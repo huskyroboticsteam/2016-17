@@ -1,5 +1,5 @@
 import vlc
-import random
+import os
 
 
 class VLCRecorder:
@@ -7,23 +7,25 @@ class VLCRecorder:
 
         self.instance = vlc.Instance()
 
-        self.numbers = []
-        self.highEnd = 400000
-        self.lowEnd = 5
-
         self.urls = urls
 
         # Creates the VLC Player Object
         self.player = self.instance.media_player_new()
+
+        onlyfiles = [f for f in os.listdir("video_output/") if os.path.isfile(os.path.join("video_output/", f))]
+        self.count = len(onlyfiles)
+        print(self.count)
 
         for i in range(0, len(urls)):
             self.instantiate_media(urls[i], i)
 
     # makes the broadcasts that we will use to record
     def instantiate_media(self, url, cameraId):
+        self.count += 1
+
         # sout makes the file type to output to
         sout = "#transcode{vcodec=h264,vb=800,width=640,height=480,acodec=mp3,ab=128,channels=2,samplerate=44100}" \
-               ":file{mux=mp4,dst=" "cam" + str(cameraId + 1) + "X" + self.create_random() + ".mp4}"
+               ":file{mux=mp4,dst=" "video_output/cam" + str(cameraId + 1) + "_" + str(self.count) + ".mp4}"
         # makes a "broadcast" to record, with name (filename)
         self.instance.vlm_add_broadcast(str(cameraId), url, sout, 0, None, True, False)
 
@@ -40,22 +42,3 @@ class VLCRecorder:
     def stop_recording(self, cameraId):
         self.instance.vlm_stop_media(str(cameraId))
         self.reset_media(cameraId)
-
-    def create_random(self):
-        number = random.randint(self.lowEnd, self.highEnd)
-        keep_checking = True
-
-        while keep_checking:
-            keep_checking = False
-            for i in range(0, len(self.numbers)):
-                if len(self.numbers) == self.highEnd - self.lowEnd:
-                    print("Ran out of filespace")
-                    quit("You didn't define the filespace properly")
-                if self.numbers[i] == number:
-                    number = random.randint(self.lowEnd, self.highEnd)
-                    keep_checking = True
-                    break
-
-        self.numbers.append(number)
-        print(number)
-        return str(number)

@@ -31,6 +31,11 @@ class Player(QtGui.QMainWindow):
             # Vertical box will hold the video and its corresponding record button
             vbox = QtGui.QVBoxLayout()
 
+            label = QtGui.QLabel()
+            label.setText("URL: " + urls[i])
+
+            vbox.addWidget(label)
+
             # Add video widget to layout container
             vbox.addWidget(self.videos[i])
 
