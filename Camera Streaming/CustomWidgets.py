@@ -20,7 +20,7 @@ class VLCWidget(QtGui.QFrame):
         self.setAutoFillBackground(True)
 
         # Set initial window size of widget
-        self.setFixedSize(sizeX, sizeY)
+        self.resize(sizeX, sizeY)
 
         # Set Media that will play
         self.player.set_media(self.instance.media_new(url, options))

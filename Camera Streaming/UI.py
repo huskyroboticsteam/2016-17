@@ -2,6 +2,7 @@ import sys
 import CustomWidgets
 import Recorder
 from PyQt4 import QtGui
+import math
 
 sizeX = 520
 sizeY = 300
@@ -15,9 +16,20 @@ class Player(QtGui.QMainWindow):
         self.setWindowIcon(QtGui.QIcon("icon.png"))
         self.createUI(urls)
 
+    def resizeEvent(self, resizeEvent):
+        # print resizeEvent.size()
+        for i in range (0, len(self.videos)):
+            # print (math.floor(resizeEvent.size().width() / len(self.urls))), (math.floor(resizeEvent.size().width() / len(self.urls)) * 0.5625)
+            # if resizeEvent.size().width() > resizeEvent.size().height():
+            self.videos[i].resize((math.floor(resizeEvent.size().width() / len(self.urls))), (math.floor(resizeEvent.size().width() / len(self.urls)) * 0.5625))
+
     def createUI(self, urls):
         self.widget = QtGui.QWidget(self)
+        self.widget.setContentsMargins(0, 0, 10, 5)
+        self.resize(900, 200)
         self.setCentralWidget(self.widget)
+
+        self.urls = urls
 
         # Main Horizontal Container
         self.hbox = QtGui.QHBoxLayout()
@@ -32,6 +44,7 @@ class Player(QtGui.QMainWindow):
             vbox = QtGui.QVBoxLayout()
 
             label = QtGui.QLabel()
+            label.setFixedHeight(15)
             label.setText("URL: " + urls[i])
 
             vbox.addWidget(label)
