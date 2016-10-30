@@ -38,7 +38,7 @@ class VLCWidget(QtGui.QFrame):
         elif sys.platform == "win32":  # for Windows
             self.player.set_hwnd(self.winId())
         elif sys.platform == "darwin":  # for MacOS
-            self.mediaplayer.set_nsobject(self.videoframe.winId())
+            self.mediaplayer.set_nsobject(self.winId())
 
     def play(self):
         self.player.play()
