@@ -1,0 +1,10 @@
+__author__ = 'Trevor'
+
+# Define colors
+WHITE = (255, 255, 255)
+GOLD = (213, 202, 148)
+HIGHLIGHTBOXRED = (255, 0, 0)
+DARKBOXRED = (175,0,0)
+HIGHLIGHTBOXGREEN = (0, 255, 100)
+WARNINGBOXORANGE = (225,125,0)
+BLACK = (0, 0, 0)
