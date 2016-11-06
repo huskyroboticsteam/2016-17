@@ -1,6 +1,5 @@
 __author__ = 'Trevor'
 
-%
 import pygame
 import sys
 

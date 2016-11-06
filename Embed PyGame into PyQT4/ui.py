@@ -18,7 +18,7 @@ def createUI(width, height):
 
     # Create the frame with the refresh rate that we will put PyGame in
     # In a real UI environment will need to place these frames in a class object to be retrieved after UI creation
-    image = qt_bootstrap.ImageWidget(width, height, 60)
+    image = qt_bootstrap.ImageWidget(width, height, 120)
 
     w = MainWindow(width, height, image)
     w.show()

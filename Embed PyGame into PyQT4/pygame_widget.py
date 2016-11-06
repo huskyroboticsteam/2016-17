@@ -16,17 +16,31 @@ class PyGameWidget():
         self.display.get_surface().fill((0, 0, 0, 0))
 
         # Create "Hello World" using the default font
-        font1 = pygame.font.SysFont("", 150)
-        self.text1 = font1.render("Hello World", 1, (213, 202, 148))
+        self.font1 = pygame.font.SysFont("", 150)
+
+        self.color = (201,201,201)
+
 
     def main_loop(self):
 
         self.display.flip()
 
-        print(pygame.mouse.get_pos())
+        for event in pygame.event.get():
+
+            # Check keyboard for key-presses
+            if event.type == pygame.KEYDOWN:
+                inputKey = event.key  # The key that got pressed...
+                if inputKey == pygame.K_z:  # If it's z, do this
+                    self.color = (255, 0, 0)
+                elif inputKey == pygame.K_x:  # If it's x, do this
+                    self.color = (0, 255, 0)
+                elif inputKey == pygame.K_c:
+                    self.color = (0, 0, 255)
+
+        text1 = self.font1.render("Hello World", 1, self.color)
 
         # Render the text to the screen at position (20,20).
-        self.display.get_surface().blit(self.text1, (20, 20))
+        self.display.get_surface().blit(text1, (20, 20))
 
         print(pygame.mouse.get_pos())
 
