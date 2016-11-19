@@ -71,12 +71,12 @@ def gradient_descent(armature, initial_parameters, base_pos, target_pos, iterati
     parameter_step = np.full(len(parameters), .0001)
     delta = .0001
 
-    for iter in xrange(iterations):
+    for iter in range(iterations):
         base_error = armature.error(target_pos, base_pos, 0, parameters)
 
         # Calculate derivative for each axis
         derivative = np.empty(len(parameters))
-        for i in xrange(len(parameters)):
+        for i in range(len(parameters)):
             test_parameters = np.copy(parameters)
             test_parameters[i] += delta
             new_error = armature.error(target_pos, base_pos, 0, test_parameters)
