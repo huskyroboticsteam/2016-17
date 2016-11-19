@@ -26,12 +26,14 @@ bool parseWirelessData()
     Serial.print("packetSize: ");
     Serial.println(packetSize);
     Udp.read((byte *) &recievedPacket, sizeof recievedPacket);
-    Serial.println(recievedPacket.throttle);
-    Serial.println(recievedPacket.turn);
-    Serial.println(recievedPacket.autoPilot);
+    Serial.println(recievedPacket.a);
+    Serial.println(recievedPacket.b);
+    // Serial.println(recievedPacket.autoPilot);
+    /*
     throttle = recievedPacket.throttle;
     turn = recievedPacket.turn;
     autoPilot = recievedPacket.autoPilot;
+    */
     return true;
 }
 
