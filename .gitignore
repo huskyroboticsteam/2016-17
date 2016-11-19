@@ -1,0 +1,4 @@
+*.pyc
+
+# InverseKinematics
+InverseKinematics/.idea
