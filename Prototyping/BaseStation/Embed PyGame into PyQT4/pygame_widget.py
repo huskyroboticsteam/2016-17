@@ -3,7 +3,6 @@ import ui
 
 pygame.font.init()
 
-
 class PyGameWidget():
     def __init__(self, width, height):
 
@@ -20,11 +19,14 @@ class PyGameWidget():
 
         self.color = (201,201,201)
 
+        self.data = "DATA"
+
 
     def main_loop(self):
 
         self.display.flip()
 
+        self.data = "Joy input"
         for event in pygame.event.get():
 
             # Check keyboard for key-presses
@@ -47,14 +49,5 @@ class PyGameWidget():
         # Tell Pygame we have completed the loop.
         pygame.event.pump()
 
-
 if __name__ =='__main__':
     ui.createUI(700, 300)
-
-
-
-
-
-
-
-
