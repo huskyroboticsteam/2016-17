@@ -2,7 +2,7 @@ import pygame
 import urllib
 import os
 import math
-import sys
+import MapTile
 
 
 class Map:
@@ -31,7 +31,7 @@ class Map:
         urllib.urlretrieve(queryString, os.path.join(local_path, "map" + str(i) + ".jpg"))
 
     def retrieve_local_image(self, path, i):
-        return pygame.image.load(os.path.join(path, "map" + str(i) + ".jpg"))
+        return pygame.image.load()
 
     def calculate_corner_center(self, lat, lng, tiles):
         tiles_to_corner = (math.sqrt(tiles) - 1) / 2
@@ -98,22 +98,41 @@ class Map:
             self.zoom_level -= 1
             self.image_tiles = []
 
+    def build_tiles(self):
+
+            tiles_to_corner = (math.sqrt(self.tiles) - 1) / 2
+            pixel = [-2000 * tiles_to_corner, -1500 * tiles_to_corner]
+
+            for i in range(1, self.tiles + 1, 1):
+
+                self.image_tiles.append(MapTile.MapTile(str(self.zoom_level), "map" + str(i) + ".jpg"))
+                self.image_tiles[i - 1].screen_location = (pixel[0], pixel[1])
+
+                # Decide whether or not the tile is initially on screen
+                self.set_visibility(self.image_tiles[i - 1])
+
+                if i == int(math.sqrt(self.tiles)) or i == int(2 * math.sqrt(self.tiles)):
+                    pixel[0] = -2000 * tiles_to_corner
+                    pixel[1] += 1500
+                else:
+                    pixel[0] += 2000
+
+    def set_visibility(self, tile):
+        return
+
+    def move_map(self):
+        for i in range(1, self.tiles + 1, 1):
+            # Update locations here.
+            self.set_visibility(self.image_tiles[i - 1])
+
     def display(self, screen):
         if len(self.image_tiles) == 0:
-            for i in range(1, self.tiles + 1, 1):
-                self.image_tiles.append(self.retrieve_local_image(str(self.zoom_level), i))
-
-        tiles_to_corner = (math.sqrt(self.tiles) - 1) / 2
-        pixel = [-2000 * tiles_to_corner, -1500 * tiles_to_corner]
+            self.build_tiles()
 
         for i in range(1, self.tiles + 1, 1):
-            screen.blit(self.image_tiles[i - 1], (pixel[0], pixel[1]))
 
-            if i == int(math.sqrt(self.tiles)) or i == int(2 * math.sqrt(self.tiles)):
-                pixel[0] = -2000 * tiles_to_corner
-                pixel[1] += 1500
-            else:
-                pixel[0] += 2000
+            if self.image_tiles[i - 1].visible:
+                screen.blit(self.image_tiles[i - 1].image, self.image_tiles[i - 1].screen_location)
 
     def convert_pixels_to_degrees(self):
         return
