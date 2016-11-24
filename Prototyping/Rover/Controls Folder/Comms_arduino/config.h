@@ -41,9 +41,8 @@ struct sendData {
 };
 
 struct recieveData {
-  float throttle;
-  float turn;
-  bool autoPilot;
+  short a;
+  short b;
 };
 
 // SERIAL COMMUNICATION CONSTANTS //

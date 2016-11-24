@@ -1,4 +1,4 @@
- #include "Arduino.h"
+#include "Arduino.h"
 #include "config.h"
 #include <Servo.h>
 #include <Ethernet.h>
@@ -6,7 +6,7 @@
 
 EthernetUDP Udp;
 byte MAC_ADDRESS[] = {0x90, 0xA2, 0xDA, 0x00, 0x3D, 0x8D};
-IPAddress IP(192, 168, 1, 50);
+IPAddress IP(192, 168, 1, 40);
 // structs for send/ recieve
 recieveData recievedPacket;
 sendData sentPacket;
@@ -43,6 +43,7 @@ void loop() {
 }
 
 void sendPWM() {
+  /*
   Serial.println("Throttle: " );
   Serial.println(throttle);
   Serial.println("Turn: ");
@@ -57,6 +58,7 @@ void sendPWM() {
     AutoPilot_Servo.writeMicroseconds(AUTOPILOT_OFF);
 
   }
+  */
 }
 
 

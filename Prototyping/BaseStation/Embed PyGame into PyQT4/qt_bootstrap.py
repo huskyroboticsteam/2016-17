@@ -10,6 +10,8 @@ class ImageWidget(QtGui.QFrame):
         self.resize(width, height)
         self.fps = fps
         self.update_func = None
+        self.wid = None
+        self.data = ""
 
     def start_updates(self):
         if self.update_func is None:
@@ -17,14 +19,18 @@ class ImageWidget(QtGui.QFrame):
         else:
             timer = QtCore.QTimer(self)
             timer.timeout.connect(self.update_func)
+            timer.timeout.connect(self.update_data)
             timer.start(1000 / self.fps)
 
+    def update_data(self):
+      self.data = self.wid.data
 
 def bootstrap_pygame(frame):
     # Set the variable to show PyGame where to place its window
     os.environ['SDL_WINDOWID'] = str(int(frame.winId()))
 
     wid = pygame_widget.PyGameWidget(frame.width(), frame.height())
+    frame.wid = wid
 
     # Set the PyGame update loop be handled by PyQt4
     frame.update_func = wid.main_loop
