@@ -1,7 +1,7 @@
 *.pyc
 
 # InverseKinematics
-InverseKinematics/.idea
-Embed PyGame into PyQT4/.idea/
-Camera Streaming/.idea/
+Prototyping/BaseStation/InverseKinematics/.idea
+Prototyping/BaseStation/Embed PyGame into PyQT4/.idea/
+Prototyping/BaseStation/Camera Streaming/.idea/
 .idea/
