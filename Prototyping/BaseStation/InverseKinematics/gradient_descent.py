@@ -6,7 +6,7 @@ from math import *
 
 """
 How to use the demo:
-Left click to set the target of the armature
+Left click and drag the target to set the target of the armature
 Right click to adjust the wrist parameters
 
 must be run directly, or call main() to start
@@ -25,6 +25,10 @@ def absolute_angle(base_angle, parameter):
     return parameter
 
 
+def distance(end, target_pos):
+    return np.linalg.norm(target_pos - end)
+
+
 # A parameter with a min and a max
 class Parameter:
     def __init__(self, min_angle, max_angle, absolute_calculator):
@@ -41,7 +45,16 @@ class Parameter:
     def absolute_angle(self, base_angle, parameter_angle):
         return self.absolute_calculator(base_angle, parameter_angle)
 
-    def is_manual(self):
+    def is_auto(self):
+        return True
+
+
+# A parameter with only one value
+class StaticParameter(Parameter):
+    def __init__(self, value, absolute_calculator):
+        Parameter.__init__(self, value, value, absolute_calculator)
+
+    def is_auto(self):
         return False
 
 
@@ -54,8 +67,8 @@ class ManualParameter(Parameter):
     def absolute_setpoint(self, base_angle):
         return self.absolute_angle(base_angle, self.setponit)
 
-    def is_manual(self):
-        return True
+    def is_auto(self):
+        return False
 
 
 class Arm:
@@ -79,7 +92,7 @@ class Arm:
         global_angle = self.angle.absolute_angle(base_angle, parameters[0])
         end = to_vector(global_angle, self.length) + starting_pos
         if self.after is None:
-            return np.linalg.norm(target_pos - end)
+            return distance(end, target_pos)
         else:
             return self.after.error(target_pos, end, global_angle, parameters[1:])
 
@@ -92,8 +105,8 @@ class Arm:
     def limb_count(self):
         return 1 if self.after is None else self.after.limb_count() + 1
 
-    def parameter_manual(self):
-        return [self.angle.is_manual()] + ([] if self.after is None else self.after.parameter_manual())
+    def parameter_auto(self):
+        return [self.angle.is_auto()] + ([] if self.after is None else self.after.parameter_auto())
 
 
 def make_tentacle(segment_length, segment_count):
@@ -103,7 +116,7 @@ def make_tentacle(segment_length, segment_count):
     return None
 
 
-def gradient_descent(armature, initial_parameters, manual_parameters, base_pos, target_pos, iterations):
+def gradient_descent(armature, initial_parameters, automatic_parameters, base_pos, target_pos, iterations):
     parameters = np.copy(initial_parameters)
     parameters_min = armature.min_parameters()
     parameters_max = armature.max_parameters()
@@ -116,13 +129,13 @@ def gradient_descent(armature, initial_parameters, manual_parameters, base_pos, 
         # Calculate derivative for each axis
         derivative = np.empty(len(parameters))
         for i in range(len(parameters)):
-            if manual_parameters[i]:
-                derivative[i] = 0
-            else:
+            if automatic_parameters[i]:
                 test_parameters = np.copy(parameters)
                 test_parameters[i] += delta
                 new_error = armature.error(target_pos, base_pos, 0, test_parameters)
                 derivative[i] = (new_error - base_error) / delta
+            else:
+                derivative[i] = 0
 
         # Step in the direction of the derivative to a given amount
         parameter_step *= .99
@@ -138,36 +151,43 @@ def main():
     running = True
     clock = pygame.time.Clock()
 
+    target_size = 10
+    moving_target = False
+
     base_position = np.array([320, 240])
     # test_armature = make_tentacle(40, 10)
     test_armature = Arm(50, Parameter(-pi, 0, relative_angle),
-                        Arm(50, Parameter(0, pi, relative_angle),
-                            Arm(30, Parameter(0, pi / 4, relative_angle),
-                                Arm(20, ManualParameter(-pi / 4, pi / 4, absolute_angle)))))
+                    Arm(50, Parameter(0, pi, relative_angle),
+                    Arm(30, Parameter(0, pi / 4, relative_angle),
+                    Arm(20, ManualParameter(-pi / 4, pi / 4, absolute_angle)))))
 
     params = np.full(test_armature.limb_count(), 0)
-    params_manual = test_armature.parameter_manual()
-    target = np.array([0, 0])
+    params_auto = test_armature.parameter_auto()
+    target = np.array([380, 130])
 
     while running:
         clock.tick(60)
         for event in pygame.event.get():
             if event.type == QUIT:
                 running = 0
-            if event.type == MOUSEMOTION:
+            elif event.type == MOUSEMOTION:
                 if pygame.mouse.get_pressed()[2]:
                     params[3] += event.rel[0] / 50
-            if event.type == MOUSEBUTTONDOWN:
-                if event.button == 3:
-                    pass
+            elif event.type == MOUSEBUTTONDOWN:
+                if event.button == 1:
+                    mouse_pos = np.array(pygame.mouse.get_pos())
+                    if distance(mouse_pos, target) < target_size:
+                        moving_target = True
+            elif event.type == MOUSEBUTTONUP:
+                moving_target = False
 
-        if pygame.mouse.get_pressed()[0]:
+        if moving_target:
             target = np.array(pygame.mouse.get_pos())
 
-        params = gradient_descent(test_armature, params, params_manual, base_position, target, 100)
+        params = gradient_descent(test_armature, params, params_auto, base_position, target, 100)
 
         screen.fill((120, 120, 120))
-        pygame.draw.circle(screen, (255, 20, 20), target, 10)
+        pygame.draw.circle(screen, (255, 20, 20), target, target_size)
         test_armature.draw(screen, base_position, 0, params)
         pygame.display.flip()
 
