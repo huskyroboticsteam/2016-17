@@ -136,6 +136,7 @@ def main():
     pygame.init()
     screen = pygame.display.set_mode((640, 480))
     running = True
+    clock = pygame.time.Clock()
 
     base_position = np.array([320, 240])
     # test_armature = make_tentacle(40, 10)
@@ -149,6 +150,7 @@ def main():
     target = np.array([0, 0])
 
     while running:
+        clock.tick(60)
         for event in pygame.event.get():
             if event.type == QUIT:
                 running = 0
@@ -162,7 +164,7 @@ def main():
         if pygame.mouse.get_pressed()[0]:
             target = np.array(pygame.mouse.get_pos())
 
-        params = gradient_descent(test_armature, params, params_manual, base_position, target, 10)
+        params = gradient_descent(test_armature, params, params_manual, base_position, target, 100)
 
         screen.fill((120, 120, 120))
         pygame.draw.circle(screen, (255, 20, 20), target, 10)
