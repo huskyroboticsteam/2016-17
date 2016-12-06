@@ -1,7 +1,8 @@
-import urllib
-import os
 import math
 import MapTile
+import Utility
+import Generator
+import os
 
 
 class Map:
@@ -40,97 +41,31 @@ class Map:
             }
         }
 
-        # Decides what to run on first opening the program
+        self.open_map()
+
+    def open_map(self):
+        # Clear all map tiles
+        for i in range(15, 20):
+            self.image_tiles[i]["tilesImages"] = []
+
+        # Decides whether to generate a new map
         new = raw_input("Generate New Map (Y/N): ")
 
         if new == "Y" or new == "y":
-            self.generate_maps()
+            g = Generator.Generator(self.TILE_SIZE, self.image_tiles)
+            name = g.generate_maps()
+            self.parse_data_file(name)
         else:
-            name = raw_input("Map Name? ")
+            while True:
+                name = raw_input("Map Name? ")
+                if os.path.exists(name):
+                    break
+                else:
+                    print "Map doesn't exist"
+
             self.parse_data_file(name)
 
         self.build_tiles()
-
-    def retrieve_online_image(self, local_path, location, i, fname):
-        baseUrl = "http://dev.virtualearth.net/REST/V1/"
-        callType = "Imagery/Map/AerialWithLabels/"
-        apiKey = "&key=AuAaQIpuk55T4X2UIhXfXitbUHHzIJNHlQLK-Y5v5Na_tx5cAz9Fvmw-xUR5oW8T"
-
-        queryString = baseUrl + callType + location + apiKey
-        print queryString
-
-        # Checks if the folder exists, if it doesn't create the folder
-        if not os.path.exists(fname):
-            os.mkdir(fname)
-
-        # Append the folder name to the local path
-        local_path = fname + "/" + local_path
-
-        # Checks if the folder exists, if it doesn't create the folder
-        if not os.path.exists(local_path):
-            os.mkdir(local_path)
-
-        # Query the server and save the image to the given path
-        urllib.urlretrieve(queryString, os.path.join(local_path, "map" + str(i) + ".jpg"))
-
-    def calculate_corner_center(self, zoom, lat, lng, tiles):
-        # Find how many tiles up and left the top left tile is at from the center
-        tiles_to_corner = (math.sqrt(tiles) - 1) / 2
-
-        # Move over to the top left center position on the zoom_location grid
-        x, y = self.convert_degrees_to_pixels(zoom, lat, lng)
-        x -= tiles_to_corner * 2000
-        y -= tiles_to_corner * 1500
-
-        return x, y
-
-    def generate_single_map(self, zoom, lat, lng, tiles, fname):
-
-        zoom = int(zoom)
-        lat = float(lat)
-        lng = float(lng)
-        tiles = int(tiles)
-
-        x, y = self.calculate_corner_center(zoom, lat, lng, tiles)
-        # Remember the left-hand edge of the map
-        originalX = x
-
-        # 1 indexed loop so the math makes more sense
-        for i in range(1, tiles + 1, 1):
-            lat, lng = self.convert_pixels_to_degrees(zoom, x, y)
-
-            location = str(lat) + "," + str(lng) + "/" + str(zoom) + "?mapSize=" + str(self.TILE_SIZE[0]) + "," + \
-                       str(self.TILE_SIZE[1])
-
-            self.retrieve_online_image(str(zoom), location, i, fname)
-
-            # At the edge of the square of tiles
-            if i % math.sqrt(self.image_tiles[zoom]["tiles"]) == 0:
-                y += 1500
-                x = originalX
-            else:
-                x += 2000
-
-    def generate_maps(self):
-        # Take input
-        lat = raw_input("Select Center Latitude: ")
-        lng = raw_input("Select Center Longitude: ")
-        name = raw_input("Map name: ")
-
-        # Creates / opens a text file and stores the center (lat, long) and folder name of map generated
-        f = open(name + ".dat", "a")
-        f.write(name + "\n")
-        f.write(lat + "\n")
-        f.write(lng + "\n")
-        f.close()
-
-        # Set required variables for map open
-        self.center = (lat, lng)
-        self.folderName = name
-
-        # Generate all zoom levels of the map 15 - 19
-        for i in range(15, 20):
-            self.generate_single_map(i, lat, lng, self.image_tiles[i]["tiles"], name)
 
     def zoom_in(self):
         if self.zoom_level < 19:
@@ -148,9 +83,8 @@ class Map:
         lat = f.next().strip('\n')
         lng = f.next().strip('\n')
 
-        print dir
-        print lat
-        print lng
+        print "Map Location: " + dir
+        print "Center of Map: " + lat + ", " + lng
 
         # Set the required variables from what was read from the file
         self.center = (lat, lng)
@@ -161,8 +95,6 @@ class Map:
 
         # Loop through all the zoom levels 15 - 19
         for i in range(15, 20, 1):
-
-
 
             # Decide where the top left tile of the map is
             tiles_to_corner = (math.sqrt(self.image_tiles[i]["tiles"]) - 1) / 2
@@ -211,32 +143,43 @@ class Map:
                 screen.blit(self.image_tiles[self.zoom_level]["tilesImages"][i - 1].image,
                             self.image_tiles[self.zoom_level]["tilesImages"][i - 1].screen_location)
 
-    # Accepts pixel x and y from the zoom_level coordinate system only
-    # Returns a latitude and longitude
-    def convert_pixels_to_degrees(self, zoom, pixelX, pixelY):
-        # Converts to coordinate system determined by map density
-        # See https://msdn.microsoft.com/en-us/library/bb259689.aspx for details
+    def get_real_mouse_screen_pos(self, mouse):
 
-        x = (pixelX / (256 * math.pow(2, zoom))) - 0.5
-        y = 0.5 - (pixelY / (256 * math.pow(2, zoom)))
+        # The position of the mouse in the screen coordinate system
+        screen_x = mouse[0]
+        screen_y = mouse[1]
 
-        lat = 90 - 360 * math.atan(math.exp(-y * 2 * math.pi)) / math.pi
-        lng = 360 * x
+        # The position of the top left corner of the center tile of the map
+        center = self.image_tiles[self.zoom_level]["tilesImages"][((self.image_tiles[self.zoom_level]["tiles"] + 1) / 2) - 1]
+        center_location = center.screen_location
 
+        # The mouse position adjusted for map movements
+        x = screen_x - center_location[0]
+        y = screen_y - center_location[1]
+
+        return x, y
+
+    def get_mouse_pos_projection(self, mouse):
+
+        # Get mouse position adjusted for map movements
+        x, y = self.get_real_mouse_screen_pos(mouse)
+
+        # Get the center of the map in the Bing Coordinate System
+        center_bing_x, center_bing_y = Utility.convert_degrees_to_pixels(self.zoom_level, self.center[0], self.center[1])
+
+        # Get the pixel position of the top left corner of the center tile on the Bing Coordinate System
+        center_bing_x -= self.TILE_SIZE[0] / 2
+        center_bing_y -= self.TILE_SIZE[1] / 2
+
+        # Get the position in the Bing Coordinate System of the mouse
+        current_bing_x = center_bing_x + x
+        current_bing_y = center_bing_y + y
+
+        return current_bing_x, current_bing_y
+
+    # Converts mouse position in the Bing Coordinate System to latitude and longitude
+    def get_mouse_lat_lng(self, mouse):
+        x, y = self.get_mouse_pos_projection(mouse)
+        lat, lng = Utility.convert_pixels_to_degrees(self.zoom_level, x, y)
+        print lat, lng
         return lat, lng
-
-    # Accepts a latitude and longitude
-    # Returns pixel coordinates in the zoom_level coordinate system
-    def convert_degrees_to_pixels(self, zoom, lat, lng):
-        # Converts to coordinate system determined by map density
-        # See https://msdn.microsoft.com/en-us/library/bb259689.aspx for details
-
-        sinLatitude = math.sin(lat * math.pi / 180)
-
-        x = (lng + 180) / 360
-        y = (0.5 - math.log((1 + sinLatitude) / (1 - sinLatitude)) / (4 * math.pi))
-
-        pixelX = int((x * 256 * math.pow(2, zoom)) + 0.5)
-        pixelY = int((y * 256 * math.pow(2, zoom)) + 0.5)
-
-        return pixelX, pixelY

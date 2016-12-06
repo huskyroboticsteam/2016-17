@@ -10,7 +10,7 @@ screen = pygame.display.set_mode((1600, 1100))
 
 # Objects that will control fps
 clock = pygame.time.Clock()
-fps = 60
+fps = 120
 
 while True:
     # Loop fps times per second
@@ -31,6 +31,14 @@ while True:
             # Zoom out if x is pressed
             elif inputKey == pygame.K_x:  # If it's x, do this
                 m.zoom_out()
+
+            elif inputKey == pygame.K_0:
+                m.get_mouse_lat_lng(pygame.mouse.get_pos())
+
+            elif inputKey == pygame.K_END:
+                screen.fill((0, 0, 0))
+                pygame.display.flip()
+                m.open_map()
 
         # Move the tiles if you're moving the mouse with left button down
         if event.type == pygame.MOUSEMOTION:
