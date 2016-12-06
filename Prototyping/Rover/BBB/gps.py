@@ -32,7 +32,7 @@ class GPS :
         
         
         #this is where you write the commands you want to give the NMEA sentences
-        #to your serial object from eariler object.write(command) put sleep command after
+        #to your serial object from earlier object.write(command) put sleep command after
         
     def read(self):
         pass
