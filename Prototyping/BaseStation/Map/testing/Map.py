@@ -6,14 +6,13 @@ import os
 import pygame
 import sys
 
-
 class Map:
     def __init__(self):
         # Size of all tiles for calculations
         self.TILE_SIZE = [1500, 1500]
 
         # Current map zoom and center
-        self.zoom_level = 15
+        self.zoom_level = 16
         self.center = (None, None)
 
         # Directory where map tiles are located
@@ -22,7 +21,7 @@ class Map:
         # Stores loaded in images
         self.image_tiles = {
             15: {
-                "tiles": 1,
+                "tiles": 9,
                 "tilesImages": []
             },
             16: {
@@ -34,11 +33,11 @@ class Map:
                 "tilesImages": []
             },
             18: {
-                "tiles": 9,
+                "tiles": 25,
                 "tilesImages": []
             },
             19: {
-                "tiles": 9,
+                "tiles": 25,
                 "tilesImages": []
             }
         }
@@ -55,7 +54,7 @@ class Map:
 
         if new == "Y" or new == "y":
             g = Generator.Generator(self.TILE_SIZE, self.image_tiles)
-            name = g.generate_maps()
+            name = g.generate_maps_new()
             self.parse_data_file(name)
         else:
             while True:
@@ -95,6 +94,10 @@ class Map:
 
         lat = f.next().strip('\n')
         lng = f.next().strip('\n')
+
+        for i in range(16, 20):
+            tiles = f.next().strip('\n')
+            self.image_tiles[i]["tiles"] = int(tiles)
         f.close()
 
         print "Map Location: " + dir
@@ -108,7 +111,7 @@ class Map:
         out = "Loading"
 
         # Loop through all the zoom levels 15 - 19
-        for i in range(15, 20, 1):
+        for i in range(16, 20, 1):
 
             # Decide where the top left tile of the map is
             tiles_to_corner = (math.sqrt(self.image_tiles[i]["tiles"]) - 1) / 2
