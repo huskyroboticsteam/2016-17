@@ -1,11 +1,11 @@
 ## UI Dependencies
 
 **MUST** inherit from:
-[QWidget] (http://pyqt.sourceforge.net/Docs/PyQt4/qwidget.html), QHBoxLayout, or QVBoxLayout
+[QWidget] (http://pyqt.sourceforge.net/Docs/PyQt4/qwidget.html), [QHBoxLayout] (http://pyqt.sourceforge.net/Docs/PyQt4/qhboxlayout.html), or [QVBoxLayout] (http://pyqt.sourceforge.net/Docs/PyQt4/qvboxlayout.html).
 
 This allows for easy addition to the main UI framework.
 
 ## Extra features
 
-Modular design should allow for a standalone runner file to operate each component of the UI outside of the framework
-If this is not possible, the dependency has not been written properly.
+Modular design should allow for a standalone runner file to operate each component of the UI outside of the framework.
+If this is not possible, the dependency has not been properly written.
