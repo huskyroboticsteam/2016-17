@@ -6,9 +6,10 @@ Code base for the 2016-17 buld season
 ### Python VLC
 Install python-vlc with pip and then overwrite the vlc.py file with the one included in the dependencies directory
 Make sure 32 bit VLC player is installed to the OS:
+
 | Operating System | Installation |
 | :----------------: | :----------------------------------------------: |
-| Linux (Ubuntu) | Usually comes by default, otherwise is usually in the package manager |
+| Linux (Ubuntu) | Usually comes by default, otherwise usually in the package manager |
 | Windows | http://get.videolan.org/vlc/2.2.4/win32/vlc-2.2.4-win32.exe |
 
 ### PyQT4 Installation:
