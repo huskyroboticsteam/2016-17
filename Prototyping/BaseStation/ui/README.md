@@ -1,7 +1,7 @@
 ## UI Dependencies
 
-MUST inherit from:
-QWidget, QHBoxLayout, or QVBoxLayout
+**MUST** inherit from:
+[QWidget] (http://pyqt.sourceforge.net/Docs/PyQt4/qwidget.html), QHBoxLayout, or QVBoxLayout
 
 This allows for easy addition to the main UI framework.
 
