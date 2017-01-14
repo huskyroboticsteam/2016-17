@@ -1,0 +1,26 @@
+Formula to maintain current turning angle
+
+Constants:
+
+l_front = distance from front wheels to middle joint
+l_back = distance from back wheels to middle joint
+width = distance between right and left wheels
+
+Inputs:
+
+angle = current angle of middle joint (0 is straight forward, positive is turn right, negative is turn left)
+v = target speed
+
+Calculations:
+
+(front turning radius)
+r_front = (l_back + (l_front * cos(angle))) / sin(angle)
+(back turning radius)
+r_back = (l_front + (l_back * cos(angle))) / sin(angle)
+
+Output:
+
+front_left_v = v * (1 + (width / (2 * r_front)))
+front_right_v = v * (1 - (width / (2 * r_front)))
+back_left_v = v * (1 + (width / (2 * r_back)))
+back_right_v = v * (1 - (width / (2 * r_back)))
