@@ -1,19 +1,14 @@
-import sys
 import CustomWidgets
 import Recorder
 from PyQt4 import QtGui
 import math
 
-sizeX = 520
-sizeY = 300
+class Player(QtGui.QWidget):
 
-
-class Player(QtGui.QMainWindow):
-
-    def __init__(self, urls, master=None):
-        QtGui.QMainWindow.__init__(self, master)
-        self.setWindowTitle("Camera Streamer")
-        self.setWindowIcon(QtGui.QIcon("icon.png"))
+    def __init__(self, urls, x, y, master=None):
+        super(Player, self).__init__(master)
+        self.sizeX = x
+        self.sizeY = y
         self.createUI(urls)
 
     def resizeEvent(self, resizeEvent):
@@ -25,9 +20,7 @@ class Player(QtGui.QMainWindow):
 
     def createUI(self, urls):
         self.widget = QtGui.QWidget(self)
-        self.widget.setContentsMargins(0, 0, 10, 5)
-        self.resize(900, 200)
-        self.setCentralWidget(self.widget)
+        self.setContentsMargins(0, 0, 10, 5)
 
         self.urls = urls
 
@@ -35,7 +28,7 @@ class Player(QtGui.QMainWindow):
         self.hbox = QtGui.QHBoxLayout()
 
         # Create the VLC video widgets
-        self.videos = createVLCWidgets(urls)
+        self.videos = self.createVLCWidgets(urls)
 
         self.recorder = Recorder.VLCRecorder(urls)
 
@@ -60,38 +53,20 @@ class Player(QtGui.QMainWindow):
             self.hbox.addLayout(vbox)
 
         # Add all layouts to main container
-        self.widget.setLayout(self.hbox)
+        self.setLayout(self.hbox)
 
         # Give VLC the window to play in then tell it to play the video
         for i in range(0, len(urls)):
             self.videos[i].assignWindowId()
             self.videos[i].play()
 
+    def createVLCWidgets(self, urls):
+        # Empty list to hold vlc widgets
+        widgets = []
 
-def createVLCWidgets(urls):
-    # Empty list to hold vlc widgets
-    widgets = []
+        for i in range(0, len(urls)):
+            vlc_widget = CustomWidgets.VLCWidget(urls[i], ":network-caching=300", self.sizeX, self.sizeY)
+            vlc_widget.id = i
+            widgets.append(vlc_widget)
 
-    for i in range(0, len(urls)):
-        vlc_widget = CustomWidgets.VLCWidget(urls[i], ":network-caching=300", sizeX, sizeY)
-        vlc_widget.id = i
-        widgets.append(vlc_widget)
-
-    return widgets
-
-# Main Function
-def main(urls, x, y):
-
-    global sizeX
-    sizeX = x
-    global sizeY
-    sizeY = y
-
-    app = QtGui.QApplication(sys.argv)
-
-    # Pass all URL RTSP parameters and random number generator bounds to the UI for initialization
-    player = Player(urls)
-    player.show()
-
-    # Start the UI loop
-    sys.exit(app.exec_())
+        return widgets
