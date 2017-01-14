@@ -1,6 +1,6 @@
 __author__ = 'Trevor'
 
-import nextcamera
+from Prototyping.BaseStation.Examples.OldGUI.codeToIntegrate.Nathan import nextcamera
 
 camOne = "rtsp://192.168.1.12:554/user=admin&password=&channel=1&stream=0.sdp"
 camTwo = "rtsp://192.168.1.15:554/user=admin&password=&channel=1&stream=0.sdp"

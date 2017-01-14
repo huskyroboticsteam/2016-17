@@ -1,6 +1,9 @@
-from PyQt4 import QtGui, QtCore
 import sys
+
+from PyQt4 import QtGui, QtCore
+
 import qt_bootstrap
+
 
 class MainWindow(QtGui.QMainWindow):
     def __init__(self, width, height, wid, parent=None):

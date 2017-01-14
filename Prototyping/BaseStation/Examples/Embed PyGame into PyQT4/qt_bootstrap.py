@@ -1,5 +1,7 @@
-from PyQt4 import QtGui, QtCore
 import os
+
+from PyQt4 import QtGui, QtCore
+
 import pygame_widget
 
 

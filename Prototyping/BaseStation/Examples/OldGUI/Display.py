@@ -1,8 +1,9 @@
 __author__ = 'Trevor'
 
-from VisualObjects import *
-from MapTile import *
 import colors
+from MapTile import *
+from VisualObjects import *
+
 
 class DisplayScreen:
     def __init__(self, pygame, screenWidth, screenHeight):
@@ -179,7 +180,7 @@ class DisplayInterface(DisplayScreen):
                 print "invalid entry"
 
     def giveReceivedInformation(self,Coordinate,Magnetometer):
-        self.PixelLocation = MapPixelCoords.coordToPixel1(float(Coordinate[0]),float(Coordinate[1]),self.MapArray[self.currentMap])
+        self.PixelLocation = MapPixelCoords.coordToPixel1(float(Coordinate[0]), float(Coordinate[1]), self.MapArray[self.currentMap])
         print Magnetometer
         MagnetometerNumber = float(Magnetometer) - 180
         if MagnetometerNumber < 0:
@@ -206,7 +207,7 @@ class DisplayInterface(DisplayScreen):
             # Find current central coordinate on screen before updating map
             centralX = -self.MainAxis.x + self.screenWidth/2
             centralY = -self.MainAxis.y + self.screenHeight/2
-            mapPoint = MapPixelCoords.pixelToCoord(self,centralX,centralY)
+            mapPoint = MapPixelCoords.pixelToCoord(self, centralX, centralY)
             # Update map
             self.currentMap = possibleZoomLevel
             self.MapTiles = self.loadImages(self.MapArray[self.currentMap])
@@ -215,7 +216,7 @@ class DisplayInterface(DisplayScreen):
                 if self.markerList[i] != False:
                     self.markerList[i].updateZoom(self.MapArray[self.currentMap])
             # Update screen position
-            newPixelCoord = MapPixelCoords.coordToPixel1(mapPoint[0],mapPoint[1],self.MapArray[self.currentMap])
+            newPixelCoord = MapPixelCoords.coordToPixel1(mapPoint[0], mapPoint[1], self.MapArray[self.currentMap])
             self.MainAxis.x = -(newPixelCoord[0] - self.screenWidth/2)
             self.MainAxis.y = -(newPixelCoord[1] - self.screenHeight/2)
 

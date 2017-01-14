@@ -1,4 +1,5 @@
 import pygame
+
 import ui
 
 pygame.font.init()

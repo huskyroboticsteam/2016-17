@@ -1,10 +1,13 @@
 __author__ = 'Trevor'
 
-import colors
 import string
-from GPSCoordinates import *
-import MapPixelCoords
+
 import pygame
+
+import MapPixelCoords
+import colors
+from GPSCoordinates import *
+
 
 class Sidebar:
     def __init__(self,pygame,screenHeight):
