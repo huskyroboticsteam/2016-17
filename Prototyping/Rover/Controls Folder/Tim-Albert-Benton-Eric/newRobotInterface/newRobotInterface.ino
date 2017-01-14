@@ -1,10 +1,10 @@
 #include "RobotController.h"
 
-RobotController controller;
+RobotController *controller;
 
 void setup() {
-  controller.setDrive(10, 0, 0);
-
+  controller = new RobotController();
+  controller->setDrive(100, 30, 0);
 }
 
 void loop() {

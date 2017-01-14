@@ -2,6 +2,7 @@
 #define ROBOT_CONTROLLER_H
 
 #include "PidController.h"
+#include <Adafruit_MotorShield.h>
 
 // An interface for controlling the robot. Assumes that the joint is exactly in
 // the middle between the front and back wheels.
@@ -20,11 +21,15 @@ class RobotController {
         // long time, will result in the robot moving at 'speed' and has the
         // central joint at 'angle'.
         void setDriveTowards(double speed, double angle);
-        // Sets the wheel speeds to 'left_speed' and 'right_speed'.
-        void setMotor(double left_speed, double right_speed);
+        // Actually make the wheel turn at the values in 'motor_speeds'.
+        void setMotors();
 
+        Adafruit_MotorShield motor_shield;
         // PID controller for the angle.
         PidController angle_controller;
+        // 0 is back left, 1 is back right, 2 is front right, 3 is front left
+        double motor_speeds[4];
+        Adafruit_DCMotor *(motors[4]);
 };
 
 #endif
