@@ -58,7 +58,6 @@ class IPList(QtGui.QWidget):
 
             hbox.addWidget(label)
             hbox.addWidget(label2)
-            self.addLayout(hbox)
             vbox.addLayout(hbox)
 
             self.ui_map[key] = label2

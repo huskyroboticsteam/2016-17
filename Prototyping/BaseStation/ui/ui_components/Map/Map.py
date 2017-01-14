@@ -1,10 +1,12 @@
 import math
+import os
+import sys
+
+import pygame
+
+import Generator
 import MapTile
 import Utility
-import Generator
-import os
-import pygame
-import sys
 
 
 class Map:

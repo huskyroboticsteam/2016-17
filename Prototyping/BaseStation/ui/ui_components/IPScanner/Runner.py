@@ -12,10 +12,7 @@ if __name__ == '__main__':
     # Updates IPs every 20 seconds.
     ui = IPCheckerLayout.IPList(maps, 5000)
 
-    mainwid = QtGui.QWidget()
-    mainwid.setLayout(ui)
-
-    window.setCentralWidget(mainwid)
+    window.setCentralWidget(ui)
     window.resize(300, 500)
 
     window.show()
