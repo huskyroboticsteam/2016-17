@@ -1,20 +1,15 @@
 import sys
 import time
-#import Adafruit_BBIO.GPIO as GPIO
-#from Adafruit_BBIO.SPI import SPI
 import Adafruit_GPIO.SPI as SPI
 import Adafruit_GPIO.I2C as I2C
 import Adafruit_MAX31855.MAX31855 as MAX31855
-
-#spi = SPI(0,0)
+import I2C_Interface
 
 PinDataIn = "P9_18"
 PinChipSel = "P9_17"
 PinClock = "P9_22"
 
-I2C_SDAPin = "P9_20"
-I2C_SCLPin = "P9_19"
-
+UVSensor = I2C_Interface(0x38)
 thermocouple = MAX31855.MAX31855(PinClock, PinChipSel, PinDataIn) # spi=SPI.SpiDev(1,0)) #
 
 print('Press Ctrl-C to quit.')
@@ -26,6 +21,8 @@ while True:
     time.sleep(0.01)
     internal = thermocouple.readInternalC()
 
+    sys.stdout.write(UVSensor.readByte(0x71))
+    sys.stdout.write(UVSensor.readByte(0x73))
     #print('Thermocouple Temperature: {0:0.3F}*C'.format(temp))
 
     #print('{0:0.2F},'.format(temp), end='')

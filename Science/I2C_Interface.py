@@ -10,3 +10,6 @@ class I2C_Interface:
 
     def readByte(self, register):
         return self._I2C.readS8(register)
+
+    def returnValueByDivisor(self, byte, divisor):
+        return byte / divisor
