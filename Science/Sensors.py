@@ -1,3 +1,4 @@
+import sys
 import time
 #import Adafruit_BBIO.GPIO as GPIO
 #from Adafruit_BBIO.SPI import SPI
@@ -27,7 +28,9 @@ while True:
 
     #print('Thermocouple Temperature: {0:0.3F}*C'.format(temp))
 
-    print('{0:0.3F}'.format(temp), end=",")
+    #print('{0:0.2F},'.format(temp), end='')
+    sys.stdout.write('{0:0.2F},'.format(temp))
+    sys.stdout.flush()
 
     #print('    Internal Temperature: {0:0.3F}*C'.format(internal))
 
