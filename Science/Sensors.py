@@ -1,5 +1,7 @@
 import sys
 import time
+#import Adafruit_BBIO.GPIO as GPIO
+#from Adafruit_BBIO.SPI import SPI
 import Adafruit_GPIO.SPI as SPI
 import Adafruit_GPIO.I2C as I2C
 import Adafruit_MAX31855.MAX31855 as MAX31855
@@ -27,12 +29,13 @@ while True:
     #print('Thermocouple Temperature: {0:0.3F}*C'.format(temp))
 
     #print('{0:0.2F},'.format(temp), end='')
-    sys.stdout.write('{0:0.2F},'.format(temp))
+    sys.stdout.write(time.strftime("%Y-%m-%d %H:%M:%S,"))
+    sys.stdout.write('{0:0.2F};'.format(temp))
     sys.stdout.flush()
 
     #print('    Internal Temperature: {0:0.3F}*C'.format(internal))
 
-    time.sleep(1.0)
+    time.sleep(0.25)
 
 # #/dev/spidev1.0
 
