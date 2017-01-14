@@ -1,7 +1,5 @@
 import sys
 import time
-#import Adafruit_BBIO.GPIO as GPIO
-#from Adafruit_BBIO.SPI import SPI
 import Adafruit_GPIO.SPI as SPI
 import Adafruit_GPIO.I2C as I2C
 import Adafruit_MAX31855.MAX31855 as MAX31855
