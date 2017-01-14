@@ -25,9 +25,11 @@ while True:
     time.sleep(0.01)
     internal = thermocouple.readInternalC()
 
-    print('Thermocouple Temperature: {0:0.3F}*C'.format(temp))
+    #print('Thermocouple Temperature: {0:0.3F}*C'.format(temp))
 
-    print('    Internal Temperature: {0:0.3F}*C'.format(internal))
+    print('{0:0.3F}'.format(temp), end=",")
+
+    #print('    Internal Temperature: {0:0.3F}*C'.format(internal))
 
     time.sleep(1.0)
 
