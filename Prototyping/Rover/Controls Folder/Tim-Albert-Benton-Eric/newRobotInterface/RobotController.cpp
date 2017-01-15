@@ -22,9 +22,8 @@ RobotController::RobotController(): angle_controller(K_P, K_I, K_D) {
 
 void RobotController::setDrive(
         double target_speed, double target_angle, double curr_angle) {
-    double error = curr_angle - target_angle;
-    double correction = angle_controller.go(error);
-    setDriveTowards(target_speed, curr_angle + correction);
+    setDriveTowards(target_speed, curr_angle);
+    pidAngleCorrection(target_angle, curr_angle);
     setMotors();
 }
 
@@ -45,6 +44,16 @@ void RobotController::setDriveTowards(double speed, double angle) {
     motor_speeds[1] = speed * (1 - WIDTH / (2 * r_back)); // back right wheel
     motor_speeds[2] = speed * (1 - WIDTH / (2 * r_front)); // front right wheel
     motor_speeds[3] = speed * (1 + WIDTH / (2 * r_front)); // front left wheel
+}
+
+void RobotController::pidAngleCorrection(
+        double target_angle, double curr_angle) {
+    double error = curr_angle - target_angle;
+    double correction = angle_controller.go(error);
+    motor_speeds[0] -= correction;
+    motor_speeds[1] += correction;
+    motor_speeds[2] -= correction;
+    motor_speeds[3] += correction;
 }
 
 void RobotController::setMotors() {

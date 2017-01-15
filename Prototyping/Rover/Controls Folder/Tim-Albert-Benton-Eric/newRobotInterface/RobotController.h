@@ -16,10 +16,13 @@ class RobotController {
         // of the joint.
         void setDrive(double target_speed, double target_angle, double curr_angle);
     private:
-        // Sets the wheel speeds such that, if maintained at these speeds for a
-        // long time, will result in the robot moving at 'speed' and has the
-        // central joint at 'angle'.
+        // Sets 'motor_speeds' such that, if the wheels are maintained at these
+        // speeds for a long time, will result in the robot moving at 'speed'
+        // and has the central joint at 'angle'.
         void setDriveTowards(double speed, double angle);
+        // Adjusts 'motor_speeds' so that the angle is closer to 'target_angle',
+        // using the PID controller algorithm.
+        void pidAngleCorrection(double target_angle, double curr_angle);
         // Actually make the wheel turn at the values in 'motor_speeds'.
         void setMotors();
 
