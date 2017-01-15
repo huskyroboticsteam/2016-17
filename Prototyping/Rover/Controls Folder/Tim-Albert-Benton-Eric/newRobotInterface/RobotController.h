@@ -4,8 +4,7 @@
 #include "PidController.h"
 #include <Adafruit_MotorShield.h>
 
-// An interface for controlling the robot. Assumes that the joint is exactly in
-// the middle between the front and back wheels.
+// An interface for controlling the robot.
 // All speeds are measured in TODO units. All angles are measured in degrees.
 class RobotController {
     public:

@@ -1,10 +1,13 @@
 #include "RobotController.h"
 #include <math.h>
 
+// All lengths are measured in TODO units
 // The distance between the left and right wheels.
 const double WIDTH = 1.0;  // TODO measure this
-// The distance between the front and back wheels.
-const double LENGTH = 1.0; // TODO measure this
+// The distance between the front wheels and the middle joint.
+const double FRONT_LENGTH = 0.5; // TODO measure this
+// The distance between the back wheels and the middle joint.
+const double BACK_LENGTH = 0.5; // TODO measure this
 // Constants for the PID controller.
 const double K_P = 0.0, K_I = 0.00, K_D = 0.00000; // TODO tune these
 // Epsilon: numbers less than this is treated as zero.
@@ -35,13 +38,13 @@ void RobotController::setDriveTowards(double speed, double angle) {
     // Convert to radians
     double angle_rad = angle * M_PI / 180.0;
     // Turning radius. Positive if turning right. Negative if turning left.
-    double r = LENGTH / (2 * tan(angle_rad / 2));
-    double left_speed =  speed * (r + WIDTH / 2) / r;
-    double right_speed = speed * (r - WIDTH / 2) / r;
-    motor_speeds[0] = left_speed;
-    motor_speeds[1] = right_speed;
-    motor_speeds[2] = right_speed;
-    motor_speeds[3] = left_speed;
+    // Have different values for front and back wheels.
+    double r_front = (BACK_LENGTH + FRONT_LENGTH * cos(angle_rad)) / sin(angle_rad);
+    double r_back  = (FRONT_LENGTH + BACK_LENGTH * cos(angle_rad)) / sin(angle_rad);
+    motor_speeds[0] = speed * (1 + WIDTH / (2 * r_back)); // back left wheel
+    motor_speeds[1] = speed * (1 - WIDTH / (2 * r_back)); // back right wheel
+    motor_speeds[2] = speed * (1 - WIDTH / (2 * r_front)); // front right wheel
+    motor_speeds[3] = speed * (1 + WIDTH / (2 * r_front)); // front left wheel
 }
 
 void RobotController::setMotors() {
