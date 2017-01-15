@@ -18,6 +18,10 @@ class PidController {
     double prev_error;
     // The sum of 'error' values in all previous calls to 'go'.
     double sum_error;
+    // Timestamp of the time 'go' was previously called.
+    unsigned long last_called_micros;
+    // Is true iff 'go' has been called before.
+    bool called_before;
 };
 
 #endif
