@@ -3,13 +3,11 @@ import time
 import Adafruit_GPIO.SPI as SPI
 import Adafruit_GPIO.I2C as I2C
 import Adafruit_MAX31855.MAX31855 as MAX31855
-import I2C_Interface
 
 PinDataIn = "P9_18"
 PinChipSel = "P9_17"
 PinClock = "P9_22"
 
-UVSensor = I2C_Interface(0x38)
 thermocouple = MAX31855.MAX31855(PinClock, PinChipSel, PinDataIn) # spi=SPI.SpiDev(1,0)) #
 
 print('Press Ctrl-C to quit.')
