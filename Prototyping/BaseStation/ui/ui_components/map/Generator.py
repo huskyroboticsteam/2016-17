@@ -12,7 +12,7 @@ class Generator:
 
     def retrieve_online_image(self, local_path, location, i, fname):
         baseUrl = "http://dev.virtualearth.net/REST/V1/"
-        callType = "Imagery/Map/AerialWithLabels/"
+        callType = "Imagery/map/AerialWithLabels/"
         apiKey = "&key=AuAaQIpuk55T4X2UIhXfXitbUHHzIJNHlQLK-Y5v5Na_tx5cAz9Fvmw-xUR5oW8T"
 
         queryString = baseUrl + callType + location + apiKey
@@ -69,7 +69,7 @@ class Generator:
             # Take input
             lat = raw_input("Select Center Latitude: ")
             lng = raw_input("Select Center Longitude: ")
-            name = raw_input("Map name: ")
+            name = raw_input("map name: ")
 
             if Utility.is_valid_coord(lat) and Utility.is_valid_coord(lng) and Utility.is_valid_file_name(name):
                 break

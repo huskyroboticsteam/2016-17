@@ -19,7 +19,7 @@ class ImageWidget(QtGui.QFrame):
         else:
             timer = QtCore.QTimer(self)
             timer.timeout.connect(self.update_func)
-            timer.timeout.connect(self.update_data)
+            #timer.timeout.connect(self.update_data)
             timer.start(1000 / self.fps)
 
     def update_data(self):

@@ -55,7 +55,7 @@ class DisplayInterface(DisplayScreen):
         self.PixelLocation = False
 
         for i in range(len(self.zoomLevels)):
-            mapName = locationName + "Map" + str(self.zoomLevels[i])
+            mapName = locationName + "map" + str(self.zoomLevels[i])
             self.MapArray.append(Map(self.pygame, mapName, ArraySize[i], startingCoord, self.zoomLevels[i]))
 
         self.MapTiles = self.loadImages(self.MapArray[self.currentMap])

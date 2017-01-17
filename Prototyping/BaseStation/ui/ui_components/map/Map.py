@@ -53,7 +53,7 @@ class Map:
             self.image_tiles[i]["tilesImages"] = []
 
         # Decides whether to generate a new map
-        new = raw_input("Generate New Map (Y/N): ")
+        new = raw_input("Generate New map (Y/N): ")
 
         if new == "Y" or new == "y":
             g = Generator.Generator(self.TILE_SIZE, self.image_tiles)
@@ -61,11 +61,11 @@ class Map:
             self.parse_data_file(name)
         else:
             while True:
-                name = raw_input("Map Name? ")
+                name = raw_input("map Name? ")
                 if os.path.exists(name):
                     break
                 else:
-                    print "Map doesn't exist"
+                    print "map doesn't exist"
 
             self.parse_data_file(name)
 
@@ -99,8 +99,8 @@ class Map:
         lng = f.next().strip('\n')
         f.close()
 
-        print "Map Location: " + dir
-        print "Center of Map: " + lat + ", " + lng
+        print "map Location: " + dir
+        print "Center of map: " + lat + ", " + lng
 
         # Set the required variables from what was read from the file
         self.center = (lat, lng)
