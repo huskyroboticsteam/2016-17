@@ -24,6 +24,7 @@ void setup() {
 }
 
 void loop() {
+  // Bluetooth sends character read from serial monitor to arduino which sends to motors
   char toSend = (char)bluetooth.read();
   Serial.println(toSend);
   if(toSend == 'f') { // forward
