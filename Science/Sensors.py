@@ -32,9 +32,9 @@ while True:
     uvData = UV_L.readRaw8()
     uvData |= UV_H.readRaw8() << 8
 
-    sys.stdout.write(uvData)
-    sys.stdout.write(time.strftime("%Y-%m-%d %H:%M:%S,"))
-    sys.stdout.write('{0:0.2F};'.format(temp))
+    sys.stdout.write('{0}'.format(uvData))
+    #sys.stdout.write(time.strftime("%Y-%m-%d %H:%M:%S,"))
+    #sys.stdout.write('{0:0.2F};'.format(temp))
     sys.stdout.flush()
 
 
