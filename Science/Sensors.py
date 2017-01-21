@@ -13,8 +13,8 @@ UV_ADDR_MSB = 0x39
 
 thermocouple = MAX31855.MAX31855(PinClock, PinChipSel, PinDataIn) # spi=SPI.SpiDev(1,0))
 
-UV_L = I2C(UV_ADDR_LSB, I2C.get_default_bus())
-UV_H = I2C(UV_ADDR_MSB, I2C.get_default_bus())
+UV_L = I2C.Device(UV_ADDR_LSB, I2C.get_default_bus())
+UV_H = I2C.Device(UV_ADDR_MSB, I2C.get_default_bus())
 
 UV_L.writeRaw8(0x06)
 
