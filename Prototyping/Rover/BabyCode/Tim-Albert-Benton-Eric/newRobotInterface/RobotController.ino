@@ -11,7 +11,7 @@ const double FRONT_LENGTH = 0.5; // TODO measure this
 // The distance between the back wheels and the middle joint.
 const double BACK_LENGTH = 0.5; // TODO measure this
 // Constants for the PID controller.
-const double K_P = 0.0, K_I = 0.00, K_D = 0.00000; // TODO tune these
+const double K_P = 0.5, K_I = 0.00, K_D = 0.00000; // TODO tune these
 // Epsilon: numbers less than this is treated as zero.
 const double EPS = 1e-4;
 

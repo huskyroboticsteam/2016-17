@@ -1,4 +1,5 @@
 #include "RobotController.h"
+#include "Potentiometer.h"
 #include "log.h"
 
 RobotController *controller;
@@ -9,5 +10,5 @@ void setup() {
 }
 
 void loop() {
-  controller->setDrive(10, 20, 20);
+  controller->setDrive(50, -20, getCurrentAngle());
 }
