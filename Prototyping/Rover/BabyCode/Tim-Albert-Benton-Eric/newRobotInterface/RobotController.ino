@@ -1,4 +1,5 @@
 #include "RobotController.h"
+#include "Potentiometer.h"
 #include <math.h>
 
 // All lengths are measured in TODO units
@@ -42,8 +43,8 @@ void RobotController::setDriveTowards(double speed, double angle) {
   double r_back  = (FRONT_LENGTH + BACK_LENGTH * cos(angle_rad)) / sin(angle_rad);
   motor_speeds[0] = speed * (1 + WIDTH / (2 * r_back)); // back left wheel
   motor_speeds[1] = speed * (1 - WIDTH / (2 * r_back)); // back right wheel
-  motor_speeds[2] = speed * (1 - WIDTH / (2 * r_front)); // front right wheel
-  motor_speeds[3] = speed * (1 + WIDTH / (2 * r_front)); // front left wheel
+  motor_speeds[2] = speed * (1 + WIDTH / (2 * r_front)); // front left wheel
+  motor_speeds[3] = speed * (1 - WIDTH / (2 * r_front)); // front right wheel
 }
 
 void RobotController::pidAngleCorrection(
@@ -52,13 +53,13 @@ void RobotController::pidAngleCorrection(
   double correction = angle_controller.go(error);
   motor_speeds[0] -= correction;
   motor_speeds[1] += correction;
-  motor_speeds[2] -= correction;
-  motor_speeds[3] += correction;
+  motor_speeds[2] += correction;
+  motor_speeds[3] -= correction;
 }
 
 void RobotController::setMotors() {
   // The left wheels have to turn the other way
-  const double MULTIPLIER[4] = {-1, 1, 1, -1};
+  const double MULTIPLIER[4] = {-1, 1, -1, 1};
   for (int i = 0; i < 4; i++) {
     double x = motor_speeds[i] * MULTIPLIER[i];
     if (x > 0) {
