@@ -1,11 +1,13 @@
 #include "RobotController.h"
+#include "log.h"
 
 RobotController *controller;
 
 void setup() {
+  initLogging();
   controller = new RobotController();
-  controller->setDrive(100, 30, 0);
 }
 
 void loop() {
+  controller->setDrive(10, 20, 20);
 }
