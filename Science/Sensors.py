@@ -19,8 +19,6 @@ while True:
     time.sleep(0.01)
     internal = thermocouple.readInternalC()
 
-    sys.stdout.write(UVSensor.readByte(0x71))
-    sys.stdout.write(UVSensor.readByte(0x73))
     #print('Thermocouple Temperature: {0:0.3F}*C'.format(temp))
 
     #print('{0:0.2F},'.format(temp), end='')
