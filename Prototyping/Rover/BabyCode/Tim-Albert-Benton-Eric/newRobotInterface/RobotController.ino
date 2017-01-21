@@ -86,12 +86,15 @@ void RobotController::setMotors() {
   const double MULTIPLIER[4] = {-1, 1, -1, 1};
   for (int i = 0; i < 4; i++) {
     double x = motor_speeds[i] * MULTIPLIER[i];
+    uint8_t abs_speed = (uint8_t)  min(255, abs(x));
+    motors[i]->setSpeed(abs_speed);
+    debug("motor #"); debug(i); debug(": "); debug(abs_speed); debug(", ");
     if (x > 0) {
-      motors[i]->setSpeed(x);
       motors[i]->run(FORWARD);
+      debugln("forward");
     } else {
-      motors[i]->setSpeed(x);
       motors[i]->run(BACKWARD);
+      debugln("backward");
     }
   }
 }
