@@ -1,3 +1,6 @@
+// Current Version could give angular velocity of one motor correctly but not all four.  
+// println inside calcAngVel doesn't give any ouput right
+
 #include <Adafruit_MotorShield.h>
 Adafruit_DCMotor * motor1;
 Adafruit_DCMotor * motor2;
