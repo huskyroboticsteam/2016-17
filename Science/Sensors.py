@@ -1,10 +1,9 @@
 import sys
 import time
-import Adafruit_GPIO.SPI as SPI
-import Adafruit_GPIO.I2C as I2C
 import UV_Sensor as UV
 import Thermocouple
 import DistanceSensor
+import Limit
 
 PinDataIn = "P9_18"
 PinChipSel = "P9_17"
@@ -16,6 +15,7 @@ DIST_ADDR = 0x52
 UV_Sens = UV(UV_ADDR_LSB)
 Therm = Thermocouple(PinClock, PinChipSel, PinDataIn)
 Distance = DistanceSensor(DIST_ADDR)
+LimitTest = Limit(0)
 
 #Setup Sensors
 UV_Sens.setup()
@@ -31,6 +31,9 @@ while True:
     time.sleep(0.01)
     internal = Therm.getInternalTemp()
     uvData = UV_Sens.getData()
+    distance = Distance.getRawData()
+    limStatus = LimitTest.status()
+
 
     sys.stdout.write('{0:{fill}16b} ({0}),'.format(uvData, fill='0'))
     #sys.stdout.write(time.strftime("%Y-%m-%d %H:%M:%S,"))
