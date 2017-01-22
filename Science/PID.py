@@ -1,5 +1,6 @@
 import time
 
+
 class PID(object):
 
     _lastError = 0
@@ -24,8 +25,8 @@ class PID(object):
         dT = curTime - self._lastTime
         error = self._target - input
         self._pVal = self._p * error
-        self._iVal += self._i * (dT * (self._lastError - error))
-        self._dVal = self._d * ( (self._lastError - error) / dT )
+        self._iVal += self._i * (dT * (error - self._lastError))
+        self._dVal = self._d * ((error - self._lastError) / dT)
         self._lastError = error
         self._lastTime = curTime
         self._output = self._pVal + self._iVal + self._dVal
@@ -38,3 +39,8 @@ class PID(object):
 
     def getOutput(self):
         return self._output
+
+    def setCoefficients(self, kP, kI, kD):
+        self._p = kP
+        self._i = kI
+        self._d = kD

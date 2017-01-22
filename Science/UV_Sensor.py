@@ -15,8 +15,8 @@ class UV(object):
 
     def getRaw(self):
         uvData = self._uvl.readRaw8()
-        uvData |= self._uvh.readRaw8() << 8
+        uvData |= self._uvm.readRaw8() << 8
         return uvData
 
     def getData(self):
-        return self.getRaw() * 5 #uW/cm/cm
+        return self.getRaw() * 5  # uW/cm/cm
