@@ -13,9 +13,11 @@ class PID(object):
         self._p = kP
         self._i = kI
         self._d = kD
+        self._target = 0
 
     def setTarget(self, target):
         self._target = target
+        self.reset()
 
     def run(self, input):
         curTime = time.time()
@@ -27,6 +29,12 @@ class PID(object):
         self._lastError = error
         self._lastTime = curTime
         self._output = self._pVal + self._iVal + self._dVal
+
+    def reset(self):
+        self._pVal = 0
+        self._iVal = 0
+        self._dVal = 0
+        self._lastError = 0
 
     def getOutput(self):
         return self._output
