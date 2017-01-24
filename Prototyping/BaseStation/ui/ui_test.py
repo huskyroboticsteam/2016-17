@@ -19,7 +19,7 @@ window = QtGui.QMainWindow()
 
 
 # Creates the map at 800x200 px and updates at 120 fps
-map = MapWidget.MainWindow(800, 200, 120)
+map = MapWidget.MainWindow(600, 200, 120)
 
 # Create the emergency stop button
 stop_button = stop.Stop()
