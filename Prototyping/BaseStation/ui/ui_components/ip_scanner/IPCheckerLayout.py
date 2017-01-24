@@ -1,5 +1,5 @@
 import NetworkChecker
-from PyQt4 import QtGui, QtCore
+from PyQt4 import QtGui, QtCore, Qt
 import PingThread
 
 
@@ -50,6 +50,7 @@ class IPList(QtGui.QWidget):
         for key, value in self.map.iteritems():
             hbox = QtGui.QHBoxLayout()
 
+
             label = QtGui.QLabel()
             label.setText(value)
             label2 = QtGui.QLabel()
@@ -58,8 +59,17 @@ class IPList(QtGui.QWidget):
 
             hbox.addWidget(label)
             hbox.addWidget(label2)
+
             vbox.addLayout(hbox)
 
             self.ui_map[key] = label2
 
-        return vbox
+        frame = QtGui.QFrame()
+        frame.setLayout(vbox)
+        frame.setFrameStyle(QtGui.QFrame.Sunken | QtGui.QFrame.StyledPanel)
+        vbox.setAlignment(QtCore.Qt.AlignTop)
+
+        box = QtGui.QVBoxLayout()
+        box.addWidget(frame)
+
+        return box
