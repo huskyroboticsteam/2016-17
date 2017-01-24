@@ -3,12 +3,9 @@ import Adafruit_BBIO.UART as UART
 from time import sleep
 UART.setup("UART1")
 ser = serial.Serial('/dev/ttyO1', 9600)
-'''while(1):
-    while GPS.inWaiting() == 0:
-        pass
-    NMEA = GPS.readline()
-    print NMEA'''
-class GPS :
+
+
+class GPS:
     def __init__(self):
         #This sets up variables for useful commands.
         #This set is used to set the rate the GPS reports
@@ -29,18 +26,37 @@ class GPS :
         GPRMC_GPGGA="$PMTK314,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*28\r\n"#Send GPRMC AND GPGGA Sentences
         SEND_ALL ="$PMTK314,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0*28\r\n" #Send All Sentences
         SEND_NOTHING="$PMTK314,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*28\r\n" #Send Nothing
-        
+        ser.write(MEAS_200_msec)
+        sleep(1)
+        ser.write(GPRMC_GPGGA)
+        sleep(1)
+        ser.flushInput()
+        ser.flushOutput()
         
         #this is where you write the commands you want to give the NMEA sentences
         #to your serial object from earlier object.write(command) put sleep command after
         
     def read(self):
-        pass
+        #flush twice to make sure nothing is clogged
+        ser.flushInput()
+        ser.flushInput()
+        while ser.inWaiting() == 0:
+            pass
+        NMEA = ser.readline()
+        print NMEA
+        Narray = NMEA.split(",")
+        #sentences can be found by the leading term
+        if Narray[0] == '$GPGGA':
+            pass
+        if Narray[0] == '$GPRMC':
+            self.Latitude = Narray[3]
+            self.n_s = Narray[4]
+            self.longitude = Narray[5]
+            self.e_w = Narray[6]
+            self.g_speed = Narray[7]
+
 
 test = GPS()
-while(1):
-    ser.flushInput()
-    while ser.inWaiting() == 0:
-        pass
-    NMEA = ser.readline()
-    print NMEA
+while 1:
+    test.read()
+    print test.Latitude

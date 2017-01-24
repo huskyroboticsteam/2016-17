@@ -29,7 +29,7 @@ class RobotController {
     Adafruit_MotorShield motor_shield;
     // PID controller for the angle.
     PidController angle_controller;
-    // 0 is back left, 1 is back right, 2 is front right, 3 is front left
+    // 0 is back left, 1 is back right, 2 is front left, 3 is front right
     double motor_speeds[4];
     Adafruit_DCMotor *(motors[4]);
 };
