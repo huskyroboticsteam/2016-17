@@ -3,6 +3,7 @@ import sys
 from ui_components.map import MapWidget
 from ui_components.ip_scanner import IPCheckerLayout
 from ui_components.camera_streaming import UI
+from ui_components.emergency_stop import stop
 
 # Link the camera streaming feed when attached over ethernet
 camOne = "rtsp://192.168.1.15:554/user=admin&password=&channel=1&stream=0.sdp"
@@ -20,6 +21,9 @@ window = QtGui.QMainWindow()
 # Creates the map at 800x200 px and updates at 120 fps
 map = MapWidget.MainWindow(800, 200, 120)
 
+# Create the emergency stop button
+stop_button = stop.Stop()
+
 # Shows the video streams in their own windows of size 300x200 px
 camera = UI.Player(urls, 300, 200)
 
@@ -33,6 +37,7 @@ hbox = QtGui.QHBoxLayout()
 # Add the map and IP list to the horizontal layout
 hbox.addWidget(map)
 hbox.addWidget(ip)
+hbox.addWidget(stop_button)
 # Add the horizontal layout and camera feed to the vertical layout
 vbox.addLayout(hbox)
 vbox.addWidget(camera)
