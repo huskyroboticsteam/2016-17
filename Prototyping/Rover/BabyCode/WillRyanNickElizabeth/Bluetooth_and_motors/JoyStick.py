@@ -17,6 +17,13 @@ from struct import *
 ser = serial.Serial('/dev/cu.HC-05-DevB')
 
 class App:
+    forward = False
+    back = False
+    left = False
+    right = False
+    stop = False
+    directions = array(forward, back, left, right, stop)
+
     def __init__(self):
         
         pygame.init()
@@ -73,12 +80,22 @@ class App:
     def send_command(self):
         throttle = self.check_axis(1)
         turn = self.check_axis(2)
-        if(throttle < -0.5):
+        if(throttle < -0.5 and not forward):
+            reset()
+            forward = True
             ser.write('f')
-        elif(throttle > 0.5):
+        elif(throttle > 0.5 and not back):
+            reset()
+            back = True
             ser.write('r')
-        else:
+        elif(not stop):
+            reset()
+            stop = True
             ser.write('s')
+
+    def reset(direction):
+        for each in directions:
+            each = False
 
 
     def main(self):
