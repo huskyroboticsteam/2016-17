@@ -1,5 +1,5 @@
 import NetworkChecker
-from PyQt4 import QtGui, QtCore, Qt
+from PyQt4 import QtGui, QtCore
 import PingThread
 
 

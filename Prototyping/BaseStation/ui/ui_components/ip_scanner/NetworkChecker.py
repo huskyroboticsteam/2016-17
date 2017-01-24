@@ -1,6 +1,7 @@
 import socket
 
 
+# Check whether the machine is currently on the same ip address as the rover
 def check_network(ip_map):
     # Get the host's current IP address
     myIP = str(socket.gethostbyname(socket.gethostname()))
