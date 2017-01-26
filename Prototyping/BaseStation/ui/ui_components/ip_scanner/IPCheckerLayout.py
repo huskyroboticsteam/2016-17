@@ -50,11 +50,12 @@ class IPList(QtGui.QWidget):
         for key, value in self.map.iteritems():
             hbox = QtGui.QHBoxLayout()
 
-
             label = QtGui.QLabel()
+            label.setAlignment(QtCore.Qt.AlignHCenter)
             label.setText(value)
-            label2 = QtGui.QLabel()
 
+            label2 = QtGui.QLabel()
+            label2.setAlignment(QtCore.Qt.AlignHCenter)
             label2.setText("Active")
 
             hbox.addWidget(label)
@@ -64,12 +65,6 @@ class IPList(QtGui.QWidget):
 
             self.ui_map[key] = label2
 
-        frame = QtGui.QFrame()
-        frame.setLayout(vbox)
-        frame.setFrameStyle(QtGui.QFrame.Sunken | QtGui.QFrame.StyledPanel)
         vbox.setAlignment(QtCore.Qt.AlignTop)
 
-        box = QtGui.QVBoxLayout()
-        box.addWidget(frame)
-
-        return box
+        return vbox
