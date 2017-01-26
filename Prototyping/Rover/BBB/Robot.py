@@ -67,7 +67,9 @@ def driveMotor(motor, val):
         return
     pwm.set_pwm(forwardPin, 4096, 0)
     pwm.set_pwm(backPin, 4096, 0)
-    pwm.set_pwm(throttlePin, 2048 + abs(val * 8), 2048 - abs(val * 8))
+    pwm.set_pwm(throttlePin,
+                2048 + abs((256 - abs(val)) * 8),
+                2048 - abs((256 - abs(val)) * 8))
     if val > 0:
         pwm.set_pwm(forwardPin, 0, 4096)
     if val < 0:
@@ -75,23 +77,25 @@ def driveMotor(motor, val):
     print "driving motor: " + str(motor) + " with value: " + str(val)
 
 
+# returns a float of how far from straight the pot is. > 0 for Right, < 0 for left
 def readPot():
-    return ADC.read(POT_PIN)
+    return POT_MIDDLE - ADC.read(POT_PIN)
 
 
 # returns a tuple of (throttle, turn)
 # turn value is 100 for full right -100 for full left and 0 for straight
 def getDriveParms(auto):
-    return (50, 100)
+    return (50, 0)
 
 
 # returns a tuple of (motor1, motor2, motor3, motor4) from the driveParms modified by the pot reading
 def convertParmsToMotorVals(driveParms):
-    result = (driveParms[0] - driveParms[1],
-              driveParms[0] + driveParms[1],
+    potReading = readPot()
+    result = (driveParms[0] - driveParms[1] + int(potReading * 10),
+              driveParms[0] + driveParms[1] - int(potReading * 10),
               driveParms[0] + driveParms[1],
               driveParms[0] - driveParms[1])
-    potReading = readPot()
+
     return result
 
 
