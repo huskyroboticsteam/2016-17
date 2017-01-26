@@ -11,21 +11,22 @@ class Player(QtGui.QWidget):
         self.sizeY = y
         self.createUI(urls)
 
-    def resizeEvent(self, resizeEvent):
-        # print resizeEvent.size()
-        for i in range (0, len(self.videos)):
-            # print (math.floor(resizeEvent.size().width() / len(self.urls))), (math.floor(resizeEvent.size().width() / len(self.urls)) * 0.5625)
-            # if resizeEvent.size().width() > resizeEvent.size().height():
-            self.videos[i].resize((math.floor(resizeEvent.size().width() / len(self.urls))), (math.floor(resizeEvent.size().width() / len(self.urls)) * 0.5625))
+    # def resizeEvent(self, resizeEvent):
+    #     # print resizeEvent.size()
+    #     for i in range (0, len(self.videos)):
+    #         # print (math.floor(resizeEvent.size().width() / len(self.urls))), (math.floor(resizeEvent.size().width() / len(self.urls)) * 0.5625)
+    #         # if resizeEvent.size().width() > resizeEvent.size().height():
+    #         self.videos[i].resize((math.floor(resizeEvent.size().width() / len(self.urls))), (math.floor(resizeEvent.size().width() / len(self.urls)) * 0.5625))
 
     def createUI(self, urls):
         self.widget = QtGui.QWidget(self)
-        self.setContentsMargins(0, 0, 10, 5)
+        # self.setContentsMargins(0, 0, 10, 5)
 
         self.urls = urls
 
         # Main Horizontal Container
         self.hbox = QtGui.QHBoxLayout()
+        self.hbox.setContentsMargins(0, 0, 0, 0)
 
         # Create the VLC video widgets
         self.videos = self.createVLCWidgets(urls)
@@ -35,6 +36,7 @@ class Player(QtGui.QWidget):
         for i in range(0, len(urls)):
             # Vertical box will hold the video and its corresponding record button
             vbox = QtGui.QVBoxLayout()
+            vbox.setContentsMargins(0, 0, 0, 0)
 
             label = QtGui.QLabel()
             label.setFixedHeight(15)

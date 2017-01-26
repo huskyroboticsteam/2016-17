@@ -8,6 +8,7 @@ class MainWindow(QtGui.QWidget):
 
         self.map = Bootstrap.ImageWidget(width, height, fps)
         hbox = QtGui.QHBoxLayout()
+        hbox.setContentsMargins(0, 0, 0, 0)
 
         hbox.addWidget(self.map)
 

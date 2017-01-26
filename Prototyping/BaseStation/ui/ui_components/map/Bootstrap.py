@@ -8,7 +8,6 @@ class ImageWidget(QtGui.QFrame):
         QtGui.QFrame.__init__(self)
 
         self.resize(width, height)
-        self.setFixedSize(width, height)
         self.fps = fps
         self.update_func = None
         self.wid = None
