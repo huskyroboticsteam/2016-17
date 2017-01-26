@@ -19,11 +19,11 @@ void setup() {
   motor2 = AFMS.getMotor(2);
   motor3 = AFMS.getMotor(3);
   motor4 = AFMS.getMotor(4);
-  /*
-  motor1->setSpeed(100);
-  motor2->setSpeed(100);
-  motor3->setSpeed(100);
-  motor4->setSpeed(100);*/
+  
+  motor1->setSpeed(0);
+  motor2->setSpeed(0);
+  motor3->setSpeed(0);
+  motor4->setSpeed(0);
 
   
 
@@ -49,6 +49,7 @@ void Drive(int power, int turn) {
   motor2->setSpeed(motor2_speed);
   motor3->setSpeed(motor3_speed);
   motor4->setSpeed(motor4_speed);
+  
   Serial.print(motor1_speed);
   Serial.print(motor2_speed);
   Serial.print(motor3_speed);
@@ -57,14 +58,11 @@ void Drive(int power, int turn) {
 }
 
 int PowerMod(int power) { 
-
- // if (power >= 0)
   int new_power = power;
   return new_power; 
 } 
 
 int TurnMod(int turn) { 
-
   int new_turn = turn; 
   return new_turn; 
 }

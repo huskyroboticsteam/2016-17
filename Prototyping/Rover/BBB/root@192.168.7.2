@@ -1,0 +1,7 @@
+import Adafruit_BBIO.ADC as ADC
+
+ADC.setup()
+
+potVal = ADC.read("AIN0")
+
+print(potVal)
