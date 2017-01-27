@@ -54,7 +54,6 @@ class App:
         if (self.my_joystick):
             if (p_axis < self.my_joystick.get_numaxes()):
                 return self.my_joystick.get_axis(p_axis)
-
         return 0
 
     def check_button(self, p_button):
@@ -101,7 +100,7 @@ class App:
             ser.write('r')
         else:
             ser.write('s')"""
-        adjust = int(-100*throttle);
+        adjust = int(-255*throttle);
         ser.write(Str(adjust))
 
 
