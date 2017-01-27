@@ -4,9 +4,9 @@ import sys
 
 
 class PygameWrapper:
-    def __init__(self, width, height):
+    def __init__(self, width, height, default_map_name):
 
-        self.m = Map.Map()
+        self.m = Map.Map(default_map_name)
         pygame.font.init()
 
         # Display dimensions to 1600 x 1100

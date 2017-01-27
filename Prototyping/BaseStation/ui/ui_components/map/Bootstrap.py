@@ -25,11 +25,12 @@ class ImageWidget(QtGui.QFrame):
     def update_data(self):
       self.data = self.wid.data
 
-def bootstrap_pygame(frame):
+
+def bootstrap_pygame(frame, map_name):
     # Set the variable to show PyGame where to place its window
     os.environ['SDL_WINDOWID'] = str(int(frame.winId()))
 
-    wid = PygameWrapper.PygameWrapper(frame.width(), frame.height())
+    wid = PygameWrapper.PygameWrapper(frame.width(), frame.height(), map_name)
     frame.wid = wid
 
     # Set the PyGame update loop be handled by PyQt4

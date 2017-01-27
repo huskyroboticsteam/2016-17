@@ -14,5 +14,5 @@ class MainWindow(QtGui.QWidget):
 
         self.setLayout(hbox)
 
-    def initialize(self):
-        Bootstrap.bootstrap_pygame(self.map)
+    def initialize(self, map_name):
+        Bootstrap.bootstrap_pygame(self.map, map_name)

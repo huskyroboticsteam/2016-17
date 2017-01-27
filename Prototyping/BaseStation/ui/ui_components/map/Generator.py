@@ -59,35 +59,25 @@ class Generator:
             else:
                 x += self.TILE_SIZE[0]
 
-    def generate_maps(self):
+    def generate_maps(self, name, lat, lng):
 
-        lat = ""
-        lng = ""
-        name = ""
+        # Don't try to download maps if the input is invalid
+        if Utility.is_valid_coord(lat) and Utility.is_valid_coord(lng) and Utility.is_valid_file_name(name):
 
-        while True:
-            # Take input
-            lat = raw_input("Select Center Latitude: ")
-            lng = raw_input("Select Center Longitude: ")
-            name = raw_input("map name: ")
+            # Creates / overwrites a text file and stores the center (lat, lng) and folder name of map generated
+            f = open(name + ".dat", "w")
+            f.write(name + "\n")
+            f.write(str(self.TILE_SIZE[0]) + "\n")
+            f.write(str(self.TILE_SIZE[1]) + "\n")
+            f.write(lat + "\n")
+            f.write(lng + "\n")
+            f.close()
 
-            if Utility.is_valid_coord(lat) and Utility.is_valid_coord(lng) and Utility.is_valid_file_name(name):
-                break
-            else:
-                print "Some input is invalid"
+            # Generate all zoom levels of the map 15 - 19
+            for i in range(15, 20):
+                self.generate_single_map(i, lat, lng, self.image_tiles[i]["tiles"], name)
 
-        # Creates / overwrites a text file and stores the center (lat, lng) and folder name of map generated
-        f = open(name + ".dat", "w")
-        f.write(name + "\n")
-        f.write(str(self.TILE_SIZE[0]) + "\n")
-        f.write(str(self.TILE_SIZE[1]) + "\n")
-        f.write(lat + "\n")
-        f.write(lng + "\n")
-        f.close()
-
-        # Generate all zoom levels of the map 15 - 19
-        for i in range(15, 20):
-            self.generate_single_map(i, lat, lng, self.image_tiles[i]["tiles"], name)
-
-        return name
+        else:
+            print "Some input is invalid"
+            return
 

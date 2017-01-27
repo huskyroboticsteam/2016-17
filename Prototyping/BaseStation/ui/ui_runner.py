@@ -4,6 +4,8 @@ from ui_components.map import MapWidget
 from ui_components.ip_scanner import IPCheckerLayout
 from ui_components.camera_streaming import UI
 from ui_components.emergency_stop import stop
+from ui_components.settings import settings
+from ui_components import command_api
 from ui import Ui_MainWindow
 
 
@@ -34,7 +36,11 @@ main.camera_container.addWidget(UI.Player(urls, 300, 200))
 # Updates IP state every 50 milliseconds. Maps the name to the status.
 main.sensor_container.addWidget(IPCheckerLayout.IPList({"192.168.1.10": "Rover", "192.168.1.20": "Camera Two"}, 50))
 
+comm = command_api.CommandApi(map)
+# main.generate.mousePressEvent()
+
+setting_widget = settings.Settings(main, comm)
 # Show window, initialize pygame, and execute the app
 win.show()
-map.initialize()
+map.initialize(setting_widget.get_map_name())
 app.exec_()

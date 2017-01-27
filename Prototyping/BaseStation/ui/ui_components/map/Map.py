@@ -10,7 +10,7 @@ import Utility
 
 
 class Map:
-    def __init__(self):
+    def __init__(self, map_name):
         # Size of all tiles for calculations
         self.TILE_SIZE = [1500, 1500]
 
@@ -45,29 +45,14 @@ class Map:
             }
         }
 
-        self.open_map()
+        self.open_map(map_name)
 
-    def open_map(self):
+    def open_map(self, map_name):
         # Clear all map tiles
         for i in range(15, 20):
             self.image_tiles[i]["tilesImages"] = []
 
-        # Decides whether to generate a new map
-        new = raw_input("Generate New map (Y/N): ")
-
-        if new == "Y" or new == "y":
-            g = Generator.Generator(self.TILE_SIZE, self.image_tiles)
-            name = g.generate_maps()
-            self.parse_data_file(name)
-        else:
-            while True:
-                name = raw_input("map Name? ")
-                if os.path.exists(name):
-                    break
-                else:
-                    print "map doesn't exist"
-
-            self.parse_data_file(name)
+        self.parse_data_file(map_name)
 
         self.build_tiles()
 
