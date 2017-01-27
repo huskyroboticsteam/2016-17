@@ -81,7 +81,6 @@ class App:
     def center_text(self, text, x, y, color):
         surface = self.font.render(text, True, color, (0, 0, 0))
         surface.set_colorkey((0, 0, 0))
-
         self.screen.blit(surface, (x - surface.get_width() / 2,
                                    y - surface.get_height() / 2))
 
@@ -102,8 +101,8 @@ class App:
             ser.write('r')
         else:
             ser.write('s')"""
-        throttle *= 100;
-        ser.write(Str(throttle))
+        adjust = int(-100*throttle);
+        ser.write(Str(adjust))
 
 
 
