@@ -95,12 +95,13 @@ class App:
             self.autoPilot = not self.autoPilot
 
         #self.UDPSender.sendItOff(pack(self.UDPSender.format, throttle, turn, self.autoPilot))
-        if(throttle < -0.5):
+        """if(throttle < -0.5):
             ser.write('f')
         elif(throttle > 0.5):
             ser.write('r')
         else:
-            ser.write('s')
+            ser.write('s')"""
+        ser.write(Str(throttle),Str(turn))
 
 
 
