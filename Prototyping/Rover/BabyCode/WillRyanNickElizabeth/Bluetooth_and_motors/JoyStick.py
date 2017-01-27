@@ -101,7 +101,7 @@ class App:
             ser.write('r')
         else:
             ser.write('s')"""
-        ser.write(Str(throttle),Str(turn))
+        ser.write(Str(throttle))
 
 
 
