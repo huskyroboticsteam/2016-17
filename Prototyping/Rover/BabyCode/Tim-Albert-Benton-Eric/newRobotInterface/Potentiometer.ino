@@ -2,15 +2,27 @@
 
 // The pin the potentiometer is connected to.
 const int POTENTIOMETER_PIN = 3;
-// POTENTIOMETER_VALUE_1 is the value read from the potentiometer when the angle
-// is ANGLE_1. Same for POTENTIOMBER_VALUE_2 and ANGLE_2. These angles should be
-// extreme left and extreme right, respectively.
-const double ANGLE_1 = -45.0;
-const double POTENTIOMETER_VALUE_1 = 160;
-const double ANGLE_2 = 45.0;
-const double POTENTIOMETER_VALUE_2 = 380;
+// Number of potentiometer calibration points. Must be at least 2.
+const int NUM_CALIBRATION = 2;
+// For any i, POTENTIOMETER_VALUES[i] should be the value read from the
+// potentiometer when the angle is ANGLES[i]. ANGLES[0] and ANGLES[NUM_CALIBRATION-1]
+// should be the extreme left and extreme right in some order. POTENTIOMETER_VALUES
+// should be strictly increasing.
+const double ANGLES[NUM_CALIBRATION] = {-45.0, 45.0};
+const double POTENTIOMETER_VALUES[NUM_CALIBRATION] = {160, 380};
 
 double getCurrentAngle() {
-  return map(analogRead(POTENTIOMETER_PIN),
-        POTENTIOMETER_VALUE_1, POTENTIOMETER_VALUE_2, ANGLE_1, ANGLE_2);
+  double value = analogRead(POTENTIOMETER_PIN);
+  if (value <= POTENTIOMETER_VALUES[0]) {
+    return ANGLES[0];
+  } else if (value >= POTENTIOMETER_VALUES[NUM_CALIBRATION-1]) {
+    return ANGLES[NUM_CALIBRATION-1];
+  } else {
+    for (int i = 0; i < NUM_CALIBRATION-1; i++) {
+      if (value >= ANGLES[i] && value <= ANGLES[i+1]) {
+        return map(value, POTENTIOMETER_VALUES[i], POTENTIOMETER_VALUES[i+1],
+              ANGLES[i], ANGLES[i+1]);
+      }
+    }
+  }
 }
