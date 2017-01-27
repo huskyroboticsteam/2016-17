@@ -69,6 +69,7 @@ class App:
             if (p_hat < self.my_joystick.get_numhats()):
                 return self.my_joystick.get_hat(p_hat)
 
+            
         return (0, 0)
 
     def draw_text(self, text, x, y, color, align_right=False):
@@ -101,6 +102,7 @@ class App:
             ser.write('r')
         else:
             ser.write('s')"""
+        throttle *= 100;
         ser.write(Str(throttle))
 
 
