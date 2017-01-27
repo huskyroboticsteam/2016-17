@@ -48,3 +48,6 @@ class PID(object):
         self._p = kP
         self._i = kI
         self._d = kD
+
+    def getTarget(self):
+        return self._target
