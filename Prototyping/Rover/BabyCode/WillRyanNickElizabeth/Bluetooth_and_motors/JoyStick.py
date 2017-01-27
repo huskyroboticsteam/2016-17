@@ -12,18 +12,12 @@
 import serial
 import pygame
 from pygame.locals import *
+# from sendOverUDP import *
 from struct import *
 
 ser = serial.Serial('/dev/cu.HC-05-DevB')
 
 class App:
-    forward = False
-    back = False
-    left = False
-    right = False
-    stop = False
-    directions = array(forward, back, left, right, stop)
-
     def __init__(self):
         
         pygame.init()
@@ -77,25 +71,38 @@ class App:
 
         return (0, 0)
 
-    def send_command(self):
+    def draw_text(self, text, x, y, color, align_right=False):
+        surface = self.font.render(text, True, color, (0, 0, 0))
+        surface.set_colorkey((0, 0, 0))
+
+        self.screen.blit(surface, (x, y))
+
+    def center_text(self, text, x, y, color):
+        surface = self.font.render(text, True, color, (0, 0, 0))
+        surface.set_colorkey((0, 0, 0))
+
+        self.screen.blit(surface, (x - surface.get_width() / 2,
+                                   y - surface.get_height() / 2))
+
+    def UDP_init(self):
+        # self.UDPSender = sendOverUDP("192.168.1.50", 8888)
+        self.autoPilot = False;
+
+    def send_packet(self):
         throttle = self.check_axis(1)
         turn = self.check_axis(2)
-        if(throttle < -0.5 and not forward):
-            reset()
-            forward = True
+        if (self.check_button(0)):
+            self.autoPilot = not self.autoPilot
+
+        #self.UDPSender.sendItOff(pack(self.UDPSender.format, throttle, turn, self.autoPilot))
+        if(throttle < -0.5):
             ser.write('f')
-        elif(throttle > 0.5 and not back):
-            reset()
-            back = True
+        elif(throttle > 0.5):
             ser.write('r')
-        elif(not stop):
-            reset()
-            stop = True
+        else:
             ser.write('s')
 
-    def reset(direction):
-        for each in directions:
-            each = False
+
 
 
     def main(self):
@@ -114,7 +121,50 @@ class App:
                     self.quit()
                     return
 
-            self.send_command()
+            self.draw_text("Joystick Name:  %s" % self.joystick_names[0],
+                           5, 5, (0, 255, 0))
+
+            self.draw_text("Axes (%d)" % self.my_joystick.get_numaxes(),
+                           5, 25, (255, 255, 255))
+
+            for i in range(0, self.my_joystick.get_numaxes()):
+                if (self.my_joystick.get_axis(i)):
+                    pygame.draw.circle(self.screen, (0, 0, 200),
+                                       (20 + (i * 30), 50), 10, 0)
+                else:
+                    pygame.draw.circle(self.screen, (255, 0, 0),
+                                       (20 + (i * 30), 50), 10, 0)
+
+                self.center_text("%d" % i, 20 + (i * 30), 50, (255, 255, 255))
+
+            self.draw_text("Buttons (%d)" % self.my_joystick.get_numbuttons(),
+                           5, 75, (255, 255, 255))
+
+            for i in range(0, self.my_joystick.get_numbuttons()):
+                if (self.my_joystick.get_button(i)):
+                    pygame.draw.circle(self.screen, (0, 0, 200),
+                                       (20 + (i * 30), 100), 10, 0)
+                else:
+                    pygame.draw.circle(self.screen, (255, 0, 0),
+                                       (20 + (i * 30), 100), 10, 0)
+
+                self.center_text("%d" % i, 20 + (i * 30), 100, (255, 255, 255))
+
+            self.draw_text("POV Hats (%d)" % self.my_joystick.get_numhats(),
+                           5, 125, (255, 255, 255))
+
+            for i in range(0, self.my_joystick.get_numhats()):
+                if (self.my_joystick.get_hat(i) != (0, 0)):
+                    pygame.draw.circle(self.screen, (0, 0, 200),
+                                       (20 + (i * 30), 150), 10, 0)
+                else:
+                    pygame.draw.circle(self.screen, (255, 0, 0),
+                                       (20 + (i * 30), 150), 10, 0)
+
+                self.center_text("%d" % i, 20 + (i * 30), 100, (255, 255, 255))
+
+            pygame.display.flip()
+            self.send_packet()
 
     def quit(self):
         pygame.display.quit()
