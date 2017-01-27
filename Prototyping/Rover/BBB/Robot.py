@@ -37,10 +37,6 @@ Back
 
 '''
 
-# initializes PID controller
-def initPID(P, I , D, target = 0):
-    pid.setCoefficients(P, I, D)
-    pid.setTarget(target)
 
 # motor: throttle, F, B
 # 1: 8,  9,  10
@@ -76,9 +72,7 @@ def driveMotor(motor, val):
         return
     pwm.set_pwm(forwardPin, 4096, 0)
     pwm.set_pwm(backPin, 4096, 0)
-    pwm.set_pwm(throttlePin,
-                2048 + abs((256 - abs(val)) * 8),
-                2048 - abs((256 - abs(val)) * 8))
+    pwm.set_pwm(throttlePin, 0 + abs(val) * 8, 4096 - abs(val) * 8)
     if val > 0:
         pwm.set_pwm(forwardPin, 0, 4096)
     if val < 0:
@@ -91,10 +85,10 @@ def readPot():
     return POT_MIDDLE - ADC.read(POT_PIN)
 
 
-# returns a tuple of (throttle, turn)
+# returns a 2-tuple of (throttle, turn)
 # turn value is 100 for full right -100 for full left and 0 for straight
 def getDriveParms(auto):
-    return (100, 0)
+    return (100, -75)
 
 
 # returns a tuple of (motor1, motor2, motor3, motor4) from the driveParms modified by the pot reading
@@ -102,12 +96,12 @@ def convertParmsToMotorVals(driveParms):
     potReading = readPot()
     if not (driveParms[1] == 0 and pid.getTarget() == 0):
         pid.setTarget(driveParms[1])
-    pid.run(translateValue(potReading, POT_LEFT - POT_MIDDLE, POT_RIGHT - POT_MIDDLE, -100, 100))
+    pid.run(translateValue(potReading, POT_LEFT - POT_MIDDLE, POT_RIGHT - POT_MIDDLE, 100, -100))
     finalTurn = pid.getOutput()
-    result = (driveParms[0] - finalTurn,
-              driveParms[0] + finalTurn,
-              driveParms[0] + finalTurn,
-              driveParms[0] - finalTurn)
+    result = (func(driveParms[0] + finalTurn),
+              func(driveParms[0] - finalTurn),
+              func(driveParms[0] - finalTurn),
+              func(driveParms[0] + finalTurn))
     return result
 
 
@@ -123,6 +117,19 @@ def translateValue(value, inMin, inMax, outMin, outMax):
     # Convert the 0-1 range into a value in the right range.
     return outMin + (valueScaled * outSpan)
 
+
+# Does important stuff
+# Don't touch
+# If you have questions contact DenverCoder9
+# Applied temporary fix 8/23/2003
+# Assumes va1 is not in the range (100246, 100261)
+def func(va1):
+    # calculates the difference.
+    # TODO: add support for 64-bit platforms
+    # Worst case complexity: O(2^n)
+    # return (0x000000FF | (1 << 8 & (0xFF >> 7) << 6 & 0x0F)) - (0o377 * 0o50) / (va1 + 0b00101000)
+    # temp fix: keeping old code in case it breaks
+    return math.atan(va1 / 0o50) * (0x01FF) / math.pi
 
 def main():
     try:
