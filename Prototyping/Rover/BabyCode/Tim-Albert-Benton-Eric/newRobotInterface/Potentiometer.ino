@@ -1,4 +1,5 @@
 #include "Potentiometer.h"
+#include "log.h"
 
 // The pin the potentiometer is connected to.
 const int POTENTIOMETER_PIN = 3;
@@ -13,16 +14,22 @@ const double POTENTIOMETER_VALUES[NUM_CALIBRATION] = {160, 380};
 
 double getCurrentAngle() {
   double value = analogRead(POTENTIOMETER_PIN);
+  double angle;
   if (value <= POTENTIOMETER_VALUES[0]) {
-    return ANGLES[0];
+    angle = ANGLES[0];
   } else if (value >= POTENTIOMETER_VALUES[NUM_CALIBRATION-1]) {
-    return ANGLES[NUM_CALIBRATION-1];
+    angle = ANGLES[NUM_CALIBRATION-1];
   } else {
     for (int i = 0; i < NUM_CALIBRATION-1; i++) {
       if (value >= ANGLES[i] && value <= ANGLES[i+1]) {
-        return map(value, POTENTIOMETER_VALUES[i], POTENTIOMETER_VALUES[i+1],
+        angle = map(value, POTENTIOMETER_VALUES[i], POTENTIOMETER_VALUES[i+1],
               ANGLES[i], ANGLES[i+1]);
+        break;
       }
     }
   }
+  debug("Calling getCurrentAngle: ");
+  debuglnValue(value);
+  debuglnValue(angle);
+  return angle;
 }
