@@ -47,17 +47,17 @@ void allBackward(){
 void loop() {
   // Bluetooth sends character read from serial monitor to arduino which sends to motors
   String toSend = "";
-  while(Serial.available()){
+  while(Serial.available() > 0){
     char digit = (char)bluetooth.read();
     toSend += digit;
   }
   //String toSend = bluetooth.read();
-  Serial.println(toSend)
+  Serial.println(toSend);
     
   int throttle = toSend.toInt();
 
   if (throttle > 30) {
-    allForward()
+    allForward();
     changeAllSpeed(throttle);
   } else if (throttle < -30) {
     allBackward();
