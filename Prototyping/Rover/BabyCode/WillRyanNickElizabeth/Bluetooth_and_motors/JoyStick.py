@@ -100,7 +100,7 @@ class App:
         else:
             ser.write('s')"""
         adjust = int(-255*throttle)
-        ser.write(str(adjust))
+        ser.write(chr(adjust))
 
 
 
