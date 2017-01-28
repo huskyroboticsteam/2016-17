@@ -54,7 +54,7 @@ void loop() {
   //String toSend = bluetooth.read();
   Serial.println(toSend);
     
-  int throttle = (int)toSend*2;
+  int throttle = ((int)toSend - 127)*2;
 
   if (throttle > 30) {
     allForward();
