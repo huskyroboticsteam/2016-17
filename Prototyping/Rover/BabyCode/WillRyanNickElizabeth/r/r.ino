@@ -45,10 +45,10 @@ void loop() {
     motor3->run(FORWARD);
     motor4->run(BACKWARD);
     
-    motor1->setSpeed(-throttle);
-    motor2->setSpeed(-throttle);
-    motor3->setSpeed(-throttle);
-    motor4->setSpeed(-throttle);  
+    motor1->setSpeed(-1 * throttle);
+    motor2->setSpeed(-1 * throttle);
+    motor3->setSpeed(-1 * throttle);
+    motor4->setSpeed(-1 * throttle);  
   } else {
     motor1->run(RELEASE);
     motor2->run(RELEASE);
