@@ -27,11 +27,23 @@ void loop() {
   // Bluetooth sends character read from serial monitor to arduino which sends to motors
   String toSend = (String)bluetooth.read();
   Serial.println(toSend);
+  int throttle = toSend.toInt();
 
-  motor1->setSpeed(toSend.toInt());
-  motor2->setSpeed(toSend.toInt());
-  motor3->setSpeed(toSend.toInt());
-  motor4->setSpeed(toSend.toInt());
+  if (throttle > 0) {
+    motor1->run(FORWARD);
+    
+    motor1->setSpeed(throttle);
+    motor2->setSpeed(throttle);
+    motor3->setSpeed(throttle);
+    motor4->setSpeed(throttle);
+  } else if (toSend.toInt() < 0) {
+    motor1->run(BACKWARD);
+    
+    motor1->setSpeed(throttle);
+    motor2->setSpeed(throttle);
+    motor3->setSpeed(throttle);
+    motor4->setSpeed(throttle);  
+  }
   
 //  if(toSend == 'f') { // forward
 //    motor1->run(BACKWARD);
