@@ -12,15 +12,15 @@ pwm = Adafruit_PCA9685.PCA9685(address=0x60, busnum=1)
 pwm.set_pwm_freq(60)
 
 # Potentiometer pin:
-POT_PIN = "AIN0"
-POT_LEFT = 0.768
-POT_MIDDLE = 0.556
-POT_RIGHT = 0.331
-POT_TOL = 0.001
+POT_PIN = "AIN2"
+POT_LEFT = 0.566
+POT_MIDDLE = 0.447
+POT_RIGHT = 0.287
+POT_TOL = 0.01
 # 0 if manual 1 if auto drive
 auto = 0
 
-pid = PID.PID(-1,0,0)
+pot_pid = PID.PID(-1,0,0)
 
 '''
 ROBOT motor configuration:
@@ -72,7 +72,7 @@ def driveMotor(motor, val):
         return
     pwm.set_pwm(forwardPin, 4096, 0)
     pwm.set_pwm(backPin, 4096, 0)
-    pwm.set_pwm(throttlePin, 0 + abs(val) * 8, 4096 - abs(val) * 8)
+    pwm.set_pwm(throttlePin, 2048 - abs(val) * 8, 2048 + abs(val) * 8)
     if val > 0:
         pwm.set_pwm(forwardPin, 0, 4096)
     if val < 0:
@@ -81,29 +81,52 @@ def driveMotor(motor, val):
 
 
 # returns a float of how far from straight the pot is. > 0 for Right, < 0 for left
+# returns -1 if error
 def readPot():
-    return POT_MIDDLE - ADC.read(POT_PIN)
-
+    result = POT_MIDDLE - ADC.read(POT_PIN)
+    if result > POT_MIDDLE - POT_RIGHT or result < POT_MIDDLE - POT_LEFT:
+        return -1
+    return result
 
 # returns a 2-tuple of (throttle, turn)
 # turn value is 100 for full right -100 for full left and 0 for straight
 def getDriveParms(auto):
-    return (100, -75)
+    return (10, 0)
 
 
 # returns a tuple of (motor1, motor2, motor3, motor4) from the driveParms modified by the pot reading
 def convertParmsToMotorVals(driveParms):
     potReading = readPot()
-    if not (driveParms[1] == 0 and pid.getTarget() == 0):
-        pid.setTarget(driveParms[1])
-    pid.run(translateValue(potReading, POT_LEFT - POT_MIDDLE, POT_RIGHT - POT_MIDDLE, 100, -100))
-    finalTurn = pid.getOutput()
-    result = (func(driveParms[0] + finalTurn),
-              func(driveParms[0] - finalTurn),
-              func(driveParms[0] - finalTurn),
-              func(driveParms[0] + finalTurn))
-    return result
+    if potReading != -1:
+        # Potentiometer is good. Run PID.
+        setPIDTarget(pot_pid, int(driveParms[1]), -100, 100)
+        scaledPotReading = translateValue(potReading, POT_LEFT - POT_MIDDLE, POT_RIGHT - POT_MIDDLE, 100, -100)
+        pot_pid.run(scaledPotReading)
+        finalTurn = pot_pid.getOutput()
+        print str(driveParms)
+        result = (func(driveParms[0] + finalTurn),
+                  func(driveParms[0] - finalTurn),
+                  func(driveParms[0] - finalTurn),
+                  func(driveParms[0] + finalTurn))
+        return result
+    else:
+        print "Pot Error"
+        # Potentiometer error
+        # reset PID:
+        pot_pid.setTarget(0)
+        print str(driveParms)
+        result = (func(driveParms[0] + driveParms[1]),
+                  func(driveParms[0] - driveParms[1]),
+                  func(driveParms[0] - driveParms[1]),
+                  func(driveParms[0] + driveParms[1]))
+        print str(result)
+        return result
 
+def setPIDTarget(pid, input, min, max):
+    if input < min or input > max:
+        pid.setTarget(0)
+    elif pid.getTarget() != input:
+        pid.setTarget(input)
 
 # translate values from one range to another
 def translateValue(value, inMin, inMax, outMin, outMax):
@@ -129,7 +152,7 @@ def func(va1):
     # Worst case complexity: O(2^n)
     # return (0x000000FF | (1 << 8 & (0xFF >> 7) << 6 & 0x0F)) - (0o377 * 0o50) / (va1 + 0b00101000)
     # temp fix: keeping old code in case it breaks
-    return math.atan(va1 / 0o50) * (0x01FF) / math.pi
+    return math.atan(va1 / float(int(float(0o50)))) * (0x01FF / math.pi)
 
 def main():
     try:
@@ -138,12 +161,12 @@ def main():
             MotorParms = convertParmsToMotorVals(driveParms)
             for i in range(1, 5):
                 driveMotor(i, MotorParms[i - 1])
-            time.sleep(0.01)
+            time.sleep(0.5)
+
     except KeyboardInterrupt:
         for i in range(1, 5):
             driveMotor(i, 0)
         print "exiting"
-
 
 if __name__ == "__main__":
     main()
