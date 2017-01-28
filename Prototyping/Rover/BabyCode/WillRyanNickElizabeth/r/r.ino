@@ -29,20 +29,31 @@ void loop() {
   Serial.println(toSend);
   int throttle = toSend.toInt();
 
-  if (throttle > 0) {
-    motor1->run(FORWARD);
+  if (throttle > 30) {
+    motor1->run(BACKWARD);
+    motor2->run(FORWARD);
+    motor3->run(BACKWARD);
+    motor4->run(FORWARD);
     
     motor1->setSpeed(throttle);
     motor2->setSpeed(throttle);
     motor3->setSpeed(throttle);
     motor4->setSpeed(throttle);
-  } else if (toSend.toInt() < 0) {
-    motor1->run(BACKWARD);
+  } else if (throttle < -30) {
+    motor1->run(FORWARD);
+    motor2->run(BACKWARD);
+    motor3->run(FORWARD);
+    motor4->run(BACKWARD);
     
     motor1->setSpeed(-throttle);
     motor2->setSpeed(-throttle);
     motor3->setSpeed(-throttle);
     motor4->setSpeed(-throttle);  
+  } else {
+    motor1->run(RELEASE);
+    motor2->run(RELEASE);
+    motor3->run(RELEASE);
+    motor4->run(RELEASE);
   }
   
 //  if(toSend == 'f') { // forward
