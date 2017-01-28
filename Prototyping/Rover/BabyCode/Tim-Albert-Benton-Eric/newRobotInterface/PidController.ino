@@ -1,5 +1,4 @@
 #include "PidController.h"
-#include <Arduino.h>
 
 PidController::PidController(double k_p, double k_i, double k_d):
     k_p(k_p), k_i(k_i), k_d(k_d) {
