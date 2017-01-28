@@ -39,10 +39,10 @@ void loop() {
   } else if (toSend.toInt() < 0) {
     motor1->run(BACKWARD);
     
-    motor1->setSpeed(throttle);
-    motor2->setSpeed(throttle);
-    motor3->setSpeed(throttle);
-    motor4->setSpeed(throttle);  
+    motor1->setSpeed(-throttle);
+    motor2->setSpeed(-throttle);
+    motor3->setSpeed(-throttle);
+    motor4->setSpeed(-throttle);  
   }
   
 //  if(toSend == 'f') { // forward
