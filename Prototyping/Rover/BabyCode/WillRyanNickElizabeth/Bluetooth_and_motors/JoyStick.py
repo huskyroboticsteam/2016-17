@@ -85,13 +85,12 @@ class App:
 
     def UDP_init(self):
         # self.UDPSender = sendOverUDP("192.168.1.50", 8888)
-        self.autoPilot = False;
+        self.autoPilot = False
 
     def send_packet(self):
         throttle = self.check_axis(1)
         turn = self.check_axis(2)
-        if (self.check_button(0)):
-            self.autoPilot = not self.autoPilot
+        if (self.check_button(0)):            self.autoPilot = not self.autoPilot
 
         #self.UDPSender.sendItOff(pack(self.UDPSender.format, throttle, turn, self.autoPilot))
         """if(throttle < -0.5):
@@ -100,7 +99,7 @@ class App:
             ser.write('r')
         else:
             ser.write('s')"""
-        adjust = int(-255*throttle);
+        adjust = int(-255*throttle)
         ser.write(Str(adjust))
 
 
