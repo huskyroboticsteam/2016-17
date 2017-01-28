@@ -15,7 +15,7 @@ DIST_ADDR = 0x52
 #Create Sensors
 UV_Sens = UV.UV(UV_ADDR_LSB)
 Therm = Thermocouple.Thermocouple(PinClock, PinChipSel, PinDataIn)
-Dist = DistanceSensor(DIST_ADDR)
+Dist = DistanceSensor.DistanceSensor(DIST_ADDR)
 pidCtrl = PID.PID(1, 1, 1)
 
 #Setup Sensors
