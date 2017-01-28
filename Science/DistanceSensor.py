@@ -16,8 +16,9 @@ class DistanceSensor(object):
         pass
 
     def getRawData(self):
-        # reads 4 bytes from the data register
-        return self._i2cDev.readList(self._distReg, 4)
+        # reads 2 bytes from the data register
+        #return self._i2cDev.readList(self._distReg, 2)
+        return self._i2cDev.readU8(0xC0)
 
     def getData(self):
         return self._calibM * self.getRawData() + self._calibInt

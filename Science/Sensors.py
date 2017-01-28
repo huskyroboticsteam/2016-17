@@ -32,7 +32,7 @@ while True:
     time.sleep(0.01)
     internal = Therm.getInternalTemp()
     uvData = UV_Sens.getData()
-    distData = Dist.getData()
+    distData = Dist.getRawData()
 
     sys.stdout.write('{0}, '.format(distData))
     #sys.stdout.write('{0}, '.format(pidCtrl.getOutput()))
