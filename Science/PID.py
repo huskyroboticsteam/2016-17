@@ -25,7 +25,7 @@ class PID(object):
         dT = curTime - self._lastTime
         error = self._target - input
         self._pVal = self._p * error
-        self._iVal += self._i * (dT * (error - self._lastError))
+        self._iVal += self._i * (dT * self._error)
         self._dVal = self._d * ((error - self._lastError) / dT)
         self._lastError = error
         self._lastTime = curTime
