@@ -1,3 +1,4 @@
+
 #include <Adafruit_MotorShield.h>
 
 #include <SoftwareSerial.h>
@@ -47,9 +48,11 @@ void allBackward(){
 void loop() {
   // Bluetooth sends character read from serial monitor to arduino which sends to motors
   String toSend = "";
-  for(int i = 0; i < 3; i++){
+  while(Serial.available() > 0){
     char digit = (char)bluetooth.read();
-    toSend += digit;
+    if (digit != '-1'){
+      toSend += digit;
+    }
   }
   //String toSend = bluetooth.read();
   Serial.println(toSend);
