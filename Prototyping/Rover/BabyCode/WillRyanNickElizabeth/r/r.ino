@@ -22,6 +22,27 @@ void setup() {
   bluetooth.begin(9600);
   bluetooth.println("Initialized");
 }
+l
+void changeAllSpeed(int n){
+  motor1->setSpeed(n);
+  motor2->setSpeed(n);
+  motor3->setSpeed(n);
+  motor4->setSpeed(n);
+}
+
+void allForward(){
+  motor1->run(BACKWARD);
+  motor2->run(FORWARD);
+  motor3->run(BACKWARD);
+  motor4->run(FORWARD);
+}
+
+void allBackward(){
+  motor1->run(FORWARD);
+  motor2->run(BACKWARD);
+  motor3->run(FORWARD);
+  motor4->run(BACKWARD);
+}
 
 void loop() {
   // Bluetooth sends character read from serial monitor to arduino which sends to motors
@@ -30,25 +51,11 @@ void loop() {
   int throttle = toSend.toInt();
 
   if (throttle > 30) {
-    motor1->run(BACKWARD);
-    motor2->run(FORWARD);
-    motor3->run(BACKWARD);
-    motor4->run(FORWARD);
-    
-    motor1->setSpeed(throttle);
-    motor2->setSpeed(throttle);
-    motor3->setSpeed(throttle);
-    motor4->setSpeed(throttle);
+    allForward();
+    changeAllSpeed(throttle);
   } else if (throttle < -30) {
-    motor1->run(FORWARD);
-    motor2->run(BACKWARD);
-    motor3->run(FORWARD);
-    motor4->run(BACKWARD);
-    
-    motor1->setSpeed(-1 * throttle);
-    motor2->setSpeed(-1 * throttle);
-    motor3->setSpeed(-1 * throttle);
-    motor4->setSpeed(-1 * throttle);  
+    allBackward();
+    changeAllSpeed(-1 * throttle);
   } else {
     motor1->run(RELEASE);
     motor2->run(RELEASE);
@@ -61,7 +68,7 @@ void loop() {
 //    motor2->run(FORWARD);
 //    motor3->run(BACKWARD);
 //    motor4->run(FORWARD);
-//  } else if(toSend == 's') { // stop
+//  } else if(toSend == 's') { // stopl
 //    motor1->run(RELEASE);
 //    motor2->run(RELEASE);
 //    motor3->run(RELEASE);
