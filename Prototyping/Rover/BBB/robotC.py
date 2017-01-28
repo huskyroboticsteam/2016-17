@@ -3,6 +3,11 @@ from struct import *
 from motor import *
 from bbio import *
 
+FRONT_RIGHT = 1
+FRONT_LEFT = 2
+
+motorrs[FRONT_RIHGT]
+
 class Control:
     def __ini__(self):
         pass
