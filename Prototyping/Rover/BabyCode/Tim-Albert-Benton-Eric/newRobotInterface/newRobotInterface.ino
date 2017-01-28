@@ -6,7 +6,6 @@ RobotController *controller;
 int mode = 1;
 
 void setup() {
-  initLogging();
   controller = new RobotController();
 }
 
