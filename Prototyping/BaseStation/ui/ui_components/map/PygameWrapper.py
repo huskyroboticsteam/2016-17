@@ -4,9 +4,9 @@ import sys
 
 
 class PygameWrapper:
-    def __init__(self, width, height, default_map_name):
-
-        self.m = Map.Map(default_map_name)
+    def __init__(self, width, height, map_name):
+        self.map_name = map_name
+        self.m = Map.Map(map_name)
         pygame.font.init()
 
         # Display dimensions to 1600 x 1100
@@ -44,7 +44,7 @@ class PygameWrapper:
                 elif inputKey == pygame.K_END:
                     self.screen.fill((0, 0, 0))
                     pygame.display.flip()
-                    self.m.open_map()
+                    self.m.open_map(self.map_name)
 
             # Move the tiles if you're moving the mouse with left button down
             if event.type == pygame.MOUSEMOTION:

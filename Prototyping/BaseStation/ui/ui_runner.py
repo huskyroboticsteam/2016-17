@@ -9,6 +9,10 @@ from ui_components import command_api
 from ui import Ui_MainWindow
 
 
+def quitting():
+    setting_widget.save()
+
+
 # Link the camera streaming feed when attached over ethernet
 camOne = "rtsp://192.168.1.15:554/user=admin&password=&channel=1&stream=0.sdp"
 camTwo = "rtsp://192.168.1.20:554/user=admin&password=&channel=1&stream=0.sdp"
@@ -19,6 +23,7 @@ urls = [camOne, camTwo, camThree]
 
 # Specifying the new PyQt4 applicataion and main window
 app = QtGui.QApplication(sys.argv)
+app.aboutToQuit.connect(quitting)
 win = QtGui.QMainWindow()
 main = Ui_MainWindow()
 main.setupUi(win)
@@ -36,10 +41,12 @@ main.camera_container.addWidget(UI.Player(urls, 300, 200))
 # Updates IP state every 50 milliseconds. Maps the name to the status.
 main.sensor_container.addWidget(IPCheckerLayout.IPList({"192.168.1.10": "Rover", "192.168.1.20": "Camera Two"}, 50))
 
-comm = command_api.CommandApi(map)
-
+comm = command_api.CommandApi()
 setting_widget = settings.Settings(main, comm)
+
 # Show window, initialize pygame, and execute the app
 win.show()
-map.initialize(setting_widget.get_map_name())
-app.exec_()
+internal_map = map.initialize(setting_widget.get_map_name())
+# Give the command api the map to talk to
+comm.feedin_map(internal_map.m)
+sys.exit(app.exec_())

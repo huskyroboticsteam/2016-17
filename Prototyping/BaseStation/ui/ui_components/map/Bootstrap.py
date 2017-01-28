@@ -36,3 +36,5 @@ def bootstrap_pygame(frame, map_name):
     # Set the PyGame update loop be handled by PyQt4
     frame.update_func = wid.main_loop
     frame.start_updates()
+
+    return wid

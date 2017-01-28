@@ -9,13 +9,24 @@ class Settings:
         self.setup()
 
     def generate_new_map(self):
-        name = self.main.map_name
-        lat = self.main.lat
-        lng = self.main.lng
-        self.comm.generate_new_map(name, lat, lng)
+        name = self.main.map_name.text()
+        lat = self.main.lat.text()
+        lng = self.main.lng.text()
+        result = self.comm.generate_new_map(name, lat, lng)
+
+        # If we generated successfully
+        if result:
+            self.main.map_name.setText("")
+            self.main.lat.setText("")
+            self.main.lng.setText("")
 
     def get_map_name(self):
         return self.main.map_val.text()
+
+    def save(self):
+        f = open(".settings", "w")
+        f.write("default_map=" + str(self.main.map_val.text()) + "\n")
+        f.close()
 
     def setup(self):
         f = open(".settings", "r")

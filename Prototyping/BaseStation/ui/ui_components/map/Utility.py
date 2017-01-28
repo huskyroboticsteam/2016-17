@@ -51,6 +51,7 @@ def convert_degrees_to_pixels(zoom, lat, lng):
 
 
 def is_valid_coord(coord):
+    print coord
 
     # If the user inputs garbage values like 'abcde' for lat or lng then return false
     try:

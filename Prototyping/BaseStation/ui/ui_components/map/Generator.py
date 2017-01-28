@@ -60,6 +60,9 @@ class Generator:
                 x += self.TILE_SIZE[0]
 
     def generate_maps(self, name, lat, lng):
+        name = str(name)
+        lat = str(lat)
+        lng = str(lng)
 
         # Don't try to download maps if the input is invalid
         if Utility.is_valid_coord(lat) and Utility.is_valid_coord(lng) and Utility.is_valid_file_name(name):
@@ -77,7 +80,9 @@ class Generator:
             for i in range(15, 20):
                 self.generate_single_map(i, lat, lng, self.image_tiles[i]["tiles"], name)
 
+            return True
+
         else:
             print "Some input is invalid"
-            return
+            return False
 

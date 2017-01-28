@@ -12,11 +12,11 @@ class VLCRecorder:
         # Creates the VLC Player Object
         self.player = self.instance.media_player_new()
 
-        print os.listdir("ui_components/camera_streaming/video_output")
+        # print os.listdir("ui_components/camera_streaming/video_output")
 
         onlyfiles = [f for f in os.listdir("ui_components/camera_streaming/video_output/") if os.path.isfile(os.path.join("ui_components/camera_streaming/video_output/", f))]
         self.count = len(onlyfiles)
-        print(self.count)
+        # print(self.count)
 
         for i in range(0, len(urls)):
             self.instantiate_media(urls[i], i)
