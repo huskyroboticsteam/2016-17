@@ -3,8 +3,8 @@ import Adafruit_GPIO.I2C as I2C
 
 class DistanceSensor(object):
 
-    _addr = 0x52
-    _distReg = _addr + 1
+    _addr = 0x53
+    _distReg = 0x53
     _calibInt = 0
     _calibM = 1
 
