@@ -37,7 +37,6 @@ main.camera_container.addWidget(UI.Player(urls, 300, 200))
 main.sensor_container.addWidget(IPCheckerLayout.IPList({"192.168.1.10": "Rover", "192.168.1.20": "Camera Two"}, 50))
 
 comm = command_api.CommandApi(map)
-# main.generate.mousePressEvent()
 
 setting_widget = settings.Settings(main, comm)
 # Show window, initialize pygame, and execute the app
