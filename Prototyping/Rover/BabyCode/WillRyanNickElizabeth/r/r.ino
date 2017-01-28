@@ -22,7 +22,7 @@ void setup() {
   bluetooth.begin(9600);
   bluetooth.println("Initialized");
 }
-l
+
 void changeAllSpeed(int n){
   motor1->setSpeed(n);
   motor2->setSpeed(n);
