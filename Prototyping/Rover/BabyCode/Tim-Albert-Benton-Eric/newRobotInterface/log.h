@@ -2,7 +2,7 @@
 #define LOG_H
 
 // Comment this line to disable logging. Uncomment it to enable it.
-#define DEBUG
+//#define DEBUG
 
 #define do_it(a) do { a; } while (0)
 

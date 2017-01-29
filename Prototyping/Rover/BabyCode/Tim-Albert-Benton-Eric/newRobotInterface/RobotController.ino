@@ -1,7 +1,6 @@
 #include "RobotController.h"
 #include "Potentiometer.h"
 #include "log.h"
-#include <math.h>
 
 // All lengths are measured in TODO units
 // The distance between the left and right wheels.
@@ -11,7 +10,7 @@ const double FRONT_LENGTH = 0.5; // TODO measure this
 // The distance between the back wheels and the middle joint.
 const double BACK_LENGTH = 0.5; // TODO measure this
 // Constants for the PID controller.
-const double K_P = 0.5, K_I = 0.00, K_D = 0.00000; // TODO tune these
+const double K_P = 1.0, K_I = 0.00, K_D = 0.00000; // TODO tune these
 // Epsilon: numbers less than this is treated as zero.
 const double EPS = 1e-4;
 
@@ -87,8 +86,8 @@ void RobotController::setMotors() {
   for (int i = 0; i < 4; i++) {
     double x = motor_speeds[i] * MULTIPLIER[i];
     uint8_t abs_speed = (uint8_t)  min(255, abs(x));
-    motors[i]->setSpeed(abs_speed);
     debug("motor #"); debug(i); debug(": "); debug(abs_speed); debug(", ");
+    motors[i]->setSpeed(abs_speed);
     if (x > 0) {
       motors[i]->run(FORWARD);
       debugln("forward");
