@@ -4,7 +4,10 @@ from time import sleep
 UART.setup("UART1")
 ser = serial.Serial('/dev/ttyO1', 9600)
 
-
+# TODO: comment this better
+# TODO: make this work
+# TODO: remove unused variables
+# TODO: shorten startup time if possible
 class GPS:
     def __init__(self):
         #This sets up variables for useful commands.
@@ -35,28 +38,28 @@ class GPS:
         
         #this is where you write the commands you want to give the NMEA sentences
         #to your serial object from earlier object.write(command) put sleep command after
-        
+
+    # TODO: needs more updating and tweaking
+    # returns GPS data or -1 if error
     def read(self):
-        #flush twice to make sure nothing is clogged
-        ser.flushInput()
-        ser.flushInput()
-        while ser.inWaiting() == 0:
-            pass
-        NMEA = ser.readline()
-        print NMEA
-        Narray = NMEA.split(",")
-        #sentences can be found by the leading term
-        if Narray[0] == '$GPGGA':
-            pass
-        if Narray[0] == '$GPRMC':
-            self.Latitude = Narray[3]
-            self.n_s = Narray[4]
-            self.longitude = Narray[5]
-            self.e_w = Narray[6]
-            self.g_speed = Narray[7]
-
-
-test = GPS()
-while 1:
-    test.read()
-    print test.Latitude
+        try:
+            #flush twice to make sure nothing is clogged
+            ser.flushInput()
+            ser.flushInput()
+            while ser.inWaiting() == 0:
+                pass
+            NMEA = ser.readline()
+            # print NMEA
+            Narray = NMEA.split(",")
+            #sentences can be found by the leading term
+            if Narray[0] == '$GPGGA':
+                pass
+            if Narray[0] == '$GPRMC':
+                self.Latitude = Narray[3]
+                self.n_s = Narray[4]
+                self.longitude = Narray[5]
+                self.e_w = Narray[6]
+                self.g_speed = Narray[7]
+            return self.Latitude
+        except AttributeError:
+            return -1
