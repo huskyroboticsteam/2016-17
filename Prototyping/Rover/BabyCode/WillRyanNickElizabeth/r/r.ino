@@ -48,8 +48,10 @@ void loop() {
   // Bluetooth sends character read from serial monitor to arduino which sends to motors
 //  String toSend = "";
 //  for(int i = 0; i < 3; i++){
-  
-  int toSend = bluetooth.read();
+  int toSend = 127;
+  if(bluetooth.available() > 0){
+    toSend = bluetooth.read();
+  }
 //    toSend += digit;
 //  }
   //String toSend = bluetooth.read();
