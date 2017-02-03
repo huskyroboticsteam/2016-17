@@ -12,6 +12,7 @@
 import serial
 import pygame
 from pygame.locals import *
+import struct
 # from sendOverUDP import *
 from struct import *
 
@@ -92,10 +93,10 @@ class App:
         turn = self.check_axis(2)
         if (self.check_button(0)):
             self.autoPilot = not self.autoPilot
-        adjust = int((-1*throttle + 1) *63)
-
-        barray = [(adjust>>(8*i))&0xff for i in range(3,-1,-1)]
-        ser.write(barray)
+        adjust = int(throttle*127 + 127)
+        ser.write(struct.pack('>B', adjust))
+        #barray = [(adjust>>(8*i))&0xff for i in range(3,-1,-1)]
+        #ser.write(data)
 
 
 
