@@ -48,13 +48,13 @@ void loop() {
   // Bluetooth sends character read from serial monitor to arduino which sends to motors
 //  String toSend = "";
 //  for(int i = 0; i < 3; i++){
-  char toSend = (char)bluetooth.read();
+  int toSend = bluetooth.parseInt();
 //    toSend += digit;
 //  }
   //String toSend = bluetooth.read();
   Serial.println(toSend);
     
-  int throttle = ((int)toSend - 63)*4;
+  int throttle = toSend;
 
   if (throttle > 30) {
     allForward();
@@ -68,31 +68,4 @@ void loop() {
     motor3->run(RELEASE);
     motor4->run(RELEASE);
   }
-  
-//  if(toSend == 'f') { // forward
-//    motor1->run(BACKWARD);
-//    motor2->run(FORWARD);
-//    motor3->run(BACKWARD);
-//    motor4->run(FORWARD);
-//  } else if(toSend == 's') { // stopl
-//    motor1->run(RELEASE);
-//    motor2->run(RELEASE);
-//    motor3->run(RELEASE);
-//    motor4->run(RELEASE);
-//  } else if(toSend == 'r') { // reverse
-//    motor1->run(FORWARD);
-//    motor2->run(BACKWARD);
-//    motor3->run(FORWARD);
-//    motor4->run(BACKWARD);
-//  } else if(toSend == 'b') { // boost
-//    motor1->setSpeed(255);
-//    motor2->setSpeed(255);
-//    motor3->setSpeed(255);
-//    motor4->setSpeed(255);
-//  } else if(toSend == 'n') { // no boost
-//    motor1->setSpeed(100);
-//    motor2->setSpeed(100);
-//    motor3->setSpeed(100);
-//    motor4->setSpeed(100);
-//  }
 }
