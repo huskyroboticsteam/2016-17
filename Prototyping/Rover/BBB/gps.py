@@ -31,11 +31,13 @@ class GPS:
         SEND_NOTHING="$PMTK314,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*28\r\n" #Send Nothing
         ser.write(MEAS_200_msec)
         sleep(1)
+        print "1"
         ser.write(GPRMC_GPGGA)
         sleep(1)
+        print "2"
         ser.flushInput()
         ser.flushOutput()
-        
+        print "3"
         #this is where you write the commands you want to give the NMEA sentences
         #to your serial object from earlier object.write(command) put sleep command after
 

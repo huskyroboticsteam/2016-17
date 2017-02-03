@@ -84,7 +84,7 @@ class Robot:
         print "driving motor: " + str(motor) + " with value: " + str(motorVal)
 
 
-    # returns a float of how far from straight the pot is. > 0 for Right, < 0 for left
+    # returns a float of how far from straight the potentiomer is. > 0 for Right, < 0 for left
     # returns -1 if error
     def readPot(self):
         result = self.POT_MIDDLE - ADC.read(self.POT_PIN)
@@ -104,7 +104,7 @@ class Robot:
     # returns automatic drive parms from gps, mag, sonar and destination
     # TODO: figure out a way to change throttle while on autopilot?
     def getAutoDriveParms(self):
-        print self.getGPS()
+        # print self.getGPS()
         return (10, self.calculateDesiredTurn(self.getMag()))
 
     # returns heading of front body or -1 if error
@@ -134,9 +134,10 @@ class Robot:
         if ((curHeading > desiredHeading and difHeading > 180) or
             (curHeading < desiredHeading and difHeading < 180)):
             #turn right
-            return self.translateValue(difHeading, 0, 180, 0, 100)
+            return self.translateValue(difHeading % 180, 0, 180, 0, 10)
         else:
-            return -1 * self.translateValue(difHeading, 0, 180, 0, 100)
+            #turn left
+            return -1 * self.translateValue(difHeading % 180, 0, 180, 0, 10)
 
     # returns a tuple of (motor1, motor2, motor3, motor4) from the driveParms modified by the pot reading
     def convertParmsToMotorVals(self, driveParms):
