@@ -41,6 +41,7 @@ class Robot:
         # list of GPS coords to travel to
         self.destinations = []
 
+
     # motor: throttle, F, B
     # 1: 8,  9,  10
     # 2: 13, 12, 11
@@ -103,13 +104,17 @@ class Robot:
     # returns automatic drive parms from gps, mag, sonar and destination
     # TODO: figure out a way to change throttle while on autopilot?
     def getAutoDriveParms(self):
-        print self.getMag()
         print self.getGPS()
         return (10, self.calculateDesiredTurn(self.getMag()))
 
-    # returns heading or -1 if error
+    # returns heading of front body or -1 if error
     def getMag(self):
-        return self.mag.read()
+        rawMag = self.mag.read()
+        print "back: " + str(rawMag)
+        pot = self.readPot()
+        angle = self.translateValue(pot, self.POT_MIDDLE - self.POT_LEFT, self.POT_MIDDLE - self.POT_RIGHT, -40, 40)
+        print "front: " + str((rawMag + angle) % 360)
+        return (rawMag + angle) % 360
 
     # returns gps data
     # TODO: get GPS to work
