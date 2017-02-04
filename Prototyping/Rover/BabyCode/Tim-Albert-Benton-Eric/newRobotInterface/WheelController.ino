@@ -2,15 +2,19 @@
 
 const int SAMPLE_SIZE = 1000; // in ms
 
-WheelController::WheelController(Adafruit_DCMotor *motor, int *encoder_count) {
+WheelController::WheelController(Adafruit_DCMotor *motor, volatile int *encoder_count) {
   this->motor = motor;
   this->encoder_count = encoder_count;
   this->last_calc_time = millis();
   this->ang_vel = 0.0;
 }
 
-// TODO use ang_vel
 void WheelController::setSpeed(double speed) {
+  calcAngVel();
+  // Currently assumes that setting the power to 'speed' will make motor turn at
+  // 'speed' revolutions per second.
+  // TODO use ang_vel to calculate required power.
+  // Note: If the power is set to more than 255, it will overflow.
   motor->setSpeed(min(255, abs(speed)));
   if (speed > 0) {
     motor->run(FORWARD);
