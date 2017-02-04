@@ -14,10 +14,24 @@ const double K_P = 1.0, K_I = 0.00, K_D = 0.00000; // TODO tune these
 // Epsilon: numbers less than this is treated as zero.
 const double EPS = 1e-4;
 
+volatile int encoder_count[4];
+
+// Interrupt functions. They just increment the count for each encoder up by 1
+void count0() {encoder_count[0]++;}
+void count1() {encoder_count[1]++;}
+void count2() {encoder_count[2]++;}
+void count3() {encoder_count[3]++;}
+
 RobotController::RobotController(): angle_controller(K_P, K_I, K_D) {
   motor_shield.begin();
+  // Set up interrupts for the encoder
+  attachInterrupt(digitalPinToInterrupt(2), count0, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(3), count1, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(18), count2, CHANGE);
+  attachInterrupt(digitalPinToInterrupt(19), count3, CHANGE);
   for (int i = 0; i < 4; i++) {
-    wheel_controllers[i] = new WheelController(motor_shield.getMotor(i+1));
+    wheel_controllers[i] =
+      new WheelController(motor_shield.getMotor(i+1), &(encoder_count[i]));
   }
 }
 

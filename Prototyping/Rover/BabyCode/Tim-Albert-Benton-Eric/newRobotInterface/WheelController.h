@@ -6,12 +6,17 @@
 // An interface for controlling one wheel.
 class WheelController {
     public:
-        // Constructs a WheelController that controls the wheel with the motor
-        // 'motor'.
-        WheelController(Adafruit_DCMotor *motor);
+        WheelController(Adafruit_DCMotor *motor, int *encoder_count);
         // Makes the wheel turn at 'speed' revolutions per second.
         void setSpeed(double speed);
     private:
+        // Sets ang_vel to current angular velocity
+        void calcAngVel();
+
         Adafruit_DCMotor *motor;
+        int *encoder_count;
+        long unsigned int last_calc_time;
+        // Current angular velocity
+        double ang_vel;
 };
 #endif
