@@ -88,7 +88,9 @@ def _listen_loop():
     if mode == "client":
         with _client_sent_data_condition:
             _client_sent_data_condition.wait()
-    while not _stopping:
+    with global_lock:
+        is_stopping = _stopping
+    while not is_stopping:
         data, addr = _sock.recvfrom(_BUFFER_SIZE)
         if data:
             packet_type = data[0] # TODO: Don't hardcode to a byte like the rest of the code
@@ -101,6 +103,8 @@ def _listen_loop():
                 for i in range(len(descriptor)):
                     packet[descriptor[i]] = data_tuple[i]
             _receive_buffer.put((packet, addr), True)
+        with global_lock:
+            is_stopping = _stopping
 
 def _common_presetup():
     '''Setup functions common to both server and client'''
@@ -206,6 +210,7 @@ def shutdown():
         _stopping = True
         try:
             # This seems to be throwing an exception that is causing the thread to die
+            _sock.shutdown(socket.SHUT_WR)
             _sock.shutdown(socket.SHUT_RDWR)
         except:
             pass
