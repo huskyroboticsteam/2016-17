@@ -5,6 +5,8 @@ Adafruit_DCMotor * motor1;
 Adafruit_DCMotor * motor2;
 Adafruit_DCMotor * motor3;
 Adafruit_DCMotor * motor4;
+int throttle;
+int turn;
 SoftwareSerial bluetooth(10, 11); // RX, TX
 
 void setup() {
@@ -44,6 +46,10 @@ void allBackward(){
   motor4->run(BACKWARD);
 }
 
+void turn(){
+  
+}
+
 void loop() {
   // Bluetooth sends character read from serial monitor to arduino which sends to motors
 //  String toSend = "";
@@ -56,8 +62,11 @@ void loop() {
 //  }
   //String toSend = bluetooth.read();
   //Serial.println(toSend);
-    
-  int throttle = (toSend - 127) * -2;
+  if(toSend < 127){ 
+    throttle = (toSend - 63) * 4;
+  } else {
+    turn = (toSend - 192) * 2/3;
+  }
 
   if (throttle > 30) {
     allForward();
