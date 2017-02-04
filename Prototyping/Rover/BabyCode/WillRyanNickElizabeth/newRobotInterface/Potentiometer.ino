@@ -2,7 +2,6 @@
 #include "log.h"
 
 // The pin the potentiometer is connected to.
-const int POTENTIOMETER_PIN = 3;
 // Number of potentiometer calibration points. Must be at least 2.
 const int NUM_CALIBRATION = 3;
 // For any i, POTENTIOMETER_VALUES[i] should be the value read from the
@@ -10,7 +9,13 @@ const int NUM_CALIBRATION = 3;
 // should be the extreme left and extreme right in some order. POTENTIOMETER_VALUES
 // should be strictly increasing.
 const double ANGLES[NUM_CALIBRATION] = {-45.0, 0.0, 45.0};
-const double POTENTIOMETER_VALUES[NUM_CALIBRATION] = {140, 260, 392};
+double POTENTIOMETER_VALUES[NUM_CALIBRATION];
+
+void calibrate(int left, int middle, int right) {
+  POTENTIOMETER_VALUES[0] = left;
+  POTENTIOMETER_VALUES[1] = middle;
+  POTENTIOMETER_VALUES[2] = right;
+}
 
 double getCurrentAngle() {
   debugln("Calling getCurrentAngle: ");
