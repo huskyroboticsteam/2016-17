@@ -17,7 +17,7 @@ const double EPS = 1e-4;
 RobotController::RobotController(): angle_controller(K_P, K_I, K_D) {
   motor_shield.begin();
   for (int i = 0; i < 4; i++) {
-    motors[i] = motor_shield.getMotor(i+1);
+    wheel_controllers[i] = new WheelController(motor_shield.getMotor(i+1));
   }
 }
 
@@ -85,15 +85,7 @@ void RobotController::setMotors() {
   const double MULTIPLIER[4] = {-1, 1, -1, 1};
   for (int i = 0; i < 4; i++) {
     double x = motor_speeds[i] * MULTIPLIER[i];
-    uint8_t abs_speed = (uint8_t)  min(255, abs(x));
-    debug("motor #"); debug(i); debug(": "); debug(abs_speed); debug(", ");
-    motors[i]->setSpeed(abs_speed);
-    if (x > 0) {
-      motors[i]->run(FORWARD);
-      debugln("forward");
-    } else {
-      motors[i]->run(BACKWARD);
-      debugln("backward");
-    }
+    debug("motor #"); debug(i); debug(": "); debugln(speed);
+    wheel_controllers[i]->setSpeed(x);
   }
 }
