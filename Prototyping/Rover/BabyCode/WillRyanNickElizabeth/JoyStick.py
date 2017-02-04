@@ -95,7 +95,7 @@ class App:
         adjustLR = int(turn*63 + 190)
         ser.write(struct.pack('>B', adjustFB))
         ser.write(struct.pack('>B', adjustLR))
-        print turn
+
 
     def main(self):
         self.UDP_init()
