@@ -25,7 +25,7 @@ Yaw rotates around the Z
 
 
 def gradient_descent(armature, initial_parameters, automatic_parameters, target_pos, iterations):
-    parameters = np.copy(initial_parameters)
+    parameters = np.array(initial_parameters, copy=True, dtype=np.float32)
     parameters_min = armature.min_parameters()
     parameters_max = armature.max_parameters()
     parameter_step = np.full(len(parameters), .0005)
@@ -72,8 +72,7 @@ def main():
                     Arm(30, Parameter(0, pi / 4), FixedParameter(0),
                     Arm(10, Parameter(0, pi / 4), FixedParameter(0)))))
 
-    print dir(test_armature)
-    params = np.full(test_armature.limb_count() * 2, 0)
+    params = test_armature.min_parameters()
     params_auto = test_armature.parameter_auto()
     target = np.array([0, 0, 0])
 

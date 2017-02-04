@@ -54,7 +54,11 @@ class ManualParameter(Parameter):
 
 """
 An arm in three dimensions. Right now, only two angles of freedom are supported,
-pitch and yaw. They should be passed in as some kind of Parameter
+pitch and yaw. They should be passed in as some kind of Parameter.
+
+The Arm class itself represents the structure of the arm, including segment lengths
+and angle parameters. Most methods require a parameters list which holds information
+regarding a specific configuration of the arm
 """
 class Arm:
     def __init__(self, length, pitch, yaw, after=None):
