@@ -88,10 +88,14 @@ def _listen_loop():
     if mode == "client":
         with _client_sent_data_condition:
             _client_sent_data_condition.wait()
-    with global_lock:
+    with _global_lock:
         is_stopping = _stopping
+        socket_obj = _sock
     while not is_stopping:
-        data, addr = _sock.recvfrom(_BUFFER_SIZE)
+        try:
+            data, addr = socket_obj.recvfrom(_BUFFER_SIZE)
+        except Exception:
+            break
         if data:
             packet_type = data[0] # TODO: Don't hardcode to a byte like the rest of the code
             payload = data[1:]
@@ -103,7 +107,7 @@ def _listen_loop():
                 for i in range(len(descriptor)):
                     packet[descriptor[i]] = data_tuple[i]
             _receive_buffer.put((packet, addr), True)
-        with global_lock:
+        with _global_lock:
             is_stopping = _stopping
 
 def _common_presetup():
@@ -210,7 +214,6 @@ def shutdown():
         _stopping = True
         try:
             # This seems to be throwing an exception that is causing the thread to die
-            _sock.shutdown(socket.SHUT_WR)
             _sock.shutdown(socket.SHUT_RDWR)
         except:
             pass
