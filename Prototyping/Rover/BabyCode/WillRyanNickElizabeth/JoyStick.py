@@ -15,6 +15,7 @@ from pygame.locals import *
 import struct
 # from sendOverUDP import *
 from struct import *
+import time
 
 ser = serial.Serial('/dev/cu.HC-05-DevB')
 
@@ -93,6 +94,7 @@ class App:
         turn = self.check_axis(0)
         adjustFB = int(throttle*63 + 63)
         adjustLR = int(turn*63 + 190)
+        time.sleep(.015)
         ser.write(struct.pack('>B', adjustFB))
         ser.write(struct.pack('>B', adjustLR))
 
