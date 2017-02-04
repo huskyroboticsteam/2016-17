@@ -93,6 +93,7 @@ def _listen_loop():
         socket_obj = _sock
     while not is_stopping:
         try:
+            # In server mode on Windows, this socket will not close if it is listening here and nothing was ever received, so the thread will not die.
             data, addr = socket_obj.recvfrom(_BUFFER_SIZE)
         except Exception:
             break
@@ -213,11 +214,12 @@ def shutdown():
         global _stopping
         _stopping = True
         try:
-            # This seems to be throwing an exception that is causing the thread to die
+            # This seems to be throwing an exception that is causing the thread to die on Linux
+            _sock.shutdown(socket.SHUT_RD)
             _sock.shutdown(socket.SHUT_RDWR)
         except:
             pass
-        _sock.close() # This alone isn't enough to stop the thread, but it may be unnecessary with the above
+        _sock.close()
         if mode == "client":
             with _client_sent_data_condition:
                 _client_sent_data_condition.notify()
