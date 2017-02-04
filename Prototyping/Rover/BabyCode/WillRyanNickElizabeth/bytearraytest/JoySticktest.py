@@ -90,16 +90,10 @@ class App:
 
     def send_packet(self):
         throttle = self.check_axis(1)
-        turn = self.check_axis(2)
-        if (self.check_button(0)):
-            self.autoPilot = not self.autoPilot
+        turn = self.check_axis(0)
         adjust = int(throttle*127 + 127)
         ser.write(struct.pack('>B', adjust))
-        #barray = [(adjust>>(8*i))&0xff for i in range(3,-1,-1)]
-        #ser.write(data)
-
-
-
+        print turn
 
     def main(self):
         self.UDP_init()
