@@ -3,7 +3,7 @@ import Adafruit_GPIO.I2C as I2C
 
 class DistanceSensor(object):
 
-    _addr = 0x52
+    _addr = 0x29
     _distReg = _addr + 1
     _calibInt = 0
     _calibM = 1
@@ -16,8 +16,8 @@ class DistanceSensor(object):
         pass
 
     def getRawData(self):
-        # reads 4 bytes from the data register
-        return self._i2cDev.readList(self._distReg, 4)
+        # reads 2 bytes from the data register
+        return self._i2cDev.readList(self._distReg, 2)
 
     def getData(self):
         return self._calibM * self.getRawData() + self._calibInt

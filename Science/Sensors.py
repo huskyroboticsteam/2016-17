@@ -13,35 +13,30 @@ UV_ADDR_LSB = 0x38
 DIST_ADDR = 0x52
 
 #Create Sensors
-UV_Sens = UV.UV(UV_ADDR_LSB)
+#UV_Sens = UV.UV(UV_ADDR_LSB)
 Therm = Thermocouple.Thermocouple(PinClock, PinChipSel, PinDataIn)
+Dist = DistanceSensor.DistanceSensor(DIST_ADDR)
 pidCtrl = PID.PID(1, 1, 1)
 
 #Setup Sensors
-UV_Sens.setup(2)
+#UV_Sens.setup(2)
+Dist.setup()
 
 print('Press Ctrl-C to quit.')
 
-itCount = 0
-test = 0
 
 while True:
-
-    pidCtrl.setTarget(100)
 
     # Read Sensor Data
     time.sleep(0.01)
     temp = Therm.getTemp()
     time.sleep(0.01)
     internal = Therm.getInternalTemp()
-    uvData = UV_Sens.getData()
+    #uvData = UV_Sens.getData()
+    distData = Dist.getRawData()
 
-    if(itCount % 23 == 0):
-        test += 1
-
-    pidCtrl.run(test)
-
-    sys.stdout.write('{0}, '.format(pidCtrl.getOutput()))
+    sys.stdout.write('{0}, '.format(distData))
+    #sys.stdout.write('{0}, '.format(pidCtrl.getOutput()))
     #sys.stdout.write('{0:{fill}16b} ({0}),'.format(uvData, fill='0'))
     #sys.stdout.write(time.strftime("%Y-%m-%d %H:%M:%S,"))
     #sys.stdout.write('{0:0.2F};'.format(temp))

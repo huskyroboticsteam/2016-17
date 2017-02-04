@@ -1,6 +1,7 @@
 import Adafruit_PCA9685
 
-
+# stops all motors
+# run if main program crashes
 pwm = Adafruit_PCA9685.PCA9685(address=0x60, busnum=1)
 pwm.set_pwm_freq(60)
 pwm.set_pwm(8,2048,2048)
