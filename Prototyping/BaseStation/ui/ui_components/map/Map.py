@@ -1,16 +1,16 @@
 import math
-import os
-import sys
-
-import pygame
-
-import Generator
 import MapTile
 import Utility
+import Generator
+import os
+import pygame
+import sys
+import Marker
 
 
 class Map:
     def __init__(self, map_name):
+        self.markers = []
         # Size of all tiles for calculations
         self.TILE_SIZE = [1500, 1500]
 
@@ -53,7 +53,6 @@ class Map:
             self.image_tiles[i]["tilesImages"] = []
 
         self.parse_data_file(map_name)
-
         self.build_tiles()
 
     def zoom_in(self):
@@ -84,8 +83,8 @@ class Map:
         lng = f.next().strip('\n')
         f.close()
 
-        print "map Location: " + dir
-        print "Center of map: " + lat + ", " + lng
+        print "Map Location: " + dir
+        print "Center of Map: " + lat + ", " + lng
 
         # Set the required variables from what was read from the file
         self.center = (lat, lng)
@@ -126,23 +125,39 @@ class Map:
     # Chooses whether to set have the tile be visible or not which affects if it is rendered
     # Not Yet Implemented
     def set_visibility(self, tile):
-        tile.visible = True
+        display_x = 1600
+        display_y = 1100
+        top_left_x = tile.screen_location[0]
+        top_left_y = tile.screen_location[1]
+        bottom_right_x = top_left_x + 2000
+        bottom_right_y = top_left_y + 1500
+        if bottom_right_x < 0 or bottom_right_y < 0:
+            tile.visible = False
+        elif top_left_x > display_x or top_left_y > display_y:
+            tile.visible = False
+        else:
+            tile.visible = True
 
     # Move the map around, takes a dx and dy from mouse movement event
     def move_map(self, dx, dy):
         # Loop through all tiles in the current zoom level only and move those
         for i in range(1, self.image_tiles[self.zoom_level]["tiles"] + 1, 1):
             self.image_tiles[self.zoom_level]["tilesImages"][i - 1].move(dx, dy)
-            # self.set_visibility(self.image_tiles[i - 1])
+            self.set_visibility(self.image_tiles[self.zoom_level]["tilesImages"][i - 1])
+        for marker in self.markers:
+            marker.x = marker.x + dx
+            marker.y = marker.y + dy
 
     # Requires the screen to display on
     # Displays all tiles of the current zoom_level with visibility set to true
     # Displays the tile at its screen_location variable
     def display(self, screen):
+        self.screen = screen
         for i in range(1, self.image_tiles[self.zoom_level]["tiles"] + 1, 1):
             if self.image_tiles[self.zoom_level]["tilesImages"][i - 1].visible:
                 screen.blit(self.image_tiles[self.zoom_level]["tilesImages"][i - 1].image,
                             self.image_tiles[self.zoom_level]["tilesImages"][i - 1].screen_location)
+        self.draw_marker()
 
     def get_real_mouse_screen_pos(self, mouse):
 
@@ -222,3 +237,41 @@ class Map:
         # Adjust all tiles by the target vector
         for i in range(0, len(self.image_tiles[zoom]["tilesImages"])):
             self.image_tiles[zoom]["tilesImages"][i].move(dx, dy)
+
+
+    # add a new marker given the specified coordinates x and y
+    def add_marker(self, x, y):
+        # remember the coordinates
+        self.coordinates.append((x, y))
+        # generates a new marker object
+        self.make_marker(x, y)
+
+    # draw every marker on the screen
+    def draw_marker(self):
+        for marker in self.markers:
+            marker.draw()
+
+    # changes the position of markers after zooming in
+    def zoom_marker(self):
+        # clear all markers
+        self.markers = []
+        # add every marker in the new position after zooming in/out
+        for coords in self.coordinates:
+            self.make_marker(coords[0], coords[1])
+
+    # creates a new marker object with the given coordinate x and y
+    def make_marker(self, x, y):
+        pixelCoord = Utility.convert_degrees_to_pixels(self.zoom_level, x, y)
+        self.centerX2, self.centerY2 = Utility.convert_degrees_to_pixels(self.zoom_level, self.center[0],
+                                                                         self.center[1])
+        center = self.image_tiles[self.zoom_level]["tilesImages"][
+            ((self.image_tiles[self.zoom_level]["tiles"] + 1) / 2) - 1]
+        self.center_location = center.screen_location
+
+        self.centerX2 -= self.TILE_SIZE[0] / 2
+        self.centerY2 -= self.TILE_SIZE[1] / 2
+
+        self.markers.append(
+            Marker.Marker(pixelCoord[0] + self.center_location[0], pixelCoord[1] + self.center_location[1],
+                          self.centerX2, self.centerY2, self.screen, self.zoom_level))
+

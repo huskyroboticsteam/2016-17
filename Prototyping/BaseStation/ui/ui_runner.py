@@ -12,7 +12,6 @@ from ui import Ui_MainWindow
 def quitting():
     setting_widget.save()
 
-
 # Link the camera streaming feed when attached over ethernet
 camOne = "rtsp://192.168.1.15:554/user=admin&password=&channel=1&stream=0.sdp"
 camTwo = "rtsp://192.168.1.20:554/user=admin&password=&channel=1&stream=0.sdp"

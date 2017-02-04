@@ -13,13 +13,14 @@ UV_ADDR_LSB = 0x38
 DIST_ADDR = 0x52
 
 #Create Sensors
-UV_Sens = UV.UV(UV_ADDR_LSB)
+#UV_Sens = UV.UV(UV_ADDR_LSB)
 Therm = Thermocouple.Thermocouple(PinClock, PinChipSel, PinDataIn)
 Dist = DistanceSensor.DistanceSensor(DIST_ADDR)
 pidCtrl = PID.PID(1, 1, 1)
 
 #Setup Sensors
-UV_Sens.setup(2)
+#UV_Sens.setup(2)
+Dist.setup()
 
 print('Press Ctrl-C to quit.')
 
@@ -31,7 +32,7 @@ while True:
     temp = Therm.getTemp()
     time.sleep(0.01)
     internal = Therm.getInternalTemp()
-    uvData = UV_Sens.getData()
+    #uvData = UV_Sens.getData()
     distData = Dist.getRawData()
 
     sys.stdout.write('{0}, '.format(distData))

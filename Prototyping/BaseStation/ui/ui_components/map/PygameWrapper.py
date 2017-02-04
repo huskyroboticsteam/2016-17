@@ -1,6 +1,7 @@
 import pygame
 import Map
 import sys
+import Command
 
 
 class PygameWrapper:
@@ -45,6 +46,9 @@ class PygameWrapper:
                     self.screen.fill((0, 0, 0))
                     pygame.display.flip()
                     self.m.open_map(self.map_name)
+
+                elif inputKey == pygame.K_c:
+                    Command.command(self.m)
 
             # Move the tiles if you're moving the mouse with left button down
             if event.type == pygame.MOUSEMOTION:
