@@ -91,8 +91,10 @@ class App:
     def send_packet(self):
         throttle = self.check_axis(1)
         turn = self.check_axis(0)
-        adjust = int(throttle*127 + 127)
-        ser.write(struct.pack('>B', adjust))
+        adjustFB = int(throttle*63 + 63)
+        adjustLR = int(throttle*63 + 190)
+        ser.write(struct.pack('>B', adjustFB))
+        ser.write(struct.pack('>B', adjustLR))
         print turn
 
     def main(self):
