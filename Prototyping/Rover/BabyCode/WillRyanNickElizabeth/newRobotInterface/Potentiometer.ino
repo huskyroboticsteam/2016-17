@@ -9,8 +9,8 @@ const int NUM_CALIBRATION = 3;
 // potentiometer when the angle is ANGLES[i]. ANGLES[0] and ANGLES[NUM_CALIBRATION-1]
 // should be the extreme left and extreme right in some order. POTENTIOMETER_VALUES
 // should be strictly increasing.
-const double ANGLES[NUM_CALIBRATION] = {45.0, 0.0, -45.0};
-const double POTENTIOMETER_VALUES[NUM_CALIBRATION] = {270, 425, 551};
+const double ANGLES[NUM_CALIBRATION] = {-45.0, 0.0, 45.0};
+const double POTENTIOMETER_VALUES[NUM_CALIBRATION] = {140, 260, 392};
 
 double getCurrentAngle() {
   debugln("Calling getCurrentAngle: ");
