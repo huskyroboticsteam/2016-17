@@ -72,6 +72,7 @@ def main():
                     Arm(30, Parameter(0, pi / 4), FixedParameter(0),
                     Arm(10, Parameter(0, pi / 4), FixedParameter(0)))))
 
+    print dir(test_armature)
     params = np.full(test_armature.limb_count() * 2, 0)
     params_auto = test_armature.parameter_auto()
     target = np.array([0, 0, 0])
@@ -101,7 +102,8 @@ def main():
 
         screen.fill((120, 120, 120))
         pygame.draw.circle(screen, (255, 20, 20), (draw_origin + target)[::2], target_size)
-        test_armature.draw(screen, draw_matrix, params)
+        points = test_armature.joints(params)
+        pygame.draw.lines(screen, (0,0,0), False, points + draw_origin[::2], 5)
         pygame.display.flip()
 
     pygame.quit()

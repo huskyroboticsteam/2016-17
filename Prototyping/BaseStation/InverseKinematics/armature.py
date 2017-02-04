@@ -1,6 +1,4 @@
 #! /usr/bin/env python2
-import pygame
-from pygame.locals import *
 import numpy as np
 import transformations as tr
 
@@ -63,9 +61,17 @@ class Arm:
         self.length = length
         self.after = after  # The next limb
         self.pitch = pitch
-        self.yaw = yaw
+        self.yaw = yaw		
 
-    def draw(self, surface, baseTransform, parameters):
+    def joints(self, parameters):
+        """Returns the points representing the location of each joint in the arm
+	    (convienant for drawing). You may have to do transformations on these points
+	    to suit your graphical environment. The points will be in a projected 2d space
+        
+        """
+        return [np.zeros(2)] + self._joints_impl(tr.identity_matrix(), parameters)
+		
+    def _joints_impl(self, baseTransform, parameters):
         armLength = tr.translation_matrix(np.array([self.length, 0, 0]))
         rPitch = tr.rotation_matrix(parameters[0], yaxis)
         rYaw = tr.rotation_matrix(parameters[1], zaxis)
@@ -73,17 +79,14 @@ class Arm:
         transform = tr.concatenate_matrices([baseTransform, rYaw, rPitch, armLength])
         #transform = armLength * rPitch * rYaw * baseTransform
         #transform = baseTransform * rYaw * rPitch * armLength
-		
-        start = tr.translation_from_matrix(baseTransform)
-        end = tr.translation_from_matrix(transform)
-        # Only use the y and z coords for a quick and dirty orthogonal projection
-        pygame.draw.line(surface, (0, 0, 0), start[::2], end[::2], 5)
 
-        # Draw angle constraints
-        #pygame.draw.aaline(surface, (100, 0, 0), position, position + to_vector(self.pitch.absolute_min(base_angle), 30))
-        #pygame.draw.aaline(surface, (100, 0, 0), position, position + to_vector(self.pitch.absolute_max(base_angle), 30))
+        # Only use the y and z coords for a quick and dirty orthogonal projection
+        end = tr.translation_from_matrix(transform)[::2]
+		
         if self.after is not None:
-            self.after.draw(surface, transform, parameters[2:])
+            return [end] + self.after._joints_impl(transform, parameters[2:])
+        else:
+            return [end]
 
     def error(self, target_pos, baseTransform, parameters):
         armLength = tr.translation_matrix(np.array([self.length, 0, 0]))
