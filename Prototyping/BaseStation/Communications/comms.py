@@ -11,6 +11,8 @@ except ImportError:
 
 _BUFFER_SIZE = 1024 # Buffer size for receiving data
 
+_compiled_protocol = False
+
 class Protocol:
     '''
     An enum for friendly packet names to their definitions
@@ -61,6 +63,10 @@ def _compile_protocol():
     It populates _header_struct_dict and modifies Protocol so that its field
     values point to the bytes version of the packet header number
     '''
+    global _compiled_protocol
+    if _compiled_protocol:
+        return
+    _compiled_protocol = True
     _header_struct = struct.Struct("<B")
     for attr, value in item_iterator(Protocol):
         header, fmt, descriptors = value
@@ -170,9 +176,6 @@ def send_message(packet, addr=None):
             raise Exception("addr has been omitted for a non-client setup")
     if not addr:
         addr = _server_address
-    if mode == "client":
-        with _client_sent_data_condition:
-            _client_sent_data_condition.notify()
     if "type" not in packet:
         raise Exception("packet has no type key")
     struct_obj, descriptor = _header_struct_dict[packet["type"]]
@@ -186,6 +189,9 @@ def send_message(packet, addr=None):
         data += struct_obj.pack(*values_to_pack)
     with _global_lock:
         _sock.sendto(data, addr)
+    if mode == "client":
+        with _client_sent_data_condition:
+            _client_sent_data_condition.notify()
 
 def shutdown():
     '''
