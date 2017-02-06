@@ -1,6 +1,7 @@
 #! /usr/bin/env python2
 import numpy as np
 import transformations as tr
+import cython
 
 xaxis, yaxis, zaxis = np.array([1, 0, 0]), np.array([0, 1, 0]), np.array([0, 0, 1])
 
@@ -74,16 +75,16 @@ class Arm:
         
         """
         return [np.zeros(2)] + self._joints_impl(tr.identity_matrix(), parameters)
-		
+	
+    #@cython.locals(armLength=np.ndarray, rPitch=np.ndarray, rYaw=np.ndarray, transform=np.ndarray)
     def _joints_impl(self, baseTransform, parameters):
         armLength = tr.translation_matrix(np.array([self.length, 0, 0]))
         rPitch = tr.rotation_matrix(parameters[0], yaxis)
         rYaw = tr.rotation_matrix(parameters[1], zaxis)
         
-        transform = tr.concatenate_matrices([baseTransform, rYaw, rPitch, armLength])
+        transform = tr.concatenate_matrices(baseTransform, rYaw, rPitch, armLength)
         #transform = armLength * rPitch * rYaw * baseTransform
-        #transform = baseTransform * rYaw * rPitch * armLength
-
+        
         # Only use the y and z coords for a quick and dirty orthogonal projection
         end = tr.translation_from_matrix(transform)[::2]
 		
@@ -97,10 +98,9 @@ class Arm:
         rPitch = tr.rotation_matrix(parameters[0], yaxis)
         rYaw = tr.rotation_matrix(parameters[1], zaxis)
 		
-        transform = tr.concatenate_matrices([baseTransform, rYaw, rPitch, armLength])
+        transform = tr.concatenate_matrices(baseTransform, rYaw, rPitch, armLength)
         #transform = armLength * rPitch * rYaw * baseTransform
-        #transform = baseTransform * rYaw * rPitch * armLength
-
+        
         if self.after is None:
             end = tr.translation_from_matrix(transform)
             return distance(target_pos, end)

@@ -1,3 +1,6 @@
+#!python
+#cython: boundscheck=False
+
 # -*- coding: utf-8 -*-
 # transformations.py
 
@@ -202,15 +205,13 @@ import math
 import numpy
 
 import cython
-#@cython.boundscheck(False) # turn off bounds-checking for entire function
-#@cython.wraparound(False)  # turn off negative index wrapping for entire function
 
 __version__ = '2015.07.18'
 __docformat__ = 'restructuredtext en'
 __all__ = ()
 
-@cython.returns(numpy.ndarray)
-def identity_matrix():
+@cython.returns(numpy.matrix)
+def identity_matrix():            
     """Return 4x4 identity/unit matrix.
 
     >>> I = identity_matrix()
@@ -1857,7 +1858,7 @@ def inverse_matrix(matrix):
     """
     return numpy.linalg.inv(matrix)
 
-def concatenate_matrices(matrices):
+def concatenate_matrices(*matrices):
     """Return concatenation of series of transformation matrices.
 
     >>> M = numpy.random.rand(16).reshape((4, 4)) - 0.5

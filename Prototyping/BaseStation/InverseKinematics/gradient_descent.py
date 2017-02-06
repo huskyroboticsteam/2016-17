@@ -53,9 +53,9 @@ def gradient_descent(armature, initial_parameters, automatic_parameters, target_
 
         parameters = np.clip(parameters, parameters_min, parameters_max)
     return parameters
-
-
+   
 def main():
+    import time
     pygame.init()
     screen = pygame.display.set_mode((640, 480))
     running = True
@@ -77,7 +77,7 @@ def main():
     target = np.array([0, 0, 0])
 
     while running:
-        clock.tick(60)
+        #clock.tick(60)
         for event in pygame.event.get():
             if event.type == QUIT:
                 running = False
@@ -97,7 +97,10 @@ def main():
             pos = pygame.mouse.get_pos()
             target = np.array([pos[0], 0, pos[1]]) - draw_origin
 
+        time_start = time.time()
         params = gradient_descent(test_armature, params, params_auto, target, 50)
+        time_end = time.time()
+        print(time_end - time_start)
 
         screen.fill((120, 120, 120))
         pygame.draw.circle(screen, (255, 20, 20), (draw_origin + target)[::2], target_size)
