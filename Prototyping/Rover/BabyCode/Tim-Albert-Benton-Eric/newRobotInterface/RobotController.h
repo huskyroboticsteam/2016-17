@@ -2,10 +2,12 @@
 #define ROBOT_CONTROLLER_H
 
 #include "PidController.h"
+#include "WheelController.h"
 #include <Adafruit_MotorShield.h>
 
 // An interface for controlling the robot.
-// All speeds are measured in TODO units. All angles are measured in degrees.
+// All speeds are measured in revolutions per second. All angles are measured in
+// degrees.
 class RobotController {
   public:
     RobotController();
@@ -31,7 +33,7 @@ class RobotController {
     PidController angle_controller;
     // 0 is back left, 1 is back right, 2 is front left, 3 is front right
     double motor_speeds[4];
-    Adafruit_DCMotor *(motors[4]);
+    WheelController *(wheel_controllers[4]);
 };
 
 #endif

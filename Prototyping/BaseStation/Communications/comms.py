@@ -11,15 +11,7 @@ except ImportError:
 
 _BUFFER_SIZE = 1024 # Buffer size for receiving data
 
-_global_lock = threading.Lock() # Locks for external methods to prevent race conditions
-_sock = None # The socket object
-_header_struct_dict = dict() # Mapping of header byte to Struct object
-_receive_buffer = Queue.Queue() # Parsed message queue
-_stopping = False # If the listening thread should shut down
-_listening_thread = None # Holds the threading object
-
-server_address = None # For clients, when sending data to the server
-mode = None # String indicating what has been setup
+_compiled_protocol = False
 
 class Protocol:
     '''
@@ -41,6 +33,21 @@ class Protocol:
     movement = [1, "<hh", ("throttle", "steering")]
     gps_coords = [2, "<ff", ("longitude", "latitude")]
 
+def _setup_globals():
+    '''Defines the global variables'''
+    global _global_lock, _sock, _header_struct_dict, _receive_buffer, _stopping
+    global _listening_thread, _client_sent_data_condition, server_address, mode
+    _global_lock = threading.Lock() # Locks for external methods to prevent race conditions
+    _sock = None # The socket object
+    _header_struct_dict = dict() # Mapping of header byte to Struct object
+    _receive_buffer = Queue.Queue() # Parsed message queue
+    _stopping = False # If the listening thread should shut down
+    _listening_thread = None # Holds the threading object
+    _client_sent_data_condition = threading.Condition() # Used for clients to start listening when they have sent data
+
+    server_address = None # For clients, when sending data to the server
+    mode = None # String indicating what has been setup
+
 def item_iterator(obj):
     '''
     Iterates over the fields of obj, except hidden ones
@@ -56,6 +63,10 @@ def _compile_protocol():
     It populates _header_struct_dict and modifies Protocol so that its field
     values point to the bytes version of the packet header number
     '''
+    global _compiled_protocol
+    if _compiled_protocol:
+        return
+    _compiled_protocol = True
     _header_struct = struct.Struct("<B")
     for attr, value in item_iterator(Protocol):
         header, fmt, descriptors = value
@@ -74,8 +85,18 @@ def _listen_loop():
     '''
     The listening loop that runs on a separate thread
     '''
-    while not _stopping:
-        data, addr = _sock.recvfrom(_BUFFER_SIZE)
+    if mode == "client":
+        with _client_sent_data_condition:
+            _client_sent_data_condition.wait()
+    with _global_lock:
+        is_stopping = _stopping
+        socket_obj = _sock
+    while not is_stopping:
+        try:
+            # In server mode on Windows, this socket will not close if it is listening here and nothing was ever received, so the thread will not die.
+            data, addr = socket_obj.recvfrom(_BUFFER_SIZE)
+        except Exception:
+            break
         if data:
             packet_type = data[0] # TODO: Don't hardcode to a byte like the rest of the code
             payload = data[1:]
@@ -87,6 +108,8 @@ def _listen_loop():
                 for i in range(len(descriptor)):
                     packet[descriptor[i]] = data_tuple[i]
             _receive_buffer.put((packet, addr), True)
+        with _global_lock:
+            is_stopping = _stopping
 
 def _common_presetup():
     '''Setup functions common to both server and client'''
@@ -125,7 +148,7 @@ def setup_client(host, port):
         _server_address = (host, port)
         _start_listening_thread()
 
-def receive_message():
+def receive_message(block=False):
     '''
     Returns a tuple of the format (packet, address)
     - packet is a dictionary representing a packet
@@ -134,15 +157,16 @@ def receive_message():
     - address is a tuple of the format (host, port)
     - If both fields are None, then no packet is available at the moment
 
+    `block` specifies whether the method blocks until a parsed packet is available.
+
     Communications must be setup before invoking this method. Otherwise, Exception is thrown.
     '''
     if not mode:
         raise Exception("Communications aren't setup")
-    with _global_lock:
-        try:
-            return _receive_buffer.get(False)
-        except Queue.Empty:
-            return (None, None)
+    try:
+        return _receive_buffer.get(block)
+    except Queue.Empty:
+        return (None, None)
 
 def send_message(packet, addr=None):
     '''
@@ -156,7 +180,7 @@ def send_message(packet, addr=None):
     '''
     if not mode:
         raise Exception("Communications aren't setup")
-    if not mode == "client":
+    if mode == "server":
         if not addr:
             raise Exception("addr has been omitted for a non-client setup")
     if not addr:
@@ -174,6 +198,9 @@ def send_message(packet, addr=None):
         data += struct_obj.pack(*values_to_pack)
     with _global_lock:
         _sock.sendto(data, addr)
+    if mode == "client":
+        with _client_sent_data_condition:
+            _client_sent_data_condition.notify()
 
 def shutdown():
     '''
@@ -187,8 +214,15 @@ def shutdown():
         global _stopping
         _stopping = True
         try:
-            # This seems to be throwing an exception that is causing the thread to die
+            # This seems to be throwing an exception that is causing the thread to die on Linux
+            _sock.shutdown(socket.SHUT_RD)
             _sock.shutdown(socket.SHUT_RDWR)
         except:
             pass
-        _sock.close() # This alone isn't enough to stop the thread, but it may be unnecessary with the above
+        _sock.close()
+        if mode == "client":
+            with _client_sent_data_condition:
+                _client_sent_data_condition.notify()
+        _setup_globals()
+
+_setup_globals()

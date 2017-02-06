@@ -1,26 +1,26 @@
-#######################################
-# Code coded by Mike Doty
-#
-# If you want trackball checking, you will
-# have to code it yourself.  Sorry!
-#
-# Oh, and it just grabs the first joystick.
-#   Yes, that makes me lazy.
-#
-# Released February 8, 2008.
-#######################################
+# Working Joystick Code
+# Authors: Will, Nick, Elizabeth, and Ryan
+# Controls a minibot with a joystick, sending throttle and turn values
+# over pyserial to an arduino.
+# Throttle values sent are between 0-126
+# Turn values sent are between 128-255
+
+
 import serial
 import pygame
 from pygame.locals import *
 import struct
-# from sendOverUDP import *
 from struct import *
+import time
 
+# Change this to the bluetooth port on your computer
 ser = serial.Serial('/dev/cu.HC-05-DevB')
+
 
 class App:
     def __init__(self):
-        
+        self.calibrated = False
+        self.calibrationLevel = 0
         pygame.init()
 
         pygame.display.set_caption("Joystick Analyzer")
@@ -85,17 +85,33 @@ class App:
                                    y - surface.get_height() / 2))
 
     def UDP_init(self):
-        # self.UDPSender = sendOverUDP("192.168.1.50", 8888)
-        self.autoPilot = False
+        self.calibrate(0)
 
+    def calibrate(self, number):
+        if number == 0:
+            print "Move rover to the left turn max position then pull trigger"
+        if number == 1:
+            print "Move rover to the right turn max position then pull trigger"
+        if number == 2:
+            print "Move rover to the middle position then pull trigger"
+        if number == 3:
+            self.calibrated = True
+            print "Calibration complete"
     def send_packet(self):
+        if not self.calibrated:
+            if (self.my_joystick.get_button(0)):
+                ser.write(struct.pack('>B', 0))
+                self.calibrationLevel = self.calibrationLevel + 1
+                self.calibrate(self.calibrationLevel)
+                time.sleep(2)
         throttle = self.check_axis(1)
         turn = self.check_axis(0)
-        adjustFB = int(throttle*63 + 63)
+        adjustFB = int(throttle*62 + 63)
         adjustLR = int(turn*63 + 190)
+        time.sleep(.015)
         ser.write(struct.pack('>B', adjustFB))
         ser.write(struct.pack('>B', adjustLR))
-        print turn
+
 
     def main(self):
         self.UDP_init()
