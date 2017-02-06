@@ -31,7 +31,6 @@ test_armature = Arm(50, Parameter(0, pi), FixedParameter(0),
                 Arm(10, Parameter(0, pi / 4), FixedParameter(0)))))
 
 params = test_armature.min_parameters()
-params_auto = test_armature.parameter_auto()
 target = np.array([0, 0, 0])
 
 while running:
@@ -56,7 +55,7 @@ while running:
         target = np.array([pos[0], 0, pos[1]]) - draw_origin
 
     #time_start = time.time()
-    params = gradient_descent(test_armature, params, params_auto, target, 10)
+    params = gradient_descent(test_armature, params, target, 10)
     #time_end = time.time()
     #print(time_end - time_start)
 

@@ -125,8 +125,8 @@ class Arm:
     def limb_count(self):
         return 1 if self.after is None else self.after.limb_count() + 1
 
-    def parameter_auto(self):
-        return [self.pitch.is_auto(), self.yaw.is_auto()] + ([] if self.after is None else self.after.parameter_auto())
+    def auto_parameters(self):
+        return [self.pitch.is_auto(), self.yaw.is_auto()] + ([] if self.after is None else self.after.auto_parameters())
 
 
 # def make_tentacle(segment_length, segment_count):

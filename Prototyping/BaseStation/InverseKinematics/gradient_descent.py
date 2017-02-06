@@ -1,13 +1,13 @@
 #! /usr/bin/env python2
 import numpy as np
-from math import *
 import transformations as tr
 from armature import *
 
-def gradient_descent(armature, initial_parameters, automatic_parameters, target_pos, iterations):
+def gradient_descent(armature, initial_parameters, target_pos, iterations):
     parameters = np.array(initial_parameters, copy=True, dtype=np.float32)
     parameters_min = armature.min_parameters()
     parameters_max = armature.max_parameters()
+    automatic_parameters = armature.auto_parameters()
     delta = .0001 # For calculating the derivative
 
     tBase = tr.identity_matrix()
