@@ -87,14 +87,7 @@ class Arm:
 	
     #@cython.locals(armLength=np.ndarray, rPitch=np.ndarray, rYaw=np.ndarray, transform=np.ndarray)
     def _joints_impl(self, baseTransform, parameters):
-        armLength = tr.translation_matrix(np.array([self.length, 0, 0]))
-        rPitch = tr.rotation_matrix(parameters[0], yaxis)
-        rYaw = tr.rotation_matrix(parameters[1], zaxis)
-        
-        transform = tr.concatenate_matrices(baseTransform, rYaw, rPitch, armLength)
-        #transform = armLength * rPitch * rYaw * baseTransform
-        
-        # Only use the y and z coords for a quick and dirty orthogonal projection
+        transform = np.dot(baseTransform, self.transform(parameters[0], parameters[1]))
         end = tr.translation_from_matrix(transform)
 		
         if self.after is not None:
@@ -103,18 +96,25 @@ class Arm:
             return [end]
 
     def error(self, target_pos, baseTransform, parameters):
-        armLength = tr.translation_matrix(np.array([self.length, 0, 0]))
-        rPitch = tr.rotation_matrix(parameters[0], yaxis)
-        rYaw = tr.rotation_matrix(parameters[1], zaxis)
-		
-        transform = tr.concatenate_matrices(baseTransform, rYaw, rPitch, armLength)
-        #transform = armLength * rPitch * rYaw * baseTransform
+        transform = np.dot(baseTransform, self.transform(parameters[0], parameters[1]))
         
         if self.after is None:
             end = tr.translation_from_matrix(transform)
             return distance(target_pos, end)
         else:
             return self.after.error(target_pos, transform, parameters[2:])
+            
+    def transform(self, pitch, yaw):
+        """Gives the translation matrix associated with this arm with the given pitch
+        and yaw.
+        
+        """
+        tLength = tr.translation_matrix(np.array([self.length, 0, 0]))
+        rPitch = tr.rotation_matrix(pitch, yaxis)
+        rYaw = tr.rotation_matrix(yaw, zaxis)
+        
+        #return armLength * rPitch * rYaw
+        return tr.concatenate_matrices(rYaw, rPitch, tLength)        
 
     def min_parameters(self):
         return [self.pitch.min, self.yaw.min] + ([] if self.after is None else self.after.min_parameters())
