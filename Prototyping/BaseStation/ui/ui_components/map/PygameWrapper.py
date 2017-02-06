@@ -17,6 +17,8 @@ class PygameWrapper:
         self.clock = pygame.time.Clock()
         self.fps = 120
 
+    def close(self):
+        pygame.display.quit()
 
     def main_loop(self):
 

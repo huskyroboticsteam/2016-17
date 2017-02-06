@@ -26,10 +26,21 @@ class IPList(QtGui.QWidget):
         results = self.threaded_ping()
         # print results
         for i in range(0, len(results)):
+            val = self.ui_map[results[i][0]]
             if results[i][1]:
-                self.ui_map[results[i][0]].setText("Active")
+                p = val.palette()
+                color = QtGui.QColor()
+                color.setRgb(0, 255, 0, 255)
+                p.setColor(val.backgroundRole(), color)
+                p.setColor(val.foregroundRole(), color)
+                self.ui_map[results[i][0]].setPalette(p)
             else:
-                self.ui_map[results[i][0]].setText("Fail")
+                p = val.palette()
+                color = QtGui.QColor()
+                color.setRgb(255, 0, 0, 255)
+                p.setColor(val.backgroundRole(), color)
+                p.setColor(val.foregroundRole(), color)
+                val.setPalette(p)
 
     def threaded_ping(self):
         threads = []
@@ -50,20 +61,28 @@ class IPList(QtGui.QWidget):
         for key, value in self.map.iteritems():
             hbox = QtGui.QHBoxLayout()
 
+            indicator = QtGui.QWidget()
+            indicator.setFixedSize(10, 10)
+            indicator.setAutoFillBackground(True)
+
+            # Set default coloration
+            p = indicator.palette()
+            color = QtGui.QColor()
+            color.setRgb(145, 44, 238, 255)
+            p.setColor(indicator.backgroundRole(), color)
+            # p.setColor(self.foregroundRole(), color)
+            indicator.setPalette(p)
+
             label = QtGui.QLabel()
-            label.setAlignment(QtCore.Qt.AlignHCenter)
+            label.setAlignment(QtCore.Qt.AlignLeft)
             label.setText(value)
 
-            label2 = QtGui.QLabel()
-            label2.setAlignment(QtCore.Qt.AlignHCenter)
-            label2.setText("Active")
-
+            hbox.addWidget(indicator)
             hbox.addWidget(label)
-            hbox.addWidget(label2)
 
             vbox.addLayout(hbox)
 
-            self.ui_map[key] = label2
+            self.ui_map[key] = indicator
 
         vbox.setAlignment(QtCore.Qt.AlignTop)
 
