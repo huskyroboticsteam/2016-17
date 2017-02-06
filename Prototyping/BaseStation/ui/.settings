@@ -1,5 +1,5 @@
 default_map=UW
 cams=Cam 1,rtsp://192.168.1.15:554/user,Cam 2,Lel,Cam 3,Keky
-default_cam_1=0
+default_cam_1=1
 default_cam_2=1
-default_cam_3=2
+default_cam_3=1
