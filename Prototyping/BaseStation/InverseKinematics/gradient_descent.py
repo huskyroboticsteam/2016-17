@@ -1,6 +1,4 @@
 #! /usr/bin/env python2
-import pygame
-from pygame.locals import *
 import numpy as np
 from math import *
 import transformations as tr
@@ -28,8 +26,7 @@ def gradient_descent(armature, initial_parameters, automatic_parameters, target_
     parameters = np.array(initial_parameters, copy=True, dtype=np.float32)
     parameters_min = armature.min_parameters()
     parameters_max = armature.max_parameters()
-    parameter_step = np.full(len(parameters), .0005)
-    delta = .0001
+    delta = .0001 # For calculating the derivative
 
     tBase = tr.identity_matrix()
 
@@ -48,7 +45,8 @@ def gradient_descent(armature, initial_parameters, automatic_parameters, target_
                 derivative[i] = 0
 
         # Step in the direction of the derivative to a given amount
-        parameter_step *= .9
+        # Cap the size of the step
+        parameter_step = min(base_error, 30) * .00005
         parameters -= derivative * parameter_step
 
         parameters = np.clip(parameters, parameters_min, parameters_max)
@@ -56,6 +54,9 @@ def gradient_descent(armature, initial_parameters, automatic_parameters, target_
    
 def main():
     import time
+    import pygame
+    from pygame.locals import *
+
     pygame.init()
     screen = pygame.display.set_mode((640, 480))
     running = True
@@ -97,14 +98,14 @@ def main():
             pos = pygame.mouse.get_pos()
             target = np.array([pos[0], 0, pos[1]]) - draw_origin
 
-        time_start = time.time()
-        params = gradient_descent(test_armature, params, params_auto, target, 50)
-        time_end = time.time()
-        print(time_end - time_start)
+        #time_start = time.time()
+        params = gradient_descent(test_armature, params, params_auto, target, 10)
+        #time_end = time.time()
+        #print(time_end - time_start)
 
         screen.fill((120, 120, 120))
         pygame.draw.circle(screen, (255, 20, 20), (draw_origin + target)[::2], target_size)
-        points = test_armature.joints(params)
+        points = [point[::2] for point in test_armature.joints(params)]
         pygame.draw.lines(screen, (0,0,0), False, points + draw_origin[::2], 5)
         pygame.display.flip()
 

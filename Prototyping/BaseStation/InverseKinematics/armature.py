@@ -71,10 +71,11 @@ class Arm:
     def joints(self, parameters):
         """Returns the points representing the location of each joint in the arm
 	    (convienant for drawing). You may have to do transformations on these points
-	    to suit your graphical environment. The points will be in a projected 2d space
+	    to suit your graphical environment. One reccomendation is to intrepret the x
+        and z coordinates as x and y (using something like point[::2])
         
         """
-        return [np.zeros(2)] + self._joints_impl(tr.identity_matrix(), parameters)
+        return [np.zeros(3)] + self._joints_impl(tr.identity_matrix(), parameters)
 	
     #@cython.locals(armLength=np.ndarray, rPitch=np.ndarray, rYaw=np.ndarray, transform=np.ndarray)
     def _joints_impl(self, baseTransform, parameters):
@@ -86,7 +87,7 @@ class Arm:
         #transform = armLength * rPitch * rYaw * baseTransform
         
         # Only use the y and z coords for a quick and dirty orthogonal projection
-        end = tr.translation_from_matrix(transform)[::2]
+        end = tr.translation_from_matrix(transform)
 		
         if self.after is not None:
             return [end] + self.after._joints_impl(transform, parameters[2:])
