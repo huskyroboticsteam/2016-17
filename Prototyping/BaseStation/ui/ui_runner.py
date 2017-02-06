@@ -23,7 +23,7 @@ app.aboutToQuit.connect(quitting)
 win = QtGui.QMainWindow()
 main = Ui_MainWindow()
 main.setupUi(win)
-win.resize(1360, 765)
+win.resize(1200, 675)
 comm = command_api.CommandApi()
 setting_widget = settings.Settings(main, comm)
 
