@@ -57,6 +57,14 @@ class ManualParameter(Parameter):
 An arm in three dimensions. Right now, only two angles of freedom are supported,
 pitch and yaw. They should be passed in as some kind of Parameter.
 
+Arm segements always exist along the positive x axis (forward)
+Z is vertical
++Y is to the right
+
+Pitch rotates around the Y axis
+Roll rotates around the X axis
+Yaw rotates around the Z 
+
 The Arm class itself represents the structure of the arm, including segment lengths
 and angle parameters. Most methods require a parameters list which holds information
 regarding a specific configuration of the arm
