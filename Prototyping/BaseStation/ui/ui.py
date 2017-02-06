@@ -109,7 +109,7 @@ class Ui_MainWindow(object):
         self.gridLayout_9 = QtGui.QGridLayout(self.frame_3)
         self.gridLayout_9.setMargin(5)
         self.gridLayout_9.setObjectName(_fromUtf8("gridLayout_9"))
-        self.map_container = QtGui.QGridLayout()
+        self.map_container = QtGui.QVBoxLayout()
         self.map_container.setObjectName(_fromUtf8("map_container"))
         self.gridLayout_9.addLayout(self.map_container, 0, 0, 1, 1)
         self.gridLayout.addWidget(self.frame_3, 1, 2, 1, 2)

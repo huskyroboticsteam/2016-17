@@ -1,28 +1,24 @@
-import sys
-from PyQt4.QtCore import *
-import Map
 from PyQt4.QtGui import *
+from PyQt4 import QtCore
 
 
 class command(QLineEdit):
     def __init__(self, map, parent = None):
         super(command, self).__init__(parent)
-
         self.map = map
-        # app = QApplication(sys.argv)
-        commands = ("add", "remove", "set")
+        self.commands = ("add", "remove", "set")
 
-        # layout = QFormLayout()
-        text, ok = self.getText(self, 'Text Input Dialog', 'Enter your name:')
-        if ok:
-            list = text.split(" ")
-            if list[0] not in commands:
+    def keyPressEvent(self, e):
+        print QtCore.Qt.Key_Enter
+        print e.key()
+        if e.key() == QtCore.Qt.Key_Enter:
+            print "Run"
+            list = self.text().split(" ")
+            if list[0] not in self.commands:
                 print list[0] + " isn't a command"
             else:
+                self.setText("")
                 self.execute(list)
-
-    def blah(self):
-        print
 
     def execute(self, list):
         print "go"

@@ -1,6 +1,6 @@
 from PyQt4 import QtGui
 import sys
-from ui_components.map import MapWidget
+from ui_components.map import MapWidget, Command
 from ui_components.ip_scanner import IPCheckerLayout
 from ui_components.camera_streaming import UI
 from ui_components.emergency_stop import stop
@@ -46,6 +46,10 @@ setting_widget = settings.Settings(main, comm)
 # Show window, initialize pygame, and execute the app
 win.show()
 internal_map = map.initialize(setting_widget.get_map_name())
+
+command_line = Command.command(internal_map)
+main.map_container.addWidget(command_line)
+
 # Give the command api the map to talk to
 comm.feedin_map(internal_map.m)
 sys.exit(app.exec_())

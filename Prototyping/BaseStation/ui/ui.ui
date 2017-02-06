@@ -161,7 +161,7 @@
                <number>5</number>
               </property>
               <item row="0" column="0">
-               <layout class="QGridLayout" name="map_container"/>
+               <layout class="QVBoxLayout" name="map_container"/>
               </item>
              </layout>
             </widget>
