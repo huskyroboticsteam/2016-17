@@ -1,7 +1,6 @@
 #! /usr/bin/env python2
 import numpy as np
 import transformations as tr
-import cython
 
 xaxis, yaxis, zaxis = np.array([1, 0, 0]), np.array([0, 1, 0]), np.array([0, 0, 1])
 

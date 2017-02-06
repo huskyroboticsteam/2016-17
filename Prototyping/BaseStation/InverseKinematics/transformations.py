@@ -204,13 +204,13 @@ import math
 
 import numpy
 
-import cython
+#import cython
 
 __version__ = '2015.07.18'
 __docformat__ = 'restructuredtext en'
 __all__ = ()
 
-@cython.returns(numpy.matrix)
+#@cython.returns(numpy.matrix)
 def identity_matrix():            
     """Return 4x4 identity/unit matrix.
 
@@ -225,8 +225,8 @@ def identity_matrix():
     """
     return numpy.identity(4)
 
-@cython.returns(numpy.ndarray)
-@cython.locals(direction=numpy.ndarray, M=numpy.ndarray)
+#@cython.returns(numpy.ndarray)
+#@cython.locals(direction=numpy.ndarray, M=numpy.ndarray)
 def translation_matrix(direction):
     """Return matrix to translate by direction vector.
 
@@ -239,8 +239,8 @@ def translation_matrix(direction):
     M[:3, 3] = direction[:3]
     return M
 
-@cython.returns(numpy.ndarray)
-@cython.locals(matrix=numpy.ndarray)
+#@cython.returns(numpy.ndarray)
+#@cython.locals(matrix=numpy.ndarray)
 def translation_from_matrix(matrix):
     """Return translation vector from translation matrix.
 
@@ -307,9 +307,9 @@ def reflection_from_matrix(matrix):
     point /= point[3]
     return point, normal
 
-@cython.returns(numpy.ndarray)
-@cython.locals(angle=cython.float, direction=numpy.ndarray, point=numpy.ndarray, 
-	sina=float, cosa=float, R=numpy.ndarray, M=numpy.ndarray)
+#@cython.returns(numpy.ndarray)
+#@cython.locals(angle=cython.float, direction=numpy.ndarray, point=numpy.ndarray, 
+#	sina=float, cosa=float, R=numpy.ndarray, M=numpy.ndarray)
 def rotation_matrix(angle, direction, point=None):
     """Return matrix to rotate about axis defined by point and direction.
 

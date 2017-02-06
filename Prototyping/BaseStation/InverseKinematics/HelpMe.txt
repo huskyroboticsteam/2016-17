@@ -1,4 +1,0 @@
-If you want to use this code, you might want to install cython
-
-Run:
-pip install Cython
