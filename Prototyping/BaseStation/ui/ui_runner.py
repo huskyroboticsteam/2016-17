@@ -44,7 +44,7 @@ main.sensor_container.addWidget(IPCheckerLayout.IPList({"192.168.1.10": "Rover",
 win.show()
 internal_map = map.initialize(setting_widget.get_map_name())
 
-command_line = Command.command(internal_map)
+command_line = Command.command(internal_map.m)
 main.map_container.addWidget(command_line)
 
 # Give the command api the map to talk to
