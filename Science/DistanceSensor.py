@@ -1,7 +1,11 @@
+"""
+Very early development on this communication...
+"""
+
 import Adafruit_GPIO.I2C as I2C
 
 
-class DistanceSensor(object):
+class DistanceSensor:
 
     _addr = 0x29
     _distReg = _addr + 1
