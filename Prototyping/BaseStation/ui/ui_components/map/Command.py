@@ -6,11 +6,12 @@ class command(QLineEdit):
     def __init__(self, map, parent=None):
         super(command, self).__init__(parent)
         self.map = map
-        self.commands = ("add", "remove", "set")
+        self.commands = ("ADD", "remove", "set")
 
     def keyPressEvent(self, e):
         # Call the super method so we can type in the box
         super(command, self).keyPressEvent(e)
+        print e.text()
 
         # Added functionality
         if e.key() == QtCore.Qt.Key_Return:
@@ -24,7 +25,7 @@ class command(QLineEdit):
 
     def execute(self, list):
         print "go"
-        if list[0] == "add":
+        if list[0] == "ADD":
             # type add lat long
             self.map.add_marker(list[1], list[2])
             print "adding"
