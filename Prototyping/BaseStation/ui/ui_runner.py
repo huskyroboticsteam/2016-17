@@ -12,6 +12,8 @@ from ui import Ui_MainWindow
 def quitting():
     # Properly shutdown the pygame window
     internal_map.close()
+    # Shutdown the networking thread
+    iplist.worker_thread.quit()
     # Save the changes to the settings by the user
     setting_widget.save()
 
@@ -37,8 +39,9 @@ main.stop_container.addWidget(stop.Stop())
 # Shows the video streams in their own windows of size 300x200 px
 main.camera_container.addWidget(UI.Player(setting_widget.get_camera_urls(), 300, 200))
 
+iplist = IPCheckerLayout.IPList({"192.168.1.10": "Rover", "192.168.1.20": "Camera Two"}, 50)
 # Updates IP state every 50 milliseconds. Maps the name to the status.
-main.sensor_container.addWidget(IPCheckerLayout.IPList({"192.168.1.10": "Rover", "192.168.1.20": "Camera Two"}, 50))
+main.sensor_container.addWidget(iplist)
 
 # Show window, initialize pygame, and execute the app
 win.show()

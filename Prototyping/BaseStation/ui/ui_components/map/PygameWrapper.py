@@ -2,12 +2,14 @@ import pygame
 import Map
 import sys
 import Command
+from PyQt4 import QtCore
 
 
 class PygameWrapper:
-    def __init__(self, width, height, map_name):
+    def __init__(self, map_name):
         self.map_name = map_name
         self.m = Map.Map(map_name)
+
         pygame.font.init()
 
         # Display dimensions to 1600 x 1100

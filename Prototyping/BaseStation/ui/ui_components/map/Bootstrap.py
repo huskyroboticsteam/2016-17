@@ -30,7 +30,7 @@ def bootstrap_pygame(frame, map_name):
     # Set the variable to show PyGame where to place its window
     os.environ['SDL_WINDOWID'] = str(int(frame.winId()))
 
-    wid = PygameWrapper.PygameWrapper(frame.width(), frame.height(), map_name)
+    wid = PygameWrapper.PygameWrapper(map_name)
     frame.wid = wid
 
     # Set the PyGame update loop be handled by PyQt4

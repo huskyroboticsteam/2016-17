@@ -2,6 +2,10 @@ import IPCheckerLayout
 import sys
 from PyQt4 import QtGui
 
+
+def quit():
+    ui.worker_thread.quit()
+
 if __name__ == '__main__':
 
     app = QtGui.QApplication(sys.argv)
@@ -22,4 +26,5 @@ if __name__ == '__main__':
 
     window.show()
 
+    app.aboutToQuit.connect(quit)
     app.exec_()
