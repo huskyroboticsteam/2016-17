@@ -19,7 +19,7 @@ Basic Implementation as follows:
 4) Use getOutput() to return the desired output.
 
 NOTE: This output will be relative to the units given in the run() method.
-Change the map of this output to a given range if necessary, for example, in using motors.
+Map this output to a given range if necessary, for example, in using motors.
 NOTE: Nothing has to be done to change the target value during operation, it is all handled
 in this class.
 
