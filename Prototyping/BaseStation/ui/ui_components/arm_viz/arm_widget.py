@@ -44,7 +44,6 @@ class arm_widget(QtGui.QWidget):
     def paintEvent(self, QPaintEvent):
 
         painter = QtGui.QPainter(self)
-        painter.Antialiasing
         painter.setPen(self.pen)
 
         self.pen.setColor(QtCore.Qt.red)
