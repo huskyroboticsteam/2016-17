@@ -1,6 +1,7 @@
 from PyQt4 import QtGui, QtCore
 import os
 import PygameWrapper
+import time
 
 
 class ImageWidget(QtGui.QFrame):
@@ -19,18 +20,18 @@ class ImageWidget(QtGui.QFrame):
         else:
             timer = QtCore.QTimer(self)
             timer.timeout.connect(self.update_func)
-            #timer.timeout.connect(self.update_data)
+            # timer.timeout.connect(self.update_data)
             timer.start(1000 / self.fps)
 
     def update_data(self):
-      self.data = self.wid.data
+        self.data = self.wid.data
 
 
-def bootstrap_pygame(frame, map_name):
+def bootstrap_pygame(frame, map_name, fps):
     # Set the variable to show PyGame where to place its window
     os.environ['SDL_WINDOWID'] = str(int(frame.winId()))
 
-    wid = PygameWrapper.PygameWrapper(map_name)
+    wid = PygameWrapper.PygameWrapper(map_name, fps)
     frame.wid = wid
 
     # Set the PyGame update loop be handled by PyQt4

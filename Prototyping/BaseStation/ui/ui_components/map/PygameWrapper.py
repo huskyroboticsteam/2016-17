@@ -6,21 +6,21 @@ from PyQt4 import QtCore
 
 
 class PygameWrapper:
-    def __init__(self, map_name):
+    def __init__(self, map_name, fps):
         self.map_name = map_name
         self.m = Map.Map(map_name)
 
         pygame.font.init()
-
         # Display dimensions to 1600 x 1100
         self.screen = pygame.display.set_mode((1600, 1100))
 
         # Objects that will control fps
         self.clock = pygame.time.Clock()
-        self.fps = 120
+        self.fps = fps
 
     def close(self):
         pygame.display.quit()
+        pygame.quit()
 
     def main_loop(self):
 

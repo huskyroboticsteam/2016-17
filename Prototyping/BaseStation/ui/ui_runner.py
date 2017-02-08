@@ -6,6 +6,8 @@ from ui_components.camera_streaming import UI
 from ui_components.emergency_stop import stop
 from ui_components.settings import settings
 from ui_components import command_api
+from ui_components.arm_viz import arm_widget
+from ui_components.sensors import SensorWidget
 from ui import Ui_MainWindow
 
 
@@ -29,8 +31,8 @@ win.resize(1200, 675)
 comm = command_api.CommandApi()
 setting_widget = settings.Settings(main, comm)
 
-# Creates the map at 800x200 px and updates at 120 fps
-map = MapWidget.MainWindow(600, 200, 120)
+# Creates the map at 800x200 px and updates at 30 fps
+map = MapWidget.MainWindow(600, 200, 30)
 main.map_container.addWidget(map)
 
 # Create the emergency stop button
@@ -43,10 +45,15 @@ iplist = IPCheckerLayout.IPList({"192.168.1.10": "Rover", "192.168.1.20": "Camer
 # Updates IP state every 50 milliseconds. Maps the name to the status.
 main.sensor_container.addWidget(iplist)
 
+# Add the arm visualization
+main.joystick_container.addWidget(arm_widget.arm_widget())
+
+main.reading_container.addWidget(SensorWidget.Sensors())
+
 # Show window, initialize pygame, and execute the app
 win.show()
-internal_map = map.initialize(setting_widget.get_map_name())
 
+internal_map = map.initialize(setting_widget.get_map_name())
 command_line = Command.command(internal_map.m)
 main.map_container.addWidget(command_line)
 
