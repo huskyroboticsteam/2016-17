@@ -1,9 +1,0 @@
-
-
-class Humidity(object):
-
-    def __init__(self, pin):
-        self._pin = pin
-
-    def readRaw(self):
-        pass
