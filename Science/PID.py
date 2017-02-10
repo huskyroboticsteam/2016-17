@@ -41,17 +41,16 @@ import time
 
 class PID:
 
-    _lastError = 0
-    _lastTime = 0
-    _output = 0
-    _pVal = 0
-    _iVal = 0
-    _dVal = 0
-
     # Initializes coefficients and sets target to 0
     def __init__(self, kP, kI, kD):
         self.setCoefficients(kP, kI, kD)
         self._target = 0
+        self._lastError = 0
+        self._lastTime = 0
+        self._output = 0
+        self._pVal = 0
+        self._iVal = 0
+        self._dVal = 0
 
     # Set target of control loop.
     # **Can be changed during operation without consequence
