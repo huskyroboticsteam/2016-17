@@ -7,18 +7,17 @@ Use this for reference: https://gist.github.com/chaosmail/8372717
 
 class PID(object):
 
-    _lastError = 0
-    _lastTime = 0
-    _output = 0
-    _pVal = 0
-    _iVal = 0
-    _dVal = 0
-
     def __init__(self, kP, kI, kD):
         self._p = kP
         self._i = kI
         self._d = kD
         self._target = 0
+        self._lastError = 0
+        self._lastTime = 0
+        self._output = 0
+        self._pVal = 0
+        self._iVal = 0
+        self._dVal = 0
 
     def setTarget(self, target):
         self._target = target
