@@ -29,12 +29,12 @@ class Robot:
         self.pwm.set_pwm_freq(60)
         self.mag = MAG.Magnetometer()
         self.gps = GPS.GPS()
-        self.pot_pid = PID.PID(-1, 0, 0)
+        self.pot_pid = PID.PID(-0.1, 0, 0)
         # Potentiometer pin:
         self.POT_PIN = "AIN2"
         self.POT_LEFT = 0.771
-        self.POT_MIDDLE = 0.553
         self.POT_RIGHT = 0.346
+        self.POT_MIDDLE = (self.POT_LEFT + self.POT_RIGHT) / 2
         self.POT_TOL = 0.01
         # autopilot
         self.auto = True
@@ -89,6 +89,7 @@ class Robot:
     def readPot(self):
         result = self.POT_MIDDLE - ADC.read(self.POT_PIN)
         if result > self.POT_MIDDLE - self.POT_RIGHT or result < self.POT_MIDDLE - self.POT_LEFT:
+            print result
             return -1
         return result
 
@@ -96,9 +97,9 @@ class Robot:
     # turn value is 100 for full right -100 for full left and 0 for straight
     def getDriveParms(self, auto):
         if auto:
-            return self.getAutoDriveParms()
+            return (20, self.calculateDesiredTurn(self.getMag()))
         else:
-            return (10, 0)
+            return (20, 0)
 
 
     # returns automatic drive parms from gps, mag, sonar and destination
@@ -112,7 +113,7 @@ class Robot:
         rawMag = self.mag.read()
         print "back: " + str(rawMag)
         pot = self.readPot()
-        angle = self.translateValue(pot, self.POT_MIDDLE - self.POT_LEFT, self.POT_MIDDLE - self.POT_RIGHT, -40, 40)
+        angle = self.translateValue(pot, self.POT_LEFT - self.POT_MIDDLE, self.POT_RIGHT - self.POT_MIDDLE, -40, 40)
         print "front: " + str((rawMag + angle) % 360)
         return (rawMag + angle) % 360
 
@@ -138,6 +139,7 @@ class Robot:
         else:
             #turn left
             return -1 * self.translateValue(difHeading % 180, 0, 180, 0, 10)
+
 
     # returns a tuple of (motor1, motor2, motor3, motor4) from the driveParms modified by the pot reading
     def convertParmsToMotorVals(self, driveParms):
@@ -222,7 +224,6 @@ def main():
             MotorParms = robot.convertParmsToMotorVals(driveParms)
             for i in range(1, 5):
                 robot.driveMotor(i, MotorParms[i - 1])
-            time.sleep(0.5)
 
     except KeyboardInterrupt:
         for i in range(1, 5):

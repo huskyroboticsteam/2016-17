@@ -1,6 +1,7 @@
 from Adafruit_I2C import Adafruit_I2C
 import time
 
+
 # TODO: shorten startup time if possible
 class Magnetometer:
     def __init__(self):
