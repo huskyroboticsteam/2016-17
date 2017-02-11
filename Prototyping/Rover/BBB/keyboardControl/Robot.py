@@ -191,8 +191,8 @@ class InputThread(threading.Thread):
         while True:
             in_str = raw_input('input: ')
             in_list = in_str.split()
-            throttle = in_list[0]
-            turn = in_list[1]
+            throttle = float(in_list[0])
+            turn = float(in_list[1])
             self.drive_params.set(throttle, turn)
 
 
