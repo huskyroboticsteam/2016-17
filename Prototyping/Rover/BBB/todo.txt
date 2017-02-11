@@ -1,4 +1,4 @@
-Comms:
+Comms: (Will, Nick, Elizabeth, Ryan)
     Design packets (use Python structs)
         - Drive to Rover
         - GPS to Rover
