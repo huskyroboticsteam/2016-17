@@ -125,8 +125,15 @@ class Robot:
     # calculates the desired heading
     # returns a value between 0 and 360 inclusive
     # TODO: calculate direction between current GPS location and destination
+    # update: acting under the assumption of current GPS coordinates stored in variables lat, long
+    # destination coords dlat, dlong; unsure of how to get these
     def calculateDesiredHeading(self):
-        return 180
+        x_distance = dlat - lat
+        y_distance = dlong - long
+        theta = math.atan2(x_distance, y_distance)
+        return translateValue(self, theta, -1 * pi, pi, 0, 360)
+        
+        
 
     # returns a turn value from -100 to 100 based on the difference between the current heading and the desired heading
     def calculateDesiredTurn(self, curHeading):
