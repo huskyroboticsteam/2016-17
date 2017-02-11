@@ -154,7 +154,8 @@ class DriveParams:
         self.lock = threading.Lock()
 
     def set(self, throttle, turn):
-        with self.lock
+        print 'DriveParams set:', throttle, turn
+        with self.lock:
             self.throttle = throttle
             self.turn = turn
 
@@ -162,6 +163,7 @@ class DriveParams:
         temp = ()
         with self.lock:
             temp = self.throttle, self.turn
+        print 'DriveParams get:', temp
         return temp
 
 
@@ -187,7 +189,7 @@ class InputThread(threading.Thread):
         print 'Enter throttle followed by turn, separated by spaces.'
         print 'For turn, 100 is full right, -100 is full left.'
         while True:
-            in_str = input('input: ')
+            in_str = raw_input('input: ')
             in_list = in_str.split()
             throttle = in_list[0]
             turn = in_list[1]
