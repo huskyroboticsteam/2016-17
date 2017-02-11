@@ -3,6 +3,9 @@ import numpy as np
 import transformations as tr
 
 xaxis, yaxis, zaxis = np.array([1, 0, 0]), np.array([0, 1, 0]), np.array([0, 0, 1])
+pitch = yaxis
+#yaw = zaxis
+#roll = xaxis
 
 def distance(end, target_pos):
     return np.linalg.norm(target_pos - end)
@@ -10,27 +13,31 @@ def distance(end, target_pos):
 
 # A parameter with a min and a max
 class Parameter:
-    def __init__(self, min_angle, max_angle):
+    def __init__(self, min_angle, max_angle, axis=pitch):
         self.min = min_angle
         self.max = max_angle
-
-    def max(self):
-        return self.max
-
-    def min(self):
-        return self.min
+        self.axis = axis
 
     def is_auto(self):
         return True
+        
+    def applyParameter(self, value, baseTransform):
+        """Returns a new rotation matrix derived from the previous baseTransform
+        with the given value of this parameter
+        """
+        return np.dot(baseTransform, tr.rotation_matrix(value, self.axis))
 
-
-# A parameter with only one value, a fixed joint
+# A parameter with only one value, a joint fixed in global space
 class StaticParameter(Parameter):
     def __init__(self, value):
         Parameter.__init__(self, value, value)
 
     def is_auto(self):
         return False
+        
+    def applyParameter(self, value, baseTransform):
+        rx, ry, rz = tr.euler_from_matrix(baseTransform)
+        return np.dot(baseTransform, tr.rotation_matrix(ry - self.min, self.axis))
 
 
 # A parameter that is mechanically fixed, i.e. not used.
@@ -40,13 +47,11 @@ class FixedParameter(StaticParameter):
 
 
 # A parameter with a min and a max and a setpoint
+# Unused
 class ManualParameter(Parameter):
     def __init__(self, min_angle, max_angle):
         Parameter.__init__(self, min_angle, max_angle)
         self.setpoint = min_angle
-
-    def setpoint(self):
-        return self.setpoint
 
     def is_auto(self):
         return False
@@ -69,11 +74,10 @@ and angle parameters. Most methods require a parameters list which holds informa
 regarding a specific configuration of the arm
 """
 class Arm:
-    def __init__(self, length, pitch, yaw, after=None):
+    def __init__(self, length, parameter, after=None):
         self.length = length
         self.after = after  # The next limb
-        self.pitch = pitch
-        self.yaw = yaw		
+        self.parameter = parameter
 
     def joints(self, parameters):
         """Returns the points representing the location of each joint in the arm
@@ -84,48 +88,46 @@ class Arm:
         """
         return [np.zeros(3)] + self._joints_impl(tr.identity_matrix(), parameters)
 	
-    #@cython.locals(armLength=np.ndarray, rPitch=np.ndarray, rYaw=np.ndarray, transform=np.ndarray)
     def _joints_impl(self, baseTransform, parameters):
-        transform = np.dot(baseTransform, self.transform(parameters[0], parameters[1]))
+        transform = self.applyTransform(parameters[0], baseTransform)
         end = tr.translation_from_matrix(transform)
 		
         if self.after is not None:
-            return [end] + self.after._joints_impl(transform, parameters[2:])
+            return [end] + self.after._joints_impl(transform, parameters[1:])
         else:
             return [end]
 
     def error(self, target_pos, baseTransform, parameters):
-        transform = np.dot(baseTransform, self.transform(parameters[0], parameters[1]))
+        transform = self.applyTransform(parameters[0], baseTransform)
         
         if self.after is None:
             end = tr.translation_from_matrix(transform)
             return distance(target_pos, end)
         else:
-            return self.after.error(target_pos, transform, parameters[2:])
-            
-    def transform(self, pitch, yaw):
+            return self.after.error(target_pos, transform, parameters[1:])
+    
+    #@cython.locals(armLength=np.ndarray, rPitch=np.ndarray, rYaw=np.ndarray, transform=np.ndarray)        
+    def applyTransform(self, parameterValue, baseTransform):
         """Gives the translation matrix associated with this arm with the given pitch
         and yaw.
         
         """
+        baseTransform = self.parameter.applyParameter(parameterValue, baseTransform)
         tLength = tr.translation_matrix(np.array([self.length, 0, 0]))
-        rPitch = tr.rotation_matrix(pitch, yaxis)
-        rYaw = tr.rotation_matrix(yaw, zaxis)
         
-        #return armLength * rPitch * rYaw
-        return tr.concatenate_matrices(rYaw, rPitch, tLength)        
+        return np.dot(baseTransform, tLength)        
 
     def min_parameters(self):
-        return [self.pitch.min, self.yaw.min] + ([] if self.after is None else self.after.min_parameters())
+        return [self.parameter.min] + ([] if self.after is None else self.after.min_parameters())
 
     def max_parameters(self):
-        return [self.pitch.max, self.yaw.max] + ([] if self.after is None else self.after.max_parameters())
+        return [self.parameter.max] + ([] if self.after is None else self.after.max_parameters())
 
     def limb_count(self):
         return 1 if self.after is None else self.after.limb_count() + 1
 
     def auto_parameters(self):
-        return [self.pitch.is_auto(), self.yaw.is_auto()] + ([] if self.after is None else self.after.auto_parameters())
+        return [self.parameter.is_auto()] + ([] if self.after is None else self.after.auto_parameters())
 
 
 # def make_tentacle(segment_length, segment_count):

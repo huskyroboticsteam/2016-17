@@ -25,10 +25,10 @@ moving_target = False
 draw_origin = np.array([320, 0, 240])
 draw_matrix = tr.translation_matrix(draw_origin)
 # test_armature = make_tentacle(40, 10)
-test_armature = Arm(50, Parameter(0, pi), FixedParameter(0),
-                Arm(50, Parameter(0, pi), FixedParameter(0),
-                Arm(30, Parameter(0, pi / 4), FixedParameter(0),
-                Arm(10, Parameter(0, pi / 4), FixedParameter(0)))))
+test_armature = Arm(50, Parameter(0, pi),
+                Arm(50, Parameter(0, pi / 4),
+                Arm(30, Parameter(0, pi / 4),
+                Arm(10, StaticParameter(0)))))
 
 params = test_armature.min_parameters()
 target = np.array([0, 0, 0])

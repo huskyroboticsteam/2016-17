@@ -50,11 +50,11 @@ while running:
 
     mouseX, mouseY = pygame.mouse.get_pos()
     reachSegment(0, mouseX, mouseY)
-    for i in xrange(1, numSegments):
+    for i in range(1, numSegments):
         reachSegment(i, targetX, targetY)
-    for i in xrange(len(x) - 1, 0, -1):
+    for i in range(len(x) - 1, 0, -1):
         positionSegment(i, i-1)
-    for i in xrange(len(x)):
+    for i in range(len(x)):
         pygame.draw.circle(screen, (0, 200, 0), (int(x[i]), int(y[i])), 4)
         pygame.draw.line(screen, (i * 40, i * 40, i * 40), (x[i], y[i]), (x[i] + segLength[i] * cos(angle[i]),
                                                            y[i] + segLength[i] * sin(angle[i])), 5)
