@@ -1,0 +1,31 @@
+Comms: (Will, Nick, Elizabeth, Ryan)
+    Design packets (use Python structs)
+        - Drive to Rover
+        - GPS to Rover
+        - sensors back
+    Get comms working (work with Elton)
+
+Autonomous:
+    heading between two GPS coords
+    GPS - Sebastian
+    Mag problems
+        - average last 10?
+        - calc heading of front based on Pot reading
+    Obstacle avoidance
+        - distance sensor - science team
+        - design algorithm
+        - keep a map of known obstacles?
+    Encoders (EE motor controller will feed us rotations speeds)
+        - interrupts?
+        - threads?
+
+For large Rover:
+    Motor-controllers - Brian and Justin
+
+Misc:
+    make func ok - Brian
+    refactoring
+        - add a Motor class
+        - PID.py
+    Motor ramp up
+    driving via keyboard input - Tim

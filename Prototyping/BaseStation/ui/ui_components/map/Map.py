@@ -1,8 +1,6 @@
 import math
 import MapTile
 import Utility
-import Generator
-import os
 import pygame
 import sys
 import Marker
@@ -11,6 +9,7 @@ import Marker
 class Map:
     def __init__(self, map_name):
         self.markers = []
+        self.coordinates = []
         # Size of all tiles for calculations
         self.TILE_SIZE = [1500, 1500]
 
@@ -255,6 +254,7 @@ class Map:
     def zoom_marker(self):
         # clear all markers
         self.markers = []
+
         # add every marker in the new position after zooming in/out
         for coords in self.coordinates:
             self.make_marker(coords[0], coords[1])

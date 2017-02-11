@@ -1,9 +1,23 @@
+"""
+Interfaces Beaglebone Black PWM outputs with
+a Talon Motor Controller.
+
+More research needs to go into the operation of a
+Talon Motor Controller before this code
+is tested with an actual motor.
+Refer to author with questions.
+
+Written by Jaden Bottemiller in January 2017
+EE Team of Husky Robotics
+(Untested as of 2/6/2017)
+jadenjb@uw.edu
+"""
 import Adafruit_GPIO.PWM as PWM
 
 
-class TalonMC(object):
+class TalonMC:
 
-    _freq = 15625 # from the Talon spec
+    _freq = 15625  # from the Talon spec
 
     def __init__(self, pin):
         self._pin = pin

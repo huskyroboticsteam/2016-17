@@ -39,7 +39,8 @@ def _setup_globals():
     global _listening_thread, _client_sent_data_condition, server_address, mode
     _global_lock = threading.Lock() # Locks for external methods to prevent race conditions
     _sock = None # The socket object
-    _header_struct_dict = dict() # Mapping of header byte to Struct object
+    if not "_header_struct_dict" in globals():
+        _header_struct_dict = dict() # Mapping of header byte to Struct object
     _receive_buffer = Queue.Queue() # Parsed message queue
     _stopping = False # If the listening thread should shut down
     _listening_thread = None # Holds the threading object
@@ -120,6 +121,7 @@ def _common_presetup():
 def _start_listening_thread():
     global _listening_thread
     _listening_thread = threading.Thread(target=_listen_loop)
+    _listening_thread.daemon = True
     _listening_thread.start()
 
 def setup_server(host, port):
@@ -164,7 +166,9 @@ def receive_message(block=False):
     if not mode:
         raise Exception("Communications aren't setup")
     try:
-        return _receive_buffer.get(block)
+        message = _receive_buffer.get(block)
+        _receive_buffer.task_done()
+        return message
     except Queue.Empty:
         return (None, None)
 
@@ -223,6 +227,9 @@ def shutdown():
         if mode == "client":
             with _client_sent_data_condition:
                 _client_sent_data_condition.notify()
+        if _receive_buffer.empty():
+            # Add a empty packet to unblock any threads blocking on receive
+            _receive_buffer.put({"type": None})
         _setup_globals()
 
 _setup_globals()
