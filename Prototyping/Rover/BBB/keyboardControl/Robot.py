@@ -1,6 +1,5 @@
 import Adafruit_BBIO.ADC as ADC
 import Adafruit_PCA9685
-import time
 import math
 import threading
 import PID
@@ -26,12 +25,12 @@ class Robot:
         # setup i2c to motorshield
         self.pwm = Adafruit_PCA9685.PCA9685(address=0x60, busnum=1)
         self.pwm.set_pwm_freq(60)
-        self.pot_pid = PID.PID(-1, 0, 0)
+        self.pot_pid = PID.PID(-0.1, 0, 0)
         # Potentiometer pin:
         self.POT_PIN = "AIN2"
         self.POT_LEFT = 0.771
-        self.POT_MIDDLE = 0.553
         self.POT_RIGHT = 0.346
+        self.POT_MIDDLE = (self.POT_LEFT + self.POT_RIGHT) / 2
         self.POT_TOL = 0.01
 
 
@@ -85,6 +84,7 @@ class Robot:
             return -1
         return result
 
+
     # takes a 2-tuple of (throttle, turn)
     # turn value is 100 for full right -100 for full left and 0 for straight
     # returns a tuple of (motor1, motor2, motor3, motor4) from the driveParms modified by the pot reading
@@ -93,7 +93,7 @@ class Robot:
         if potReading != -1:
             # Potentiometer is good. Run PID.
             self.setPIDTarget(self.pot_pid, int(driveParms[1]), -100, 100)
-            scaledPotReading = self.translateValue(potReading, self.POT_LEFT - self.POT_MIDDLE, self.POT_RIGHT - self.POT_MIDDLE, 100, -100)
+            angle = self.translateValue(pot, self.POT_LEFT - self.POT_MIDDLE, self.POT_RIGHT - self.POT_MIDDLE, -40, 40)
             self.pot_pid.run(scaledPotReading)
             finalTurn = self.pot_pid.getOutput()
             print str(driveParms)
@@ -177,7 +177,6 @@ class DriveThread(threading.Thread):
             motor_params = self.robot.convertParmsToMotorVals(drive_params)
             for i in range(1, 5):
                 self.robot.driveMotor(i, motor_params[i - 1])
-            time.sleep(0.5)
 
 
 class InputThread(threading.Thread):
