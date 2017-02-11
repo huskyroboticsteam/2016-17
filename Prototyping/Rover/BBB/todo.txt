@@ -15,7 +15,7 @@ Autonomous:
         - distance sensor - science team
         - design algorithm
         - keep a map of known obstacles?
-    Encoders
+    Encoders (EE motor controller will feed us rotations speeds)
         - interrupts?
         - threads?
 
