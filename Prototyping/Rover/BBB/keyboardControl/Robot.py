@@ -154,7 +154,7 @@ class DriveParams:
         self.lock = threading.Lock()
 
     def set(self, throttle, turn):
-        print 'DriveParams set:', throttle, turn
+        print 'DriveParams set: throttle =', throttle, ', turn =' turn
         with self.lock:
             self.throttle = throttle
             self.turn = turn
@@ -163,7 +163,7 @@ class DriveParams:
         temp = ()
         with self.lock:
             temp = self.throttle, self.turn
-        print 'DriveParams get:', temp
+        print 'DriveParams get: temp =', temp
         return temp
 
 
@@ -175,6 +175,7 @@ class DriveThread(threading.Thread):
     def run(self):
         while True:
             drive_params = self.drive_params.get()
+            print 'DriveThread run: drive_params =', drive_params
             motor_params = self.robot.convertParmsToMotorVals(drive_params)
             for i in range(1, 5):
                 self.robot.driveMotor(i, motor_params[i - 1])
@@ -193,6 +194,7 @@ class InputThread(threading.Thread):
             in_list = in_str.split()
             throttle = in_list[0]
             turn = in_list[1]
+            print 'InputThread run: trottle =', throttle, ', turn =', turn
             self.drive_params.set(throttle, turn)
 
 
