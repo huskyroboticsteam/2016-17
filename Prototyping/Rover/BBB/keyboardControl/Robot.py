@@ -167,6 +167,7 @@ class DriveParams:
 
 class DriveThread(threading.Thread):
     def __init__(self, drive_params):
+        super(DriveThread, self).__init__()
         self.robot = Robot()
         self.drive_params = drive_params
 
@@ -181,6 +182,7 @@ class DriveThread(threading.Thread):
 
 class InputThread(threading.Thread):
     def __init__(self, drive_params):
+        super(InputThread, self).__init__()
         self.drive_params = drive_params
 
     def run(self):
