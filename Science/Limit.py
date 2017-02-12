@@ -7,16 +7,16 @@ Written by Jaden Bottemiller in January 2017
 EE Team of Husky Robotics
 (Untested as of 2/6/2017)
 """
-import Adafruit_GPIO.GPIO as GPIO
 
 
 class Limit:
 
     # Sets pin of limit switch
-    def __init__(self, pin):
+    def __init__(self, pin, gpio):
         self._pin = pin
+        self._gpio = gpio
 
     # Returns on/off (boolean) characteristic of the pin
     # at any given time
     def status(self):
-        return GPIO.BaseGPIO.is_high(self._pin)
+        return self._gpio.is_high(self._pin)

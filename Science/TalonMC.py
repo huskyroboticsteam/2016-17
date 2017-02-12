@@ -11,13 +11,18 @@ Written by Jaden Bottemiller in January 2017
 EE Team of Husky Robotics
 (Untested as of 2/6/2017)
 jadenjb@uw.edu
+
+Talon Spec
+https://content.vexrobotics.com/vexpro/pdf/Talon-SRX-User-Guide-20150201.pdf
+Page 29 has PWM Calibration information
+
 """
 import Adafruit_GPIO.PWM as PWM
 
 
 class TalonMC:
 
-    _freq = 15625  # from the Talon spec
+    _freq = 4000  # from the Talon spec
 
     def __init__(self, pin):
         self._pin = pin

@@ -6,6 +6,7 @@ import DistanceSensor
 import Limit
 import PID
 import Adafruit_BBIO.ADC as ADC  # Ignore compilation errors
+import Adafruit_GPIO.GPIO as GPIO
 
 # Define constants
 PinDataIn = "P9_18"
@@ -16,6 +17,8 @@ DIST_ADDR = 0x52
 
 # Initialize hardware
 ADC.setup()
+GPIO = GPIO.AdafruitBBIOAdapter(GPIO.BaseGPIO())
+
 
 # Create Sensors
 UV_Sens = UV.UV(UV_ADDR_LSB)

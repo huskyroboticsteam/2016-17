@@ -29,5 +29,5 @@ class AverageFilter(object):
         return self._sum / self._num
 
     def reset(self):
-        _sum = 0
-        _num = 0
+        self._sum = 0
+        self._num = 0

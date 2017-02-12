@@ -27,7 +27,6 @@ NOTE: Run the update() method as often as possible
 NOTE: Assumes Encoder does not step more than one phase per update
 """
 
-import Adafruit_GPIO.GPIO.BaseGPIO.is_high as is_high
 from math import pi
 
 
@@ -35,23 +34,24 @@ class Encoder:
 
     # Takes in channel A and B pin numbers
     # ppr = Pulses per revolution
-    def __init__(self, pinA, pinB, ppr):
+    def __init__(self, pinA, pinB, ppr, gpio):
 
-        self._pinA = pinA # integer value for A channel
-        self._pinB = pinB # integer value for B channel
-        self._ppr = ppr  # pulses per revolution of the encoder, default to 1
-                         # instead of 0 so nothing breaks upon division
-        self._steps = 0  # signed number of steps/pulses encoder has recorded
-        self._distK = 1  # K Constant for distance multiplication
-        self._lastA = False # last pin position for channel A
-        self._lastB = False # last pin position for channel B
-        self._isSetup = False # whether the Encoder has been set up yet
+        self._pinA = pinA      # integer value for A channel
+        self._pinB = pinB      # integer value for B channel
+        self._ppr = ppr        # pulses per revolution of the encoder, default to 1
+                               # instead of 0 so nothing breaks upon division
+        self._steps = 0        # signed number of steps/pulses encoder has recorded
+        self._distK = 1        # K Constant for distance multiplication
+        self._lastA = False    # last pin position for channel A
+        self._lastB = False    # last pin position for channel B
+        self._isSetup = False  # whether the Encoder has been set up yet
+        self._gpio = gpio      # Sets GPIO object
 
     # Initializes Encoder
     # Meant for internal use only
     def _setup(self):
-        self._lastA = is_high(self._pinA)
-        self._lastB = is_high(self._pinB)
+        self._lastA = self._gpio.is_high(self._pinA)
+        self._lastB = self._gpio.is_high(self._pinB)
         self._isSetup = True
 
     # Updates encoder values
@@ -61,8 +61,8 @@ class Encoder:
         # last cycle to this cycle.
         if not self._isSetup:
             self._setup()
-        curA = is_high(self._pinA)
-        curB = is_high(self._pinB)
+        curA = self._gpio.is_high(self._pinA)
+        curB = self._gpio.is_high(self._pinB)
 
         increment = 0
         if self._lastA != curA:
@@ -89,7 +89,7 @@ class Encoder:
         return self._steps * (2 * pi/self._ppr)
 
     # Returns true if the direction the encoder is moving clockwise
-    def isClockwise(lastA, lastB, curA, curB):
+    def _isClockwise(self, lastA, lastB, curA, curB):
         return (curA != lastA and curA != curB) \
                 or (curB != lastB and curA == curB)
 
