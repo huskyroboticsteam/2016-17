@@ -1,6 +1,6 @@
 import socket
 import struct
-UDP_IP = "192.168.1.40"
+UDP_IP = "192.168.0.40"
 print(UDP_IP)
 UDP_PORT = 8888
 format_string = "<hh"
