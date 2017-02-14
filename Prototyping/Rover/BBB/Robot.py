@@ -5,6 +5,8 @@ import PID
 import math
 import gps as GPS
 import mag as MAG
+import socket
+import struct
 
 
 class Robot:
@@ -40,6 +42,16 @@ class Robot:
         self.auto = True
         # list of GPS coords to travel to
         self.destinations = []
+        self.receivedDrive = None
+        self.robot_ip = "192.168.0.40"
+        self.udp_port = 8840
+        self.base_station_ip = None
+        self.driveFormat = "<??hh"
+        self.gpsFormat = "<?hhhhhh"
+        self.sock = socket.socket(socket.AF_INET,  # Internet
+                                socket.SOCK_DGRAM)  # UDP
+        self.sock.bind((self.robot_ip, self.udp_port))
+        self.sock.setblocking(False)
 
 
     # motor: throttle, F, B
@@ -96,10 +108,13 @@ class Robot:
     # returns a 2-tuple of (throttle, turn)
     # turn value is 100 for full right -100 for full left and 0 for straight
     def getDriveParms(self, auto):
+        if self.receivedDrive == None:
+            return (0, 0)
+        auto = self.receivedDrive[0]
         if auto:
             return (20, self.calculateDesiredTurn(self.getMag()))
         else:
-            return (20, 0)
+            return (self.receivedDrive[1], self.receivedDrive[2])
 
 
     # returns automatic drive parms from gps, mag, sonar and destination
@@ -122,6 +137,7 @@ class Robot:
     def getGPS(self):
         return self.gps.read()
 
+    '''
     # calculates the desired heading
     # returns a value between 0 and 360 inclusive
     # TODO: calculate direction between current GPS location and destination
@@ -131,9 +147,8 @@ class Robot:
         x_distance = dlat - lat
         y_distance = dlong - long
         theta = math.atan2(x_distance, y_distance)
-        return translateValue(self, theta, -1 * pi, pi, 0, 360)
-        
-        
+        return self.translateValue(self, theta, -1 * pi, pi, 0, 360)
+    '''
 
     # returns a turn value from -100 to 100 based on the difference between the current heading and the desired heading
     def calculateDesiredTurn(self, curHeading):
@@ -217,16 +232,32 @@ class Robot:
 
     # receives a packet and sets variables accordingly
     def receiveData(self):
+        try:
+            data, addr = self.sock.recvfrom(1024)  # buffer size is 1024 bytes
+            self.base_station_ip = addr
+            unpacked = struct.unpack(self.driveFormat, data)
+            if unpacked[0]:
+                self.receivedDrive = unpacked[1:]
+            else:
+                unpacked = struct.unpack(self.gpsFormat, data)
+                self.destinations.append(unpacked[1:])
+            print unpacked
+        except:
+            pass
+
+    # sends data in message back to the base station
+    def sendData(self):
         pass
         # TODO: do this
-        # at lease two packet types, drive packet: (auto, throttle, turn)
-        # GPS packet (next GPS coordinate to go to, or list of GPS coordinates)
+        # read data from sensors or read class variables
 
 
 def main():
     robot = Robot()
     try:
         while True:
+            robot.receiveData()
+            robot.sendData()
             driveParms = robot.getDriveParms(robot.getAuto())
             MotorParms = robot.convertParmsToMotorVals(driveParms)
             for i in range(1, 5):
