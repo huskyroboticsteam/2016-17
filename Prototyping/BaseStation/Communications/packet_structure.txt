@@ -1,10 +1,21 @@
 Base Station --> Rover
 Drive Packet:
-bool, bool, short, short
-drive packet flag, autonomous flag, throttle, turn
+0               1               2              3
+bool            bool            short          short
+packet_flag     auto_flag       throttle       turn
 
 GPS packet:
-bool, short, short, short, short, short, short
-drive packet flag, lat_degree, lat_min, lat_sec, long_degree, long_min, long_sec
+0               1               2               3               4               5               6
+bool            short           short           short           short           short           short
+packet_flag     lat_degree      lat_min         lat_sec         long_degree     long_min        long_sec
+
 
 Rover --> Base Station
+0               1               2               3               4               5               6               7               8               9               10              11
+float           float           float           float           float           float           short           short           short           short           short           short
+pot             mag             encoder_1       encoder_2       encoder_3       encoder_4       lat_degree      lat_min         lat_sec         long_degree     long_min        long_sec
+
+
+Base Station --> Arm
+
+Arm --> Base Station
