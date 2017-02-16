@@ -4,6 +4,10 @@ from armature import *
 from math import pi
 from gradient_descent import *
 
+"""
+Visualizes the arm using computations in 3d space mapped to a 2d surface
+Currently follows a target that is moved by mouse input but eventually will use real arm data
+"""
 
 class arm_widget(QtGui.QWidget):
     def __init__(self):

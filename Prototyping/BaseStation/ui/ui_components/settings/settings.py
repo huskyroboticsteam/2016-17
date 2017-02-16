@@ -1,5 +1,10 @@
 from PyQt4 import QtCore
 
+"""
+Operate the settings page in the main ui
+Reads from .settings on startup and writes over .settings on shutdown
+"""
+
 
 class Settings:
     def __init__(self, ui, command_api):
@@ -16,17 +21,21 @@ class Settings:
         name = self.main.map_name.text()
         lat = self.main.lat.text()
         lng = self.main.lng.text()
+
+        # Tell the command_api to generate a new map
         result = self.comm.generate_new_map(name, lat, lng)
 
-        # If we generated successfully
+        # If we generated successfully (user data is validated)
         if result:
             self.main.map_name.setText("")
             self.main.lat.setText("")
             self.main.lng.setText("")
 
+    # Utility function to get the default map name
     def get_map_name(self):
         return self.main.map_val.text()
 
+    # Get the urls that each feed is set to on startup
     def get_camera_urls(self):
         temp = []
 
@@ -36,21 +45,17 @@ class Settings:
 
         return temp
 
+    # Saves the current state of the settings page except for generation of new map form
     def save(self):
         # Write over the settings file
         f = open(".settings", "w")
+        # Write the map name we will open on startup (not validated)
         f.write("default_map=" + str(self.main.map_val.text()) + "\n")
 
-        output = ""
-        for i in range(0, len(self.cam_list)):
-            output += self.main.cam1.itemText(i)
-            output += ","
-            output += self.cam_list[i]
-            if i != len(self.cam_list) - 1:
-                output += ","
+        # Skip the cams= line since the user shouldn't change this in operation
+        f.next()
 
-        f.write("cams=" + output + "\n")
-
+        # Write the currently selected camera for each feed
         f.write("default_cam_1=" + str(self.main.cam1.currentIndex()) + "\n")
         f.write("default_cam_2=" + str(self.main.cam2.currentIndex()) + "\n")
         f.write("default_cam_3=" + str(self.main.cam3.currentIndex()) + "\n")
@@ -60,10 +65,13 @@ class Settings:
     def setup(self):
         # Read settings from the settings file
         f = open(".settings", "r")
+
         # Read in map value
         self.main.map_val.setText(f.next().strip('\n').split("=")[1])
 
+        # Read in the list of cameras and their friendly names
         camStr = f.next().strip('\n').split("=")[1]
+        # Cam list alternates friendly name, file location, name...
         camList = camStr.split(",")
 
         list = QtCore.QStringList()

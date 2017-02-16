@@ -1,11 +1,16 @@
 from map import Generator
 
+"""
+A utility class that takes in many other objects for cross module updating
+"""
+
 
 class CommandApi:
     def __init__(self, sensor_module):
         self.map = None
         self.sensors = sensor_module
 
+    # Since pygame initialization is strange we need to give it after init
     def feedin_map(self, map):
         self.map = map
 

@@ -1,5 +1,10 @@
 from PyQt4 import QtGui, QtCore
 
+"""
+The emergency stop button for the rover.
+Button presses are locked until the shift button is pressed.
+"""
+
 
 class Stop(QtGui.QPushButton):
     def __init__(self, Master=None):
