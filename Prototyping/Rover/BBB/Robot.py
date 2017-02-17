@@ -117,19 +117,30 @@ class Robot:
     def getGPS(self):
         return self.gps.read()
 
-    '''
     # calculates the desired heading
     # returns a value between 0 and 360 inclusive
     # TODO: calculate direction between current GPS location and destination
-    # update: acting under the assumption of current GPS coordinates destination array
-    # takes first value in array
-    # destination coords dlat, dlong; unsure of how to get these
+    # note that destinations is an array of arrays; destination GPS location
+    #  is at [0] which contains [lat, long]
     def calculateDesiredHeading(self):
-        x_distance = destinations[0].lat - self.coord.lat;
-        y_distance = destinations[0].long - self.coord.long;
+        currLocation = self.gps.getCoords()
+        currLat = currLocation[0]
+        currLong = currLocation[1]
+        x_distance = self.destinations[0][0] - currLat;
+        y_distance = self.destinations[0][1] - currLong;
         theta = math.atan2(x_distance, y_distance)
         return self.translateValue(self, theta, -1 * pi, pi, 0, 360)
-    '''
+
+
+    # calculates desired new GPS coordinate based on distance
+    # from current GPS location and current heading in degrees
+    def calculateDesiredNewCoordinate(self, currHeading, distance):
+        theta = self.translateValue(self, currHeading, 0, 360, -1 * pi, pi)
+        x = distance * math.cos(theta)
+        y = distance * math.sin(theta)
+        coords = {x, y}
+        return coords
+
 
     # returns a turn value from -100 to 100 based on the difference between the current heading and the desired heading
     def calculateDesiredTurn(self, curHeading):
