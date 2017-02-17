@@ -5,7 +5,6 @@ import PID
 import math
 import gps as GPS
 import mag as MAG
-import Motor
 import socket
 import struct
 
@@ -33,19 +32,6 @@ class Robot:
         self.mag = MAG.Magnetometer()
         self.gps = GPS.GPS()
         self.pot_pid = PID.PID(-0.1, 0, 0)
-        # setup motors
-        # motor: throttle, F, B
-        # 1: 8,  9,  10
-        # 2: 13, 12, 11
-        # 3: 2,  4,  3
-        # 4: 7,  6,  5
-        self.motors = [
-            None, # motor IDs are 1-based, so placeholder for index 0
-            Motor.Motor(1, 8, 9, 10, self.pwm),
-            Motor.Motor(2, 13, 12, 11, self.pwm),
-            Motor.Motor(3, 2, 4, 3, self.pwm),
-            Motor.Motor(4, 7, 6, 5, self.pwm),
-        ]
         # Potentiometer pin:
         self.POT_PIN = "AIN2"
         self.POT_LEFT = 0.771
@@ -62,24 +48,56 @@ class Robot:
         self.base_station_ip = None
         self.driveFormat = "<??hh"
         self.gpsFormat = "<?hhhhhh"
-        self.rtbFormat = "<fffffhhhhhh"
         self.sock = socket.socket(socket.AF_INET,  # Internet
                                 socket.SOCK_DGRAM)  # UDP
         self.sock.bind((self.robot_ip, self.udp_port))
         self.sock.setblocking(False)
 
+
+    # motor: throttle, F, B
+    # 1: 8,  9,  10
+    # 2: 13, 12, 11
+    # 3: 2,  4,  3
+    # 4: 7,  6,  5
     # drives the motor with a value, negative numbers for reverse
-    def driveMotor(self, motor_id, motor_val):
-        if motor_id < 1 or motor_id > 4:
-            print "bad motor num: " + motor_id
+    def driveMotor(self, motor, motorVal):
+        # verify value is good
+        motorVal = int(motorVal)
+        if abs(motorVal) > 255:
+            print "bad value: " + str(motorVal)
             return
-        self.motors[motor_id].set_motor(motor_val)
+        # select proper pins
+        if motor == 1:
+            throttlePin = 8
+            forwardPin = 9
+            backPin = 10
+        elif motor == 2:
+            throttlePin = 13
+            forwardPin = 12
+            backPin = 11
+        elif motor == 3:
+            throttlePin = 2
+            forwardPin = 4
+            backPin = 3
+        elif motor == 4:
+            throttlePin = 7
+            forwardPin = 6
+            backPin = 5
+        else:
+            print "bad motor num"
+            return
+        self.pwm.set_pwm(forwardPin, 4096, 0)
+        self.pwm.set_pwm(backPin, 4096, 0)        self.pwm.set_pwm(throttlePin, 2048 - abs(motorVal) * 8, 2048 + abs(motorVal) * 8)
+        if motorVal > 0:
+            self.pwm.set_pwm(forwardPin, 0, 4096)
+        if motorVal < 0:
+            self.pwm.set_pwm(backPin, 0, 4096)
+        print "driving motor: " + str(motor) + " with value: " + str(motorVal)
 
 
     # returns a float of how far from straight the potentiomer is. > 0 for Right, < 0 for left
     # returns -1 if error
-    def readPot(self):
-        result = self.POT_MIDDLE - ADC.read(self.POT_PIN)
+    def readPot(self):        result = self.POT_MIDDLE - ADC.read(self.POT_PIN)
         if result > self.POT_MIDDLE - self.POT_RIGHT or result < self.POT_MIDDLE - self.POT_LEFT:
             print result
             return -1
@@ -89,9 +107,8 @@ class Robot:
     # turn value is 100 for full right -100 for full left and 0 for straight
     def getDriveParms(self, auto):
         if self.receivedDrive == None:
-            return (0, 0)
-        auto = self.receivedDrive[0]
-        if auto:
+             return (0, 0)
+        auto = self.receivedDrive[0]        if auto:
             return (20, self.calculateDesiredTurn(self.getMag()))
         else:
             return (self.receivedDrive[1], self.receivedDrive[2])
@@ -99,7 +116,7 @@ class Robot:
 
     # returns automatic drive parms from gps, mag, sonar and destination
     # TODO: figure out a way to change throttle while on autopilot?
-    def getAutoDriveParms(self):
+=    def getAutoDriveParms(self):
         # print self.getGPS()
         return (10, self.calculateDesiredTurn(self.getMag()))
 
@@ -109,7 +126,7 @@ class Robot:
         print "back: " + str(rawMag)
         pot = self.readPot()
         angle = self.translateValue(pot, self.POT_LEFT - self.POT_MIDDLE, self.POT_RIGHT - self.POT_MIDDLE, -40, 40)
-        print "front: " + str((rawMag + angle) % 360)
+         print "front: " + str((rawMag + angle) % 360)
         return (rawMag + angle) % 360
 
     # returns gps data
@@ -117,20 +134,31 @@ class Robot:
     def getGPS(self):
         return self.gps.read()
 
-    '''
+    
     # calculates the desired heading
     # returns a value between 0 and 360 inclusive
     # TODO: calculate direction between current GPS location and destination
-    # update: acting under the assumption of current GPS coordinates destination array
-    # takes first value in array
-    # destination coords dlat, dlong; unsure of how to get these
+    # note that destinations is an array of arrays; destination GPS location 
+    # is at [0] which contains [lat, long]
     def calculateDesiredHeading(self):
-        x_distance = destinations[0].lat - self.coord.lat;
-        y_distance = destinations[0].long - self.coord.long;
+        currLocation = self.gps.getCoords()
+        currLat = currLocation[0]
+        currLong = currLocation[1]
+        x_distance = destinations[0][0] - currLat;
+        y_distance = destinations[0][1] - currLong;
         theta = math.atan2(x_distance, y_distance)
         return self.translateValue(self, theta, -1 * pi, pi, 0, 360)
-    '''
-
+    
+    # calculates desired new GPS coordinate based on distance
+    # from current GPS location and current heading in degrees 
+    def calculateDesiredNewCoordinate(self, currHeading, distance):
+        theta = self.translateValue(self, currHeading, 0, 360, -1*pi, pi)
+        x = distance * math.cos(theta)
+        y = distance * math.sin(theta)
+        coords = {x, y}
+        return coords
+        
+        
     # returns a turn value from -100 to 100 based on the difference between the current heading and the desired heading
     def calculateDesiredTurn(self, curHeading):
         desiredHeading = self.calculateDesiredHeading()
