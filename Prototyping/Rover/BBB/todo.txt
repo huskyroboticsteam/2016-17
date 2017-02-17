@@ -13,7 +13,7 @@ Autonomous:
         - calc heading of front based on Pot reading
     Obstacle avoidance
         - distance sensor - science team
-        - design algorithm
+        - design algorithm - Albert and Benton
         - keep a map of known obstacles?
     Encoders (EE motor controller will feed us rotations speeds)
         - interrupts?
