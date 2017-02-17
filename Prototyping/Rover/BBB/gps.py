@@ -48,17 +48,17 @@ class GPS:
     def getCoords(self){
         info = self.read()
         lat = info[3]
-        latD = info[4]
-        long = info[5]
-        longD = info[6]
+        latDir = info[4]
+        lon = info[5]
+        longDir = info[6]
         coords = []
         if (latD == 'S'):
             coords.append(latD * -1)
         else:
-            coords.append(latD)
-        if(longD == 'W'):
-            coords.append(longD * -1)
+            coords.append(lat)
+        if(longDir == 'W'):
+            coords.append(longDir * -1)
         else:
-            coords.append(longD)
+            coords.append(lon)
         return coords
             
