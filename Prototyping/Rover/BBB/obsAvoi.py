@@ -11,13 +11,12 @@ class obsAvoi :
         self.POT_RIGHT = RP
         self.POT_MIDDLE = (self.POT_LEFT + self.POT_RIGHT) / 2
 
-    # TODO: Use sensor in front of rover to determine if there is a
-    #       an obstacle within a certain distance in front
-    #       Waiting for code from science subteam
+    # TODO: Return bool signifying if there is obstacle witin given distance
+    #       Waiting for code from science sub-team
     def isObstacle (self, distance):
         return false
 
-    # Looks around for obstacles and returns a heading without one
+    # Looks around for obstacles and returns a heading without obstacle
     def getDetourHeading(self):
         possibleHeadings = []
         # Stop the rover
@@ -26,19 +25,28 @@ class obsAvoi :
         # Make the rover look as far left as possible
         while(readPot < POT_LEFT):
             robot.driveMoter(1, 20)
+            robot.driveMoter(2, -20)
+            robot.driveMoter(3, -20)
             robot.driveMoter(4, 20)
         robot.driveMoter(1, 0)
+        robot.driveMoter(2, 0)
+        robot.driveMoter(3, 0)
         robot.driveMoter(4, 0)
         # Look from left to right gathering obstacles in an arc ahead
         while(readPot > POT_Right):
             robot.driveMoter(1, -20)
+            robot.driveMoter(2, 20)
+            robot.driveMoter(3, 20)
             robot.driveMoter(4, -20)
-            possibleHeadings.append((getMag(), isObstacle))
+            possibleHeadings.append((getMag(), isObstacle(self, 2)))
             #TODO: Maybe? Add pause to slow read speed
         Robot.driveMoter(1, 0)
+        robot.driveMoter(2, 0)
+        robot.driveMoter(3, 0)
         Robot.driveMoter(4, 0)
-        # Determine path closest to center with no obstacle
         centerHeading = possibleHeadings.pop(self, int(len(possibleHeadings) / 2))[0]
+        # Determine path closest to center with no obstacle
+        # Removes values from center of array outward
         inLoop = true
         while (inLoop):
             middleHeading = int(len(possibleHeadings) / 2)
@@ -49,12 +57,12 @@ class obsAvoi :
             if(tempHeading[0] is None):
                 inLoop = false
             tempHeading = possibleHeadings.pop(self, middleHeading -1)
-            # Check for next vale to the left of center
+            # Check for next value to the left of center
             if (not tempHeading[1]):
                 return tempHeading[0]
-            if __name__ == '__main__':
-                if (tempHeading[0] is None):
-                    inLoop = false
+            if (tempHeading[0] is None):
+                inLoop = false
         # If all scanned values have something in the way then ...
+        # TODO Fix that problem
         # TO BE CONTINUED
 
