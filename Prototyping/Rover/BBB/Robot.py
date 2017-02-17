@@ -120,7 +120,6 @@ class Robot:
         # print self.getGPS()
         return (10, self.calculateDesiredTurn(self.getMag()))
 
-
     # returns heading of front body or -1 if error
     def getMag(self):
         rawMag = self.mag.read()
@@ -141,7 +140,6 @@ class Robot:
     # TODO: calculate direction between current GPS location and destination
     # note that destinations is an array of arrays; destination GPS location 
     # is at [0] which contains [lat, long]
-    # for sufficiently large distances, should use haversine function
     def calculateDesiredHeading(self):
         currLocation = self.gps.getCoords()
         currLat = currLocation[0]
