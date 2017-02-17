@@ -1,3 +1,4 @@
+
 import serial
 import Adafruit_BBIO.UART as UART
 from time import sleep
@@ -41,3 +42,23 @@ class GPS:
                     return Narray
         except AttributeError:
             return -1
+    
+    # returns coordinates of current location in an array [lat, long]
+    # negative lat corresponds to S direction; negative long corresponds to W
+    def getCoords(self){
+        info = self.read()
+        lat = info[3]
+        latD = info[4]
+        long = info[5]
+        longD = info[6]
+        coords = []
+        if (latD == 'S'):
+            coords.append(latD * -1)
+        else:
+            coords.append(latD)
+        if(longD == 'W'):
+            coords.append(longD * -1)
+        else:
+            coords.append(longD)
+        return coords
+            
