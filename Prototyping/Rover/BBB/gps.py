@@ -47,18 +47,21 @@ class GPS:
     # negative lat corresponds to S direction; negative long corresponds to W
     def getCoords(self){
         info = self.read()
-        lat = info[3]
-        latDir = info[4]
-        lon = info[5]
-        longDir = info[6]
-        coords = []
-        if (latDir == 'S'):
-            coords.append(lat * -1)
-        else:
-            coords.append(lat)
-        if(longDir == 'W'):
-            coords.append(lon * -1)
-        else:
-            coords.append(lon)
-        return coords
+        try (info != None):
+            lat = info[3]
+            latDir = info[4]
+            lon = info[5]
+            longDir = info[6]
+            coords = []
+            if (latDir == 'S'):
+                coords.append(lat * -1)
+            else:
+                coords.append(lat)
+            if(longDir == 'W'):
+                coords.append(lon * -1)
+            else:
+                coords.append(lon)
+            return coords
+        except:
+            self.getCoords()
             
