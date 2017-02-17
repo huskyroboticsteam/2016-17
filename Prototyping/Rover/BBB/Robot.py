@@ -145,8 +145,8 @@ class Robot:
     # takes first value in array
     # destination coords dlat, dlong; unsure of how to get these
     def calculateDesiredHeading(self):
-        x_distance = dlat - lat
-        y_distance = dlong - long
+        x_distance = dlat - destinations[0].lat;
+        y_distance = dlong - destinations[0].long;
         theta = math.atan2(x_distance, y_distance)
         return self.translateValue(self, theta, -1 * pi, pi, 0, 360)
     '''
