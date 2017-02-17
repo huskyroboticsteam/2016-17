@@ -5,6 +5,7 @@ import PID
 import math
 import gps as GPS
 import mag as MAG
+import Motor
 import socket
 import struct
 
@@ -32,6 +33,19 @@ class Robot:
         self.mag = MAG.Magnetometer()
         self.gps = GPS.GPS()
         self.pot_pid = PID.PID(-0.1, 0, 0)
+        # setup motors
+        # motor: throttle, F, B
+        # 1: 8,  9,  10
+        # 2: 13, 12, 11
+        # 3: 2,  4,  3
+        # 4: 7,  6,  5
+        self.motors = [
+            None, # motor IDs are 1-based, so placeholder for index 0
+            Motor.Motor(1, 8, 9, 10, self.pwm),
+            Motor.Motor(2, 13, 12, 11, self.pwm),
+            Motor.Motor(3, 2, 4, 3, self.pwm),
+            Motor.Motor(4, 7, 6, 5, self.pwm),
+        ]
         # Potentiometer pin:
         self.POT_PIN = "AIN2"
         self.POT_LEFT = 0.771
@@ -48,52 +62,18 @@ class Robot:
         self.base_station_ip = None
         self.driveFormat = "<??hh"
         self.gpsFormat = "<?hhhhhh"
+        self.rtbFormat = "<fffffhhhhhh"
         self.sock = socket.socket(socket.AF_INET,  # Internet
                                 socket.SOCK_DGRAM)  # UDP
         self.sock.bind((self.robot_ip, self.udp_port))
         self.sock.setblocking(False)
 
-
-    # motor: throttle, F, B
-    # 1: 8,  9,  10
-    # 2: 13, 12, 11
-    # 3: 2,  4,  3
-    # 4: 7,  6,  5
     # drives the motor with a value, negative numbers for reverse
-    def driveMotor(self, motor, motorVal):
-        # verify value is good
-        motorVal = int(motorVal)
-        if abs(motorVal) > 255:
-            print "bad value: " + str(motorVal)
+    def driveMotor(self, motor_id, motor_val):
+        if motor_id < 1 or motor_id > 4:
+            print "bad motor num: " + motor_id
             return
-        # select proper pins
-        if motor == 1:
-            throttlePin = 8
-            forwardPin = 9
-            backPin = 10
-        elif motor == 2:
-            throttlePin = 13
-            forwardPin = 12
-            backPin = 11
-        elif motor == 3:
-            throttlePin = 2
-            forwardPin = 4
-            backPin = 3
-        elif motor == 4:
-            throttlePin = 7
-            forwardPin = 6
-            backPin = 5
-        else:
-            print "bad motor num"
-            return
-        self.pwm.set_pwm(forwardPin, 4096, 0)
-        self.pwm.set_pwm(backPin, 4096, 0)
-        self.pwm.set_pwm(throttlePin, 2048 - abs(motorVal) * 8, 2048 + abs(motorVal) * 8)
-        if motorVal > 0:
-            self.pwm.set_pwm(forwardPin, 0, 4096)
-        if motorVal < 0:
-            self.pwm.set_pwm(backPin, 0, 4096)
-        print "driving motor: " + str(motor) + " with value: " + str(motorVal)
+        self.motors[motor_id].set_motor(motor_val)
 
 
     # returns a float of how far from straight the potentiomer is. > 0 for Right, < 0 for left
