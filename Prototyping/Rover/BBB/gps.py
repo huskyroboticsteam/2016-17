@@ -45,9 +45,9 @@ class GPS:
     
     # returns coordinates of current location in an array [lat, long]
     # negative lat corresponds to S direction; negative long corresponds to W
-    def getCoords(self){
+    def getCoords(self):
         info = self.read()
-        try (info != None):
+        try:
             lat = info[3]
             latDir = info[4]
             lon = info[5]
