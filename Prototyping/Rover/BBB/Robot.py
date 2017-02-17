@@ -141,7 +141,8 @@ class Robot:
     # calculates the desired heading
     # returns a value between 0 and 360 inclusive
     # TODO: calculate direction between current GPS location and destination
-    # update: acting under the assumption of current GPS coordinates stored in variables lat, long
+    # update: acting under the assumption of current GPS coordinates destination array
+    # takes first value in array
     # destination coords dlat, dlong; unsure of how to get these
     def calculateDesiredHeading(self):
         x_distance = dlat - lat
