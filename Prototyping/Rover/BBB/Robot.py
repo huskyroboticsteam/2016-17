@@ -48,7 +48,7 @@ class Robot:
         self.base_station_ip = None
         self.driveFormat = "<??hh"
         self.gpsFormat = "<?hhhhhh"
-        self.rtbFormat = "<ffffffhhhhhh"
+        self.rtbFormat = "<fffffhhhhhh"
         self.sock = socket.socket(socket.AF_INET,  # Internet
                                 socket.SOCK_DGRAM)  # UDP
         self.sock.bind((self.robot_ip, self.udp_port))
