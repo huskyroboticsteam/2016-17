@@ -52,12 +52,12 @@ class GPS:
         lon = info[5]
         longDir = info[6]
         coords = []
-        if (latD == 'S'):
-            coords.append(latD * -1)
+        if (latDir == 'S'):
+            coords.append(lat * -1)
         else:
             coords.append(lat)
         if(longDir == 'W'):
-            coords.append(longDir * -1)
+            coords.append(lon * -1)
         else:
             coords.append(lon)
         return coords
