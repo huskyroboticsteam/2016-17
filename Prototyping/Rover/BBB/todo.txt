@@ -25,7 +25,7 @@ For large Rover:
 Misc:
     make func ok - Brian
     refactoring
-        - add a Motor class
+        - add a Motor class - Done by Tim
         - PID.py
-    Motor ramp up
+    Motor ramp up - Done by Tim
     driving via keyboard input - Tim
