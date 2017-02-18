@@ -27,5 +27,6 @@ class CommandApi:
         if self.map is not None:
             print
 
-    def send_auto_data(self):
-        print
+
+def send_auto_data(self):
+    print

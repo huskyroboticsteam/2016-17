@@ -1,11 +1,11 @@
 from PyQt4 import QtGui
 import sys
-from ui_components.map import MapWidget, Command
+from ui_components.map import MapWidget
 from ui_components.ip_scanner import IPCheckerLayout
 from ui_components.camera_streaming import UI
 from ui_components.emergency_stop import stop
 from ui_components.settings import settings
-from ui_components import command_api
+from ui_components import command_api, Command
 from ui_components.arm_viz import arm_widget
 from ui_components.sensors import SensorWidget
 from ui import Ui_MainWindow
@@ -28,7 +28,7 @@ win = QtGui.QMainWindow()
 main = Ui_MainWindow()
 main.setupUi(win)
 win.resize(1200, 675)
-comm = command_api.CommandApi()
+comm = command_api.CommandApi(None)
 setting_widget = settings.Settings(main, comm)
 
 # Creates the map at 800x200 px and updates at 30 fps

@@ -58,13 +58,13 @@ class Map:
         if self.zoom_level < 19:
             self.adjust_map_for_zoom(pygame.mouse.get_pos(), self.zoom_level + 1)
             self.zoom_level += 1
-			self.zoom_marker()
+            self.zoom_marker()
 
     def zoom_out(self):
         if self.zoom_level > 15:
             self.adjust_map_for_zoom(pygame.mouse.get_pos(), self.zoom_level - 1)
             self.zoom_level -= 1
-			self.zoom_marker()
+            self.zoom_marker()
 
     def parse_data_file(self, name):
 
@@ -239,13 +239,14 @@ class Map:
         for i in range(0, len(self.image_tiles[zoom]["tilesImages"])):
             self.image_tiles[zoom]["tilesImages"][i].move(dx, dy)
 
+    # add the position of the rover giving x and y coordinates
+    def add_rover(self, x, y):
+        self.add_marker(x, y, True)
 
-    # add a new marker given the specified coordinates x and y
+    # add a new marker given the specified coordinates x and y, assuming that this isn't a rover
     def add_marker(self, x, y):
-        # remember the coordinates
-        self.coordinates.append((x, y))
         # generates a new marker object
-        self.make_marker(x, y)
+        self.add_marker(x, y, False)
 
     # draw every marker on the screen
     def draw_marker(self):
@@ -254,15 +255,14 @@ class Map:
 
     # changes the position of markers after zooming in
     def zoom_marker(self):
-        # clear all markers
-        self.markers = []
+        new_marker = []
+        for marker in self.markers:
+            new_marker.append(self.make_marker(marker.coordX, marker.coordY, marker.rover))
 
-        # add every marker in the new position after zooming in/out
-        for coords in self.coordinates:
-            self.make_marker(coords[0], coords[1])
+        self.markers = new_marker
 
     # creates a new marker object with the given coordinate x and y
-    def make_marker(self, x, y):
+    def make_marker(self, x, y, rover):
         pixelCoord = Utility.convert_degrees_to_pixels(self.zoom_level, x, y)
         self.centerX2, self.centerY2 = Utility.convert_degrees_to_pixels(self.zoom_level, self.center[0],
                                                                          self.center[1])
@@ -273,7 +273,6 @@ class Map:
         self.centerX2 -= self.TILE_SIZE[0] / 2
         self.centerY2 -= self.TILE_SIZE[1] / 2
 
-        self.markers.append(
-            Marker.Marker(pixelCoord[0] + self.center_location[0], pixelCoord[1] + self.center_location[1],
-                          self.centerX2, self.centerY2, self.screen, self.zoom_level))
+        return Marker.Marker(pixelCoord[0] + self.center_location[0], pixelCoord[1] + self.center_location[1],
+                          self.centerX2, self.centerY2, self.screen, self.zoom_level, x, y, rover)
 
