@@ -1,6 +1,5 @@
 from PyQt4.QtGui import *
 from PyQt4 import QtCore, QtGui
-import command_api
 
 
 class command(QLineEdit):
