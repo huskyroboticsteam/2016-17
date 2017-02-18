@@ -155,6 +155,21 @@ class DriveParams:
 
 
 class DriveThread(threading.Thread):
+    def __init__(self, drive_params):
+        super(DriveThread, self).__init__()
+        self.robot = Robot()
+        self.drive_params = drive_params
+
+    def run(self):
+        while True:
+            drive_params = self.drive_params.get()
+            if drive_params is None:
+                break
+            motor_params = self.robot.convertParmsToMotorVals(drive_params)
+            for i in range(1, 5):
+                self.robot.driveMotor(i, motor_params[i - 1])
+        for i in range(1, 5):
+            self.robot.stopMotor(i)
 
 
 def main():
