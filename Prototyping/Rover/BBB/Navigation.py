@@ -2,7 +2,7 @@ import math
 import Utils
 import mag as MAG
 import gps as GPS
-import Adafruit_BBIO.ADC as ADC
+import Adafruit_BBIO.ADC as ADCv
 
 class Navigation:
     """ Navigation code """
@@ -11,6 +11,8 @@ class Navigation:
         self.auto = True
         # list of GPS coords to travel to
         self.destinations = []
+        # list of tuple with heading and bool determining if obstacle
+        self.scannedHeadings = []
         self.mag = MAG.Magnetometer()
         self.gps = GPS.GPS()
         self.POT_PIN = pot_pin
@@ -18,6 +20,8 @@ class Navigation:
         self.POT_RIGHT = pot_right
         self.POT_MIDDLE = pot_middle
         self.POT_TOL = pot_tol
+        self.avoidingObs = false
+        self.checkingDistance = 2
 
 
     # returns a float of how far from straight the potentiomer is. > 0 for Right, < 0 for left
@@ -77,6 +81,48 @@ class Navigation:
         else:
             #turn left
             return -1 * Utils.translateValue(difHeading % 180, 0, 180, 0, 10)
+
+    # TODO Return a bool determining if there is something in way
+    #      If false, there is no obstacle within checkingDistance of rover sensor
+    def isObstacle(self):
+        return false
+
+    # Adds a (heading, isObsticalVal) pair to scannedHeadings
+    def appendScanedHeadings(self, heading, isObstacleVal):
+        self.scannedHeadings.append(heading, isObstacleVal)
+
+    # Checks to see if first value in scannedHeadings is a "temp" value
+    # If so then just replace it
+    def checkIfAvoidingObs(self, heading):
+        if self.avoidingObs:
+            self.destinations.pop(self, 0)
+            self.destinations.insert(0, calculateDesiredNewCoordinate(heading, self.checkingDistance))
+        else
+            self.destinations.insert(0, calculateDesiredNewCoordinate(heading, self.checkingDistance))
+
+    # Will calculate a heading closest to center and add destination to destination list
+    def addDestination(self):
+        centerHeading = self.scannedHeadings.pop(self, int(len(self.scannedHeadings) / 2))[0]
+        # Determine path closest to center with no obstacle
+        # Removes values from center of array outward
+        inLoop = true
+        while (inLoop):
+            middleHeading = int(len(possibleHeadings) / 2)
+            tempHeading = self.scannedHeadings.pop(self, middleHeading)
+            # Check for next value to the right of center
+            if (not tempHeading[1]):
+                self.scannedHeadings = []
+
+            if self.scannedHeadings[0] is None:
+                inLoop = false
+            tempHeading = possibleHeadings.pop(self, middleHeading -1)
+            # Check for next value to the left of center
+            if (not tempHeading[1]):
+                self.scannedHeadings = []
+                return tempHeading[0]
+            if (self.scannedHeadings[0] is None):
+                inLoop = false
+        # TODO: What to do if there is no path forward?
 
     # returns True for autopilot False for manual control
     def getAuto(self):
