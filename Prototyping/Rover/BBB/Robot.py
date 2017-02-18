@@ -127,7 +127,6 @@ class Robot(object):
     def get_nav(self):
         return self.nav
 
-<<<<<<< Updated upstream
 
 class DriveParams:
     def __init__(self):
@@ -162,13 +161,6 @@ class DriveThread(threading.Thread):
         self.drive_params = drive_params
 
     def run(self):
-=======
-    def
-
-def main():
-    robot = Robot()
-    try:
->>>>>>> Stashed changes
         while True:
             drive_params = self.drive_params.get()
             if drive_params is None:
