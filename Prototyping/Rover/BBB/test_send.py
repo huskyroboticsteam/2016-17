@@ -1,5 +1,6 @@
 import socket
 import struct
+import time
 
 
 class test_send:
@@ -27,19 +28,17 @@ class test_send:
         self.rtbFormat = "<fffffhhhhhh"
         self.sock = socket.socket(socket.AF_INET,  # Internet
                                 socket.SOCK_DGRAM)  # UDP
-        self.sock.bind((self.robot_ip, self.receive_port))
-        self.sock2 = socket.socket(socket.AF_INET,  # Internet
-                                socket.SOCK_DGRAM)
-        self.sock2.bind((self.robot_ip, self.send_port))
-        self.sock.setblocking(False)
-        self.sock2.setblocking(False)
+        self.sock.bind(("0.0.0.0", 58152))
+        #self.sock.setblocking(False)
+        self.bind = False
         self.bound = False
 
     def receiveData(self):
         try:
             data, addr = self.sock.recvfrom(1024)  # buffer size is 1024 bytes
+            self.sock.sendto(data, addr)
             self.base_station_ip = addr
-            self.bound = True
+            self.bind = True
             unpacked = struct.unpack(self.driveFormat, data)
             if unpacked[0]:
                 self.receivedDrive = unpacked[1:]
@@ -52,12 +51,14 @@ class test_send:
 
     # sends data in message back to the base station
     def sendData(self):
+        if self.bind and not self.bound:
+            self.bound = True
         if self.bound:
             MESSAGE = struct.pack(self.rtbFormat, 10, 9, 1, 2, 3, 4, 1.0, 2.0, 3.0, 4.0, 5.0)
             print MESSAGE
             print self.base_station_ip
             print self.send_port
-            self.sock2.sendto(MESSAGE, (self.base_station_ip[0], self.send_port))
+            self.sock.sendto(MESSAGE, (self.base_station_ip[0], 58152))
         pass
         # TODO: do this
         # read data from sensors or read class variables
@@ -65,8 +66,10 @@ def main():
     robot = test_send()
     try:
         while True:
+            time.sleep(1)
             robot.receiveData()
-            robot.sendData()
+            time.sleep(1)
+            #robot.sendData()
     except KeyboardInterrupt:
         print "exiting"
 
