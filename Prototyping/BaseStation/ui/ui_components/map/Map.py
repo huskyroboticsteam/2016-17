@@ -241,12 +241,12 @@ class Map:
 
     # add the position of the rover giving x and y coordinates
     def add_rover(self, x, y):
-        self.add_marker(x, y, True)
+        self.markers.append(self.make_marker(x, y, True))
 
     # add a new marker given the specified coordinates x and y, assuming that this isn't a rover
     def add_marker(self, x, y):
         # generates a new marker object
-        self.add_marker(x, y, False)
+        self.markers.append(self.make_marker(x, y, False))
 
     # draw every marker on the screen
     def draw_marker(self):
@@ -276,3 +276,8 @@ class Map:
         return Marker.Marker(pixelCoord[0] + self.center_location[0], pixelCoord[1] + self.center_location[1],
                           self.centerX2, self.centerY2, self.screen, self.zoom_level, x, y, rover)
 
+    def remove_marker(self, index):
+            if(index < len(self.markers) and index > -1):
+                self.markers.pop(index)
+            else:
+                print "Inavlid index at", (index + 1)
