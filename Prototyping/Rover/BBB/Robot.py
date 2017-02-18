@@ -2,6 +2,7 @@ import Adafruit_BBIO.ADC as ADC
 import Adafruit_PCA9685
 import PID
 import math
+import threading
 import MiniMotor
 import BigMotor
 import Robot_comms
@@ -126,21 +127,69 @@ class Robot(object):
     def get_nav(self):
         return self.nav
 
-def main():
-    robot = Robot()
-    try:
-        while True:
-            robot.get_robot_comms().receiveData(robot.get_nav())
-            robot.get_robot_comms().sendData(robot.get_nav())
-            driveParms = robot.getDriveParms(robot.get_nav().getAuto())
-            MotorParms = robot.convertParmsToMotorVals(driveParms)
-            for i in range(1, 5):
-                robot.driveMotor(i, MotorParms[i - 1])
 
-    except KeyboardInterrupt:
-        for i in range(1, 5):
-            robot.stopMotor(i)
-        print "exiting"
+class DriveParams:
+    def __init__(self):
+        self.throttle = 0.0
+        self.turn = 0.0
+        self.is_stopped = False
+        self.lock = threading.Lock()
+
+    def set(self, throttle, turn):
+        with self.lock:
+            self.throttle = throttle
+            self.turn = turn
+
+    def stop(self):
+        with self.lock:
+            self.is_stopped = True
+
+    def get(self):
+        temp = ()
+        with self.lock:
+            if self.is_stopped:
+                temp = None
+            else:
+                temp = self.throttle, self.turn
+        return temp
+
+
+class DriveThread(threading.Thread):
+
+
+def main():
+    choice = raw_input('Control robot with keyboard? (y/n) ')
+    if choice[0] == 'y':
+        drive_params = DriveParams()
+        drive_thread = DriveThread(drive_params)
+        drive_thread.start()
+        print 'Enter throttle followed by turn, separated by spaces.'
+        print 'For turn, 100 is full right, -100 is full left.'
+        try:
+            while True:
+                in_str = raw_input('input: ')
+                in_list = in_str.split()
+                throttle = float(in_list[0])
+                turn = float(in_list[1])
+                drive_params.set(throttle, turn)
+        except KeyboardInterrupt:
+            drive_params.stop()
+            drive_thread.join()
+    else:
+        robot = Robot()
+        try:
+            while True:
+                robot.get_robot_comms().receiveData(robot.get_nav())
+                robot.get_robot_comms().sendData(robot.get_nav())
+                driveParms = robot.getDriveParms(robot.get_nav().getAuto())
+                MotorParms = robot.convertParmsToMotorVals(driveParms)
+                for i in range(1, 5):
+                    robot.driveMotor(i, MotorParms[i - 1])
+
+        except KeyboardInterrupt:
+            for i in range(1, 5):
+                robot.stopMotor(i)
+            print "exiting"
 
 if __name__ == "__main__":
     main()
