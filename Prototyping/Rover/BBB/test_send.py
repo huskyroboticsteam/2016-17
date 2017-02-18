@@ -29,14 +29,13 @@ class test_send:
         self.sock = socket.socket(socket.AF_INET,  # Internet
                                 socket.SOCK_DGRAM)  # UDP
         self.sock.bind(("0.0.0.0", 58152))
-        #self.sock.setblocking(False)
+        self.sock.setblocking(False)
         self.bind = False
         self.bound = False
 
     def receiveData(self):
         try:
             data, addr = self.sock.recvfrom(1024)  # buffer size is 1024 bytes
-            self.sock.sendto(data, addr)
             self.base_station_ip = addr
             self.bind = True
             unpacked = struct.unpack(self.driveFormat, data)
@@ -58,7 +57,7 @@ class test_send:
             print MESSAGE
             print self.base_station_ip
             print self.send_port
-            self.sock.sendto(MESSAGE, (self.base_station_ip[0], 58152))
+            self.sock.sendto(MESSAGE, self.base_station_ip)
         pass
         # TODO: do this
         # read data from sensors or read class variables
@@ -69,7 +68,7 @@ def main():
             time.sleep(1)
             robot.receiveData()
             time.sleep(1)
-            #robot.sendData()
+            robot.sendData()
     except KeyboardInterrupt:
         print "exiting"
 
