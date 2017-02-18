@@ -65,5 +65,4 @@ class CommsUpdate:
         self.command_api.update_sensors(pot, mag, enc_1, enc_2, enc_3, enc_4)
         self.command_api.update_rover_pos(lat_deg, lat_min, lat_sec, lng_deg, lng_min, lng_sec)
 
-        # TODO: convert this format to floats
         # TODO: add arm packets structure

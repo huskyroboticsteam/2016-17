@@ -13,11 +13,13 @@ class CommandApi:
         g = Generator.Generator(self.map.TILE_SIZE, self.map.image_tiles)
         return g.generate_maps(map_name, lat, lng)
 
-    def update_sensors(self, pos, mag, enc_1, enc_2, enc_3, enc_4):
-        print
-        # TODO: update sensor module
+    def update_sensors(self, pot, mag, enc_1, enc_2, enc_3, enc_4):
+        dictionary = {"Potentiometer": pot, "Magnetometer": mag, "Encoder 1": enc_1,
+                      "Encoder 2": enc_2, "Encoder 3": enc_3, "Encoder 4": enc_4}
+        self.sensors.update_ui(dictionary)
 
     def update_rover_pos(self, lat_deg, lat_min, lat_sec, lng_deg, lng_min, lng_sec):
+        # TODO: convert this format to floats and update on map
         if self.map is not None:
             print
 
