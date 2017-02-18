@@ -5,8 +5,7 @@ import PID
 import math
 import MiniMotor
 import BigMotor
-import socket
-import struct
+import Robot_comms
 import Navigation
 import Utils
 
@@ -47,17 +46,8 @@ class Robot:
             MiniMotor.MiniMotor(3, 2, 4, 3, self.pwm),
             MiniMotor.MiniMotor(4, 7, 6, 5, self.pwm),
         ]
-        self.receivedDrive = None
-        self.robot_ip = "192.168.0.40"
-        self.udp_port = 8840
-        self.base_station_ip = None
-        self.driveFormat = "<??hh"
-        self.gpsFormat = "<?hhhhhh"
-        self.rtbFormat = "<fffffhhhhhh"
-        self.sock = socket.socket(socket.AF_INET,  # Internet
-                                socket.SOCK_DGRAM)  # UDP
-        self.sock.bind((self.robot_ip, self.udp_port))
-        self.sock.setblocking(False)
+        self.r_comms = Robot_comms.Robot_comms("192.168.0.40", 8840, "<??hh", "<?hhhhhh", "<fffffhhhhhh")
+
 
     # drives the motor with a value, negative numbers for reverse
     def driveMotor(self, motor_id, motor_val):
@@ -69,13 +59,13 @@ class Robot:
     # returns a 2-tuple of (throttle, turn)
     # turn value is 100 for full right -100 for full left and 0 for straight
     def getDriveParms(self, auto):
-        if self.receivedDrive == None:
+        if self.r_comms.receivedDrive == None:
             return 0, 0
-        auto = self.receivedDrive[0]
+        auto = self.r_comms.receivedDrive[0]
         if auto:
             return 20, self.nav.calculateDesiredTurn(self.nav.getMag())
         else:
-            return self.receivedDrive[1], self.receivedDrive[2]
+            return self.r_comms.receivedDrive[1], self.r_comms.receivedDrive[2]
 
     # returns automatic drive parms from gps, mag, sonar and destination
     # TODO: figure out a way to change throttle while on autopilot?
@@ -125,35 +115,18 @@ class Robot:
     def scale_motor_val(self, val):
         return math.atan(val / 40) * (255 * 2 / math.pi)
 
+    def get_robot_comms(self):
+        return self.r_comms
 
-    # receives a packet and sets variables accordingly
-    def receiveData(self):
-        try:
-            data, addr = self.sock.recvfrom(1024)  # buffer size is 1024 bytes
-            self.base_station_ip = addr
-            unpacked = struct.unpack(self.driveFormat, data)
-            if unpacked[0]:
-                self.receivedDrive = unpacked[1:]
-            else:
-                unpacked = struct.unpack(self.gpsFormat, data)
-                self.nav.append_destination(unpacked[1:])
-            print unpacked
-        except:
-            pass
-
-    # sends data in message back to the base station
-    def sendData(self):
-        pass
-        # TODO: do this
-        # read data from sensors or read class variables
-
+    def get_nav(self):
+        return self.nav
 
 def main():
     robot = Robot()
     try:
         while True:
-            robot.receiveData()
-            robot.sendData()
+            robot.get_robot_comms().receiveData(robot.get_nav())
+            robot.get_robot_comms().sendData(robot.get_nav())
             driveParms = robot.getDriveParms(robot.getAuto())
             MotorParms = robot.convertParmsToMotorVals(driveParms)
             for i in range(1, 5):
