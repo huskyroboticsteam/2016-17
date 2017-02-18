@@ -97,11 +97,12 @@ class Navigation:
         if self.avoidingObs:
             self.destinations.pop(self, 0)
             self.destinations.insert(0, calculateDesiredNewCoordinate(heading, self.checkingDistance))
-        else
+        else:
             self.destinations.insert(0, calculateDesiredNewCoordinate(heading, self.checkingDistance))
 
     # Will calculate a heading closest to center and add destination to destination list
     def addDestination(self):
+        # Not used now but might need it if not path forward
         centerHeading = self.scannedHeadings.pop(self, int(len(self.scannedHeadings) / 2))[0]
         # Determine path closest to center with no obstacle
         # Removes values from center of array outward
