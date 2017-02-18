@@ -3,8 +3,8 @@ import Robot
 class obsAvoi :
 # Obstacle Avoidance
 # A work in progress
-# Assumes it will be placed within
-# Will work on making it better after Robot.py refactor
+# Will be moved over to Navigation.py
+
 
     def __init__(self, LP, RP):
         self.POT_LEFT = LP
@@ -24,14 +24,14 @@ class obsAvoi :
             robot.driveMotor(i, 0)
         # Make the rover look as far left as possible
         while(readPot < POT_LEFT):
-            robot.driveMoter(1, 20)
-            robot.driveMoter(2, -20)
-            robot.driveMoter(3, -20)
-            robot.driveMoter(4, 20)
-        robot.driveMoter(1, 0)
-        robot.driveMoter(2, 0)
-        robot.driveMoter(3, 0)
-        robot.driveMoter(4, 0)
+            robot.driveMotor(1, 20)
+            robot.driveMotor(2, -20)
+            robot.driveMotor(3, -20)
+            robot.driveMotor(4, 20)
+        robot.driveMotor(1, 0)
+        robot.driveMotor(2, 0)
+        robot.driveMotor(3, 0)
+        robot.driveMotor(4, 0)
         # Look from left to right gathering obstacles in an arc ahead
         while(readPot > POT_Right):
             robot.driveMoter(1, -20)
