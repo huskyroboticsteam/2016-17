@@ -1,11 +1,16 @@
 import Adafruit_BBIO.ADC as ADC
 import Adafruit_PCA9685
+import PID
 import math
 import threading
-import PID
+import sys
+import MiniMotor
+import BigMotor
+import Robot_comms
+import Navigation
+import Utils
 
-
-class Robot:
+class Robot(object):
     '''
     ROBOT motor configuration:
 
@@ -25,82 +30,71 @@ class Robot:
         # setup i2c to motorshield
         self.pwm = Adafruit_PCA9685.PCA9685(address=0x60, busnum=1)
         self.pwm.set_pwm_freq(60)
+
         self.pot_pid = PID.PID(-0.1, 0, 0)
-        # Potentiometer pin:
-        self.POT_PIN = "AIN2"
-        self.POT_LEFT = 0.771
-        self.POT_RIGHT = 0.346
-        self.POT_MIDDLE = (self.POT_LEFT + self.POT_RIGHT) / 2
-        self.POT_TOL = 0.01
+
+        self.nav = Navigation.Navigation(0.771, 0.346, (0.771 + 0.346) / 2, 0.01, "AIN2")
+        # setup motors
+        # motor: throttle, F, B
+        # 1: 8,  9,  10
+        # 2: 13, 12, 11
+        # 3: 2,  4,  3
+        # 4: 7,  6,  5
+        self.motors = [
+            None, # motor IDs are 1-based, so placeholder for index 0
+            MiniMotor.MiniMotor(1, 8, 9, 10, self.pwm),
+            MiniMotor.MiniMotor(2, 13, 12, 11, self.pwm),
+            MiniMotor.MiniMotor(3, 2, 4, 3, self.pwm),
+            MiniMotor.MiniMotor(4, 7, 6, 5, self.pwm),
+        ]
+        self.r_comms = Robot_comms.Robot_comms("192.168.0.40", 8840, "<??hh", "<?hhhhhh", "<fffffhhhhhh")
 
 
-    # motor: throttle, F, B
-    # 1: 8,  9,  10
-    # 2: 13, 12, 11
-    # 3: 2,  4,  3
-    # 4: 7,  6,  5
     # drives the motor with a value, negative numbers for reverse
-    def driveMotor(self, motor, motorVal):
-        # verify value is good
-        motorVal = int(motorVal)
-        if abs(motorVal) > 255:
-            print "bad value: " + str(motorVal)
+    def driveMotor(self, motor_id, motor_val):
+        if motor_id < 1 or motor_id > 4:
+            print "bad motor num: " + motor_id
             return
-        # select proper pins
-        if motor == 1:
-            throttlePin = 8
-            forwardPin = 9
-            backPin = 10
-        elif motor == 2:
-            throttlePin = 13
-            forwardPin = 12
-            backPin = 11
-        elif motor == 3:
-            throttlePin = 2
-            forwardPin = 4
-            backPin = 3
-        elif motor == 4:
-            throttlePin = 7
-            forwardPin = 6
-            backPin = 5
-        else:
-            print "bad motor num"
+        self.motors[motor_id].set_motor(motor_val)
+
+    def stopMotor(self, motor_id):
+        if motor_id < 1 or motor_id > 4:
+            print "bad motor num: " + motor_id
             return
-        self.pwm.set_pwm(forwardPin, 4096, 0)
-        self.pwm.set_pwm(backPin, 4096, 0)
-        self.pwm.set_pwm(throttlePin, 2048 - abs(motorVal) * 8, 2048 + abs(motorVal) * 8)
-        if motorVal > 0:
-            self.pwm.set_pwm(forwardPin, 0, 4096)
-        if motorVal < 0:
-            self.pwm.set_pwm(backPin, 0, 4096)
-        print "driving motor: " + str(motor) + " with value: " + str(motorVal)
+        self.motors[motor_id].set_motor_exactly(0)
 
-
-    # returns a float of how far from straight the potentiomer is. > 0 for Right, < 0 for left
-    # returns -1 if error
-    def readPot(self):
-        result = self.POT_MIDDLE - ADC.read(self.POT_PIN)
-        if result > self.POT_MIDDLE - self.POT_RIGHT or result < self.POT_MIDDLE - self.POT_LEFT:
-            return -1
-        return result
-
-
-    # takes a 2-tuple of (throttle, turn)
+    # returns a 2-tuple of (throttle, turn)
     # turn value is 100 for full right -100 for full left and 0 for straight
+    def getDriveParms(self, auto):
+        if self.r_comms.receivedDrive == None:
+            return 0, 0
+        auto = self.r_comms.receivedDrive[0]
+        if auto:
+            return 20, self.nav.calculateDesiredTurn(self.nav.getMag())
+        else:
+            return self.r_comms.receivedDrive[1], self.r_comms.receivedDrive[2]
+
+    # returns automatic drive parms from gps, mag, sonar and destination
+    # TODO: figure out a way to change throttle while on autopilot?
+    def getAutoDriveParms(self):
+        # print self.getGPS()
+        return 10, self.nav.calculateDesiredTurn(self.nav.getMag())
+
     # returns a tuple of (motor1, motor2, motor3, motor4) from the driveParms modified by the pot reading
     def convertParmsToMotorVals(self, driveParms):
-        potReading = self.readPot()
+        potReading = self.nav.readPot()
         if potReading != -1:
             # Potentiometer is good. Run PID.
             self.setPIDTarget(self.pot_pid, int(driveParms[1]), -100, 100)
-            angle = self.translateValue(pot, self.POT_LEFT - self.POT_MIDDLE, self.POT_RIGHT - self.POT_MIDDLE, -40, 40)
+            scaledPotReading = Utils.translateValue(potReading, self.nav.get_pot_left() - self.nav.get_pot_middle(), \
+                                                    self.nav.get_pot_right() - self.nav.get_pot_middle(), 100, -100)
             self.pot_pid.run(scaledPotReading)
             finalTurn = self.pot_pid.getOutput()
             print str(driveParms)
-            result = (self.func(driveParms[0] + finalTurn),
-                      self.func(driveParms[0] - finalTurn),
-                      self.func(driveParms[0] - finalTurn),
-                      self.func(driveParms[0] + finalTurn))
+            result = (self.scale_motor_val(driveParms[0] + finalTurn),
+                      self.scale_motor_val(driveParms[0] - finalTurn),
+                      self.scale_motor_val(driveParms[0] - finalTurn),
+                      self.scale_motor_val(driveParms[0] + finalTurn))
             return result
         else:
             print "Pot Error"
@@ -108,10 +102,10 @@ class Robot:
             # reset PID:
             self.pot_pid.setTarget(0)
             print str(driveParms)
-            result = (self.func(driveParms[0] + driveParms[1]),
-                      self.func(driveParms[0] - driveParms[1]),
-                      self.func(driveParms[0] - driveParms[1]),
-                      self.func(driveParms[0] + driveParms[1]))
+            result = (self.scale_motor_val(driveParms[0] + driveParms[1]),
+                      self.scale_motor_val(driveParms[0] - driveParms[1]),
+                      self.scale_motor_val(driveParms[0] - driveParms[1]),
+                      self.scale_motor_val(driveParms[0] + driveParms[1]))
             print str(result)
             return result
 
@@ -121,36 +115,24 @@ class Robot:
         elif pid.getTarget() != inputVal:
             pid.setTarget(inputVal)
 
-    # translate values from one range to another
-    def translateValue(self, value, inMin, inMax, outMin, outMax):
-        # Figure out how 'wide' each range is
-        inSpan = inMax - inMin
-        outSpan = outMax - outMin
 
-        # Convert the left range into a 0-1 range (float)
-        valueScaled = float(value - inMin) / float(inSpan)
 
-        # Convert the 0-1 range into a value in the right range.
-        return outMin + (valueScaled * outSpan)
+    # a monotonically increasing function with output of -256 < x < 256
+    # scales the motor value for driving the motors so that it never has a value outside of the safe range
+    def scale_motor_val(self, val):
+        return math.atan(val / 40) * (255 * 2 / math.pi)
 
-    # Does important stuff
-    # Don't touch
-    # If you have questions contact DenverCoder9
-    # Applied temporary fix 8/23/2003
-    # Assumes va1 is not in the range (100246, 100261)
-    def func(self, va1):
-        # calculates the difference.
-        # TODO: add support for 64-bit platforms
-        # Worst case complexity: O(2^n)
-        # return (0x000000FF | (1 << 8 & (0xFF >> 7) << 6 & 0x0F)) - (0o377 * 0o50) / (va1 + 0b00101000)
-        # temp fix: keeping old code in case it breaks
-        return math.atan(va1 / float(int(float(0o50)))) * (0x01FF / math.pi)
+    def get_robot_comms(self):
+        return self.r_comms
 
+    def get_nav(self):
+        return self.nav
 
 class DriveParams:
     def __init__(self):
         self.throttle = 0.0
         self.turn = 0.0
+        self.is_stopped = False
         self.lock = threading.Lock()
 
     def set(self, throttle, turn):
@@ -158,10 +140,17 @@ class DriveParams:
             self.throttle = throttle
             self.turn = turn
 
+    def stop(self):
+        with self.lock:
+            self.is_stopped = True
+
     def get(self):
         temp = ()
         with self.lock:
-            temp = self.throttle, self.turn
+            if self.is_stopped:
+                temp = None
+            else:
+                temp = self.throttle, self.turn
         return temp
 
 
@@ -174,34 +163,31 @@ class DriveThread(threading.Thread):
     def run(self):
         while True:
             drive_params = self.drive_params.get()
+            if drive_params is None:
+                break
             motor_params = self.robot.convertParmsToMotorVals(drive_params)
             for i in range(1, 5):
                 self.robot.driveMotor(i, motor_params[i - 1])
+        for i in range(1, 5):
+            self.robot.stopMotor(i)
 
 
-class InputThread(threading.Thread):
-    def __init__(self, drive_params):
-        super(InputThread, self).__init__()
-        self.drive_params = drive_params
-
-    def run(self):
-        print 'Enter throttle followed by turn, separated by spaces.'
-        print 'For turn, 100 is full right, -100 is full left.'
+def main():
+    drive_params = DriveParams()
+    drive_thread = DriveThread(drive_params)
+    drive_thread.start()
+    print 'Enter throttle followed by turn, separated by spaces.'
+    print 'For turn, 100 is full right, -100 is full left.'
+    try:
         while True:
             in_str = raw_input('input: ')
             in_list = in_str.split()
             throttle = float(in_list[0])
             turn = float(in_list[1])
-            self.drive_params.set(throttle, turn)
-
-
-
-def main():
-    drive_params = DriveParams()
-    input_thread = InputThread(drive_params)
-    input_thread.start()
-    DriveThread(drive_params).start()
-    input_thread.join()
+            drive_params.set(throttle, turn)
+    except KeyboardInterrupt:
+        drive_params.stop()
+        drive_thread.join()
 
 if __name__ == "__main__":
     main()
