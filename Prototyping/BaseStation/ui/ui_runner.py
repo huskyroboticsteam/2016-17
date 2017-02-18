@@ -7,7 +7,7 @@ from ui_components.emergency_stop import stop
 from ui_components.settings import settings
 from ui_components import command_api, Command
 from ui_components.arm_viz import arm_widget
-from ui_components.sensors import SensorWidget
+from ui_components.sensors import SensorChecker
 from ui import Ui_MainWindow
 
 
@@ -28,7 +28,7 @@ win = QtGui.QMainWindow()
 main = Ui_MainWindow()
 main.setupUi(win)
 win.resize(1200, 675)
-comm = command_api.CommandApi(None)
+comm = command_api.CommandApi(SensorChecker)
 setting_widget = settings.Settings(main, comm)
 
 # Creates the map at 800x200 px and updates at 30 fps
@@ -49,7 +49,7 @@ main.sensor_container.addWidget(iplist)
 # Add the arm visualization
 main.joystick_container.addWidget(arm_widget.arm_widget())
 
-main.reading_container.addWidget(SensorWidget.Sensors())
+main.reading_container.addWidget(SensorChecker.SensorData(None, None))
 
 # Show window, initialize pygame, and execute the app
 win.show()
