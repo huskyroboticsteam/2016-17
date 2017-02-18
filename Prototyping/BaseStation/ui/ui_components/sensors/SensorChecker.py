@@ -1,11 +1,12 @@
 from PyQt4 import QtGui, QtCore
 
+
 class SensorData(QtGui.QWidget):
     def __init__(self, parent=None):
         super(self.__class__, self).__init__(parent)
 
         # Populated with keys from self.map to the QtLabel objects indicating activity
-        self.ui_map = {} #dictionary object
+        self.ui_map = {}  # dictionary object
 
         self.setLayout(self.build_list())
 
