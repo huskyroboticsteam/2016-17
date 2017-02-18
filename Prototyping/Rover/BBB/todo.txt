@@ -29,6 +29,6 @@ Misc:
     refactoring
         - add a Motor class - Done by Tim
     Motor ramp up - Done by Tim
-    driving via keyboard input - Tim
+    driving via keyboard input - Done by Tim
 
 
