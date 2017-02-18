@@ -1,6 +1,5 @@
 import Adafruit_BBIO.ADC as ADC
 import Adafruit_PCA9685
-import time
 import PID
 import math
 import MiniMotor
