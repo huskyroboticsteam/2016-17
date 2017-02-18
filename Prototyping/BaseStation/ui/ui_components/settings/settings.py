@@ -48,7 +48,7 @@ class Settings:
     # Saves the current state of the settings page except for generation of new map form
     def save(self):
         # Write over the settings file
-        f = open(".settings", "w")
+        f = open(".settings", "w+")
         # Write the map name we will open on startup (not validated)
         f.write("default_map=" + str(self.main.map_val.text()) + "\n")
 
