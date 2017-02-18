@@ -5,7 +5,7 @@ from ui_components.ip_scanner import IPCheckerLayout
 from ui_components.camera_streaming import UI
 from ui_components.emergency_stop import stop
 from ui_components.settings import settings
-from ui_components import command_api, Command
+from ui_components import command_api, Command, comms_update
 from ui_components.arm_viz import arm_widget
 from ui_components.sensors import SensorChecker
 from ui import Ui_MainWindow
@@ -29,6 +29,7 @@ main = Ui_MainWindow()
 main.setupUi(win)
 win.resize(1200, 675)
 comm = command_api.CommandApi(SensorChecker)
+sock = comms_update.CommsUpdate(comm)
 setting_widget = settings.Settings(main, comm)
 
 # Creates the map at 800x200 px and updates at 30 fps
@@ -49,13 +50,13 @@ main.sensor_container.addWidget(iplist)
 # Add the arm visualization
 main.joystick_container.addWidget(arm_widget.arm_widget())
 
-main.reading_container.addWidget(SensorChecker.SensorData(None, None))
+main.reading_container.addWidget(SensorChecker.SensorData())
 
 # Show window, initialize pygame, and execute the app
 win.show()
 
 internal_map = map.initialize(setting_widget.get_map_name())
-command_line = Command.command(internal_map.m)
+command_line = Command.command(internal_map.m, sock)
 main.map_container.addWidget(command_line)
 
 # Give the command api the map to talk to

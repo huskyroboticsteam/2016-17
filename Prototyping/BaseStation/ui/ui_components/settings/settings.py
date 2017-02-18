@@ -48,12 +48,16 @@ class Settings:
     # Saves the current state of the settings page except for generation of new map form
     def save(self):
         # Write over the settings file
-        f = open(".settings", "w+")
+        f = open(".settings", "w")
         # Write the map name we will open on startup (not validated)
         f.write("default_map=" + str(self.main.map_val.text()) + "\n")
 
-        # Skip the cams= line since the user shouldn't change this in operation
-        f.next()
+        output = "cams="
+        for i in range(0, len(self.cam_list)):
+            output += self.cam_list[i] + ","
+            if i == len(self.cam_list) - 1:
+                output += self.cam_list[i] + "\n"
+        f.write(output)
 
         # Write the currently selected camera for each feed
         f.write("default_cam_1=" + str(self.main.cam1.currentIndex()) + "\n")

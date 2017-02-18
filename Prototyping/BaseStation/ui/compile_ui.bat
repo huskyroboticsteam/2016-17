@@ -1,1 +1,1 @@
-python "C:\Python27\Lib\site-packages\PyQt4\uic\pyuic.py" ui.ui > ui.py
+python "C:\Program Files (x86)\Python27\Lib\site-packages\PyQt4\uic\pyuic.py" ui.ui > ui.py

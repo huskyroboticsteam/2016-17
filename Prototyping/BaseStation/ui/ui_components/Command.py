@@ -4,10 +4,11 @@ import command_api
 
 
 class command(QLineEdit):
-    def __init__(self, map, parent = None):
+    def __init__(self, map, sock, parent = None):
         super(command, self).__init__(parent)
 
         self.map = map
+        self.sock = sock
         self.commands = ("ADD", "REMOVE", "SET", "AUTO")
 
     def keyPressEvent(self, e): #e is event
@@ -28,6 +29,6 @@ class command(QLineEdit):
         elif (list[0] == "REMOVE"):
             self.map.remove_marker(int(list[1]) - 1)
         elif (list[0] == "AUTO"):
-            command_api.send_auto_data(self.map.markers)
+            command_api.send_auto_data(self.sock, self.map.markers)
 
 
