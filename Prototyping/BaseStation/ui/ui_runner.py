@@ -39,6 +39,7 @@ main.map_container.addWidget(map)
 main.stop_container.addWidget(stop.Stop())
 
 # Shows the video streams in their own windows of size 300x200 px
+print setting_widget.get_camera_urls()
 main.camera_container.addWidget(UI.Player(setting_widget.get_camera_urls(), 300, 200))
 
 iplist = IPCheckerLayout.IPList({"192.168.1.10": "Rover", "192.168.1.20": "Camera Two"}, 50)

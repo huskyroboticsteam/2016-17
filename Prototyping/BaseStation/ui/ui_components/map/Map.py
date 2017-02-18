@@ -58,11 +58,13 @@ class Map:
         if self.zoom_level < 19:
             self.adjust_map_for_zoom(pygame.mouse.get_pos(), self.zoom_level + 1)
             self.zoom_level += 1
+			self.zoom_marker()
 
     def zoom_out(self):
         if self.zoom_level > 15:
             self.adjust_map_for_zoom(pygame.mouse.get_pos(), self.zoom_level - 1)
             self.zoom_level -= 1
+			self.zoom_marker()
 
     def parse_data_file(self, name):
 

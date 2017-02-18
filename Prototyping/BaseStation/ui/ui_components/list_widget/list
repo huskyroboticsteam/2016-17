@@ -1,0 +1,22 @@
+from PyQt4 import QtGui, QtCore
+
+
+class List_Widget(QtGui.QListWidget):
+    def __init__(self, map):
+        super(self.__class__, self).__init__()
+
+        self.map = map
+
+        timer = QtCore.QTimer()
+        timer.connect(self.update)
+        timer.start()
+
+    def update(self):
+        marks = self.map.markers
+
+        self.clear()
+
+        l = QtCore.QStringList()
+        for i in range(0, len(marks)):
+            s = QtCore.QString(marks[i].x + ", " marks[i].y)
+            l.append()
