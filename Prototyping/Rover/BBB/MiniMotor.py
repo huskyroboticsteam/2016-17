@@ -1,10 +1,10 @@
-import Motor.py
-import Adafruit_PCS9685
+import Motor
+import Adafruit_PCA9685
 # Constant for how much motor power can change from one time step to another.
 
 
 
-class MiniMotor(Motor):
+class MiniMotor(Motor.Motor):
     """ Controls a single motor. """
 
     def __init__(self, motor_id, throttle_pin, forward_pin, back_pin, pwm):
@@ -13,7 +13,7 @@ class MiniMotor(Motor):
         throttle_pin, forward_pin, and back_pin should be the relevant pin IDs. (int)
         pwm should be created by Adafruit_PCA9685.PCA9685(...)
         """
-        super(motor_id)
+        super(MiniMotor, self).__init__(motor_id)
         self.throttle_pin = throttle_pin
         self.forward_pin = forward_pin
         self.back_pin = back_pin

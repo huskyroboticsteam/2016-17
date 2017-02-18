@@ -1,4 +1,4 @@
-class Motor:
+class Motor(object):
     """ Controls a single motor. """
 
     def __init__(self, motor_id):

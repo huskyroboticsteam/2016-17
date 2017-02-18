@@ -9,7 +9,7 @@ import Robot_comms
 import Navigation
 import Utils
 
-class Robot:
+class Robot(object):
     '''
     ROBOT motor configuration:
 
@@ -55,6 +55,12 @@ class Robot:
             print "bad motor num: " + motor_id
             return
         self.motors[motor_id].set_motor(motor_val)
+
+    def stopMotor(self, motor_id):
+        if motor_id < 1 or motor_id > 4:
+            print "bad motor num: " + motor_id
+            return
+        self.motors[motor_id].set_motor_exactly(0)
 
     # returns a 2-tuple of (throttle, turn)
     # turn value is 100 for full right -100 for full left and 0 for straight
@@ -127,14 +133,14 @@ def main():
         while True:
             robot.get_robot_comms().receiveData(robot.get_nav())
             robot.get_robot_comms().sendData(robot.get_nav())
-            driveParms = robot.getDriveParms(robot.getAuto())
+            driveParms = robot.getDriveParms(robot.get_nav().getAuto())
             MotorParms = robot.convertParmsToMotorVals(driveParms)
             for i in range(1, 5):
                 robot.driveMotor(i, MotorParms[i - 1])
 
     except KeyboardInterrupt:
         for i in range(1, 5):
-            robot.driveMotor(i, 0)
+            robot.stopMotor(i)
         print "exiting"
 
 if __name__ == "__main__":
