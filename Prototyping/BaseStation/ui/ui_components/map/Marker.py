@@ -1,7 +1,7 @@
 import pygame
 
-class Marker:
 
+class Marker:
 
     def __init__(self, x, y, centerX, centerY, screen, zoom_level, long, lat, rover):
         self.x = x

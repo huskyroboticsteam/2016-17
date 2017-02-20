@@ -10,21 +10,29 @@ class CommsUpdate:
 
     def __init__(self, command):
 
+        # Indicates whether the rovers is in autonomous mode
+        self.auto = False
+
         self.command_api = command
 
-        # self.rover_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        # self.rover_sock.connect((self.ROVER_HOST, self.ROVER_PORT))
-        # self.rover_sock.setblocking(False)
+        try:
+            self.rover_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.rover_sock.connect((self.ROVER_HOST, self.ROVER_PORT))
+            self.rover_sock.setblocking(False)
+        except socket.error:
+            print "Can't connect to rover"
 
-        # timer = QtCore.QTimer()
-        # timer.connect(self.send_message)
-        # timer.connect(self.recieve_message)
-        # timer.start()
+        # Do this code if there was no exception in connecting
+        else:
+            timer = QtCore.QTimer()
+            timer.connect(self.send_message)
+            timer.connect(self.recieve_message)
+            timer.start()
 
     def send_message(self):
 
         # Put the first 2 boolean values in the buffer
-        buff = struct.pack("<??", True, auto_flag)
+        buff = struct.pack("<??", True, self.auto)
         # Put the next 2 short values in the buffer
         struct.pack("<hh", buff, 2, joystick_accel, joystick_rotate)
 

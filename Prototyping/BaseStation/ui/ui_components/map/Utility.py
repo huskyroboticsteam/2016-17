@@ -61,11 +61,17 @@ def is_valid_coord(coord):
     else:
         return -180 <= flo <= 180
 
+
+def convertToDecimal(deg, min, sec):
+    DD = deg + float(min)/60 + float(sec)/3600
+    return DD
+
+
 def decdeg2dms(dd):
     negative = dd < 0
     dd = abs(dd)
-    minutes,seconds = divmod(dd*3600,60)
-    degrees,minutes = divmod(minutes,60)
+    minutes, seconds = divmod(dd * 3600, 60)
+    degrees, minutes = divmod(minutes, 60)
     if negative:
         if degrees > 0:
             degrees = -degrees
@@ -73,7 +79,8 @@ def decdeg2dms(dd):
             minutes = -minutes
         else:
             seconds = -seconds
-    return (degrees,minutes,seconds)
+    return (degrees, minutes, seconds)
+
 
 def is_valid_file_name(name):
     return name != ""

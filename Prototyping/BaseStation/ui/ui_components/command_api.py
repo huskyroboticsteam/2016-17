@@ -19,15 +19,32 @@ class CommandApi:
         self.sensors.update_ui(dictionary)
 
     def update_rover_pos(self, lat_deg, lat_min, lat_sec, lng_deg, lng_min, lng_sec):
-        # TODO: convert this format to floats and update on map
+        lat = Utility.convertToDecimal(lat_deg, lat_min, lat_sec)
+        lng = Utility.convertToDecimal(lng_deg, lng_min, lng_sec)
+
+        # Hopefully won't cause flickering
         if self.map is not None:
-            print
+            marks = self.map.markers
+
+            # Clear the rover marker
+            for i in range(0, len(marks)):
+                if marks[i].rover:
+                    self.map.remove_marker(i)
+
+            # Re add the rover at the new position
+            self.map.add_rover(lat, lng)
 
 
 # takes in an array of markers
 def send_auto_data(comms, markers):
-    for marker in markers:
-        lat = Utility.decdeg2dms(marker.coorX)
-        long = Utility.decdeg2dms(marker.coorY)
-        comms.send_auto_mode(lat[0], lat[1], lat[2], long[0], long[1], long[2])
+
+    # Don't send the data again if we are in auto mode
+    if comms.auto is False:
+        for marker in markers:
+            lat = Utility.decdeg2dms(marker.coorX)
+            long = Utility.decdeg2dms(marker.coorY)
+            comms.send_auto_mode(lat[0], lat[1], lat[2], long[0], long[1], long[2])
+        comms.auto = True
+    else:
+        comms.auto = False
 
