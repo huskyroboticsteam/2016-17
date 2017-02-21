@@ -54,9 +54,11 @@ class Settings:
 
         output = "cams="
         for i in range(0, len(self.cam_list)):
-            output += self.cam_list[i] + ","
             if i == len(self.cam_list) - 1:
-                output += self.cam_list[i] + "\n"
+                output += self.cam_list[i] + "," + self.main.cam1.itemText(i) + "\n"
+            else:
+                output += self.cam_list[i] + "," + self.main.cam1.itemText(i) + ","
+
         f.write(output)
 
         # Write the currently selected camera for each feed

@@ -11,6 +11,9 @@ class MainWindow(QtGui.QWidget):
         hbox = QtGui.QHBoxLayout()
         hbox.setContentsMargins(0, 0, 0, 0)
 
+        policy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
+        self.setSizePolicy(policy)
+
         hbox.addWidget(self.map)
 
         self.setLayout(hbox)

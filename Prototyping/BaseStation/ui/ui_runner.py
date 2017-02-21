@@ -8,6 +8,7 @@ from ui_components.settings import settings
 from ui_components import command_api, Command, comms_update
 from ui_components.arm_viz import arm_widget
 from ui_components.sensors import SensorChecker
+from ui_components.list_widget import list_widget
 from ui import Ui_MainWindow
 
 
@@ -56,8 +57,10 @@ main.reading_container.addWidget(SensorChecker.SensorData())
 win.show()
 
 internal_map = map.initialize(setting_widget.get_map_name())
-command_line = Command.command(internal_map.m, sock)
+list_wid = list_widget.ListWidget(internal_map.m)
+command_line = Command.command(internal_map.m, sock, list_wid)
 main.map_container.addWidget(command_line)
+main.map_container.addWidget(list_wid)
 
 # Give the command api the map to talk to
 comm.feedin_map(internal_map.m)

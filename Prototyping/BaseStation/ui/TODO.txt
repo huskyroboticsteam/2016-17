@@ -1,4 +1,5 @@
-List module needs to listen to the marker array update in map to update the list
+Make removing markers less lazily. It should delete at the index given and ignore rover.
+Update markers on the map
 
 Interface with the joystick code to build the packet
 

@@ -148,24 +148,6 @@
              </layout>
             </widget>
            </item>
-           <item row="1" column="2" colspan="2">
-            <widget class="QFrame" name="frame_3">
-             <property name="frameShape">
-              <enum>QFrame::Box</enum>
-             </property>
-             <property name="frameShadow">
-              <enum>QFrame::Sunken</enum>
-             </property>
-             <layout class="QGridLayout" name="gridLayout_9">
-              <property name="margin">
-               <number>5</number>
-              </property>
-              <item row="0" column="0">
-               <layout class="QVBoxLayout" name="map_container"/>
-              </item>
-             </layout>
-            </widget>
-           </item>
            <item row="1" column="1">
             <widget class="QFrame" name="frame_2">
              <property name="frameShape">
@@ -204,27 +186,6 @@
                  </widget>
                 </item>
                </layout>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item row="2" column="1" colspan="3">
-            <widget class="QFrame" name="frame_5">
-             <property name="frameShape">
-              <enum>QFrame::Box</enum>
-             </property>
-             <property name="frameShadow">
-              <enum>QFrame::Sunken</enum>
-             </property>
-             <layout class="QGridLayout" name="gridLayout_5" columnstretch="1,2">
-              <property name="margin">
-               <number>5</number>
-              </property>
-              <item row="0" column="0">
-               <layout class="QGridLayout" name="stop_container"/>
-              </item>
-              <item row="0" column="1">
-               <layout class="QGridLayout" name="list_container"/>
               </item>
              </layout>
             </widget>
@@ -278,6 +239,42 @@
                  </widget>
                 </item>
                </layout>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item row="1" column="2" rowspan="2" colspan="2">
+            <widget class="QFrame" name="frame_3">
+             <property name="frameShape">
+              <enum>QFrame::Box</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Sunken</enum>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_9">
+              <property name="margin">
+               <number>5</number>
+              </property>
+              <item row="0" column="0">
+               <layout class="QVBoxLayout" name="map_container"/>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QFrame" name="frame_5">
+             <property name="frameShape">
+              <enum>QFrame::Box</enum>
+             </property>
+             <property name="frameShadow">
+              <enum>QFrame::Sunken</enum>
+             </property>
+             <layout class="QGridLayout" name="gridLayout_5">
+              <property name="margin">
+               <number>5</number>
+              </property>
+              <item row="0" column="0">
+               <layout class="QGridLayout" name="stop_container"/>
               </item>
              </layout>
             </widget>

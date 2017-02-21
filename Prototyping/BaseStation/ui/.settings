@@ -1,5 +1,5 @@
 default_map=UW
-cams=Cam 1,rtsp://admin:1234@192.168.0.20:554/h264,Cam 2,Lel,Cam 3,Keky
+cams=Lel,Lel,Laugh,Laugh,Lol,Lol
 default_cam_1=0
-default_cam_2=0
-default_cam_3=0
+default_cam_2=1
+default_cam_3=2

@@ -17,16 +17,16 @@ class CommsUpdate:
 
         try:
             self.rover_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.rover_sock.connect((self.ROVER_HOST, self.ROVER_PORT))
             self.rover_sock.setblocking(False)
+            self.rover_sock.connect((self.ROVER_HOST, self.ROVER_PORT))
         except socket.error:
             print "Can't connect to rover"
 
         # Do this code if there was no exception in connecting
         else:
             timer = QtCore.QTimer()
-            timer.connect(self.send_message)
-            timer.connect(self.recieve_message)
+            timer.timeout.connect(self.send_message)
+            timer.timeout.connect(self.recieve_message)
             timer.start()
 
     def send_message(self):

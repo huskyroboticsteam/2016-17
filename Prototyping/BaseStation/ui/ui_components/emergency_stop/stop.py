@@ -10,6 +10,9 @@ class Stop(QtGui.QPushButton):
     def __init__(self, Master=None):
         super(Stop, self).__init__(Master)
 
+        policy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
+        self.setSizePolicy(policy)
+
         self.setAutoFillBackground(True)
 
         # Make the button purple
