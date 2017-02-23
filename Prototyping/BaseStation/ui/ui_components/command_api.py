@@ -40,10 +40,21 @@ def send_auto_data(comms, markers):
 
     # Don't send the data again if we are in auto mode
     if comms.auto is False:
-        for marker in markers:
-            lat = Utility.decdeg2dms(marker.coorX)
-            long = Utility.decdeg2dms(marker.coorY)
-            comms.send_auto_mode(lat[0], lat[1], lat[2], long[0], long[1], long[2])
+        for i in range(0, len(markers)):
+            if i == len(markers) - 1:
+                lat = markers[i].coordX.toAscii()
+                long = markers[i].coordY.toAscii()
+                lat = float(lat)
+                long = float(long)
+                print lat
+                print long
+                comms.send_auto_mode(False, lat, long)
+            else:
+                lat = markers[i].coordX.toAscii()
+                long = markers[i].coordY.toAscii()
+                lat = float(lat)
+                long = float(long)
+                comms.send_auto_mode(True, lat, long)
         comms.auto = True
     else:
         comms.auto = False

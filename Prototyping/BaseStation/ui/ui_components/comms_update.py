@@ -1,12 +1,15 @@
 from PyQt4 import QtCore
 import socket, struct
 from Queue import Queue
+import random
 
 
 class CommsUpdate:
 
-    ROVER_HOST = "12.12.12.12";
-    ROVER_PORT = 1234;
+    ROVER_HOST = "192.168.0.40"
+    ROVER_PORT = 8840
+
+    ROVER_TCP_PORT = 8841
 
     def __init__(self, command):
 
@@ -16,38 +19,43 @@ class CommsUpdate:
         self.command_api = command
 
         try:
-            self.rover_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            # UDP connection to the rover
+            self.rover_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             self.rover_sock.setblocking(False)
-            self.rover_sock.connect((self.ROVER_HOST, self.ROVER_PORT))
-        except socket.error:
+
+            # TCP connection to the rover
+            self.auto_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            # self.auto_sock.setblocking(False)
+            self.auto_sock.connect((self.ROVER_HOST, self.ROVER_TCP_PORT))
+        except socket.error():
             print "Can't connect to rover"
 
         # Do this code if there was no exception in connecting
         else:
-            timer = QtCore.QTimer()
-            timer.timeout.connect(self.send_message)
-            timer.timeout.connect(self.recieve_message)
-            timer.start()
+            self.timer = QtCore.QTimer()
+            # self.timer.timeout.connect(self.send_message)
+            # self.timer.timeout.connect(self.receive_message)
+            self.timer.start(500)
+
+    def shutdown(self):
+        self.auto_sock.close()
+        self.rover_sock.close()
 
     def send_message(self):
 
         # Put the first 2 boolean values in the buffer
-        buff = struct.pack("<??", True, self.auto)
-        # Put the next 2 short values in the buffer
-        struct.pack("<hh", buff, 2, joystick_accel, joystick_rotate)
+        buff = struct.pack("<?hh", self.auto, random.randint(-255, 255), random.randint(-100, 100))
 
-        # self.rover_sock.send(buff)
+        self.rover_sock.sendto(buff, (self.ROVER_HOST, self.ROVER_PORT))
 
         # TODO: Add sending code for the arm
 
-    def send_auto_mode(self, lat_deg, lat_min, lat_sec, lng_deg, lng_min, lng_sec):
+    def send_auto_mode(self, more, lat, lng):
 
         # Put the first boolean value in the buffer
-        buff = struct.pack("<?", False)
-        # Put the next 6 shorts in the buffer
-        buff = struct.pack("<hhhhhhh", buff, 1, lat_deg, lat_min, lat_sec, lng_deg, lng_min, lng_sec)
+        buff = struct.pack("<?ff", more, lat, lng)
 
-        self.rover_sock.send(buff)
+        self.auto_sock.send(buff)
 
     def receive_message(self):
         rover_data = self.rover_sock.recv(1024)

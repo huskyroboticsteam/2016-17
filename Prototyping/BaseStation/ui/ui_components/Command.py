@@ -12,8 +12,20 @@ class command(QLineEdit):
         self.list_wid = list_wid
         self.commands = ("ADD", "REMOVE", "SET", "AUTO")
 
+    def focusInEvent(self, e):
+        super(self.__class__, self).focusInEvent(e)
+
+        print "In"
+
+    def focusOutEvent(self, e):
+        super(self.__class__, self).focusOutEvent(e)
+
+        print "Out"
+
     def keyPressEvent(self, e):  # e is event
         super(command, self).keyPressEvent(e)
+
+        print e.key()
 
         if e.key() == QtCore.Qt.Key_Return:
             list = self.text().split(" ")  # text() gets the current texts inside the editor

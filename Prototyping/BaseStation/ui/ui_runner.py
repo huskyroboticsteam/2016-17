@@ -15,6 +15,8 @@ from ui import Ui_MainWindow
 def quitting():
     # Properly shutdown the pygame window
     internal_map.close()
+    # Close all open sockets
+    sock.shutdown()
     # Shutdown the networking thread
     iplist.worker_thread.quit()
     # Save the changes to the settings by the user
