@@ -25,8 +25,6 @@ class command(QLineEdit):
     def keyPressEvent(self, e):  # e is event
         super(command, self).keyPressEvent(e)
 
-        print e.key()
-
         if e.key() == QtCore.Qt.Key_Return:
             list = self.text().split(" ")  # text() gets the current texts inside the editor
             if list[0] not in self.commands:  # check if user enters a valid command

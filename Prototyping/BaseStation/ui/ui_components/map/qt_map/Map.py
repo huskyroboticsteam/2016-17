@@ -1,13 +1,14 @@
 import math
 import MapTile
 import Utility
-import pygame
 import sys
 import Marker
+from PyQt4 import QtGui, QtCore
 
 
-class Map:
+class Map(QtGui.QWidget):
     def __init__(self, map_name):
+        super(self.__class__, self).__init__()
         self.markers = []
         self.coordinates = []
         # Size of all tiles for calculations
@@ -44,7 +45,40 @@ class Map:
             }
         }
 
+        # Mouse press event without click
+        self.setMouseTracking(True)
+        self.clicked = False
+        self.x = 0
+        self.y = 0
+
         self.open_map(map_name)
+
+    def enterEvent(self, QEvent):
+        super(self.__class__, self).enterEvent(QEvent)
+        self.setFocus()
+
+    def mousePressEvent(self, QMouseEvent):
+        print "Pressed"
+        super(self.__class__, self).mousePressEvent(QMouseEvent)
+        if QMouseEvent.button() == QtCore.Qt.LeftButton:
+            self.clicked = True
+
+    def mouseReleaseEvent(self, QMouseEvent):
+        print "Released"
+        super(self.__class__, self).mouseReleaseEvent(QMouseEvent)
+        if QMouseEvent.button() == QtCore.Qt.LeftButton:
+            self.clicked = False
+
+    def keyPressEvent(self, QKeyEvent):
+        # super(self.__class__, self).keyPressEvent(QKeyEvent)
+        print "KeyPress"
+        if QKeyEvent.key() == QtCore.Qt.Key_Z:
+            print "Z"
+            self.zoom_out()
+            self.repaint()
+        elif QKeyEvent.key() == QtCore.Qt.Key_X:
+            self.zoom_in()
+            self.repaint()
 
     def open_map(self, map_name):
         # Clear all map tiles
@@ -56,13 +90,13 @@ class Map:
 
     def zoom_in(self):
         if self.zoom_level < 19:
-            self.adjust_map_for_zoom(pygame.mouse.get_pos(), self.zoom_level + 1)
+            self.adjust_map_for_zoom((self.x, self.y), self.zoom_level + 1)
             self.zoom_level += 1
             self.zoom_marker()
 
     def zoom_out(self):
         if self.zoom_level > 15:
-            self.adjust_map_for_zoom(pygame.mouse.get_pos(), self.zoom_level - 1)
+            self.adjust_map_for_zoom((self.x, self.y), self.zoom_level - 1)
             self.zoom_level -= 1
             self.zoom_marker()
 
@@ -140,25 +174,41 @@ class Map:
             tile.visible = True
 
     # Move the map around, takes a dx and dy from mouse movement event
-    def move_map(self, dx, dy):
-        # Loop through all tiles in the current zoom level only and move those
-        for i in range(1, self.image_tiles[self.zoom_level]["tiles"] + 1, 1):
-            self.image_tiles[self.zoom_level]["tilesImages"][i - 1].move(dx, dy)
-            self.set_visibility(self.image_tiles[self.zoom_level]["tilesImages"][i - 1])
-        for marker in self.markers:
-            marker.x = marker.x + dx
-            marker.y = marker.y + dy
+    def mouseMoveEvent(self, e):
+        super(self.__class__, self).mouseMoveEvent(e)
+        if self.clicked is True:
+            dx = e.x() - self.x
+            dy = e.y() - self.y
+            self.x = e.x()
+            self.y = e.y()
+            # Loop through all tiles in the current zoom level only and move those
+            for i in range(1, self.image_tiles[self.zoom_level]["tiles"] + 1, 1):
+                self.image_tiles[self.zoom_level]["tilesImages"][i - 1].move(dx, dy)
+                self.set_visibility(self.image_tiles[self.zoom_level]["tilesImages"][i - 1])
+            for marker in self.markers:
+                marker.x = marker.x + dx
+                marker.y = marker.y + dy
+            self.repaint()
+        else:
+            self.x = e.x()
+            self.y = e.y()
 
     # Requires the screen to display on
     # Displays all tiles of the current zoom_level with visibility set to true
     # Displays the tile at its screen_location variable
-    def display(self, screen):
-        self.screen = screen
+    def paintEvent(self, e):
+        super(self.__class__, self).paintEvent(e)
+        painter = QtGui.QPainter(self)
+        pen = QtGui.QPen(QtCore.Qt.red)
+        pen.setWidth(5)
+        painter.setPen(pen)
+
         for i in range(1, self.image_tiles[self.zoom_level]["tiles"] + 1, 1):
             if self.image_tiles[self.zoom_level]["tilesImages"][i - 1].visible:
-                screen.blit(self.image_tiles[self.zoom_level]["tilesImages"][i - 1].image,
-                            self.image_tiles[self.zoom_level]["tilesImages"][i - 1].screen_location)
-        self.draw_marker()
+                x = self.image_tiles[self.zoom_level]["tilesImages"][i - 1].screen_location[0]
+                y = self.image_tiles[self.zoom_level]["tilesImages"][i - 1].screen_location[1]
+                painter.drawImage(x, y, self.image_tiles[self.zoom_level]["tilesImages"][i - 1].image)
+        self.draw_marker(painter)
 
     def get_real_mouse_screen_pos(self, mouse):
 
@@ -249,9 +299,9 @@ class Map:
         self.markers.append(self.make_marker(x, y, False))
 
     # draw every marker on the screen
-    def draw_marker(self):
+    def draw_marker(self, painter):
         for marker in self.markers:
-            marker.draw()
+            marker.draw(painter)
 
     # changes the position of markers after zooming in
     def zoom_marker(self):
@@ -274,7 +324,7 @@ class Map:
         self.centerY2 -= self.TILE_SIZE[1] / 2
 
         return Marker.Marker(pixelCoord[0] + self.center_location[0], pixelCoord[1] + self.center_location[1],
-                          self.centerX2, self.centerY2, self.screen, self.zoom_level, x, y, rover)
+                          self.centerX2, self.centerY2, self.zoom_level, x, y, rover)
 
     def remove_marker(self, index):
             if(index < len(self.markers) and index > -1):
