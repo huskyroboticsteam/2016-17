@@ -2,7 +2,7 @@ import math
 import Utils
 import mag as MAG
 import gps as GPS
-import Adafruit_BBIO.ADC as ADCv
+import Adafruit_BBIO.ADC as ADC
 
 class Navigation:
     """ Navigation code """
@@ -20,7 +20,7 @@ class Navigation:
         self.POT_RIGHT = pot_right
         self.POT_MIDDLE = pot_middle
         self.POT_TOL = pot_tol
-        self.avoidingObs = false
+        self.avoidingObs = False
         self.checkingDistance = 2
 
 
@@ -85,7 +85,7 @@ class Navigation:
     # TODO Return a bool determining if there is something in way
     #      If false, there is no obstacle within checkingDistance of rover sensor
     def isObstacle(self):
-        return false
+        return False
 
     # Adds a (heading, isObsticalVal) pair to scannedHeadings
     def appendScanedHeadings(self, heading, isObstacleVal):
@@ -96,17 +96,19 @@ class Navigation:
     def checkIfAvoidingObs(self, heading):
         if self.avoidingObs:
             self.destinations.pop(self, 0)
-            self.destinations.insert(0, calculateDesiredNewCoordinate(heading, self.checkingDistance))
+            self.destinations.insert(0, self.calculateDesiredNewCoordinate(heading, self.checkingDistance))
         else:
-            self.destinations.insert(0, calculateDesiredNewCoordinate(heading, self.checkingDistance))
+            self.destinations.insert(0, self.calculateDesiredNewCoordinate(heading, self.checkingDistance))
 
     # Will calculate a heading closest to center and add destination to destination list
+    # TODO: this was broken, I made it run, Albert and Benton, please check and fix.
     def addDestination(self):
         # Not used now but might need it if not path forward
         centerHeading = self.scannedHeadings.pop(self, int(len(self.scannedHeadings) / 2))[0]
         # Determine path closest to center with no obstacle
         # Removes values from center of array outward
-        inLoop = true
+        inLoop = True
+        possibleHeadings = []
         while (inLoop):
             middleHeading = int(len(possibleHeadings) / 2)
             tempHeading = self.scannedHeadings.pop(self, middleHeading)
@@ -115,14 +117,14 @@ class Navigation:
                 self.scannedHeadings = []
 
             if self.scannedHeadings[0] is None:
-                inLoop = false
+                inLoop = False
             tempHeading = possibleHeadings.pop(self, middleHeading -1)
             # Check for next value to the left of center
             if (not tempHeading[1]):
                 self.scannedHeadings = []
                 return tempHeading[0]
             if (self.scannedHeadings[0] is None):
-                inLoop = false
+                inLoop = False
         # TODO: What to do if there is no path forward?
 
     # returns True for autopilot False for manual control
