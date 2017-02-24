@@ -58,6 +58,7 @@ win.show()
 
 list_wid = list_widget.ListWidget(map)
 command_line = Command.command(map, sock, list_wid)
+list_wid.signalStatus.connect(command_line.update)
 main.map_container.addWidget(command_line)
 main.map_container.addWidget(list_wid)
 
