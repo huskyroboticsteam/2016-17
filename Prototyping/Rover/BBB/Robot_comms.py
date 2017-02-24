@@ -66,6 +66,7 @@ class Robot_comms():
                 MESSAGE = struct.pack(self.rtbFormat, nav.readPot(), nav.getMag(), 0, 0, 0, 0, nav.getGPS()[3], nav.getGPS()[5])
                 self.sock.sendto(MESSAGE, self.base_station_ip)
         except:
+            # TODO: catch exceptions better (nav.getGPS may be null)
             pass
         # read data from sensors or read class variables
 
