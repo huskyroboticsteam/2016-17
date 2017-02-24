@@ -33,7 +33,7 @@ class Robot(object):
 
         self.pot_pid = PID.PID(-0.1, 0, 0)
 
-        self.nav = Navigation.Navigation(0.771, 0.346, (0.771 + 0.346) / 2, 0.01, "AIN2")
+        self.nav = Navigation.Navigation(0.771, (0.771 + 0.346) / 2, 0.346, 0.01, "AIN2")
         # setup motors
         # motor: throttle, F, B
         # 1: 8,  9,  10
@@ -47,7 +47,7 @@ class Robot(object):
             MiniMotor.MiniMotor(3, 2, 4, 3, self.pwm),
             MiniMotor.MiniMotor(4, 7, 6, 5, self.pwm),
         ]
-        self.r_comms = Robot_comms.Robot_comms("192.168.0.40", 8840, 8841, "<?hh", "<?ff", "<fffffhhhhhh")
+        self.r_comms = Robot_comms.Robot_comms("192.168.0.40", 8840, 8841, "<?hh", "<?ff", "<ffffffff")
 
 
     # drives the motor with a value, negative numbers for reverse

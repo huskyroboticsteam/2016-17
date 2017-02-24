@@ -35,18 +35,22 @@ class SDLInstance:
 
         self.joystick_connected = False
 
+    def init_joy_axis_var(self, joy_num):
+        self.joystick_axis = []
+        for i in range(joy_num + 1):
+            self.joystick_axis.append([0, 0, 0, 0])
+
     # Takes the joystick input and stores in variables
     def update_sdl2(self, joy_num):
         for event in sdl2.ext.get_events():
             if event.type == sdl2.SDL_JOYAXISMOTION:
-                # self.which_joystick = event.jaxis.which
-                # self.joystick_axis[event.jaxis.axis] = event.jaxis.value
-
-                # Should be appending axis data to the corresponding joystick
-                self.joystick_axis = []
-                for i in range(joy_num):
+                # Appends axis data to the corresponding joystick
+                for i in range(joy_num + 1):
                     if i == event.jaxis.which:
-                        self.joystick_axis.append(event.jaxis.value)
+                        for j in range(4):
+                            if j == event.jaxis.axis:
+                                self.joystick_axis[i][j] = event.jaxis.value
+                # print self.joystick_axis
 
             elif event.type == sdl2.SDL_JOYBALLMOTION:
                 self.which_joystick_ball = event.jball.which

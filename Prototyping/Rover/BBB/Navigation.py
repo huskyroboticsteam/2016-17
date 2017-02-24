@@ -67,7 +67,7 @@ class Navigation:
         theta = Utils.translateValue(self, currHeading, 0, 360, -1 * math.pi, math.pi)
         x = distance * math.cos(theta)
         y = distance * math.sin(theta)
-        coords = {x, y}
+        coords = (x, y)
         return coords
 
     # returns a turn value from -100 to 100 based on the difference between the current heading and the desired heading
@@ -101,7 +101,6 @@ class Navigation:
             self.destinations.insert(0, self.calculateDesiredNewCoordinate(heading, self.checkingDistance))
 
     # Will calculate a heading closest to center and add destination to destination list
-    # TODO: this was broken, I made it run, Albert and Benton, please check and fix.
     def addDestination(self):
         # Not used now but might need it if not path forward
         centerHeading = self.scannedHeadings.pop(self, int(len(self.scannedHeadings) / 2))[0]
