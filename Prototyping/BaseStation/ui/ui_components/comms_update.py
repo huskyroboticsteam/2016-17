@@ -22,10 +22,6 @@ class CommsUpdate:
             self.rover_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             self.rover_sock.setblocking(False)
 
-            # TCP connection to the rover
-            # self.auto_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            # # self.auto_sock.setblocking(False)
-            # self.auto_sock.connect((self.ROVER_HOST, self.ROVER_TCP_PORT))
         except socket.error():
             print "Can't connect to rover"
 
@@ -39,6 +35,14 @@ class CommsUpdate:
     def shutdown(self):
         self.auto_sock.close()
         self.rover_sock.close()
+
+    def open_tcp(self):
+       # TCP connection to the rover
+        self.auto_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        self.auto_sock.connect((self.ROVER_HOST, self.ROVER_TCP_PORT))
+
+    def close_tcp(self):
+        self.auto_sock.close()
 
     def send_message(self):
 

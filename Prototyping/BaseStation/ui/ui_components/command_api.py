@@ -40,6 +40,7 @@ def send_auto_data(comms, markers):
 
     # Don't send the data again if we are in auto mode
     if comms.auto is False:
+        comms.open_tcp()
         for i in range(0, len(markers)):
             if i == len(markers) - 1:
                 lat = markers[i].coordX.toAscii()
@@ -56,6 +57,7 @@ def send_auto_data(comms, markers):
                 long = float(long)
                 comms.send_auto_mode(True, lat, long)
         comms.auto = True
+        comms.close_tcp()
     else:
         comms.auto = False
 
