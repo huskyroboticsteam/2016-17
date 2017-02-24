@@ -1,7 +1,10 @@
-Make removing markers less lazily. It should delete at the index given and ignore rover.
-Update markers on the map
-
 Interface with the joystick code to build the packet
+
+Update all the things from comms (including drawing rover on map)
+
+Give indication if we are in auto mode
+
+Google Maps api
 
 Arm Code?
 

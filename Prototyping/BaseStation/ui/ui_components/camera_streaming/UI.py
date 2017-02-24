@@ -67,7 +67,7 @@ class Player(QtGui.QWidget):
         widgets = []
 
         for i in range(0, len(urls)):
-            vlc_widget = CustomWidgets.VLCWidget(urls[i], ":network-caching=300", self.sizeX, self.sizeY)
+            vlc_widget = CustomWidgets.VLCWidget(urls[i], ":network-caching=0", self.sizeX, self.sizeY)
             vlc_widget.id = i
             widgets.append(vlc_widget)
 

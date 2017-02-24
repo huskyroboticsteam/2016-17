@@ -6,6 +6,7 @@ import random
 class CommsUpdate:
 
     ROVER_HOST = "192.168.0.40"
+    LOCAL_HOST = "127.0.0.1"
     ROVER_PORT = 8840
 
     ROVER_TCP_PORT = 8841
@@ -28,12 +29,11 @@ class CommsUpdate:
         # Do this code if there was no exception in connecting
         else:
             self.timer = QtCore.QTimer()
-            # self.timer.timeout.connect(self.send_message)
-            # self.timer.timeout.connect(self.receive_message)
+            self.timer.timeout.connect(self.send_message)
+            self.timer.timeout.connect(self.receive_message)
             self.timer.start(500)
 
     def shutdown(self):
-        self.auto_sock.close()
         self.rover_sock.close()
 
     def open_tcp(self):
@@ -61,27 +61,26 @@ class CommsUpdate:
         self.auto_sock.send(buff)
 
     def receive_message(self):
-        rover_data = self.rover_sock.recv(1024)
 
-        # Unpack the first six floats of the packet
-        tup = struct.unpack_from("<ffffff", rover_data, 0)
-        pot = tup[0]
-        mag = tup[1]
-        enc_1 = tup[2]
-        enc_2 = tup[3]
-        enc_3 = tup[4]
-        enc_4 = tup[5]
+        try:
+            rover_data = self.rover_sock.recv(1024)
+        except:
+            print
+        else:
+            # Unpack the first six floats of the packet
+            tup = struct.unpack_from("<ffffffff", rover_data, 0)
+            pot = tup[0]
+            mag = tup[1]
+            enc_1 = tup[2]
+            enc_2 = tup[3]
+            enc_3 = tup[4]
+            enc_4 = tup[5]
+            lat = tup[6]
+            lng = tup[7]
 
-        # Unpack the next six shorts of the packet (should reach the end of the rover packet)
-        tup = struct.unpack_from("<hhhhhh", rover_data, 0)
-        lat_deg = tup[0]
-        lat_min = tup[1]
-        lat_sec = tup[2]
-        lng_deg = tup[3]
-        lng_min = tup[4]
-        lng_sec = tup[5]
+            print str(pot) + " " + str(mag) + " " + str(lat) + " " + str(lng)
 
-        self.command_api.update_sensors(pot, mag, enc_1, enc_2, enc_3, enc_4)
-        self.command_api.update_rover_pos(lat_deg, lat_min, lat_sec, lng_deg, lng_min, lng_sec)
+        self.command_api.update_sensors(random.randint(-255, 255), random.randint(-100, 100), 0, 0, 0, 0)
+            # self.command_api.update_rover_pos(lat, lng)
 
-        # TODO: add arm packets structure
+            # TODO: add arm packets structure

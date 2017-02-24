@@ -1,5 +1,5 @@
-default_map=UW
-cams=Lel,Lel,Laugh,Laugh,Lol,Lol
+default_map=URC
+cams=Rotating Cam,rtsp://admin:1234@192.168.0.20:554/media/media.amp?streamprofile
 default_cam_1=0
-default_cam_2=1
-default_cam_3=2
+default_cam_2=-1
+default_cam_3=-1

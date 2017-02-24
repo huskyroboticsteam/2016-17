@@ -11,6 +11,8 @@ class SensorData(QtGui.QWidget):
         self.setLayout(self.build_list())
 
     def update_ui(self, dictionary):
+        print self.ui_map
+        print dictionary
         for key in dictionary:
             self.ui_map[key].setText(dictionary[key])
 

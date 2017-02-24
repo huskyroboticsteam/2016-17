@@ -29,7 +29,8 @@ win = QtGui.QMainWindow()
 main = Ui_MainWindow()
 main.setupUi(win)
 win.resize(1200, 675)
-comm = command_api.CommandApi(SensorChecker)
+sensors = SensorChecker.SensorData()
+comm = command_api.CommandApi(sensors)
 sock = comms_update.CommsUpdate(comm)
 setting_widget = settings.Settings(main, comm)
 
@@ -51,7 +52,7 @@ main.sensor_container.addWidget(iplist)
 # Add the arm visualization
 main.joystick_container.addWidget(arm_widget.arm_widget())
 
-main.reading_container.addWidget(SensorChecker.SensorData())
+main.reading_container.addWidget(sensors)
 
 # Show window, initialize pygame, and execute the app
 win.show()
