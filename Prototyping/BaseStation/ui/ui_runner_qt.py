@@ -1,6 +1,6 @@
 from PyQt4 import QtGui
 import sys
-from ui_components.map.qt_map import Map
+from ui_components.map import Map
 from ui_components.ip_scanner import IPCheckerLayout
 from ui_components.camera_streaming import UI
 from ui_components.emergency_stop import stop

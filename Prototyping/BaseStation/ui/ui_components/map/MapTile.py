@@ -1,4 +1,4 @@
-import pygame
+from PyQt4 import QtGui
 import os
 
 
@@ -7,7 +7,7 @@ class MapTile:
         # Image dimensions will be static and handled by the map class
 
         # Image for the tile
-        self.image = pygame.image.load(os.path.join(path, file_name))
+        self.image = QtGui.QImage(os.path.join(path, file_name))
 
         # Top left corner of the image
         self.screen_location = (x, y)
