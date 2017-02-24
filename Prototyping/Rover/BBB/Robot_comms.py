@@ -62,7 +62,7 @@ class Robot_comms():
     # sends data in message back to the base station
     def sendData(self, nav):
         try:
-            if base_station_ip is not None:
+            if self.base_station_ip is not None:
                 MESSAGE = struct.pack(self.rtbFormat, nav.readPot(), nav.getMag(), 0, 0, 0, 0, nav.getGPS()[3], nav.getGPS()[5])
                 self.sock.sendto(MESSAGE, self.base_station_ip)
         except:
