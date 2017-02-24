@@ -33,7 +33,7 @@ class Robot(object):
 
         self.pot_pid = PID.PID(-0.1, 0, 0)
 
-        self.nav = Navigation.Navigation(0.771, 0.346, (0.771 + 0.346) / 2, 0.01, "AIN2")
+        self.nav = Navigation.Navigation(0.771, (0.771 + 0.346) / 2, 0.346, 0.01, "AIN2")
         # setup motors
         # motor: throttle, F, B
         # 1: 8,  9,  10
