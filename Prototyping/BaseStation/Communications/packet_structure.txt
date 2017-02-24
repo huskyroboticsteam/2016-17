@@ -1,13 +1,13 @@
 Base Station --> Rover
 Drive Packet:
-0               1               2              3
-bool            bool            short          short
-packet_flag     auto_flag       throttle       turn
+1               2              3
+bool            short          short
+auto_flag       throttle       turn
 
 GPS packet:
-0               1               2               3               4               5               6
-bool            short           short           short           short           short           short
-packet_flag     lat_degree      lat_min         lat_sec         long_degree     long_min        long_sec
+0               1               2
+bool            float           float
+packet_flag     lat             long
 
 
 Rover --> Base Station

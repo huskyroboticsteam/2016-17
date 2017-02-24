@@ -2,8 +2,12 @@ from PyQt4 import QtGui, QtCore
 
 
 class ListWidget(QtGui.QListWidget):
+
+    signalStatus = QtCore.pyqtSignal([str])
+
     def __init__(self, map):
         super(self.__class__, self).__init__()
+
 
         self.map = map
         self.setMaximumHeight(75)
@@ -15,7 +19,11 @@ class ListWidget(QtGui.QListWidget):
         self.itemDoubleClicked.connect(self.editing_item)
 
     def editing_item(self, item):
-        self.editItem(item)
+        # self.currentRow() # Gives the index in the list
+        cmd = 'update %s %s' %(self.currentItem().text(), self.currentRow() + 1)
+        cmd = cmd.replace(',', '')
+        self.signalStatus.emit(cmd)
+        # print cmd
 
         # TODO: emit a signal so the command line can set this data
 

@@ -198,7 +198,7 @@ class Map:
     def get_mouse_lat_lng(self, mouse_pos):
         x, y = self.get_mouse_pos_projection(mouse_pos)
         lat, lng = Utility.convert_pixels_to_degrees(self.zoom_level, x, y)
-        print lat, lng
+        # print lat, lng
         return lat, lng
 
     def adjust_map_for_zoom(self, mouse_pos, zoom):

@@ -8,6 +8,7 @@ import BigMotor
 import Robot_comms
 import Navigation
 import Utils
+import time
 
 class Robot(object):
     '''
@@ -32,7 +33,7 @@ class Robot(object):
 
         self.pot_pid = PID.PID(-0.1, 0, 0)
 
-        self.nav = Navigation.Navigation(0.771, 0.346, (0.771 + 0.346) / 2, 0.01, "AIN2")
+        self.nav = Navigation.Navigation(0.771, (0.771 + 0.346) / 2, 0.346, 0.01, "AIN2")
         # setup motors
         # motor: throttle, F, B
         # 1: 8,  9,  10
@@ -46,7 +47,7 @@ class Robot(object):
             MiniMotor.MiniMotor(3, 2, 4, 3, self.pwm),
             MiniMotor.MiniMotor(4, 7, 6, 5, self.pwm),
         ]
-        self.r_comms = Robot_comms.Robot_comms("192.168.0.40", 8840, "<??hh", "<?hhhhhh", "<fffffhhhhhh")
+        self.r_comms = Robot_comms.Robot_comms("192.168.0.40", 8840, 8841, "<?hh", "<?ff", "<ffffffff")
 
 
     # drives the motor with a value, negative numbers for reverse
@@ -200,10 +201,12 @@ def main():
                 MotorParms = robot.convertParmsToMotorVals(driveParms)
                 for i in range(1, 5):
                     robot.driveMotor(i, MotorParms[i - 1])
+                time.sleep(0.5)
 
         except KeyboardInterrupt:
             for i in range(1, 5):
                 robot.stopMotor(i)
+            robot.r_comms.closeConn()
             print "exiting"
 
 if __name__ == "__main__":
