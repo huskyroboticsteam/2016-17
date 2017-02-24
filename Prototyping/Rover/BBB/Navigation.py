@@ -67,7 +67,7 @@ class Navigation:
         theta = Utils.translateValue(self, currHeading, 0, 360, -1 * math.pi, math.pi)
         x = distance * math.cos(theta)
         y = distance * math.sin(theta)
-        coords = {x, y}
+        coords = (x, y)
         return coords
 
     # returns a turn value from -100 to 100 based on the difference between the current heading and the desired heading
