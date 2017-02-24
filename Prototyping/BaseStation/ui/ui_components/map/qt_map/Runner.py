@@ -1,61 +1,23 @@
 import Map
-import pygame
 import sys
-import Command
+from PyQt4 import QtGui
 
-# Make a new map object
-m = Map.Map("UW")
 
-# Display dimensions to 1600 x 1100
-screen = pygame.display.set_mode((1600, 1100))
+def quit():
+    ui.worker_thread.quit()
 
-# Objects that will control fps
-clock = pygame.time.Clock()
-fps = 120
+if __name__ == '__main__':
 
-while True:
-    # Loop fps times per second
-    clock.tick(fps)
+    app = QtGui.QApplication(sys.argv)
+    window = QtGui.QMainWindow()
 
-    for event in pygame.event.get():
-        # Close if the exit button is pressed
-        if event.type == pygame.QUIT:
-            sys.exit()
+    # Updates IPs every 20 seconds.
+    ui = Map.Map("UW")
 
-        if event.type == pygame.KEYDOWN:
-            inputKey = event.key  # The key that got pressed...
+    window.setCentralWidget(ui)
+    window.resize(300, 500)
 
-            # Zoom in if z is pressed
-            if inputKey == pygame.K_z:  # If it's z, do this
-                m.zoom_in()
-                m.zoom_marker()
+    window.show()
 
-            # Zoom out if x is pressed
-            elif inputKey == pygame.K_x:  # If it's x, do this
-                m.zoom_out()
-                m.zoom_marker()
-
-            elif inputKey == pygame.K_0:
-                m.get_mouse_lat_lng(pygame.mouse.get_pos())
-
-            elif inputKey == pygame.K_END:
-                screen.fill((0, 0, 0))
-                pygame.display.flip()
-                m.open_map()
-
-            elif inputKey == pygame.K_c:
-                Command.command(m)
-
-        # Move the tiles if you're moving the mouse with left button down
-        if event.type == pygame.MOUSEMOTION:
-            if event.buttons[0]:
-                # clicked and moving
-                rel = event.rel
-                # Pass the dx and dy to the move_map function
-                m.move_map(rel[0], rel[1])
-
-    # Fill with black, display, and update
-    screen.fill((0, 0, 0))
-    m.display(screen)
-    pygame.display.flip()
-    pygame.event.pump()
+    app.aboutToQuit.connect(quit)
+    app.exec_()

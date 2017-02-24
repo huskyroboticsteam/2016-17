@@ -1,6 +1,5 @@
 from PyQt4 import QtCore
 import socket, struct
-from Queue import Queue
 import random
 
 
