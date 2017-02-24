@@ -4,7 +4,7 @@ Update all the things from comms (including drawing rover on map)
 
 Give indication if we are in auto mode
 
-Google Maps api
+Google Maps api (note point to lat lng and vice versa code works with this already)
 
 Arm Code?
 
