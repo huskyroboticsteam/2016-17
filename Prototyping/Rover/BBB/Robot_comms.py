@@ -61,8 +61,12 @@ class Robot_comms():
 
     # sends data in message back to the base station
     def sendData(self, nav):
-        pass
-        # TODO: do this
+        try:
+            if base_station_ip is not None:
+                MESSAGE = struct.pack(self.rtbFormat, nav.readPot(), nav.getMag(), 0, 0, 0, 0, nav.getGPS()[3], nav.getGPS()[5])
+                self.sock.sendto(MESSAGE, self.base_station_ip)
+        except:
+            pass
         # read data from sensors or read class variables
 
     def closeConn(self):
