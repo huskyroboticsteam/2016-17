@@ -22,20 +22,18 @@ class ReceiveData(QtGui.QWidget):
     def update_input(self):
         self.sdl_instance.update_sdl2(self.joy_num)
 
-
 class Joystick(QtGui.QWidget):
     def __init__(self, sdl_instance, joy_num):
         self.sdl_instance = sdl_instance
 
         self.rd = ReceiveData(self.sdl_instance, joy_num)
         self.rd.show()
+        self.sdl_instance.init_joy_axis_var(joy_num)
 
         QtGui.QWidget.__init__(self)
         timer = QtCore.QTimer(self)
         timer.timeout.connect(self.rd.update_input)
         timer.start(1000 / 120)  # Updates 120 times per second
 
-    def get_joystick_axis(self, joy_num):
-        # while True:
-        #     print self.sdl_instance.joystick_axis[joy_num]
-        return self.sdl_instance.joystick_axis[joy_num]
+    def get_joystick_axis(self, joy_num, axis):
+        return self.sdl_instance.joystick_axis[joy_num][axis]

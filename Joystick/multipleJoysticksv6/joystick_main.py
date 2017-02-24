@@ -3,7 +3,6 @@ from joystick import Joystick
 import sys
 import sdl2.ext
 from sdl_output import SDLInstance
-import thread
 
 
 if __name__ == '__main__':
@@ -11,12 +10,10 @@ if __name__ == '__main__':
 
     sdl_instance = SDLInstance()    # Initializes PySDL2 to read and store joystick input
     joysticks = []
-    for joy_num in range(3):  # sdl2.SDL_NumJoysticks()):  # Runs once for every connected joystick
+    for joy_num in range(sdl2.SDL_NumJoysticks()):  # Runs once for every connected joystick
         joysticks.append(Joystick(sdl_instance, joy_num))
 
-
-    # Used to print out axis reading for first joystick
-    # thread.start_new_thread(joysticks[0].get_joystick_axis, (0,))
-
+    # How to get data
+    # joystick[JOYSTICK_NUM].get_joystick_axis(JOYSTICK_NUM, AXIS_NUM)
 
     exit(app.exec_())   # Tells PyQt to wait for the 'X' to be clicked to close
