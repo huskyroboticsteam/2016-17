@@ -93,8 +93,7 @@ class Navigation:
         return coords
 
     # returns a turn value from -100 to 100 based on the difference between the current heading and the desired heading
-    def calculateDesiredTurn(self, curHeading):
-        desiredHeading = self.calculateDesiredHeading()
+    def calculateDesiredTurn(self, curHeading, desiredHeading):
         difHeading = abs(curHeading - desiredHeading)
         if ((curHeading > desiredHeading and difHeading > 180) or
             (curHeading < desiredHeading and difHeading < 180)):
@@ -110,7 +109,7 @@ class Navigation:
         return False
 
     # Adds a (heading, isObsticalVal) pair to scannedHeadings
-    def appendScanedHeadings(self):
+    def appendScannedHeadings(self):
         self.scannedHeadings.append(self.getMag(), self.isObstacle())
 
     # Checks to see if first value in scannedHeadings is a "temp" value
