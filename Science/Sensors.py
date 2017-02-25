@@ -5,8 +5,8 @@ import Thermocouple
 import DistanceSensor
 import Limit
 import PID
+import Humidity
 import Adafruit_BBIO.ADC as ADC  # Ignore compilation errors
-import Adafruit_GPIO.GPIO as GPIO
 
 # Define constants
 PinDataIn = "P9_18"
@@ -17,14 +17,13 @@ DIST_ADDR = 0x52
 
 # Initialize hardware
 ADC.setup()
-GPIO = GPIO.AdafruitBBIOAdapter(GPIO.BaseGPIO())
-
 
 # Create Sensors
 UV_Sens = UV.UV(UV_ADDR_LSB)
 Therm = Thermocouple.Thermocouple(PinClock, PinChipSel, PinDataIn)
 Dist = DistanceSensor.DistanceSensor(DIST_ADDR)
 pidCtrl = PID.PID(1, 1, 1)
+humidity = Humidity.Humidity(1)
 
 # Setup Sensors
 UV_Sens.setup(2)
@@ -41,10 +40,11 @@ while True:
     time.sleep(0.01)
     internal = Therm.getInternalTemp()
     uvData = UV_Sens.getData()
-    distData = Dist.getRawData()
+    # distData = Dist.getRawData()
+    humidityData = humidity.read()
 
     # Write data to test
-    sys.stdout.write('{0}, '.format(distData))
+    sys.stdout.write('{0}, '.format(humidityData))
     #sys.stdout.write('{0}, '.format(pidCtrl.getOutput()))
     #sys.stdout.write('{0:{fill}16b} ({0}),'.format(uvData, fill='0'))
     #sys.stdout.write(time.strftime("%Y-%m-%d %H:%M:%S,"))
