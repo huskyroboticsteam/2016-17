@@ -19,6 +19,7 @@ void setup() {
   Serial.begin(9600);
   bluetooth.begin(9600);
   bluetooth.println("Initialized");
+  Serial.println("Initialized serial");
   controller = new RobotController();
   initialized = false;
   leftInitialized = false;
@@ -27,29 +28,13 @@ void setup() {
 
 void loop() {
   int toSend = 63;
-  if(bluetooth.available() > 0){
+  if(bluetooth.available() >= 0){
     toSend = bluetooth.read();
   }
   if(toSend < 127 && toSend > 0){ 
     throttle = (toSend - 63) * -4;
   } else if(toSend > 127) {
     turn = (toSend - 192) * 2/3;
-  } else if(toSend == 0) {
-    if(!leftInitialized) {
-      left = analogRead(POTENTIOMETER_PIN);
-      Serial.println("left initiallized");
-      leftInitialized = true;
-    } else if(!rightInitialized) {
-      right = analogRead(POTENTIOMETER_PIN);
-      Serial.println("right initialized");
-      rightInitialized = true;
-    } else {
-      calibrate(left, analogRead(POTENTIOMETER_PIN), right);
-      Serial.println("middle initialized");
-      initialized = true;
-    }
   }
-  if(initialized) {
-    controller->setDrive(throttle, turn, getCurrentAngle());
-  }
+  controller->setDrive(throttle, turn, getCurrentAngle());
 }

@@ -14,7 +14,7 @@ from struct import *
 import time
 
 # Change this to the bluetooth port on your computer
-ser = serial.Serial('/dev/cu.HC-05-DevB')
+ser = serial.Serial('/dev/cu.hc01comHC-05-DevB-2')
 
 
 class App:
@@ -84,37 +84,21 @@ class App:
         self.screen.blit(surface, (x - surface.get_width() / 2,
                                    y - surface.get_height() / 2))
 
-    def UDP_init(self):
-        self.calibrate(0)
 
-    def calibrate(self, number):
-        if number == 0:
-            print "Move rover to the left turn max position then pull trigger"
-        if number == 1:
-            print "Move rover to the right turn max position then pull trigger"
-        if number == 2:
-            print "Move rover to the middle position then pull trigger"
-        if number == 3:
-            self.calibrated = True
-            print "Calibration complete"
     def send_packet(self):
-        if not self.calibrated:
-            if (self.my_joystick.get_button(0)):
-                ser.write(struct.pack('>B', 0))
-                self.calibrationLevel = self.calibrationLevel + 1
-                self.calibrate(self.calibrationLevel)
-                time.sleep(2)
         throttle = self.check_axis(1)
         turn = self.check_axis(0)
         adjustFB = int(throttle*62 + 63)
         adjustLR = int(turn*63 + 190)
         time.sleep(.015)
-        ser.write(struct.pack('>B', adjustFB))
-        ser.write(struct.pack('>B', adjustLR))
+        print adjustLR
+        print adjustFB
+        ser.write('a')
+        #ser.write(struct.pack('>B', adjustFB))
+        #ser.write(struct.pack('>B', adjustLR))
 
 
     def main(self):
-        self.UDP_init()
         while (True):
             self.g_keys = pygame.event.get()
 
