@@ -18,7 +18,7 @@ class Humidity:
 
     # Initializes the Humidity Sensor on given pin
     def __init__(self, pin):
-        self._pin = "AIN" + pin  # Pin for the sensor
+        self._pin = "AIN" + str(pin)  # Pin for the sensor
         self._m = 1  # Calibration intercept
         self._int = 0  # Calibration slope
 
