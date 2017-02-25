@@ -38,7 +38,7 @@ class GPS:
                 pass
             NMEA = ser.readline()
             Narray = NMEA.split(",")
-            if (Narray[0])[-3:] == 'RMC':
+            if (Narray[0])[-3:] == 'GGA':
                     return Narray
         except AttributeError:
             return -1
@@ -48,20 +48,24 @@ class GPS:
     def getCoords(self):
         info = self.read()
         try:
-            lat = info[3]
-            latDir = info[4]
-            lon = info[5]
-            longDir = info[6]
-            coords = []
-            if (latDir == 'S'):
-                coords.append(lat * -1)
-            else:
-                coords.append(lat)
-            if(longDir == 'W'):
-                coords.append(lon * -1)
-            else:
-                coords.append(lon)
-            return coords
+            if info is not None:
+                lat = float(info[2])
+                print lat
+                latDir = info[3]
+                lon = float(info[4])
+                print lon
+                longDir = info[5]
+                coords = []
+                if (latDir == 'S'):
+                    coords.append(lat * -1)
+                else:
+                    coords.append(lat)
+                if(longDir == 'W'):
+                    coords.append(lon * -1)
+                else:
+                    coords.append(lon)
+                print coords
+                return coords
         except:
             self.getCoords()
             

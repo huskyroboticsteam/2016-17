@@ -45,7 +45,7 @@ class Navigation:
     # returns gps data
     # TODO: get GPS to work
     def getGPS(self):
-        return self.gps.read()
+        return self.gps.getCoords()
 
     # calculates the desired heading
     # returns a value between 0 and 360 inclusive

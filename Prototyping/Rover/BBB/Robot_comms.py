@@ -63,9 +63,15 @@ class Robot_comms():
     def sendData(self, nav):
         try:
             if self.base_station_ip is not None:
+                gps = nav.getGPS()
+                lat = 0
+                longitude = 0
+                if gps is not None:
+                    lat = float(gps[0])
+                    longitude = float(gps[1])
                 print "sending"
                 # TODO : add encoders 1-4, nav.getGPS()[3,5]
-                MESSAGE = struct.pack(self.rtbFormat, nav.readPot(), nav.getMag(), 0, 0, 0, 0, 0, 0)
+                MESSAGE = struct.pack(self.rtbFormat, nav.readPot(), nav.getMag(), 0, 0, 0, 0, lat, longitude)
                 print "message packed"
                 self.udp_sock.sendto(MESSAGE, self.base_station_ip)
                 print "sent"
