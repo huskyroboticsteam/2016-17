@@ -12,10 +12,10 @@ def main():
     with open('calibration_data.txt', 'r') as f:
         bno055.set_calibration(map(int, f.read().split(' ')))
     rob = Robot.Robot()
-    for i in range(1, 5):
-        rob.driveMotor(i, 200)
     try:
         while True:
+            for i in range(1, 5):
+                rob.driveMotor(i, 200)
             print 'calibration status:', bno055.get_calibration_status()
             print 'euler:', bno055.read_euler()
             magnetometer = bno055.read_magnetometer()
