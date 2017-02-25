@@ -1,6 +1,5 @@
 from map import Generator, Utility
 
-
 class CommandApi:
     def __init__(self, sensor_module):
         self.map = None
@@ -13,11 +12,6 @@ class CommandApi:
         arr = [zoom15, zoom16, zoom17, zoom18, zoom19]
         g = Generator.Generator(tile_size, api, arr)
         return g.generate_maps(map_name, lat, lng)
-
-    def update_sensors(self, pot, mag, enc_1, enc_2, enc_3, enc_4):
-        dictionary = {"Potentiometer": str(pot), "Magnetometer": str(mag), "Encoder 1": str(enc_1),
-                      "Encoder 2": str(enc_2), "Encoder 3": str(enc_3), "Encoder 4": str(enc_4)}
-        self.sensors.update_ui(dictionary)
 
     def update_rover_pos(self, lat, lng):
 

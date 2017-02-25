@@ -60,8 +60,10 @@ win.show()
 list_wid = list_widget.ListWidget(map)
 command_line = Command.command(map, sock, list_wid)
 list_wid.signalStatus.connect(command_line.update)
+sock.signalStatus.connect(sensors.update_ui)
 main.map_container.addWidget(command_line)
 main.map_container.addWidget(list_wid)
+
 
 # Give the command api the map to talk to
 comm.feedin_map(map)
