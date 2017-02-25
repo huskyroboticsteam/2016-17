@@ -56,8 +56,8 @@ class Navigation:
         currLocation = self.gps.getCoords()
         currLat = currLocation[0]
         currLong = currLocation[1]
-        x_distance = self.destinations[0][0] - currLat;
-        y_distance = self.destinations[0][1] - currLong;
+        x_distance = self.destinations[0][0] - currLat
+        y_distance = self.destinations[0][1] - currLong
         theta = math.atan2(x_distance, y_distance)
         return Utils.translateValue(self, theta, -1 * math.pi, math.pi, 0, 360)
 
