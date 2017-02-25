@@ -64,7 +64,7 @@ class Navigation:
     # calculates desired new GPS coordinate based on distance
     # from current GPS location and current heading in degrees
     def calculateDesiredNewCoordinate(self, currHeading, distance):
-        theta = Utils.translateValue(self, currHeading, 0, 360, -1 * math.pi, math.pi)
+        theta = Utils.translateValue(self, currHeading, 0, 360, 0, 2 * math.pi)
         x = distance * math.cos(theta)
         y = distance * math.sin(theta)
         coords = (x, y)
