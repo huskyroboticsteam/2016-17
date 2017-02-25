@@ -388,7 +388,7 @@ class Ui_MainWindow(object):
         self.gridLayout_3.addWidget(self.tile_16, 9, 1, 1, 1)
         self.tile_size = QtGui.QSlider(self.groupBox)
         self.tile_size.setMinimum(200)
-        self.tile_size.setMaximum(2000)
+        self.tile_size.setMaximum(1500)
         self.tile_size.setSingleStep(50)
         self.tile_size.setPageStep(50)
         self.tile_size.setOrientation(QtCore.Qt.Horizontal)
