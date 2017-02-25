@@ -9,8 +9,8 @@ def calculate_corner_center(zoom, lat, lng, tiles, tile_size):
 
     # Move over to the top left center position on the zoom_location grid
     x, y = Utility.convert_degrees_to_pixels(zoom, lat, lng)
-    x -= tiles_to_corner * tile_size[0]
-    y -= tiles_to_corner * tile_size[1]
+    x -= tiles_to_corner * tile_size
+    y -= tiles_to_corner * tile_size
 
     return x, y
 

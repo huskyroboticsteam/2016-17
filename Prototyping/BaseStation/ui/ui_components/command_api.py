@@ -9,8 +9,9 @@ class CommandApi:
     def feedin_map(self, map):
         self.map = map
 
-    def generate_new_map(self, map_name, lat, lng):
-        g = Generator.Generator(self.map.TILE_SIZE, self.map.image_tiles)
+    def generate_new_map(self, map_name, lat, lng, tile_size, api, zoom15, zoom16, zoom17, zoom18, zoom19):
+        arr = [zoom15, zoom16, zoom17, zoom18, zoom19]
+        g = Generator.Generator(tile_size, api, arr)
         return g.generate_maps(map_name, lat, lng)
 
     def update_sensors(self, pot, mag, enc_1, enc_2, enc_3, enc_4):

@@ -6,14 +6,21 @@ import Utility
 
 
 class Generator:
-    def __init__(self, tile_size, image_tiles):
+    def __init__(self, tile_size, api, num_tiles):
         self.TILE_SIZE = tile_size
-        self.image_tiles = image_tiles
+        self.api = api
+        self.num_tiles = num_tiles
 
     def retrieve_online_image(self, local_path, location, i, fname):
-        baseUrl = "http://dev.virtualearth.net/REST/V1/"
-        callType = "Imagery/map/AerialWithLabels/"
-        apiKey = "&key=AuAaQIpuk55T4X2UIhXfXitbUHHzIJNHlQLK-Y5v5Na_tx5cAz9Fvmw-xUR5oW8T"
+
+        if self.api == "Bing":
+            baseUrl = "http://dev.virtualearth.net/REST/V1/"
+            callType = "Imagery/map/AerialWithLabels/"
+            apiKey = "&key=AuAaQIpuk55T4X2UIhXfXitbUHHzIJNHlQLK-Y5v5Na_tx5cAz9Fvmw-xUR5oW8T"
+        else:
+            baseUrl = "https://maps.googleapis.com/maps/api/staticmap"
+            callType = "?maptype=hybrid&scale=1&format=jpg"
+            apiKey = "&key=AIzaSyClTno1x7g7MPiUP-kIJhmUst5EQLldS48"
 
         queryString = baseUrl + callType + location + apiKey
         print queryString
@@ -47,17 +54,21 @@ class Generator:
         for i in range(1, tiles + 1, 1):
             lat, lng = Utility.convert_pixels_to_degrees(zoom, x, y)
 
-            location = str(lat) + "," + str(lng) + "/" + str(zoom) + "?mapSize=" + str(self.TILE_SIZE[0]) + "," + \
-                       str(self.TILE_SIZE[1])
+            if self.api == "Bing":
+                location = str(lat) + "," + str(lng) + "/" + str(zoom) + "?mapSize=" + str(self.TILE_SIZE) + "," + \
+                          str(self.TILE_SIZE)
+            else:
+                location = "&center=" + str(lat) + "," + str(lng) + "&zoom=" + str(zoom) + "&size=" + str(self.TILE_SIZE) + "x" + \
+                str(self.TILE_SIZE)
 
             self.retrieve_online_image(str(zoom), location, i, fname)
 
             # At the edge of the square of tiles
             if i % math.sqrt(tiles) == 0:
-                y += self.TILE_SIZE[1]
+                y += self.TILE_SIZE
                 x = original_x
             else:
-                x += self.TILE_SIZE[0]
+                x += self.TILE_SIZE
 
     def generate_maps(self, name, lat, lng):
         name = str(name)
@@ -70,15 +81,17 @@ class Generator:
             # Creates / overwrites a text file and stores the center (lat, lng) and folder name of map generated
             f = open(name + ".dat", "w")
             f.write(name + "\n")
-            f.write(str(self.TILE_SIZE[0]) + "\n")
-            f.write(str(self.TILE_SIZE[1]) + "\n")
+            f.write(str(self.TILE_SIZE) + "\n")
+            f.write(str(self.TILE_SIZE) + "\n")
+            for i in range(0, len(self.num_tiles)):
+                f.write(str(self.num_tiles[i]) + "\n")
             f.write(lat + "\n")
             f.write(lng + "\n")
             f.close()
 
             # Generate all zoom levels of the map 15 - 19
             for i in range(15, 20):
-                self.generate_single_map(i, lat, lng, self.image_tiles[i]["tiles"], name)
+                self.generate_single_map(i, lat, lng, self.num_tiles[i - 15], name)
 
             return True
 

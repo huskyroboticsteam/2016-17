@@ -65,7 +65,8 @@ class CommsUpdate:
         try:
             rover_data = self.rover_sock.recv(1024)
         except:
-            print
+            # Do nothing
+            pass
         else:
             # Unpack the first six floats of the packet
             tup = struct.unpack_from("<ffffffff", rover_data, 0)

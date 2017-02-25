@@ -1,4 +1,5 @@
 from PyQt4 import QtCore
+import math
 
 """
 Operate the settings page in the main ui
@@ -15,15 +16,56 @@ class Settings:
 
         self.main.generate.clicked.connect(self.generate_new_map)
 
+        # Connect map generation updates
+        self.main.tile_size.valueChanged.connect(self.update_ui)
+        self.main.tile_15.textEdited.connect(self.update_ui)
+        self.main.tile_16.textEdited.connect(self.update_ui)
+        self.main.tile_17.textEdited.connect(self.update_ui)
+        self.main.tile_18.textEdited.connect(self.update_ui)
+        self.main.tile_19.textEdited.connect(self.update_ui)
+        self.main.api_select.currentIndexChanged.connect(self.update_ui)
+
         self.setup()
+
+    def update_ui(self):
+        if self.main.api_select.currentText().compare("Bing") == 0:
+            self.main.tile_size.setMaximum(1500)
+        else:
+            self.main.tile_size.setMaximum(640)
+        self.main.tile_size_label.setText(str(self.main.tile_size.value()) + " px")
+        zoom15 = 4.7773
+        zoom16 = 2.3887
+        zoom17 = 1.1943
+        zoom18 = 0.5972
+        zoom19 = 0.2968
+
+        distance15 = "{0:.2f}".format((int(self.main.tile_size.value()) * math.sqrt(int(self.main.tile_15.text())) * zoom15) / 1000)
+        distance16 = "{0:.2f}".format((int(self.main.tile_size.value()) * math.sqrt(int(self.main.tile_16.text()) * zoom16)) / 1000)
+        distance17 = "{0:.2f}".format((int(self.main.tile_size.value()) * math.sqrt(int(self.main.tile_17.text()) * zoom17)) / 1000)
+        distance18 = "{0:.2f}".format((int(self.main.tile_size.value()) * math.sqrt(int(self.main.tile_18.text()) * zoom18)) / 1000)
+        distance19 = "{0:.2f}".format((int(self.main.tile_size.value()) * math.sqrt(int(self.main.tile_19.text()) * zoom19)) / 1000)
+
+        self.main.tile_15_label.setText(str(distance15) + " km")
+        self.main.tile_16_label.setText(str(distance16) + " km")
+        self.main.tile_17_label.setText(str(distance17) + " km")
+        self.main.tile_18_label.setText(str(distance18) + " km")
+        self.main.tile_19_label.setText(str(distance19) + " km")
 
     def generate_new_map(self):
         name = self.main.map_name.text()
         lat = self.main.lat.text()
         lng = self.main.lng.text()
+        tile_size = self.main.tile_size.value()
+        api = self.main.api_select.itemText(self.main.api_select.currentIndex())
+        zoom15 = self.main.tile_15.text()
+        zoom16 = self.main.tile_16.text()
+        zoom17 = self.main.tile_17.text()
+        zoom18 = self.main.tile_18.text()
+        zoom19 = self.main.tile_19.text()
+
 
         # Tell the command_api to generate a new map
-        result = self.comm.generate_new_map(name, lat, lng)
+        result = self.comm.generate_new_map(name, lat, lng, tile_size, api, zoom15, zoom16, zoom17, zoom18, zoom19)
 
         # If we generated successfully (user data is validated)
         if result:
@@ -55,9 +97,9 @@ class Settings:
         output = "cams="
         for i in range(0, len(self.cam_list)):
             if i == len(self.cam_list) - 1:
-                output += self.cam_list[i] + "," + self.main.cam1.itemText(i) + "\n"
+                output += self.main.cam1.itemText(i) + "," + self.cam_list[i] + "\n"
             else:
-                output += self.cam_list[i] + "," + self.main.cam1.itemText(i) + ","
+                output += self.main.cam1.itemText(i) + "," + self.cam_list[i] + ","
 
         f.write(output)
 

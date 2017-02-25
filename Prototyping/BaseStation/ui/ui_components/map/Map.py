@@ -12,7 +12,7 @@ class Map(QtGui.QWidget):
         self.markers = []
         self.coordinates = []
         # Size of all tiles for calculations
-        self.TILE_SIZE = [1500, 1500]
+        self.TILE_SIZE = [640, 640]
 
         # Current map zoom and center
         self.zoom_level = 15
@@ -24,23 +24,23 @@ class Map(QtGui.QWidget):
         # Stores loaded in images
         self.image_tiles = {
             15: {
-                "tiles": 1,
+                "tiles": 9,
                 "tilesImages": []
             },
             16: {
-                "tiles": 9,
+                "tiles": 25,
                 "tilesImages": []
             },
             17: {
-                "tiles": 9,
+                "tiles": 25,
                 "tilesImages": []
             },
             18: {
-                "tiles": 9,
+                "tiles": 25,
                 "tilesImages": []
             },
             19: {
-                "tiles": 9,
+                "tiles": 49,
                 "tilesImages": []
             }
         }
@@ -79,6 +79,9 @@ class Map(QtGui.QWidget):
         elif QKeyEvent.key() == QtCore.Qt.Key_X:
             self.zoom_in()
             self.repaint()
+        elif QKeyEvent.key() == QtCore.Qt.Key_E:
+            self.get_mouse_lat_lng((self.x, self.y))
+            print self.image_tiles[15]["tilesImages"][0].image.size().height()
 
     def open_map(self, map_name):
         # Clear all map tiles
@@ -107,6 +110,14 @@ class Map(QtGui.QWidget):
         dir = f.next().strip('\n')
         width = f.next().strip('\n')
         height = f.next().strip('\n')
+
+        self.TILE_SIZE[0] = int(width)
+        self.TILE_SIZE[1] = int(height)
+
+        # Setup how many tiles per level
+        for i in range(15, 20):
+            tiles = f.next().strip('\n')
+            self.image_tiles[i]["tiles"] = int(tiles)
 
         # Quit if the tile size specified in the map is different than what we are trying to load
         if int(width) != self.TILE_SIZE[0] or int(height) != self.TILE_SIZE[1]:
