@@ -110,8 +110,8 @@ class Navigation:
         return False
 
     # Adds a (heading, isObsticalVal) pair to scannedHeadings
-    def appendScanedHeadings(self, heading, isObstacleVal):
-        self.scannedHeadings.append(heading, isObstacleVal)
+    def appendScanedHeadings(self):
+        self.scannedHeadings.append(self.getMag(), self.isObstacle())
 
     # Checks to see if first value in scannedHeadings is a "temp" value
     # If so then just replace it
@@ -133,19 +133,20 @@ class Navigation:
         while (inLoop):
             middleHeading = int(len(possibleHeadings) / 2)
             tempHeading = self.scannedHeadings.pop(self, middleHeading)
+            if self.scannedHeadings[0] is None:
+                inLoop = False
             # Check for next value to the right of center
             if (not tempHeading[1]):
                 self.scannedHeadings = []
-
-            if self.scannedHeadings[0] is None:
-                inLoop = False
+                self.checkIfAvoidingObs(tempHeading[0])
+            # Get new heading to check
             tempHeading = possibleHeadings.pop(self, middleHeading -1)
+            if (self.scannedHeadings[0] is None):
+                inLoop = False
             # Check for next value to the left of center
             if (not tempHeading[1]):
                 self.scannedHeadings = []
-                return tempHeading[0]
-            if (self.scannedHeadings[0] is None):
-                inLoop = False
+                self.checkIfAvoidingObs(tempHeading[0])
         # TODO: What to do if there is no path forward?
 
     # returns True for autopilot False for manual control
