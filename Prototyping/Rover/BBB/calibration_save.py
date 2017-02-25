@@ -8,7 +8,7 @@ def main():
         return
     status = (0, 0, 0, 0)
     try:
-        while not (status[0] == 3 and status[3] == 3):
+        while status != (3, 3, 3, 3):
             status = bno055.get_calibration_status()
             print status
     except KeyboardInterrupt:
