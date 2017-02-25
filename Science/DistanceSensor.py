@@ -2,30 +2,32 @@
 Very early development on this communication...
 """
 
-import Adafruit_GPIO.I2C as I2C
+import VL53L0X
+import time
 
 
 class DistanceSensor:
 
-    _addr = 0x29
-    _distReg = _addr + 1
-    _calibInt = 0
-    _calibM = 1
+    _ranging = False
 
-    def __init__(self, addr):
-        self._addr = addr
-        self._i2cDev = I2C.Device(self._addr, I2C.get_default_bus())
+    def __init__(self):
+        self._sensor = VL53L0X.VL53L0X()
 
-    def setup(self):
-        pass
+    def startRanging(self):
+        self._sensor.start_ranging(VL53L0X.VL53L0X_BETTER_ACCURACY_MODE)
+        self._ranging = True
 
-    def getRawData(self):
-        # reads 2 bytes from the data register
-        return self._i2cDev.readList(self._distReg, 2)
+    def stopRanging(self):
+        self._sensor.stop_ranging()
+        self._ranging = False
 
-    def getData(self):
-        return self._calibM * self.getRawData() + self._calibInt
-
-    def setCalib(self, slope, intercept):
-        self._calibInt = intercept
-        self._calibM = slope
+    def getDistance(self):
+        if not self._ranging:
+            self.startRanging()
+            time.sleep(0.3)
+        timing = self._sensor.get_timing()
+        if timing < 20000:
+            timing = 20000
+        distance = self._sensor.get_distance()
+        time.sleep(timing / 1000000.00)
+        return distance

@@ -4,7 +4,7 @@ on the Beaglebone Black
 
 Written by Jaden Bottemiller in January 2017
 EE Team of Husky Robotics
-(Untested as of 2/6/2017)
+(Tested as of 2/25/2017)
 
 NOTE: ADC Must Be Initialized Prior to Initialization / Construction of
 this sensor.
