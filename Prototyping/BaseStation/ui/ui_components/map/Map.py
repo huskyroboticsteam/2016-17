@@ -10,7 +10,6 @@ class Map(QtGui.QWidget):
     def __init__(self, map_name):
         super(self.__class__, self).__init__()
         self.markers = []
-        self.coordinates = []
         # Size of all tiles for calculations
         self.TILE_SIZE = [640, 640]
 
@@ -349,3 +348,11 @@ class Map(QtGui.QWidget):
     def update_marker(self, x, y, index):
         self.markers.pop(index)
         self.markers.insert(index, self.make_marker(x, y, False))
+
+    def update_rover_pos(self, (lat, lng)):
+        # Clear the rover marker
+        coord = (lat, lng)
+        for i in range(0, len(self.markers)):
+            if self.markers[i].rover:
+                self.markers.pop(i)
+                self.add_rover(coord[0], coord[1])
