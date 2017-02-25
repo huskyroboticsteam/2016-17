@@ -72,7 +72,6 @@ class Robot_comms():
                 print "sending"
                 # TODO : add encoders 1-4, nav.getGPS()[3,5]
                 MESSAGE = struct.pack(self.rtbFormat, nav.readPot(), nav.getMag(), 0, 0, 0, 0, lat, longitude)
-                print "message packed"
                 self.udp_sock.sendto(MESSAGE, self.base_station_ip)
                 print "sent"
         except:
