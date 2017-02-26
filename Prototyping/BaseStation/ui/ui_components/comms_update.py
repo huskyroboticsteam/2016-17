@@ -56,18 +56,26 @@ class CommsUpdate(QtGui.QWidget):
         self.auto_sock.close()
 
     def send_message(self):
-        print self.joy.joystick_axis
+        # print self.joy.joystick_axis[0][0]
 
         throttle = self.joy.joystick_axis[0][1]
         steering = self.joy.joystick_axis[0][0]
 
+        throttle = translateValue(throttle, -32768, 32768, 255, -255)
+        steering = translateValue(steering, -32768, 32768, -100, 100)
+        if abs(throttle) < 20:
+            throttle = 0
+        if abs(steering) < 20:
+            steering = 0
+        print throttle, steering
+
         # Put the first 2 boolean values in the buffer
-        buff = struct.pack("<?hh", self.auto, throttle, steering)
+        buff = struct.pack("<?hh", self.auto, int(throttle), int(steering))
 
         try:
             self.rover_sock.sendto(buff, (self.ROVER_HOST, self.ROVER_PORT))
         except:
-            pass
+            print "Failed to send"
 
         # TODO: Add sending code for the arm
 
@@ -101,6 +109,8 @@ class CommsUpdate(QtGui.QWidget):
                       "Encoder 1": str(enc_1), "Encoder 2": str(enc_2), "Encoder 3": str(enc_3), "Encoder 4": str(enc_4)}
 
             self.signalStatus.emit(dictionary)
+
+            print lat, lng
 
             self.signalUpdate.emit((lat, lng))
 
