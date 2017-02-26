@@ -50,7 +50,7 @@ class CommsUpdate(QtGui.QWidget):
     def send_message(self):
 
         joy = joystick.Joystick()
-        throttle = joy.joystick_axis[0][1]
+        throttle = joy.joystick_axis[0][0]
         steering = joy.joystick_axis[0][2]
 
         print throttle, steering
