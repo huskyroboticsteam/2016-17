@@ -9,6 +9,8 @@ import Robot_comms
 import Navigation
 import Utils
 import time
+import sys
+import getopt
 
 class Robot(object):
     '''
@@ -25,11 +27,9 @@ class Robot(object):
     Back
     '''
 
-    def __init__(self):
+    def __init__(self, arg):
         ADC.setup()
-        # setup i2c to motorshield
-        # self.pwm = Adafruit_PCA9685.PCA9685(address=0x60, busnum=1)
-        # self.pwm.set_pwm_freq(60)
+
 
         self.pot_pid = PID.PID(-0.1, 0, 0)
 
@@ -40,23 +40,34 @@ class Robot(object):
         # 2: 13, 12, 11
         # 3: 2,  4,  3
         # 4: 7,  6,  5
-        """
-        self.motors = [
-            None, # motor IDs are 1-based, so placeholder for index 0
-            MiniMotor.MiniMotor(1, 8, 9, 10, self.pwm),
-            MiniMotor.MiniMotor(2, 13, 12, 11, self.pwm),
-            MiniMotor.MiniMotor(3, 2, 4, 3, self.pwm),
-            MiniMotor.MiniMotor(4, 7, 6, 5, self.pwm),
-        ]
-        """
-        self.motors = [
-            BigMotor.BigMotor(1, "P8_13"),
-            BigMotor.BigMotor(2, "P8_19"),
-            BigMotor.BigMotor(3, "P9_14"),
-            BigMotor.BigMotor(4, "P8_13")
-        ]
-        self.r_comms = Robot_comms.Robot_comms("192.168.0.50", 8840, 8841, "<?hh", "<?ff", "<ffffffff")
-        self.automode = 0
+
+        try:
+            opts, args = getopt.getopt(arg, "-t:-f")
+        except getopt.GetoptError:
+            print 'Error'
+
+        for opt, arg in opts:
+            if opt == '-f':
+                # setup i2c to motorshield
+                self.pwm = Adafruit_PCA9685.PCA9685(address=0x60, busnum=1)
+                self.pwm.set_pwm_freq(60)
+                self.motors = [
+
+                    None, # motor IDs are 1-based, so placeholder for index 0
+                    MiniMotor.MiniMotor(1, 8, 9, 10, self.pwm),
+                    MiniMotor.MiniMotor(2, 13, 12, 11, self.pwm),
+                    MiniMotor.MiniMotor(3, 2, 4, 3, self.pwm),
+                    MiniMotor.MiniMotor(4, 7, 6, 5, self.pwm),
+                ]
+            else:
+                self.motors = [
+                    BigMotor.BigMotor(1, "P8_13"),
+                    BigMotor.BigMotor(2, "P8_19"),
+                    BigMotor.BigMotor(3, "P9_14"),
+                    BigMotor.BigMotor(4, "P8_13")
+                ]
+                self.r_comms = Robot_comms.Robot_comms("192.168.0.50", 8840, 8841, "<?hh", "<?ff", "<ffffffff")
+                self.automode = 0
 
     # drives the motor with a value, negative numbers for reverse
     def driveMotor(self, motor_id, motor_val):
