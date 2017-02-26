@@ -1,5 +1,5 @@
 import Adafruit_BBIO.PWM as PWM
-servo_pin = "P8_13"
+servo_pin = "P9_14"
 
 PWM.start(servo_pin, 1.5/17.6, 60)
 step = 0

@@ -28,12 +28,12 @@ class Robot(object):
     def __init__(self):
         ADC.setup()
         # setup i2c to motorshield
-        self.pwm = Adafruit_PCA9685.PCA9685(address=0x60, busnum=1)
-        self.pwm.set_pwm_freq(60)
+        # self.pwm = Adafruit_PCA9685.PCA9685(address=0x60, busnum=1)
+        # self.pwm.set_pwm_freq(60)
 
         self.pot_pid = PID.PID(-0.1, 0, 0)
 
-        self.nav = Navigation.Navigation(0.771, (0.771 + 0.346) / 2, 0.346, 0.01, "AIN2")
+        self.nav = Navigation.Navigation(0.546, (0.546 + 0.107) / 2, 0.107, 0.01, "AIN2")
         # setup motors
         # motor: throttle, F, B
         # 1: 8,  9,  10
@@ -53,9 +53,9 @@ class Robot(object):
             BigMotor.BigMotor(1, "P8_13"),
             BigMotor.BigMotor(2, "P8_19"),
             BigMotor.BigMotor(3, "P9_14"),
-            BigMotor.BigMotor(4, "P9_16")
+            BigMotor.BigMotor(4, "P8_13")
         ]
-        self.r_comms = Robot_comms.Robot_comms("192.168.0.40", 8840, 8841, "<?hh", "<?ff", "<ffffffff")
+        self.r_comms = Robot_comms.Robot_comms("192.168.0.50", 8840, 8841, "<?hh", "<?ff", "<ffffffff")
         self.automode = 0
 
     # drives the motor with a value, negative numbers for reverse
@@ -63,7 +63,7 @@ class Robot(object):
         if motor_id < 1 or motor_id > 4:
             print "bad motor num: " + motor_id
             return
-        self.motors[motor_id].set_motor(motor_val)
+        self.motors[motor_id - 1].set_motor(motor_val)
 
     def stopMotor(self, motor_id):
         if motor_id < 1 or motor_id > 4:
