@@ -9,7 +9,7 @@ Autonomous:
     heading between two GPS coords - Elizabeth
     GPS - Sebastian
     Mag problems
-        - average last 10?
+        - average last 10? - Done by Tim
         - calc heading of front based on Pot reading
     Obstacle avoidance - Albert and Benton
         - distance sensor - science team
