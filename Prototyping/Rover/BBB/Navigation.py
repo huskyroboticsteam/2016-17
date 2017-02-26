@@ -9,7 +9,7 @@ class Navigation:
     def __init__(self, pot_left, pot_middle, pot_right, pot_tol, pot_pin):
         # autopilot
         self.auto = True
-_        # list of GPS coords to travel to
+        # list of GPS coords to travel to
         self.destinations = []
         # list of tuple with heading and bool determining if obstacle
         self.scannedHeadings = []
@@ -19,7 +19,8 @@ _        # list of GPS coords to travel to
         self.POT_LEFT = pot_left
         self.POT_RIGHT = pot_right
         self.POT_MIDDLE = pot_middle
-        self.POT_TOL = pot_tol        self.avoidingObs = False
+        self.POT_TOL = pot_tol
+        self.avoidingObs = False
         self.checkingDistance = 2
 
 
