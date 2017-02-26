@@ -4,6 +4,7 @@ from PyQt4.QtGui import *
 
 class command(QLineEdit):
     signalStatus = QtCore.pyqtSignal([tuple])
+    autoTrigger = QtCore.pyqtSignal(bool)
 
     def __init__(self, map, sock, list_wid, parent = None):
         super(command, self).__init__(parent)
@@ -51,6 +52,7 @@ class command(QLineEdit):
 
             # Don't send the data again if we are in auto mode
             if comms.auto is False:
+                self.autoTrigger.emit(False)
                 comms.open_tcp()
                 for i in range(0, len(self.markers)):
                     lat = self.markers[i].coordX.toAscii()
@@ -65,6 +67,7 @@ class command(QLineEdit):
                 comms.auto = True
                 comms.close_tcp()
             else:
+                self.autoTrigger(True)
                 comms.auto = False
 
     def update(self, cmd):

@@ -169,7 +169,7 @@ class Ui_MainWindow(object):
         self.map_container = QtGui.QVBoxLayout()
         self.map_container.setObjectName(_fromUtf8("map_container"))
         self.gridLayout_9.addLayout(self.map_container, 0, 0, 1, 1)
-        self.gridLayout_9.setRowStretch(0, 2)
+        self.gridLayout_9.setRowStretch(0, 3)
         self.gridLayout_9.setRowStretch(1, 1)
         self.gridLayout.addWidget(self.frame_3, 1, 2, 2, 2)
         self.frame_5 = QtGui.QFrame(self.right_frame)

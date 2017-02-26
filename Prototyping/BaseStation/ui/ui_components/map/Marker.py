@@ -11,7 +11,6 @@ class Marker:
         self.rover = rover
 
     def draw(self, painter):
-        print "Drawing"
         if self.rover:
             painter.drawEllipse(int(self.x) - self.centerX, int(self.y) - self.centerY, 20, 20)
         else:

@@ -65,6 +65,8 @@ sock.signalUpdate.connect(map.update_rover_pos)
 main.map_container.addWidget(command_line)
 main.list_container.addWidget(list_wid)
 auto_lab = auto.Auto()
+command_line.autoTrigger.connect(auto_lab.toggle_ui)
+
 main.list_container.addWidget(auto_lab)
 
 # Creates the map at 800x200 px and updates at 30 fps
@@ -72,8 +74,6 @@ main.list_container.addWidget(auto_lab)
 map.signal.connect(list_wid.add_to_ui)
 map.removeSignal.connect(list_wid.remove_from_ui)
 
-# Give the command api the map to talk to
-# comm.feedin_map(map)
 
 
 sys.exit(app.exec_())
