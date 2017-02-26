@@ -31,28 +31,18 @@ class Robot_comms():
             self.base_station_ip = udp_addr
             drive_unpacked = struct.unpack(self.driveFormat, data)
             self.receivedDrive = drive_unpacked
-            print "drive received"
-            print drive_unpacked
-
         except:
             # TODO: catch exceptions from the non-blocking receive better
             pass
         try:
             if self.conn is None:
-                print "accepting"
                 self.conn, tcp_addr = self.tcp_sock.accept()
                 self.conn.setblocking(False)
-                print "accepted"
                 self.base_station_ip = tcp_addr
-            print "receiving"
             data = self.conn.recv(1024)
-            print data
-            print "received"
             gps_unpacked = struct.unpack(self.gpsFormat, data)
             if gps_unpacked[0]:
                 nav.append_destination(gps_unpacked[1:])
-                print "gps received"
-                print gps_unpacked
             else:
                 self.closeConn()
         except:
@@ -69,11 +59,9 @@ class Robot_comms():
                 if gps is not None:
                     lat = float(gps[0])
                     longitude = float(gps[1])
-                print "sending"
                 # TODO : add encoders 1-4, nav.getGPS()[3,5]
                 MESSAGE = struct.pack(self.rtbFormat, nav.readPot(), nav.getMag(), 0, 0, 0, 0, lat, longitude)
                 self.udp_sock.sendto(MESSAGE, self.base_station_ip)
-                print "sent"
         except:
             # TODO: catch exceptions better (nav.getGPS may be null)
             pass
