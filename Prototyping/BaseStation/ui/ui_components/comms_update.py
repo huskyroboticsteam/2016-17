@@ -5,7 +5,7 @@ import joystick
 
 class CommsUpdate(QtGui.QWidget):
 
-    ROVER_HOST = "192.168.0.40"
+    ROVER_HOST = "192.168.0.50"
     LOCAL_HOST = "127.0.0.1"
     ROVER_PORT = 8840
 
@@ -37,7 +37,7 @@ class CommsUpdate(QtGui.QWidget):
             self.timer = QtCore.QTimer()
             self.timer.timeout.connect(self.send_message)
             self.timer.timeout.connect(self.receive_message)
-            self.timer.start(500)
+            self.timer.start(10)
 
     def stopping(self):
         self.stop = True
@@ -56,6 +56,7 @@ class CommsUpdate(QtGui.QWidget):
     def send_message(self):
 
         joy = joystick.Joystick()
+        print joy.joystick_axis
         throttle = joy.joystick_axis[0][0]
         steering = joy.joystick_axis[0][2]
 
@@ -97,11 +98,11 @@ class CommsUpdate(QtGui.QWidget):
             lat = tup[6]
             lng = tup[7]
 
-        dictionary = {"Potentiometer": str(pot), "Magnetometer": str(mag),
+            dictionary = {"Potentiometer": str(pot), "Magnetometer": str(mag),
                       "Encoder 1": str(enc_1), "Encoder 2": str(enc_2), "Encoder 3": str(enc_3), "Encoder 4": str(enc_4)}
 
-        self.signalStatus.emit(dictionary)
+            self.signalStatus.emit(dictionary)
 
-        self.signalUpdate.emit((lat, lng))
+            self.signalUpdate.emit((lat, lng))
 
         # TODO: add arm packets structure
