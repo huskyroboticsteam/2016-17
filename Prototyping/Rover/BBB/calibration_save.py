@@ -1,5 +1,8 @@
 import BNO055
 
+
+# Calibrates the BNO055 and saves the calibration data to calibration_data.txt
+# See the website for more details
 def main():
     bno055 = BNO055.BNO055()
     init_success = bno055.begin()
