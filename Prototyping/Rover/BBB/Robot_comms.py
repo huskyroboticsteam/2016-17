@@ -1,5 +1,6 @@
 import socket
 import struct
+import threading
 
 class Robot_comms():
 
@@ -23,7 +24,20 @@ class Robot_comms():
         self.tcp_sock.setblocking(False)
         self.tcp_sock.listen(1)
         self.conn = None
+        self.lat = 0
+        self.longitude = 0
+        self.nav = None
+        updateGPS()
 
+    def updateGPS(self):
+        try:
+            gps = self.nav.getGPS()
+            if gps is not None:
+                self.lat = float(gps[0])
+                self.longitude = float(gps[1])
+            threading.Timer(10, updateGPS()).start()
+        except:
+            threading.Timer(10, updateGPS()).start()
     # receives a packet and sets variables accordingly
     def receiveData(self, nav):
         try:
@@ -51,16 +65,11 @@ class Robot_comms():
 
     # sends data in message back to the base station
     def sendData(self, nav):
+        self.nav = nav
         try:
             if self.base_station_ip is not None:
-                gps = nav.getGPS()
-                lat = 0
-                longitude = 0
-                if gps is not None:
-                    lat = float(gps[0])
-                    longitude = float(gps[1])
                 # TODO : add encoders 1-4, nav.getGPS()[3,5]
-                MESSAGE = struct.pack(self.rtbFormat, nav.readPot(), nav.getMag(), 0, 0, 0, 0, lat, longitude)
+                MESSAGE = struct.pack(self.rtbFormat, nav.readPot(), nav.getMag(), 0, 0, 0, 0, self.lat, self.longitude)
                 self.udp_sock.sendto(MESSAGE, self.base_station_ip)
         except:
             # TODO: catch exceptions better (nav.getGPS may be null)
