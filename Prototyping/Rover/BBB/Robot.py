@@ -240,7 +240,7 @@ def main():
                 MotorParms = robot.convertParmsToMotorVals(driveParms)
                 for i in range(1, 5):
                     robot.driveMotor(i, MotorParms[i - 1])
-                time.sleep(0.5)
+                time.sleep(0.01)
 
         except KeyboardInterrupt:
             for i in range(1, 5):
