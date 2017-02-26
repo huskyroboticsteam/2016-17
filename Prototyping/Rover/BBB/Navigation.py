@@ -49,17 +49,16 @@ class Navigation:
 
     # calculates the desired heading
     # returns a value between 0 and 360 inclusive
-    # TODO: calculate direction between current GPS location and destination
-    # note that destinations is an array of arrays; destination GPS location
-    #  is at [0] which contains [lat, long]
     def calculateDesiredHeading(self):
         currLocation = self.gps.getCoords()
-        currLat = currLocation[0]
-        currLong = currLocation[1]
-        x_distance = self.destinations[0][0] - currLat
-        y_distance = self.destinations[0][1] - currLong
-        theta = math.atan2(x_distance, y_distance)
-        return Utils.translateValue(self, theta, -1 * math.pi, math.pi, 0, 360)
+        destination =  destinations[0]
+        x_distance = self.distance(destination[0], currLocation[1])
+        y_distance = self.distance(currLocation[0], destination[1])
+        if (yDistance != 0):
+            theta = math.atan2(x_distance, y_distance)
+            return Utils.translateValue(self, theta, -1 * math.pi, math.pi, 0, 360)
+        else:
+            return 0
 
     # find distance between two points using the haversine formula
     def distance(self, desLong, desLat):
