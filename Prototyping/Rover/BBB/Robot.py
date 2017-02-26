@@ -33,7 +33,7 @@ class Robot(object):
 
         self.pot_pid = PID.PID(-0.1, 0, 0)
 
-        self.nav = Navigation.Navigation(0.546, (0.546 + 0.107) / 2, 0.107, 0.01, "AIN2")
+        self.nav = Navigation.Navigation(0.55000, (0.55000 + 0.11111) / 2, 0.11111, 0.01, "AIN2")
         # setup motors
         # motor: throttle, F, B
         # 1: 8,  9,  10
@@ -41,33 +41,28 @@ class Robot(object):
         # 3: 2,  4,  3
         # 4: 7,  6,  5
 
-        try:
-            opts, args = getopt.getopt(arg, "-t:-f")
-        except getopt.GetoptError:
-            print 'Error'
 
-        for opt, arg in opts:
-            if opt == '-f':
-                # setup i2c to motorshield
-                self.pwm = Adafruit_PCA9685.PCA9685(address=0x60, busnum=1)
-                self.pwm.set_pwm_freq(60)
-                self.motors = [
+        if not arg:
+            # setup i2c to motorshield
+            self.pwm = Adafruit_PCA9685.PCA9685(address=0x60, busnum=1)
+            self.pwm.set_pwm_freq(60)
+            self.motors = [
 
-                    None, # motor IDs are 1-based, so placeholder for index 0
-                    MiniMotor.MiniMotor(1, 8, 9, 10, self.pwm),
-                    MiniMotor.MiniMotor(2, 13, 12, 11, self.pwm),
-                    MiniMotor.MiniMotor(3, 2, 4, 3, self.pwm),
-                    MiniMotor.MiniMotor(4, 7, 6, 5, self.pwm),
+                None, # motor IDs are 1-based, so placeholder for index 0
+                MiniMotor.MiniMotor(1, 8, 9, 10, self.pwm),
+                MiniMotor.MiniMotor(2, 13, 12, 11, self.pwm),
+                MiniMotor.MiniMotor(3, 2, 4, 3, self.pwm),
+                MiniMotor.MiniMotor(4, 7, 6, 5, self.pwm),
+            ]
+        elif arg:
+            self.motors = [
+                BigMotor.BigMotor(1, "P8_13"),
+                BigMotor.BigMotor(2, "P8_19"),
+                BigMotor.BigMotor(3, "P9_14"),
+                BigMotor.BigMotor(4, "P8_13")
                 ]
-            else:
-                self.motors = [
-                    BigMotor.BigMotor(1, "P8_13"),
-                    BigMotor.BigMotor(2, "P8_19"),
-                    BigMotor.BigMotor(3, "P9_14"),
-                    BigMotor.BigMotor(4, "P8_13")
-                ]
-                self.r_comms = Robot_comms.Robot_comms("192.168.0.50", 8840, 8841, "<?hh", "<?ff", "<ffffffff")
-                self.automode = 0
+        self.r_comms = Robot_comms.Robot_comms("192.168.0.50", 8840, 8841, "<?hh", "<?ff", "<ffffffff")
+        self.automode = 0
 
     # drives the motor with a value, negative numbers for reverse
     def driveMotor(self, motor_id, motor_val):
@@ -231,7 +226,7 @@ def main():
             drive_params.stop()
             drive_thread.join()
     else:
-        robot = Robot()
+        robot = Robot(sys.argv[1])
         try:
             while True:
                 robot.get_robot_comms().receiveData(robot.get_nav())
@@ -240,11 +235,13 @@ def main():
                 MotorParms = robot.convertParmsToMotorVals(driveParms)
                 for i in range(1, 5):
                     robot.driveMotor(i, MotorParms[i - 1])
-                time.sleep(0.01)
 
         except KeyboardInterrupt:
             for i in range(1, 5):
-                robot.stopMotor(i)
+                try:
+                    robot.stopMotor(i)
+                except:
+                    print("motor: " + str(i) + " disconnected")
             robot.r_comms.closeConn()
             print "exiting"
 
