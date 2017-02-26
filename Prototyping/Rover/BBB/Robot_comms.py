@@ -37,7 +37,7 @@ class Robot_comms():
                 self.longitude = float(gps[1])
         except:
             pass
-        threading.Timer(10, updateGPS).start()
+        threading.Timer(1, updateGPS).start()
     # receives a packet and sets variables accordingly
     def receiveData(self, nav):
         try:
