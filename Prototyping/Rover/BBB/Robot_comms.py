@@ -27,7 +27,7 @@ class Robot_comms():
         self.lat = 0
         self.longitude = 0
         self.nav = None
-        updateGPS()
+        self.updateGPS()
 
     def updateGPS(self):
         try:
