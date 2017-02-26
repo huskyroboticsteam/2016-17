@@ -1,4 +1,5 @@
 from PyQt4 import QtCore
+from ui_components.map import Generator
 import math
 
 """
@@ -8,8 +9,7 @@ Reads from .settings on startup and writes over .settings on shutdown
 
 
 class Settings:
-    def __init__(self, ui, command_api):
-        self.comm = command_api
+    def __init__(self, ui):
         self.main = ui
 
         self.cam_list = []
@@ -64,8 +64,11 @@ class Settings:
         zoom19 = self.main.tile_19.text()
 
 
-        # Tell the command_api to generate a new map
-        result = self.comm.generate_new_map(name, lat, lng, tile_size, api, zoom15, zoom16, zoom17, zoom18, zoom19)
+        # Generate a new map
+        arr = [zoom15, zoom16, zoom17, zoom18, zoom19]
+        g = Generator.Generator(tile_size, api, arr)
+        result = g.generate_maps(name, lat, lng)
+        # result = self.comm.generate_new_map(name, lat, lng, tile_size, api, zoom15, zoom16, zoom17, zoom18, zoom19)
 
         # If we generated successfully (user data is validated)
         if result:

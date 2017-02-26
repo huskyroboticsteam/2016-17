@@ -1,9 +1,9 @@
 from PyQt4 import QtCore
 from PyQt4.QtGui import *
-import command_api
 
 
 class command(QLineEdit):
+    signalStatus = QtCore.pyqtSignal([tuple])
 
     def __init__(self, map, sock, list_wid, parent = None):
         super(command, self).__init__(parent)
@@ -47,7 +47,25 @@ class command(QLineEdit):
             self.map.update_marker(list[1], list[2], int(list[3]) - 1) # long, lat, index
             self.list_wid.update_ui()
         elif (cmd == self.commands[3]): # Auto
-            command_api.send_auto_data(self.sock, self.map.markers)
+            comms = self.sock
+
+            # Don't send the data again if we are in auto mode
+            if comms.auto is False:
+                comms.open_tcp()
+                for i in range(0, len(self.markers)):
+                    lat = self.markers[i].coordX.toAscii()
+                    long = self.markers[i].coordY.toAscii()
+                    lat = float(lat)
+                    long = float(long)
+
+                    if i == len(self.markers) - 1:
+                        self.signalStatus.emit(False, lat, long)
+                    else:
+                        self.signalStatus.emit(True, lat, long)
+                comms.auto = True
+                comms.close_tcp()
+            else:
+                comms.auto = False
 
     def update(self, cmd):
         self.setText(cmd)

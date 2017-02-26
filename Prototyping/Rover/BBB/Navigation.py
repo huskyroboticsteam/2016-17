@@ -45,34 +45,54 @@ class Navigation:
     # returns gps data
     # TODO: get GPS to work
     def getGPS(self):
-        return self.gps.read()
+        return self.gps.getCoords()
 
     # calculates the desired heading
     # returns a value between 0 and 360 inclusive
-    # TODO: calculate direction between current GPS location and destination
-    # note that destinations is an array of arrays; destination GPS location
-    #  is at [0] which contains [lat, long]
     def calculateDesiredHeading(self):
         currLocation = self.gps.getCoords()
-        currLat = currLocation[0]
-        currLong = currLocation[1]
-        x_distance = self.destinations[0][0] - currLat;
-        y_distance = self.destinations[0][1] - currLong;
-        theta = math.atan2(x_distance, y_distance)
-        return Utils.translateValue(self, theta, -1 * math.pi, math.pi, 0, 360)
+        destination =  destinations[0]
+        x_distance = self.distance(destination[0], currLocation[1])
+        y_distance = self.distance(currLocation[0], destination[1])
+        if (yDistance != 0):
+            theta = math.atan2(x_distance, y_distance)
+            return Utils.translateValue(self, theta, -1 * math.pi, math.pi, 0, 360)
+        else:
+            return 0
+
+    # find distance between two points using the haversine formula
+    def distance(self, desLong, desLat):
+        gps = GPS.GPS()
+        cord = gps.getCoords()
+        lat1 = self.radGPS(cord[0])
+        long1 = self.radGPS(cord[1])
+        lat2 = self.radGPS(desLat)
+        long2 = self.radGPS(desLong)
+        r = 6371  # radius of earth
+        dlat = lat2 - lat1
+        dlon = long2 - long1
+
+        a = math.sin(dlat/2)**2 + math.cos(lat1)*math.cos(lat2)*math.sin(dlon/2)**2
+        c = 2*math.asin(math.sqrt(a))
+
+        return r * c  # kilometers
+
+    # TODO: make sure this is getting the correct values from the string
+    # takes the dec min format and converts it to radians
+    def radGPS(self, val):
+        return math.radians(val[-7:] + (val[:-7]/60))
 
     # calculates desired new GPS coordinate based on distance
     # from current GPS location and current heading in degrees
     def calculateDesiredNewCoordinate(self, currHeading, distance):
-        theta = Utils.translateValue(self, currHeading, 0, 360, -1 * math.pi, math.pi)
+        theta = Utils.translateValue(self, currHeading, 0, 360, 0, 2 * math.pi)
         x = distance * math.cos(theta)
         y = distance * math.sin(theta)
         coords = (x, y)
         return coords
 
     # returns a turn value from -100 to 100 based on the difference between the current heading and the desired heading
-    def calculateDesiredTurn(self, curHeading):
-        desiredHeading = self.calculateDesiredHeading()
+    def calculateDesiredTurn(self, curHeading, desiredHeading):
         difHeading = abs(curHeading - desiredHeading)
         if ((curHeading > desiredHeading and difHeading > 180) or
             (curHeading < desiredHeading and difHeading < 180)):
@@ -88,8 +108,8 @@ class Navigation:
         return False
 
     # Adds a (heading, isObsticalVal) pair to scannedHeadings
-    def appendScanedHeadings(self, heading, isObstacleVal):
-        self.scannedHeadings.append(heading, isObstacleVal)
+    def appendScannedHeadings(self):
+        self.scannedHeadings.append(self.getMag(), self.isObstacle())
 
     # Checks to see if first value in scannedHeadings is a "temp" value
     # If so then just replace it
@@ -111,19 +131,20 @@ class Navigation:
         while (inLoop):
             middleHeading = int(len(possibleHeadings) / 2)
             tempHeading = self.scannedHeadings.pop(self, middleHeading)
+            if self.scannedHeadings[0] is None:
+                inLoop = False
             # Check for next value to the right of center
             if (not tempHeading[1]):
                 self.scannedHeadings = []
-
-            if self.scannedHeadings[0] is None:
-                inLoop = False
+                self.checkIfAvoidingObs(tempHeading[0])
+            # Get new heading to check
             tempHeading = possibleHeadings.pop(self, middleHeading -1)
+            if (self.scannedHeadings[0] is None):
+                inLoop = False
             # Check for next value to the left of center
             if (not tempHeading[1]):
                 self.scannedHeadings = []
-                return tempHeading[0]
-            if (self.scannedHeadings[0] is None):
-                inLoop = False
+                self.checkIfAvoidingObs(tempHeading[0])
         # TODO: What to do if there is no path forward?
 
     # returns True for autopilot False for manual control

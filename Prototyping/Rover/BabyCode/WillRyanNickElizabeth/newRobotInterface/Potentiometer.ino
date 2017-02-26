@@ -9,13 +9,10 @@ const int NUM_CALIBRATION = 3;
 // should be the extreme left and extreme right in some order. POTENTIOMETER_VALUES
 // should be strictly increasing.
 const double ANGLES[NUM_CALIBRATION] = {-45.0, 0.0, 45.0};
-double POTENTIOMETER_VALUES[NUM_CALIBRATION];
+double POTENTIOMETER_VALUES[NUM_CALIBRATION] = {173, 297, 411};
 
-void calibrate(int left, int middle, int right) {
-  POTENTIOMETER_VALUES[0] = left;
-  POTENTIOMETER_VALUES[1] = middle;
-  POTENTIOMETER_VALUES[2] = right;
-}
+
+
 
 double getCurrentAngle() {
   debugln("Calling getCurrentAngle: ");

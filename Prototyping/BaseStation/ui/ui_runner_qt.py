@@ -5,7 +5,7 @@ from ui_components.ip_scanner import IPCheckerLayout
 from ui_components.camera_streaming import UI
 from ui_components.emergency_stop import stop
 from ui_components.settings import settings
-from ui_components import command_api, Command, comms_update
+from ui_components import Command, comms_update
 from ui_components.arm_viz import arm_widget
 from ui_components.sensors import SensorChecker
 from ui_components.list_widget import list_widget
@@ -31,13 +31,9 @@ main = Ui_MainWindow()
 main.setupUi(win)
 win.resize(1200, 675)
 sensors = SensorChecker.SensorData()
-comm = command_api.CommandApi(sensors)
-sock = comms_update.CommsUpdate(comm)
-setting_widget = settings.Settings(main, comm)
-
-# Creates the map at 800x200 px and updates at 30 fps
-map = Map.Map(setting_widget.get_map_name())
-main.map_container.addWidget(map)
+#comm = command_api.CommandApi(sensors)
+sock = comms_update.CommsUpdate()
+setting_widget = settings.Settings(main)
 
 # Create the emergency stop button
 main.stop_container.addWidget(stop.Stop())
@@ -58,16 +54,26 @@ main.reading_container.addWidget(sensors)
 # Show window, initialize pygame, and execute the app
 win.show()
 
+map = Map.Map(setting_widget.get_map_name())
+main.map_container.addWidget(map)
 list_wid = list_widget.ListWidget(map)
 command_line = Command.command(map, sock, list_wid)
+command_line.signalStatus.connect(sock.send_auto_mode)
 list_wid.signalStatus.connect(command_line.update)
+sock.signalStatus.connect(sensors.update_ui)
+sock.signalUpdate.connect(map.update_rover_pos)
 main.map_container.addWidget(command_line)
 main.list_container.addWidget(list_wid)
 auto_lab = auto.Auto()
 main.list_container.addWidget(auto_lab)
 
+# Creates the map at 800x200 px and updates at 30 fps
+
+map.signal.connect(list_wid.add_to_ui)
+map.removeSignal.connect(list_wid.remove_from_ui)
+
 # Give the command api the map to talk to
-comm.feedin_map(map)
+# comm.feedin_map(map)
 
 
 sys.exit(app.exec_())

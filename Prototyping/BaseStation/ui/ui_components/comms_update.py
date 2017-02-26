@@ -1,9 +1,9 @@
-from PyQt4 import QtCore
+from PyQt4 import QtCore, QtGui
 import socket, struct
 import random
 
 
-class CommsUpdate:
+class CommsUpdate(QtGui.QWidget):
 
     ROVER_HOST = "192.168.0.40"
     LOCAL_HOST = "127.0.0.1"
@@ -11,12 +11,14 @@ class CommsUpdate:
 
     ROVER_TCP_PORT = 8841
 
-    def __init__(self, command):
+    signalStatus = QtCore.pyqtSignal([dict])
+    signalUpdate = QtCore.pyqtSignal([tuple])
+
+    def __init__(self):
+        super(self.__class__,self).__init__()
 
         # Indicates whether the rovers is in autonomous mode
         self.auto = False
-
-        self.command_api = command
 
         try:
             # UDP connection to the rover
@@ -78,7 +80,16 @@ class CommsUpdate:
             enc_4 = tup[5]
             lat = tup[6]
             lng = tup[7]
-            self.command_api.update_sensors(pot, mag, enc_1, enc_2, enc_3, enc_4)
-            # self.command_api.update_rover_pos(lat, lng)
 
-            # TODO: add arm packets structure
+            print str(pot) + " " + str(mag) + " " + str(lat) + " " + str(lng)
+
+        #self.command_api.update_sensors(random.randint(-255, 255), random.randint(-100, 100), 0, 0, 0, 0)
+
+        dictionary = {"Potentiometer": str(random.randint(-255, 255)), "Magnetometer": str(random.randint(-100, 100)),
+                      "Encoder 1": str(0), "Encoder 2": str(0), "Encoder 3": str(0), "Encoder 4": str(0)}
+
+        self.signalStatus.emit(dictionary)
+
+        self.signalUpdate.emit((random.randint(-255, 255), random.randint(-255, 255)))
+
+        # TODO: add arm packets structure

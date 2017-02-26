@@ -7,10 +7,11 @@ from PyQt4 import QtGui, QtCore
 
 
 class Map(QtGui.QWidget):
+    signal = QtCore.pyqtSignal(float, float)
+    removeSignal = QtCore.pyqtSignal(float, float)
     def __init__(self, map_name):
         super(self.__class__, self).__init__()
         self.markers = []
-        self.coordinates = []
         # Size of all tiles for calculations
         self.TILE_SIZE = [640, 640]
 
@@ -69,6 +70,11 @@ class Map(QtGui.QWidget):
         if QMouseEvent.button() == QtCore.Qt.LeftButton:
             self.clicked = False
 
+    def mouseDoubleClickEvent(self, QMouseEvent):
+        if QMouseEvent.button() == QtCore.Qt.LeftButton:
+            lat, long = self.get_mouse_lat_lng((self.x, self.y))
+            self.add_marker(lat, long)
+
     def keyPressEvent(self, QKeyEvent):
         # super(self.__class__, self).keyPressEvent(QKeyEvent)
         #print "KeyPress"
@@ -82,6 +88,9 @@ class Map(QtGui.QWidget):
         elif QKeyEvent.key() == QtCore.Qt.Key_E:
             self.get_mouse_lat_lng((self.x, self.y))
             print self.image_tiles[15]["tilesImages"][0].image.size().height()
+        '''elif QKeyEvent.key() == "Double Click":
+            lat, long = self.get_mouse_lat_lng((self.x, self.y))
+            self.add_marker(lat, long)'''
 
     def open_map(self, map_name):
         # Clear all map tiles
@@ -308,6 +317,7 @@ class Map(QtGui.QWidget):
     def add_marker(self, x, y):
         # generates a new marker object
         self.markers.append(self.make_marker(x, y, False))
+        self.signal.emit(x, y)
 
     # draw every marker on the screen
     def draw_marker(self, painter):
@@ -335,17 +345,26 @@ class Map(QtGui.QWidget):
         self.centerY2 -= self.TILE_SIZE[1] / 2
 
         return Marker.Marker(pixelCoord[0] + self.center_location[0], pixelCoord[1] + self.center_location[1],
-                          self.centerX2, self.centerY2, self.zoom_level, x, y, rover)
+                             self.centerX2, self.centerY2, self.zoom_level, x, y, rover)
 
     def remove_marker(self, index):
-        if(index < len(self.markers) and index > -1):
+        if(index > -1):
             if (self.markers[index].rover):
                 print "Do not remove the rover!"
             else:
-                self.markers.pop(index)
+                point = self.markers.pop(index)
+                self.removeSignal.emit(point.coordX, point.coordY)
         else:
             print "Inavlid index at", (index + 1)
 
     def update_marker(self, x, y, index):
         self.markers.pop(index)
         self.markers.insert(index, self.make_marker(x, y, False))
+
+    def update_rover_pos(self, (lat, lng)):
+        # Clear the rover marker
+        coord = (lat, lng)
+        for i in range(0, len(self.markers)):
+            if self.markers[i].rover:
+                self.markers.pop(i)
+                self.add_rover(coord[0], coord[1])

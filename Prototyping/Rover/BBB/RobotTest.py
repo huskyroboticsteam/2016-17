@@ -48,7 +48,7 @@ class Robot(object):
             MiniMotor.MiniMotor(4, 7, 6, 5, self.pwm),
         ]
         self.r_comms = Robot_comms.Robot_comms("192.168.0.40", 8840, 8841, "<?hh", "<?ff", "<ffffffff")
-        self.automode = 0
+
 
     # drives the motor with a value, negative numbers for reverse
     def driveMotor(self, motor_id, motor_val):
@@ -70,27 +70,7 @@ class Robot(object):
             return 0, 0
         auto = self.r_comms.receivedDrive[0]
         if auto:
-            if self.automode == 0:  # Auto drive normaly
-                if self.nav.isObstacle(): # if obstacle in front then switch mode
-                    self.automode = 1
-                else:
-                    return 20, self.nav.calculateDesiredTurn(self.nav.getMag(), self.nav.calculateDesiredHeading())
-            if self.automode == 1:  # Turn rover head to left to prepare to scan
-                if self.nav.readPot() < self.nav.get_pot_left():
-                    leftheading = (self.nav.getMag() - 40) % 360
-                    if (leftheading < 0):
-                        leftheading = 360 - leftheading
-                    return 0, self.nav.calculateDesiredTurn(self.nav.getMag(), leftheading)
-                else:
-                    self.automode = 2
-            if self.automode == 2:  # Scan in front of rover at an arch from left to right recording values
-                if self.nav.readPot() > self.nav.get_pot_right():
-                    self.nav.appendScannedHeadings()
-                    rightheading = (self.nav.getMag() + 40) % 360
-                    return 0, self.nav.calculateDesiredTurn(self.nav.getMag(), rightheading)
-                else:
-                    self.nav.addDestination()  # Get a new heading and add a temp value to coordinate list
-                    self.automode = 0 # start driving in auto normally
+            return 20, self.nav.calculateDesiredTurn(self.nav.getMag())
         else:
             return self.r_comms.receivedDrive[1], self.r_comms.receivedDrive[2]
 
@@ -98,7 +78,7 @@ class Robot(object):
     # TODO: figure out a way to change throttle while on autopilot?
     def getAutoDriveParms(self):
         # print self.getGPS()
-        return 10, self.nav.calculateDesiredTurn(self.nav.getMag(), self.nav.calculateDesiredHeading())
+        return 10, self.nav.calculateDesiredTurn(self.nav.getMag())
 
     # returns a tuple of (motor1, motor2, motor3, motor4) from the driveParms modified by the pot reading
     def convertParmsToMotorVals(self, driveParms):
@@ -217,15 +197,15 @@ def main():
             while True:
                 robot.get_robot_comms().receiveData(robot.get_nav())
                 robot.get_robot_comms().sendData(robot.get_nav())
-                driveParms = robot.getDriveParms(robot.get_nav().getAuto())
-                MotorParms = robot.convertParmsToMotorVals(driveParms)
-                for i in range(1, 5):
-                    robot.driveMotor(i, MotorParms[i - 1])
+                #driveParms = robot.getDriveParms(robot.get_nav().getAuto())
+                #MotorParms = robot.convertParmsToMotorVals(driveParms)
+                #for i in range(1, 5):
+                #    robot.driveMotor(i, MotorParms[i - 1])
                 time.sleep(0.5)
 
         except KeyboardInterrupt:
             for i in range(1, 5):
-                robot.stopMotor(i)
+                #robot.stopMotor(i)
             robot.r_comms.closeConn()
             print "exiting"
 
