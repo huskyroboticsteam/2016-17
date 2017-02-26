@@ -55,14 +55,14 @@ main.sensor_container.addWidget(iplist)
 main.joystick_container.addWidget(arm)
 # Add the sensor reading widget
 main.reading_container.addWidget(sensors)
+# Add the map to the ui
+main.map_container.addWidget(map)
 # Add the command line to the ui
 main.map_container.addWidget(command_line)
 # Add the marker list view to the ui
 main.list_container.addWidget(list_wid)
 # Add the label that indicates autonomous mode to the ui
 main.list_container.addWidget(auto_lab)
-# Add the map to the ui
-main.map_container.addWidget(map)
 
 '''Connect all events for each of the components to talk to one another'''
 command_line.signalStatus.connect(sock.send_auto_mode)
