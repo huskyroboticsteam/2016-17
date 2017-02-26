@@ -1,6 +1,7 @@
 from PyQt4 import QtCore, QtGui
 import socket, struct
 import random
+import joystick
 
 
 class CommsUpdate(QtGui.QWidget):
@@ -48,10 +49,20 @@ class CommsUpdate(QtGui.QWidget):
 
     def send_message(self):
 
-        # Put the first 2 boolean values in the buffer
-        buff = struct.pack("<?hh", self.auto, random.randint(-255, 255), random.randint(-100, 100))
+        joy = joystick.Joystick()
+        throttle = joy.joystick_axis[0][1]
+        steering = joy.joystick_axis[0][2]
 
-        self.rover_sock.sendto(buff, (self.ROVER_HOST, self.ROVER_PORT))
+        print throttle, steering
+
+
+        # Put the first 2 boolean values in the buffer
+        buff = struct.pack("<?hh", self.auto, throttle, steering)
+
+        try:
+            self.rover_sock.sendto(buff, (self.ROVER_HOST, self.ROVER_PORT))
+        except:
+            pass
 
         # TODO: Add sending code for the arm
 
