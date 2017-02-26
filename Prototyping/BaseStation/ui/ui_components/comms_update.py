@@ -24,6 +24,8 @@ class CommsUpdate(QtGui.QWidget):
         # Reset the UI if emergency stopped
         self.stop = False
 
+        self.joy = joystick.Joystick()
+
         try:
             # UDP connection to the rover
             self.rover_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -54,11 +56,8 @@ class CommsUpdate(QtGui.QWidget):
         self.auto_sock.close()
 
     def send_message(self):
-
-        joy = joystick.Joystick()
-        print joy.joystick_axis
-        throttle = joy.joystick_axis[0][0]
-        steering = joy.joystick_axis[0][2]
+        throttle = self.joy.joystick_axis[0][0]
+        steering = self.joy.joystick_axis[0][2]
 
         print throttle, steering
 
@@ -99,7 +98,11 @@ class CommsUpdate(QtGui.QWidget):
             lng = tup[7]
 
             dictionary = {"Potentiometer": str(pot), "Magnetometer": str(mag),
+<<<<<<< HEAD
                       "Encoder 1": str(enc_1), "Encoder 2": str(enc_2), "Encoder 3": str(enc_3), "Encoder 4": str(enc_4)}
+=======
+                          "Encoder 1": str(enc_1), "Encoder 2": str(enc_2), "Encoder 3": str(enc_3), "Encoder 4": str(enc_4)}
+>>>>>>> ec2547d38ef4097f6361c590d33fab489d0ecddc
 
             self.signalStatus.emit(dictionary)
 
