@@ -1,6 +1,5 @@
 from PyQt4 import QtCore, QtGui
 import socket, struct
-import random
 import joystick
 
 
@@ -98,11 +97,11 @@ class CommsUpdate(QtGui.QWidget):
             lat = tup[6]
             lng = tup[7]
 
-        dictionary = {"Potentiometer": str(random.randint(-255, 255)), "Magnetometer": str(random.randint(-100, 100)),
-                      "Encoder 1": str(0), "Encoder 2": str(0), "Encoder 3": str(0), "Encoder 4": str(0)}
+        dictionary = {"Potentiometer": str(pot), "Magnetometer": str(mag),
+                      "Encoder 1": str(enc_1), "Encoder 2": str(enc_2), "Encoder 3": str(enc_3), "Encoder 4": str(enc_4)}
 
         self.signalStatus.emit(dictionary)
 
-        self.signalUpdate.emit((random.randint(-255, 255), random.randint(-255, 255)))
+        self.signalUpdate.emit((lat, lng))
 
         # TODO: add arm packets structure
