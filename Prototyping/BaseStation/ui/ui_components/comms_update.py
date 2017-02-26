@@ -21,6 +21,10 @@ class CommsUpdate(QtGui.QWidget):
         # Indicates whether the rovers is in autonomous mode
         self.auto = False
 
+        # Indicates whether emergency stop has been pressed (CANNOT BE UNDONE)
+        # Reset the UI if emergency stopped
+        self.stop = False
+
         try:
             # UDP connection to the rover
             self.rover_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -36,11 +40,14 @@ class CommsUpdate(QtGui.QWidget):
             self.timer.timeout.connect(self.receive_message)
             self.timer.start(500)
 
+    def stopping(self):
+        self.stop = True
+
     def shutdown(self):
         self.rover_sock.close()
 
     def open_tcp(self):
-       # TCP connection to the rover
+        # TCP connection to the rover
         self.auto_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.auto_sock.connect((self.ROVER_HOST, self.ROVER_TCP_PORT))
 
@@ -54,7 +61,6 @@ class CommsUpdate(QtGui.QWidget):
         steering = joy.joystick_axis[0][2]
 
         print throttle, steering
-
 
         # Put the first 2 boolean values in the buffer
         buff = struct.pack("<?hh", self.auto, throttle, steering)

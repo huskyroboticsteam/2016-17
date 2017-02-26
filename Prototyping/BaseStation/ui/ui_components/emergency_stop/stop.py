@@ -7,6 +7,9 @@ Button presses are locked until the shift button is pressed.
 
 
 class Stop(QtGui.QPushButton):
+
+    stopEvent = QtCore.pyqtSignal()
+
     def __init__(self, Master=None):
         super(Stop, self).__init__(Master)
 
@@ -32,6 +35,10 @@ class Stop(QtGui.QPushButton):
 
         self.setText("Emergency Stop")
         self.setDisabled(True)
+
+    def mousePressEvent(self, e):
+        if self.text().compare("STOP!!!") == 0:
+            self.stopEvent.emit()
 
     # If we are focused and we press shift, change button text
     # Overrides parent method

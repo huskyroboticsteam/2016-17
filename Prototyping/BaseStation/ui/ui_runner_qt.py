@@ -72,6 +72,7 @@ sock.signalUpdate.connect(map.update_rover_pos)
 command_line.autoTrigger.connect(auto_lab.toggle_ui)
 map.signal.connect(list_wid.add_to_ui)
 map.removeSignal.connect(list_wid.remove_from_ui)
+stop_widget.stopEvent.connect(sock.stopping)
 
 # Show window and execute the app
 win.show()
