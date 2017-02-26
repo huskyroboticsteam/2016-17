@@ -8,7 +8,7 @@ class Motor(object):
         self.motor_id = motor_id
         self.prev_motor_val = 0
         # Constant for how much motor power can change from one time step to another.
-        self.MAX_MOTOR_VAL_DIFF = 10
+        self.MAX_MOTOR_VAL_DIFF = 100
 
 
     def set_motor(self, motor_val):
