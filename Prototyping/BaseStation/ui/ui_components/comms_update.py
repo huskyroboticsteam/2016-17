@@ -78,10 +78,7 @@ class CommsUpdate:
             enc_4 = tup[5]
             lat = tup[6]
             lng = tup[7]
-
-            print str(pot) + " " + str(mag) + " " + str(lat) + " " + str(lng)
-
-        self.command_api.update_sensors(random.randint(-255, 255), random.randint(-100, 100), 0, 0, 0, 0)
+            self.command_api.update_sensors(pot, mag, enc_1, enc_2, enc_3, enc_4)
             # self.command_api.update_rover_pos(lat, lng)
 
             # TODO: add arm packets structure

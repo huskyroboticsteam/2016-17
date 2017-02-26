@@ -4,6 +4,7 @@ import command_api
 
 
 class command(QLineEdit):
+
     def __init__(self, map, sock, list_wid, parent = None):
         super(command, self).__init__(parent)
 

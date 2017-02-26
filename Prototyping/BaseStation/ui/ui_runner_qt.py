@@ -9,6 +9,7 @@ from ui_components import command_api, Command, comms_update
 from ui_components.arm_viz import arm_widget
 from ui_components.sensors import SensorChecker
 from ui_components.list_widget import list_widget
+from ui_components.auto_indicator import auto
 from ui import Ui_MainWindow
 
 
@@ -61,7 +62,9 @@ list_wid = list_widget.ListWidget(map)
 command_line = Command.command(map, sock, list_wid)
 list_wid.signalStatus.connect(command_line.update)
 main.map_container.addWidget(command_line)
-main.map_container.addWidget(list_wid)
+main.list_container.addWidget(list_wid)
+auto_lab = auto.Auto()
+main.list_container.addWidget(auto_lab)
 
 # Give the command api the map to talk to
 comm.feedin_map(map)
