@@ -51,7 +51,7 @@ class Navigation:
     # returns a value between 0 and 360 inclusive
     def calculateDesiredHeading(self):
         currLocation = self.gps.getCoords()
-        destination =  destinations[0]
+        destination = self.destinations[0]
         x_distance = self.distance(destination[0], currLocation[1])
         y_distance = self.distance(currLocation[0], destination[1])
         if (y_distance != 0):

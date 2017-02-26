@@ -2,6 +2,7 @@ import BNO055
 import time
 import math
 import Robot
+import Orientation
 
 
 def magnetometer_angle(bno055):
@@ -24,17 +25,12 @@ def standard_deviation(lst, population=True):
 
 
 def main():
-    bno055 = BNO055.BNO055()
-    init_success = bno055.begin()
-    if not init_success:
-        print 'cannot initialize BNO055'
-        return
-    with open('calibration_data.txt', 'r') as f:
-        bno055.set_calibration(map(int, f.read().split(' ')))
+    orientation = Orientation.Orientation()
+    time.sleep(2)
     try:
         motor_off_angles = []
         for x in range(100):
-            motor_off_angles.append(magnetometer_angle(bno055))
+            motor_off_angles.append(orientation.get_heading())
             time.sleep(0.1)
             print x
         rob = Robot.Robot()
@@ -42,7 +38,7 @@ def main():
         for x in range(100):
             for i in range(1, 5):
                 rob.driveMotor(i, 200 * (x / 10 % 2))
-            motor_on_angles.append(magnetometer_angle(bno055))
+            motor_on_angles.append(orientation.get_heading())
             time.sleep(0.1)
             print x
     except KeyboardInterrupt:
