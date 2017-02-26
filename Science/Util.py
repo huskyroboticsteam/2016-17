@@ -20,3 +20,8 @@ class Util(object):
     @staticmethod
     def map(input, fromLow, fromHigh, toLow, toHigh):
         return toLow + ((float(input - fromLow)/(fromHigh - fromLow)) * (toHigh - toLow))
+
+    @staticmethod
+    def updateEncoders(encoders):
+        for encoder in encoders:
+            encoder.update()

@@ -28,16 +28,19 @@ NOTE: Assumes Encoder does not step more than one phase per update
 """
 
 from math import pi
+import Adafruit_BBIO.GPIO as GPIO
 
 
 class Encoder:
 
     # Takes in channel A and B pin numbers
     # ppr = Pulses per revolution
-    def __init__(self, pinA, pinB, ppr, gpio):
+    def __init__(self, pinA, pinB, ppr):
 
         self._pinA = pinA      # integer value for A channel
         self._pinB = pinB      # integer value for B channel
+        GPIO.setup(self._pinA, GPIO.IN)  # sets input GPIO pins
+        GPIO.setup(self._pinB, GPIO.IN)  # sets input GPIO pins
         self._ppr = ppr        # pulses per revolution of the encoder, default to 1
                                # instead of 0 so nothing breaks upon division
         self._steps = 0        # signed number of steps/pulses encoder has recorded
@@ -45,13 +48,12 @@ class Encoder:
         self._lastA = False    # last pin position for channel A
         self._lastB = False    # last pin position for channel B
         self._isSetup = False  # whether the Encoder has been set up yet
-        self._gpio = gpio      # Sets GPIO object
 
     # Initializes Encoder
     # Meant for internal use only
     def _setup(self):
-        self._lastA = self._gpio.is_high(self._pinA)
-        self._lastB = self._gpio.is_high(self._pinB)
+        self._lastA = GPIO.input(self._pinA)
+        self._lastB = GPIO.input(self._pinB)
         self._isSetup = True
 
     # Updates encoder values
@@ -61,8 +63,8 @@ class Encoder:
         # last cycle to this cycle.
         if not self._isSetup:
             self._setup()
-        curA = self._gpio.is_high(self._pinA)
-        curB = self._gpio.is_high(self._pinB)
+        curA = GPIO.input(self._pinA)
+        curB = GPIO.input(self._pinB)
 
         increment = 0
         if self._lastA != curA:
@@ -76,6 +78,9 @@ class Encoder:
 
         self._lastA = curA
         self._lastB = curB
+
+    def waitForEdge(self):
+        pass
 
     # This method sets a constant whose product with the accumulated angle is
     # the distance traveled

@@ -7,6 +7,9 @@ import Limit
 import PID
 import Humidity
 import Adafruit_BBIO.ADC as ADC  # Ignore compilation errors
+import Encoder
+import Util
+import threading
 
 # Define constants
 PinDataIn = "P9_18"
@@ -17,6 +20,9 @@ DIST_ADDR = 0x52
 
 # Initialize hardware
 ADC.setup()
+_encoders = [
+    Encoder.Encoder()
+]
 
 # Create Sensors
 UV_Sens = UV.UV(UV_ADDR_LSB)
