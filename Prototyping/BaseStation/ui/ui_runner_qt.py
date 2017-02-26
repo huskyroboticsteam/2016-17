@@ -30,50 +30,50 @@ win = QtGui.QMainWindow()
 main = Ui_MainWindow()
 main.setupUi(win)
 win.resize(1200, 675)
+
+'''Create all the custom widgets for the UI'''
 sensors = SensorChecker.SensorData()
-#comm = command_api.CommandApi(sensors)
 sock = comms_update.CommsUpdate()
 setting_widget = settings.Settings(main)
-
-# Create the emergency stop button
-main.stop_container.addWidget(stop.Stop())
-
-# Shows the video streams in their own windows of size 300x200 px
-print setting_widget.get_camera_urls()
-main.camera_container.addWidget(UI.Player(setting_widget.get_camera_urls(), 300, 200))
-
+stop_widget = stop.Stop()
+vlc_widget = UI.Player(setting_widget.get_camera_urls(), 300, 200)
 iplist = IPCheckerLayout.IPList({"192.168.1.10": "Rover", "192.168.1.20": "Camera Two"}, 50)
+arm = arm_widget.arm_widget()
+list_wid = list_widget.ListWidget()
+map = Map.Map(setting_widget.get_map_name())
+command_line = Command.command(map, sock, list_wid)
+auto_lab = auto.Auto()
+
+'''Add all the custom widgets to the UI containers'''
+# Create the emergency stop button
+main.stop_container.addWidget(stop_widget)
+# Shows the video streams in their own windows of size 300x200 px
+main.camera_container.addWidget(vlc_widget)
 # Updates IP state every 50 milliseconds. Maps the name to the status.
 main.sensor_container.addWidget(iplist)
-
 # Add the arm visualization
-main.joystick_container.addWidget(arm_widget.arm_widget())
-
+main.joystick_container.addWidget(arm)
+# Add the sensor reading widget
 main.reading_container.addWidget(sensors)
-
-# Show window, initialize pygame, and execute the app
-win.show()
-
-map = Map.Map(setting_widget.get_map_name())
+# Add the command line to the ui
+main.map_container.addWidget(command_line)
+# Add the marker list view to the ui
+main.list_container.addWidget(list_wid)
+# Add the label that indicates autonomous mode to the ui
+main.list_container.addWidget(auto_lab)
+# Add the map to the ui
 main.map_container.addWidget(map)
-list_wid = list_widget.ListWidget(map)
-command_line = Command.command(map, sock, list_wid)
+
+'''Connect all events for each of the components to talk to one another'''
 command_line.signalStatus.connect(sock.send_auto_mode)
 list_wid.signalStatus.connect(command_line.update)
 sock.signalStatus.connect(sensors.update_ui)
 sock.signalUpdate.connect(map.update_rover_pos)
-main.map_container.addWidget(command_line)
-main.list_container.addWidget(list_wid)
-auto_lab = auto.Auto()
 command_line.autoTrigger.connect(auto_lab.toggle_ui)
-
-main.list_container.addWidget(auto_lab)
-
-# Creates the map at 800x200 px and updates at 30 fps
-
 map.signal.connect(list_wid.add_to_ui)
 map.removeSignal.connect(list_wid.remove_from_ui)
 
-
+# Show window and execute the app
+win.show()
 
 sys.exit(app.exec_())

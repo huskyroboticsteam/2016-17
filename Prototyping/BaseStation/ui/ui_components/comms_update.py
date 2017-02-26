@@ -81,10 +81,6 @@ class CommsUpdate(QtGui.QWidget):
             lat = tup[6]
             lng = tup[7]
 
-            print str(pot) + " " + str(mag) + " " + str(lat) + " " + str(lng)
-
-        #self.command_api.update_sensors(random.randint(-255, 255), random.randint(-100, 100), 0, 0, 0, 0)
-
         dictionary = {"Potentiometer": str(random.randint(-255, 255)), "Magnetometer": str(random.randint(-100, 100)),
                       "Encoder 1": str(0), "Encoder 2": str(0), "Encoder 3": str(0), "Encoder 4": str(0)}
 

@@ -7,11 +7,9 @@ class ListWidget(QtGui.QListWidget):
     markers = []
     signalStatus = QtCore.pyqtSignal([str])
 
-    def __init__(self, map):
+    def __init__(self):
         super(self.__class__, self).__init__()
 
-
-        self.map = map
         self.setMaximumHeight(75)
 
         # Force it to be smaller than the map
