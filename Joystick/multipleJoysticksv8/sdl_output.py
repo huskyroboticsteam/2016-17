@@ -44,10 +44,11 @@ class SDLInstance:
     # Takes the joystick input and stores in variables
     def update_sdl2(self, joy_num):
         for event in sdl2.ext.get_events():
-            print "Joystick", event.jdevice.which
+            # print "Joystick", event.jdevice.which
 
             if event.type == sdl2.SDL_JOYAXISMOTION:
                 self.joystick_axis[event.jaxis.which][event.jaxis.axis] = event.jaxis.value
+                print self.joystick_axis
                 # print self.joystick_axis
 
             elif event.type == sdl2.SDL_JOYBALLMOTION:

@@ -56,10 +56,10 @@ class CommsUpdate(QtGui.QWidget):
         self.auto_sock.close()
 
     def send_message(self):
-        throttle = self.joy.joystick_axis[0][0]
-        steering = self.joy.joystick_axis[0][2]
+        print self.joy.joystick_axis
 
-        print throttle, steering
+        throttle = self.joy.joystick_axis[0][1]
+        steering = self.joy.joystick_axis[0][0]
 
         # Put the first 2 boolean values in the buffer
         buff = struct.pack("<?hh", self.auto, throttle, steering)
@@ -98,14 +98,23 @@ class CommsUpdate(QtGui.QWidget):
             lng = tup[7]
 
             dictionary = {"Potentiometer": str(pot), "Magnetometer": str(mag),
-<<<<<<< HEAD
                       "Encoder 1": str(enc_1), "Encoder 2": str(enc_2), "Encoder 3": str(enc_3), "Encoder 4": str(enc_4)}
-=======
-                          "Encoder 1": str(enc_1), "Encoder 2": str(enc_2), "Encoder 3": str(enc_3), "Encoder 4": str(enc_4)}
->>>>>>> ec2547d38ef4097f6361c590d33fab489d0ecddc
 
             self.signalStatus.emit(dictionary)
 
             self.signalUpdate.emit((lat, lng))
 
-        # TODO: add arm packets structure
+            # TODO: add arm packets structure
+
+
+# translate values from one range to another
+def translateValue(value, inMin, inMax, outMin, outMax):
+    # Figure out how 'wide' each range is
+    inSpan = inMax - inMin
+    outSpan = outMax - outMin
+
+    # Convert the left range into a 0-1 range (float)
+    valueScaled = float(value - inMin) / float(inSpan)
+
+    # Convert the 0-1 range into a value in the right range.
+    return outMin + (valueScaled * outSpan)
