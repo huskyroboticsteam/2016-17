@@ -26,6 +26,8 @@ class SDLInstance:
             hat_num = sdl2.SDL_JoystickNumHats(current_joystick)
             button_num = sdl2.SDL_JoystickNumButtons(current_joystick)
 
+            sdl2.SDL_JoystickClose
+
             self.joystick_axis.append([])
             for j in range(axis_num):
                 self.joystick_axis[i].append(0)

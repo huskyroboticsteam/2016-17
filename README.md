@@ -18,5 +18,10 @@ Make sure 32 bit VLC player is installed to the OS:
 | Linux (Ubuntu) | sudo apt-get install python-qt4 |
 | Windows | http://sourceforge.net/projects/pyqt/files/PyQt4/PyQt-4.11.4/PyQt4-4.11.4-gpl-Py2.7-Qt4.8.7-x32.exe |
 
-### PyGame
-You can use pip to install this!
+### Numpy Installation:
+pip install numpy
+
+### SDL2 Installation:
+pip install PySDL2
+Also download SDL.dll from http://libsdl.org/download-2.0.php for your version of Python x86 SDL for x86 Python install
+
