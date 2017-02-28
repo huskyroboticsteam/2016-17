@@ -9,7 +9,8 @@ import Humidity
 import Adafruit_BBIO.ADC as ADC  # Ignore compilation errors
 import Encoder
 import Util
-import threading
+from threading import Thread
+import CommHandler as Comms
 
 # Define constants
 PinDataIn = "P9_18"
@@ -18,17 +19,24 @@ PinClock = "P9_22"
 UV_ADDR_LSB = 0x38
 DIST_ADDR = 0x52
 
+# Communication Setup
+MAIN_IP = '192.168.0.60'
+PRIMARY_UDP_SEND_PORT = 8840
+INTERNAL_IP = '127.0.0.1'
+INTERNAL_UDP_RECEIVE_PORT = 5000
+
 # Initialize hardware
 ADC.setup()
-_encoders = [
-    Encoder.Encoder()
-]
+CommHandling = Comms.CommHandler(INTERNAL_IP, INTERNAL_UDP_RECEIVE_PORT)
+
+# Start Communication Thread
+COMMS_THREAD = Thread(target=CommHandling.receiveMessagesOnThread())
+COMMS_THREAD.start()
 
 # Create Sensors
 UV_Sens = UV.UV(UV_ADDR_LSB)
 Therm = Thermocouple.Thermocouple(PinClock, PinChipSel, PinDataIn)
 Dist = DistanceSensor.DistanceSensor()
-pidCtrl = PID.PID(1, 1, 1)
 humidity = Humidity.Humidity(1)
 
 # Setup Sensors
