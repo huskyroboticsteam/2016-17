@@ -5,7 +5,9 @@ limit switch.
 
 Written by Jaden Bottemiller in January 2017
 EE Team of Husky Robotics
+Questions/Comments? Email: jadenjb@uw.edu
 (Untested as of 2/6/2017)
+
 """
 import Adafruit_BBIO.GPIO as GPIO  # Ignore compiler errors
 

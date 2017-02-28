@@ -5,6 +5,7 @@ https://en.wikipedia.org/wiki/PID_controller
 
 Written by Jaden Bottemiller in January 2017
 EE Team of Husky Robotics
+Questions/Comments? Email: jadenjb@uw.edu
 (Untested as of 2/6/2017)
 
 **Built for Real-Time Operation

@@ -9,8 +9,8 @@ Refer to author with questions.
 
 Written by Jaden Bottemiller in January 2017
 EE Team of Husky Robotics
+Questions/Comments? Email: jadenjb@uw.edu
 (Untested as of 2/6/2017)
-jadenjb@uw.edu
 
 Talon Spec
 https://content.vexrobotics.com/vexpro/pdf/Talon-SRX-User-Guide-20150201.pdf

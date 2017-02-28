@@ -4,11 +4,14 @@ on the Beaglebone Black
 
 Written by Jaden Bottemiller in January 2017
 EE Team of Husky Robotics
+Questions/Comments? Email: jadenjb@uw.edu
 (Tested as of 2/25/2017)
 
 NOTE: ADC Must Be Initialized Prior to Initialization / Construction of
 this sensor.
+
 NOTE: Beaglebone Black ADC has a 12-bit resolution
+
 """
 
 import Adafruit_BBIO.ADC as ADC  # Ignore compilation errors
