@@ -41,11 +41,14 @@ class Robot_comms():
     # receives a packet and sets variables accordingly
     def receiveData(self, nav):
         try:
-            data, udp_addr = self.udp_sock.recvfrom(1024)  # buffer size is 1024 bytes
-            self.base_station_ip = udp_addr
-            drive_unpacked = struct.unpack(self.driveFormat, data)
-            self.receivedDrive = drive_unpacked
-        except:
+            try:
+                while True:
+                    data, udp_addr = self.udp_sock.recvfrom(1024)  # buffer size is 1024 bytes
+            except socket.error:
+                self.base_station_ip = udp_addr
+                drive_unpacked = struct.unpack(self.driveFormat, data)
+                self.receivedDrive = drive_unpacked
+        except socket.error:
             # TODO: catch exceptions from the non-blocking receive better
             pass
         try:
@@ -59,7 +62,7 @@ class Robot_comms():
                 nav.append_destination(gps_unpacked[1:])
             else:
                 self.closeConn()
-        except:
+        except socket.error:
             # TODO: catch exceptions better
             pass
 
@@ -71,7 +74,7 @@ class Robot_comms():
                 # TODO : add encoders 1-4, nav.getGPS()[3,5]
                 MESSAGE = struct.pack(self.rtbFormat, nav.readPot(), nav.getMag(), 0, 0, 0, 0, self.lat, self.longitude)
                 self.udp_sock.sendto(MESSAGE, self.base_station_ip)
-        except:
+        except socket.error:
             # TODO: catch exceptions better (nav.getGPS may be null)
             pass
         # read data from sensors or read class variables
