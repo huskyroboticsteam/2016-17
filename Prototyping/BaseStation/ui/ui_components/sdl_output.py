@@ -26,8 +26,6 @@ class SDLInstance:
             hat_num = sdl2.SDL_JoystickNumHats(current_joystick)
             button_num = sdl2.SDL_JoystickNumButtons(current_joystick)
 
-            sdl2.SDL_JoystickClose
-
             self.joystick_axis.append([])
             for j in range(axis_num):
                 self.joystick_axis[i].append(0)
@@ -73,8 +71,9 @@ class SDLInstance:
                 # sdl2.SDL_Init(sdl2.SDL_INIT_JOYSTICK)
                 # for i in range(sdl2.SDL_NumJoysticks()):
                 #    sdl2.SDL_JoystickOpen(i)
-
+                print "Init"
                 self.init_joy_vars(sdl2.SDL_NumJoysticks())
 
             elif event.type == sdl2.SDL_JOYDEVICEREMOVED:
+                sdl2.SDL_JoystickClose(event.which)
                 self.init_joy_vars(sdl2.SDL_NumJoysticks())
