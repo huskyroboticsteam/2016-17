@@ -28,6 +28,7 @@ NOTE: Assumes Encoder does not step more than one phase per update
 """
 
 from math import pi
+from threading import Thread
 import Adafruit_BBIO.GPIO as GPIO
 
 
@@ -48,6 +49,8 @@ class Encoder:
         self._lastA = False    # last pin position for channel A
         self._lastB = False    # last pin position for channel B
         self._isSetup = False  # whether the Encoder has been set up yet
+        self._threadA = None
+        self._threadB = None
 
     # Initializes Encoder
     # Meant for internal use only
@@ -55,6 +58,10 @@ class Encoder:
         self._lastA = GPIO.input(self._pinA)
         self._lastB = GPIO.input(self._pinB)
         self._isSetup = True
+        self._threadA = Thread(target=self._threadAChannel())
+        self._threadB = Thread(target=self._threadBChannel())
+        self._threadA.start()
+        self._threadB.start()
 
     # Updates encoder values
     # Assumes the Encoder does not go past a whole phase change
@@ -79,8 +86,19 @@ class Encoder:
         self._lastA = curA
         self._lastB = curB
 
-    def waitForEdge(self):
-        pass
+    def _waitForEdge(self, pin):
+        current = GPIO.input(pin)
+        if current:
+            GPIO.waitForEdge(pin, GPIO.FALLING)
+        else:
+            GPIO.waitForEdge(pin, GPIO.RISING)
+        self.update()
+
+    def _waitForA(self):
+        self._waitForEdge(self._pinA)
+
+    def _waitForB(self):
+        self._waitForEdge(self._pinB)
 
     # This method sets a constant whose product with the accumulated angle is
     # the distance traveled
@@ -106,3 +124,11 @@ class Encoder:
     # Resets all accumulations
     def reset(self):
         self._steps = 0
+
+    def _threadAChannel(self):
+        while True:
+            self._waitForA()
+
+    def _threadBChannel(self):
+        while True:
+            self._waitForB()

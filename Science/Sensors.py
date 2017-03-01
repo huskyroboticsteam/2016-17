@@ -38,6 +38,11 @@ UV_Sens = UV.UV(UV_ADDR_LSB)
 Therm = Thermocouple.Thermocouple(PinClock, PinChipSel, PinDataIn)
 Dist = DistanceSensor.DistanceSensor()
 humidity = Humidity.Humidity(1)
+# Need to write in the actual pin values here.
+encoder1 = Encoder.Encoder("PINA", "PINB", 220)
+encoder2 = Encoder.Encoder("PINA", "PINB", 220)
+encoder3 = Encoder.Encoder("PINA", "PINB", 220)
+
 
 # Setup Sensors
 UV_Sens.setup(2)
