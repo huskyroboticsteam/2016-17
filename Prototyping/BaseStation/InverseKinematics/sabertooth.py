@@ -1,7 +1,7 @@
 import serial
 
 class Sabertooth:
-	def __init__(self, motor_num):
+	def __init__(self, motor_num, baud_rate=38400):
 		"""
 		Motor_num should be between 1-6
 		"""
@@ -9,7 +9,7 @@ class Sabertooth:
 		self.address = (motor_num / 2) + 128
 		# Should be 0 or 4 depending on odd or even
 		self.channel_start = (motor_num % 2) * 4 
-		self.ser =  serial.Serial(port = "/dev/ttyO1", baudrate=38400)
+		self.ser =  serial.Serial(port = "/dev/ttyO1", baudrate=baud_rate)
 
 	# Resource management
 	def __enter__(self):
