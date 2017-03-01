@@ -22,14 +22,22 @@ while ser.isOpen():
 
 time = 0
 
-motors = [Sabertooth(i) for i in xrange(4)]
+wrist_angle = Sabertooth(1)
+elbow_angle = Sabertooth(2)
+# Motors 4 and 5 must run at Baud 9600
+test = Sabertooth(5, 9600)
+
+#motors = [Sabertooth(i) for i in xrange(6)]
 
 try:
 	while True:
-		for i in xrange(4):
-			motors[i].write(sin(time + (pi/2 * i)))
-		time += .05
-		sleep(.02)
+		#for i in xrange(4):
+		#	motors[i].write(sin(time + (pi/2 * i)))
+		#time += .05
+		#sleep(.02)
+		test.write(-.5)
 except KeyboardInterrupt:
-	for i in xrange(4):
-		motors[i].close()
+	#for i in xrange(4):
+	#	motors[i].close()
+		test.close()
+
