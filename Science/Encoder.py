@@ -58,8 +58,8 @@ class Encoder:
         self._lastA = GPIO.input(self._pinA)
         self._lastB = GPIO.input(self._pinB)
         self._isSetup = True
-        self._threadA = Thread(target=self._threadAChannel())
-        self._threadB = Thread(target=self._threadBChannel())
+        self._threadA = Thread(target=self._threadAChannel)
+        self._threadB = Thread(target=self._threadBChannel)
         self._threadA.start()
         self._threadB.start()
 

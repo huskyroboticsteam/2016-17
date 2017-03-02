@@ -30,7 +30,7 @@ ADC.setup()
 CommHandling = Comms.CommHandler(INTERNAL_IP, INTERNAL_UDP_RECEIVE_PORT)
 
 # Start Communication Thread
-COMMS_THREAD = Thread(target=CommHandling.receiveMessagesOnThread())
+COMMS_THREAD = Thread(target=CommHandling.receiveMessagesOnThread)
 COMMS_THREAD.start()
 
 # Create Sensors
