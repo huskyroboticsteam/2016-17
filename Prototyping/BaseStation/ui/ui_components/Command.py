@@ -36,6 +36,15 @@ class command(QLineEdit):
                 self.execute(list)
 
     def execute(self, list):
+        """
+        :param list (list of strings): User input
+
+        Depending on list[0], add, remove, update, or auto
+        Add: Adds marker to map
+        Remove: Remove marker from map
+        Update: Update marker location
+        Auto: Turn on auto-mode
+        """
         cmd = str(list[0]).upper()
         if (cmd == self.commands[0]): # Add
             # type add lat long
