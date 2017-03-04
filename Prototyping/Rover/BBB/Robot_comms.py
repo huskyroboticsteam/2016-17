@@ -27,8 +27,12 @@ class Robot_comms():
         self.lat = 0
         self.longitude = 0
         self.nav = None
+        # Starts gps looping and updating every second
         self.updateGPS()
 
+    # Attempts to update the GPS coords every second. Only should work every 2 seconds
+    # since gps only sends the correct message 50% of the time. If there is latency,
+    # it is because the GPS is being updated too frequently.
     def updateGPS(self):
         try:
             gps = self.nav.getGPS()
@@ -37,7 +41,9 @@ class Robot_comms():
                 self.longitude = float(gps[1])
         except:
             pass
+        # Currently set to 1 second
         threading.Timer(1, self.updateGPS).start()
+
     # receives a packet and sets variables accordingly
     def receiveData(self, nav):
         try:
@@ -70,14 +76,13 @@ class Robot_comms():
     def sendData(self, nav):
         self.nav = nav
         try:
+            # Only sends once it has received at least one message
             if self.base_station_ip is not None:
-                # TODO : add encoders 1-4, nav.getGPS()[3,5]
+                # Follows format: potentiometer, magnetometer, encoders 1-4, latitude, longitude
                 MESSAGE = struct.pack(self.rtbFormat, nav.readPot(), nav.getMag(), 0, 0, 0, 0, self.lat, self.longitude)
                 self.udp_sock.sendto(MESSAGE, self.base_station_ip)
         except socket.error:
-            # TODO: catch exceptions better (nav.getGPS may be null)
             pass
-        # read data from sensors or read class variables
 
     def closeConn(self):
         if self.conn != None:
