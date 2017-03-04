@@ -4,6 +4,18 @@ import transformations as tr
 from armature import *
 
 def gradient_descent(armature, initial_parameters, target_pos, iterations):
+    """
+    Returns an optimized version of initial_parameters with armature. Google 
+    gradient descent if you want an explination of the algorithm.
+
+    armature: The armature which the parameters are from
+    initial_parameters: The parameters to begin optimization from
+    target_pos: The target positon to optimize the parameters to
+    iterations: How many iteration of gradient descent to run this call. More will
+        take longer, but produce more accurate results
+
+    returns: The optimized set of parameters
+    """
     parameters = np.array(initial_parameters, copy=True, dtype=np.float32)
     parameters_min = armature.min_parameters()
     parameters_max = armature.max_parameters()

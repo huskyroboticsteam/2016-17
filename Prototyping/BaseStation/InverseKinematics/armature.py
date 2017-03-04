@@ -57,39 +57,43 @@ class ManualParameter(Parameter):
         return False
 
 
-"""
-An arm in three dimensions. Right now, only two angles of freedom are supported,
-pitch and yaw. They should be passed in as some kind of Parameter.
-
-Arm segements always exist along the positive x axis (forward)
-Z is vertical
-+Y is to the right
-
-Pitch rotates around the Y axis
-Roll rotates around the X axis
-Yaw rotates around the Z 
-
-The Arm class itself represents the structure of the arm, including segment lengths
-and angle parameters. Most methods require a parameters list which holds information
-regarding a specific configuration of the arm
-"""
 class Arm:
+    """
+    An arm in three dimensions. Right now, only two angles of freedom are supported,
+    pitch and yaw. They should be passed in as some kind of Parameter.
+    
+    Arm segements always exist along the positive x axis (forward)
+    Z is vertical
+    +Y is to the right
+    
+    Pitch rotates around the Y axis
+    Roll rotates around the X axis
+    Yaw rotates around the Z 
+    
+    The Arm class itself represents the structure of the arm, including segment lengths
+    and angle parameters. Most methods require a parameters list which holds information
+    regarding a specific configuration of the arm
+    """
+
     def __init__(self, length, parameter, after=None):
         self.length = length
         self.after = after  # The next limb
         self.parameter = parameter
 
     def joints(self, parameters):
-        """Returns the points representing the location of each joint in the arm
-	    (convienant for drawing). You may have to do transformations on these points
-	    to suit your graphical environment. One reccomendation is to intrepret the x
+        """
+	Returns the points representing the location of each joint in the arm
+	(convienant for drawing). You may have to do transformations on these points
+	to suit your graphical environment. One reccomendation is to intrepret the x
         and z coordinates as x and y (using something like point[::2])
-        
         """
         return [np.zeros(3)] + self._joints_impl(tr.identity_matrix(), parameters)
 	
     def _joints_impl(self, baseTransform, parameters):
-        transform = self.applyTransform(parameters[0], baseTransform)
+        """
+	Recursive portion of joints(). 
+	"""
+	transform = self.applyTransform(parameters[0], baseTransform)
         end = tr.translation_from_matrix(transform)
 		
         if self.after is not None:
@@ -97,7 +101,20 @@ class Arm:
         else:
             return [end]
 
-    def error(self, target_pos, baseTransform, parameters):
+    def error(self, target_pos, parameters):
+	"""
+	Calculates the difference between the target position, and the end of the arm as specified
+	by the parameters. 
+
+	target_pos: The target position in 3d space. 
+	parameters: The arm configuration to calculate the error of
+	"""
+    	return _error_impl(target_pos, parameters, tr.identity_matrix())
+
+    def _error_impl(self, target_pos, parameters, base_transform):
+        """
+	Recursive portion of error()
+	"""
         transform = self.applyTransform(parameters[0], baseTransform)
         
         if self.after is None:
@@ -108,9 +125,9 @@ class Arm:
     
     #@cython.locals(armLength=np.ndarray, rPitch=np.ndarray, rYaw=np.ndarray, transform=np.ndarray)        
     def applyTransform(self, parameterValue, baseTransform):
-        """Gives the translation matrix associated with this arm with the given pitch
+        """
+	Gives the translation matrix associated with this arm with the given pitch
         and yaw.
-        
         """
         baseTransform = self.parameter.applyParameter(parameterValue, baseTransform)
         tLength = tr.translation_matrix(np.array([self.length, 0, 0]))
@@ -130,6 +147,7 @@ class Arm:
         return [self.parameter.is_auto()] + ([] if self.after is None else self.after.auto_parameters())
 
 
+# Needs to be fixed. For testing purposes mostly.
 # def make_tentacle(segment_length, segment_count):
 #     if segment_count != 0:
 #         return Arm(segment_length, Parameter(-pi / 3, pi / 3, relative_angle),
