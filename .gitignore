@@ -1,7 +1,6 @@
-*.pyc
+# Compiled files
+*.py[cod]
+*.o
 
 # InverseKinematics
-Prototyping/BaseStation/InverseKinematics/.idea
-Prototyping/BaseStation/Embed PyGame into PyQT4/.idea/
-Prototyping/BaseStation/Camera Streaming/.idea/
 .idea/
