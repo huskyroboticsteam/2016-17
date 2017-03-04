@@ -311,21 +311,43 @@ class Map(QtGui.QWidget):
 
     # add the position of the rover giving x and y coordinates
     def add_rover(self, x, y):
+        """
+        :param x (float): Latitude
+        :param y (float): Longitude
+
+        Adds position of rover to map
+        """
         self.markers.append(self.make_marker(x, y, True))
+        self.repaint()
 
     # add a new marker given the specified coordinates x and y, assuming that this isn't a rover
     def add_marker(self, x, y):
+        """
+        :param x (float): Latitude
+        :param y (float): Longitude
+
+        Adds marker onto map
+        """
         # generates a new marker object
         self.markers.append(self.make_marker(x, y, False))
         self.signal.emit(x, y)
+        self.repaint()
 
     # draw every marker on the screen
     def draw_marker(self, painter):
+        """
+        :param painter (PyQt4): Painter object from PyQt4
+
+        Darws each marker onto map
+        """
         for marker in self.markers:
             marker.draw(painter)
 
     # changes the position of markers after zooming in
     def zoom_marker(self):
+        """
+        Re-adds markers to map to adjust for zoom level
+        """
         new_marker = []
         for marker in self.markers:
             new_marker.append(self.make_marker(marker.coordX, marker.coordY, marker.rover))
@@ -334,6 +356,13 @@ class Map(QtGui.QWidget):
 
     # creates a new marker object with the given coordinate x and y
     def make_marker(self, x, y, rover):
+        """
+        :param x (float): Longitude
+        :param y (float): Latitude
+        :param rover (boolean): Is this marker the rover
+
+        :return: A marker made using the above parameters
+        """
         pixelCoord = Utility.convert_degrees_to_pixels(self.zoom_level, x, y)
         self.centerX2, self.centerY2 = Utility.convert_degrees_to_pixels(self.zoom_level, self.center[0],
                                                                          self.center[1])
@@ -348,6 +377,11 @@ class Map(QtGui.QWidget):
                              self.centerX2, self.centerY2, self.zoom_level, x, y, rover)
 
     def remove_marker(self, index):
+        """
+        :param index (int): Index of marker that is to be removed
+
+        Removes marker from the map
+        """
         if(index > -1):
             if (self.markers[index].rover):
                 print "Do not remove the rover!"
@@ -358,10 +392,22 @@ class Map(QtGui.QWidget):
             print "Inavlid index at", (index + 1)
 
     def update_marker(self, x, y, index):
+        """
+        :param x (float): Latitude
+        :param y (float): Longitude
+        :param index (int): Index of marker to be updated
+
+        Removes marker from specified index, and insert updated marker in place
+        """
         self.markers.pop(index)
         self.markers.insert(index, self.make_marker(x, y, False))
 
     def update_rover_pos(self, (lat, lng)):
+        """
+        :param (lat, lng) (tuple): Current position of rover (float, float)
+
+        Update position of rover on map
+        """
         # Clear the rover marker
         coord = (lat, lng)
         for i in range(0, len(self.markers)):
