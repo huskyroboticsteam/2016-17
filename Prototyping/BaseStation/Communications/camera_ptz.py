@@ -15,7 +15,7 @@ class PTZCamera:
 
     `camera_address` is a string for the address to the camera (IP or symbolic)
 
-    `username` and `password` are the credentials for authenticating with the
+    `username` and `password` are the credentials as strings for authenticating with the
     camera's web interface.
     """
     def __init__(self, camera_address, username, password):
@@ -29,8 +29,8 @@ class PTZCamera:
         self._base_url =  "http://{cam_addr}/".format(cam_addr=camera_address)
 
     """
-    Sends a GET request to the camera to the root address `relative_url`
-    with the URL arguments `values`
+    Sends a GET request to the camera to the root address `relative_url` (as a string)
+    with the URL arguments `values` (a dictionary of string keys and values)
     """
     def _send_data(self, relative_url, values):
         data = list()
@@ -41,7 +41,7 @@ class PTZCamera:
         response = urllib2.urlopen(req)
 
     """
-    Sends the x and y speeds to the camera. They must be values between
+    Sends the x and y speeds to the camera. They must be integers between
     -100 and 100, otherwise behavior is unknown.
     """
     def set_speeds(self, x_speed, y_speed):
