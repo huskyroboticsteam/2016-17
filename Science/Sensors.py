@@ -11,6 +11,7 @@ import Encoder
 import Util
 from threading import Thread
 import CommHandler as Comms
+from Packet import Packet
 
 # Define constants
 PinDataIn = "P9_18"
@@ -20,14 +21,14 @@ UV_ADDR_LSB = 0x38
 DIST_ADDR = 0x52
 
 # Communication Setup
-MAIN_IP = '192.168.0.60'
-PRIMARY_UDP_SEND_PORT = 8840
+MAIN_IP = '192.168.0.10'
+PRIMARY_TCP_SEND_PORT = 24
 INTERNAL_IP = '127.0.0.1'
-INTERNAL_UDP_RECEIVE_PORT = 5000
+INTERNAL_TCP_RECEIVE_PORT = 5000
 
 # Initialize hardware
 ADC.setup()
-CommHandling = Comms.CommHandler(INTERNAL_IP, INTERNAL_UDP_RECEIVE_PORT)
+CommHandling = Comms.CommHandler(INTERNAL_IP, INTERNAL_TCP_RECEIVE_PORT)
 
 # Start Communication Thread
 COMMS_THREAD = Thread(target=CommHandling.receiveMessagesOnThread)
@@ -47,6 +48,7 @@ encoder3 = Encoder.Encoder("PINA", "PINB", 220)
 # Setup Sensors
 UV_Sens.setup(2)
 Dist.startRanging()
+int_cnt = 0
 
 while True:
 
@@ -59,15 +61,19 @@ while True:
     humidityData = humidity.read()
     distance = Dist.getDistance()
 
+    int_cnt = int_cnt + 1
+
+    CommHandling.sendAll()
+    send = Packet(MAIN_IP, PRIMARY_TCP_SEND_PORT)
+    send.appendData(int_cnt)
+    CommHandling.addCyclePacket(send)
+    sys.stdout.write("{0}".format(CommHandling.viewPackets()))
     # Write data to test
-    sys.stdout.write('{0}\n'.format(distance))
-    #sys.stdout.write('{0}, '.format(pidCtrl.getOutput()))
-    #sys.stdout.write('{0:{fill}16b} ({0}),'.format(uvData, fill='0'))
-    #sys.stdout.write(time.strftime("%Y-%m-%d %H:%M:%S,"))
-    #sys.stdout.write('{0:0.2F};'.format(temp))
+    # sys.stdout.write('{0}\n'.format(Therm.getTemp()))
+    # sys.stdout.write('{0}, '.format(pidCtrl.getOutput()))
+    # sys.stdout.write('{0:{fill}16b} ({0}),'.format(uvData, fill='0'))
+    # sys.stdout.write(time.strftime("%Y-%m-%d %H:%M:%S,"))
+    # sys.stdout.write('{0:0.2F};'.format(temp))
     sys.stdout.flush()
 
-
-    #print('    Internal Temperature: {0:0.3F}*C'.format(internal))
-
-    time.sleep(0.25)
+    time.sleep(1)

@@ -12,15 +12,21 @@ import socket
 
 class Packet:
 
+    RECEIVE_BYTE_SIZE = 1024
+
     def __init__(self, targetIP, targetPort):
-        self._data = 0
+        self._data = ""
+        self._recieved = ""
         self._targetIP = targetIP
         self._targetPort = targetPort
 
     # Append bitwise list to current packet buffer
     # EG [0,1,1,0]
     def appendData(self, data):
-        self._data += data
+        self._data += str(data)
+
+    def getRecieved(self):
+        return self._recieved
 
     # Clear buffer
     def clear(self):
@@ -28,6 +34,8 @@ class Packet:
 
     # Sends data to constructor-specified client
     def send(self):
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.sendto(self._data, self._targetIP)
+        s = socket.socket()
+        s.connect((self._targetIP, self._targetPort))
+        s.send(self._data)
+        self._recieved = s.recv(self.RECEIVE_BYTE_SIZE)
         s.close()
