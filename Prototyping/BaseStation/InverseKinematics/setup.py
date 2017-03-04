@@ -1,6 +1,10 @@
 # https://github.com/cython/cython/wiki/CythonExtensionsOnWindows
 # http://docs.cython.org/src/reference/compilation.html
 
+"""
+Used to build the cython version of Inverse Kinematics
+"""
+
 try:
     from setuptools import setup
     from setuptools import Extension
