@@ -12,6 +12,7 @@ import Util
 from threading import Thread
 import CommHandler as Comms
 from Packet import Packet
+import random
 
 # Define constants
 PinDataIn = "P9_18"
@@ -61,13 +62,16 @@ while True:
     humidityData = humidity.read()
     distance = Dist.getDistance()
 
-    int_cnt = int_cnt + 1
+    int_cnt = random.random()
 
-    CommHandling.sendAll()
     send = Packet(MAIN_IP, PRIMARY_TCP_SEND_PORT)
     send.appendData(int_cnt)
+
     CommHandling.addCyclePacket(send)
-    sys.stdout.write("{0}".format(CommHandling.viewPackets()))
+
+    CommHandling.sendAll()
+
+    sys.stdout.write("{0}\t".format(CommHandling.viewPackets()[len(CommHandling.viewPackets())-1]._data))
     # Write data to test
     # sys.stdout.write('{0}\n'.format(Therm.getTemp()))
     # sys.stdout.write('{0}, '.format(pidCtrl.getOutput()))

@@ -8,6 +8,7 @@ Questions/Comments? Email: jadenjb@uw.edu
 
 """
 import socket
+import sys
 from threading import Thread
 
 
@@ -36,9 +37,10 @@ class CommHandler:
         _sendThread.start()
 
     def _sendPackets(self):
-        for pack in self._packets:
-            pack.send()
-        self.resetPackets()
+        sys.stdout.write("Len: " + str(len(self._packets)) + "\n")
+        while len(self._packets) > 0:
+            self._packets[0].send()
+            del self._packets[0]
 
     def resetPackets(self):
         self._packets = []
