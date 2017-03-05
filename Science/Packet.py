@@ -8,8 +8,6 @@ Questions/Comments? Email: jadenjb@uw.edu
 
 """
 import socket
-import sys
-
 
 class Packet:
 
@@ -38,6 +36,4 @@ class Packet:
         s = socket.socket()
         s.connect((self._targetIP, self._targetPort))
         s.send(self._data)
-        # Uncommenting this will cause the first packet to be transmitted twice. We don't know why, nor do we really care after hours of debugging.
-        # self._recieved = s.recv(self.RECEIVE_BYTE_SIZE)
         s.close()

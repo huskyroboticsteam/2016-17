@@ -8,7 +8,6 @@ Questions/Comments? Email: jadenjb@uw.edu
 
 """
 import socket
-import sys
 from threading import Thread
 
 
