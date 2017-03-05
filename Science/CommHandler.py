@@ -37,7 +37,6 @@ class CommHandler:
         _sendThread.start()
 
     def _sendPackets(self):
-        sys.stdout.write("Len: " + str(len(self._packets)) + "\n")
         while len(self._packets) > 0:
             self._packets[0].send()
             del self._packets[0]

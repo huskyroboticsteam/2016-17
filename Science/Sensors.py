@@ -69,9 +69,8 @@ while True:
 
     CommHandling.addCyclePacket(send)
 
-    CommHandling.sendAll()
 
-    sys.stdout.write("{0}\t".format(CommHandling.viewPackets()[len(CommHandling.viewPackets())-1]._data))
+    sys.stdout.write("Sent data: {0}\n".format(CommHandling.viewPackets()[len(CommHandling.viewPackets())-1]._data))
     # Write data to test
     # sys.stdout.write('{0}\n'.format(Therm.getTemp()))
     # sys.stdout.write('{0}, '.format(pidCtrl.getOutput()))
@@ -80,4 +79,5 @@ while True:
     # sys.stdout.write('{0:0.2F};'.format(temp))
     sys.stdout.flush()
 
+    CommHandling.sendAll()
     time.sleep(1)
