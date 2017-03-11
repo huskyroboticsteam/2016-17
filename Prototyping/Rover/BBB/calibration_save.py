@@ -2,7 +2,11 @@ import BNO055
 
 
 # Calibrates the BNO055 and saves the calibration data to calibration_data.txt
-# See the website for more details
+# Continuously prints out the calibration status as sets of four numbers,
+# with 0 for uncalibrated and 3 for fully calibrated. Each number stands for
+# system, gyroscope, accelerometer, and magnetometer, in that order.
+# See this website for how to calibrate:
+# https://learn.adafruit.com/adafruit-bno055-absolute-orientation-sensor/device-calibration#generating-calibration-data
 def main():
     bno055 = BNO055.BNO055()
     init_success = bno055.begin()
