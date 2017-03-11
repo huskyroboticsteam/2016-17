@@ -80,4 +80,9 @@ class command(QLineEdit):
                 comms.auto = False
 
     def update(self, cmd):
+        """
+        :param cmd (string): The coordinate to update
+
+        Puts the string to update a coordinate into the textbox
+        """
         self.setText(cmd)
