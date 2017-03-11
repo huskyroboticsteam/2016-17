@@ -121,7 +121,7 @@ class Settings:
         self.main.map_val.setText(f.next().strip('\n').split("=")[1])
 
         # Read in the list of cameras and their friendly names
-        camStr = f.next().strip('\n').split("=")[1]
+        camStr = f.next().strip('\n').split("=", 1)[1]
         # Cam list alternates friendly name, file location, name...
         camList = camStr.split(",")
 
