@@ -216,15 +216,27 @@ class DriveParams:
         self.lock = threading.Lock()
 
     def set(self, throttle, turn):
+        """
+        Args:
+            throttle, turn (float)
+        """
         with self.lock:
-            self.throttle = throttle
-            self.turn = turn
+            self.throttle = float(throttle)
+            self.turn = float(turn)
 
     def stop(self):
+        """
+        Use this method when you want to stop the robot.
+        """
         with self.lock:
             self.is_stopped = True
 
     def get(self):
+        """
+        Returns:
+            either tuple of (float, float) or None: The throttle and turn, or
+                None if the robot should be stopped.
+        """
         with self.lock:
             if self.is_stopped:
                 temp = None
@@ -234,12 +246,24 @@ class DriveParams:
 
 
 class DriveThread(threading.Thread):
+    """
+    Thread that continuously reads the throttle and turn from a DriveParams
+    object and makes the robot move accordingly.
+
+    Attributes:
+        robot (Robot): Object for controlling the robot.
+        drive_params (DriveParams): Read the throttle and turn from this object.
+    """
     def __init__(self, drive_params, is_using_big_motor):
         super(DriveThread, self).__init__()
         self.robot = Robot(is_using_big_motor)
         self.drive_params = drive_params
 
     def run(self):
+        """
+        Overrides a method in threading.Thread. Do not call this method
+        directly; use start() instead.
+        """
         while True:
             drive_params = self.drive_params.get()
             if drive_params is None:
