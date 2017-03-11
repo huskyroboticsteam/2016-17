@@ -5,8 +5,37 @@ import gps as GPS
 import Adafruit_BBIO.ADC as ADC
 
 class Navigation:
-    """ Navigation code """
+    """
+    Object for managing navigation (e.g. potentiometer, magnetometer, obstacle
+    avoidance, GPS, autopilot)
+
+    Attributes:
+        auto (bool): True if currently in autopilot mode.
+        destinations (list of tuple of (float, float)): List of GPS coordinates
+            to travel to.
+        scannedHeadings (list of tuple of (float, bool)): List of tuples with
+            headings and bools determining if there's an obstacle there.
+        mag (MAG.Magnetometer), gps (GPS.GPS): Objects for managing
+            magnetometer and GPS.
+        POT_PIN (str): The name of the pin the potentiometer is connected to.
+        POT_LEFT, POT_RIGHT, POT_MIDDLE (float): The potentiometer readings
+            when the joint is at the leftmost, straight, and rightmost
+            respectively.
+        POT_TOL (float): Currently unused. Maybe some kind of tolerance value.
+            Maybe we should remove this?
+        avoidingObs (bool), checkingDistance (int): Someone who knows what
+            these are for please document them.
+    """
     def __init__(self, pot_left, pot_middle, pot_right, pot_tol, pot_pin):
+        """
+        Args:
+            pot_left, pot_middle, pot_right (float): The potentiometer readings
+                when the joint is at the leftmost, straight, and rightmost
+                respectively.
+            pot_tol (float): Currently unused. Maybe some kind of tolerance
+                value. Maybe we should remove this?
+            pot_pin (str): The name of the pin the potentiometer is connected to.
+        """
         # autopilot
         self.auto = True
         # list of GPS coords to travel to
@@ -16,10 +45,10 @@ class Navigation:
         self.mag = MAG.Magnetometer()
         self.gps = GPS.GPS()
         self.POT_PIN = pot_pin
-        self.POT_LEFT = pot_left
-        self.POT_RIGHT = pot_right
-        self.POT_MIDDLE = pot_middle
-        self.POT_TOL = pot_tol
+        self.POT_LEFT = float(pot_left)
+        self.POT_RIGHT = float(pot_right)
+        self.POT_MIDDLE = float(pot_middle)
+        self.POT_TOL = float(pot_tol)
         self.avoidingObs = False
         self.checkingDistance = 2
 
