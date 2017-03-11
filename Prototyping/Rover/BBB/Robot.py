@@ -8,9 +8,7 @@ import BigMotor
 import Robot_comms
 import Navigation
 import Utils
-import time
 import sys
-import getopt
 
 
 class Robot(object):
