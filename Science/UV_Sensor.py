@@ -5,11 +5,11 @@ Written by Jaden Bottemiller in January 2017
 EE Team of Husky Robotics
 This code has been tested.
 """
-
 import Adafruit_GPIO.I2C as I2C
+from Sensor import Sensor
+import Util
 
-
-class UV:
+class UV(Sensor):
 
     # default time constant
     _uvTConst = 0x02
@@ -33,5 +33,8 @@ class UV:
         return uvData
 
     # Gets data in uW/cm/cm
-    def getData(self):
+    def getValue(self):
         return self.getRaw() * 5  # uW/cm/cm (multiplication factor of 5 given by the datasheet)
+
+    def getDataForPacket(self):
+        return Util.inttobin(self.getValue(), 32)

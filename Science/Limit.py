@@ -10,9 +10,11 @@ Questions/Comments? Email: jadenjb@uw.edu
 
 """
 import Adafruit_BBIO.GPIO as GPIO  # Ignore compiler errors
+from Sensor import Sensor
+import Util
 
 
-class Limit:
+class Limit(Sensor):
 
     # Sets pin of limit switch
     def __init__(self, pin):
@@ -21,5 +23,9 @@ class Limit:
 
     # Returns on/off (boolean) characteristic of the pin
     # at any given time
-    def status(self):
+    def getValue(self):
         return GPIO.input(self._pin)
+
+    # Returns data for packet
+    def getDataForPacket(self):
+        return Util.inttobin(int(self.getValue()),1)

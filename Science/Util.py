@@ -25,3 +25,14 @@ class Util(object):
     def updateEncoders(encoders):
         for encoder in encoders:
             encoder.update()
+
+    @staticmethod
+    def bindigits(n, bits=8):
+        s = bin(n & int("1" * bits, 2))[2:]
+        return ("{0:0>%s}" % (bits)).format(s)
+
+    @staticmethod
+    def inttobin(n, bits=8):
+        return '{0:0' + str(bits) + 'b}'.format(n)
+
+

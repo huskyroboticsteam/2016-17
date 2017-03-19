@@ -15,9 +15,11 @@ NOTE: Beaglebone Black ADC has a 12-bit resolution
 """
 
 import Adafruit_BBIO.ADC as ADC  # Ignore compilation errors
+from Sensor import Sensor
+import Util
 
 
-class Humidity:
+class Humidity(Sensor):
 
     # Initializes the Humidity Sensor on given pin
     def __init__(self, pin):
@@ -34,7 +36,7 @@ class Humidity:
         return ADC.read(self._pin)
 
     # Reads calibrated raw values
-    def read(self):
+    def getValue(self):
         return self._m * self.readRaw() + self._int
 
     # Sets linear calibration constants for read()
@@ -43,3 +45,6 @@ class Humidity:
     def setup(self, slope, i):
         self._m = slope
         self._int = i
+
+    def getDataForPacket(self):
+        return Util.inttobin(self.readRaw(), 16)

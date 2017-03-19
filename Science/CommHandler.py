@@ -27,7 +27,6 @@ class CommHandler:
         self._continue = True
         self._receiving = False
 
-
     def addCyclePacket(self, packet):
         self._packets += [packet]
 
@@ -39,27 +38,6 @@ class CommHandler:
         while len(self._packets) > 0:
             self._packets[0].send()
             del self._packets[0]
-
-    def resetPackets(self):
-        self._packets = []
-
-    def waitingPackets(self):
-        return len(self._packets) >= 1
-
-    def viewPackets(self):
-        return self._packets
-
-    def waitingMessages(self):
-        return len(self._messages) >= 1
-
-    # Returns and deletes messages
-    def getMessages(self):
-        temp = self._messages
-        self._messages = []
-        return temp
-
-    def viewMessages(self):
-        return self._messages
 
     def stopComms(self):
         self._continue = False

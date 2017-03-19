@@ -29,10 +29,12 @@ NOTE: Assumes Encoder does not step more than one phase per update
 
 from math import pi
 from threading import Thread
+from Sensor import Sensor
 import Adafruit_BBIO.GPIO as GPIO
+import Util
 
 
-class Encoder:
+class Encoder(Sensor):
 
     # Takes in channel A and B pin numbers
     # ppr = Pulses per revolution
@@ -132,3 +134,11 @@ class Encoder:
     def _threadBChannel(self):
         while True:
             self._waitForB()
+
+    def getValue(self):
+        return self.getAngle(), self.getDistance()
+
+    def getDataForPacket(self):
+        return Util.inttobin(round(self.getAngle()), 16)
+
+
