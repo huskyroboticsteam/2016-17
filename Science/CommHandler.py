@@ -1,5 +1,5 @@
 """
-UDP Communications Handler.
+TCP/UDP Communications Handler.
 
 Written by Jaden Bottemiller in January 2017
 EE Team of Husky Robotics
@@ -27,6 +27,11 @@ class CommHandler:
         self._continue = True
         self._receiving = False
 
+    @classmethod
+    def sendAsyncPacket(cls, packet):
+        _sendThread = Thread(target=packet.send)
+        _sendThread.start()
+
     def addCyclePacket(self, packet):
         self._packets += [packet]
 
@@ -44,6 +49,9 @@ class CommHandler:
 
     def getReceivingStatus(self):
         return self._receiving
+
+    def getMessages(self):
+        return self._messages
 
     # Meant to be threaded externally
     # Otherwise there will be an infinite loop
@@ -65,4 +73,6 @@ class Message:
 
     def __init__(self, data, fromAddr):
         self.DATA = data
+        self.ID = int(data[31:39])
         self.fromAddr = fromAddr
+        # parse ID from given data

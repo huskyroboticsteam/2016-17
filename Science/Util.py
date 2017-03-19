@@ -6,7 +6,7 @@ Husky Robotics 2017
 """
 
 
-class Util(object):
+class Util:
 
     """
     Maps a number from one range into another
@@ -17,22 +17,22 @@ class Util(object):
     toHigh = upper bound of new range
     TESTED? [YES]
     """
-    @staticmethod
-    def map(input, fromLow, fromHigh, toLow, toHigh):
+    @classmethod
+    def map(cls, input, fromLow, fromHigh, toLow, toHigh):
         return toLow + ((float(input - fromLow)/(fromHigh - fromLow)) * (toHigh - toLow))
 
-    @staticmethod
-    def updateEncoders(encoders):
+    @classmethod
+    def updateEncoders(cls, encoders):
         for encoder in encoders:
-            encoder.update()
+            encoder._update()
 
-    @staticmethod
-    def bindigits(n, bits=8):
+    @classmethod
+    def bindigits(cls, n, bits=8):
         s = bin(n & int("1" * bits, 2))[2:]
         return ("{0:0>%s}" % (bits)).format(s)
 
-    @staticmethod
-    def inttobin(n, bits=8):
-        return '{0:0' + str(bits) + 'b}'.format(n)
+    @classmethod
+    def inttobin(cls, n, bits=8):
+        return ('{0:0' + str(bits) + 'b}').format(n)
 
 

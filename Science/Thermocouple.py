@@ -10,7 +10,7 @@ This code has been tested.
 import Adafruit_MAX31855.MAX31855 as MAX31855
 from Sensor import Sensor
 import time
-import Util
+from Util import Util
 
 class Thermocouple(Sensor):
 

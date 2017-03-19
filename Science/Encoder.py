@@ -30,6 +30,7 @@ NOTE: Assumes Encoder does not step more than one phase per update
 from math import pi
 from threading import Thread
 from Sensor import Sensor
+from Util import Util
 import Adafruit_BBIO.GPIO as GPIO
 import Util
 
@@ -67,7 +68,7 @@ class Encoder(Sensor):
 
     # Updates encoder values
     # Assumes the Encoder does not go past a whole phase change
-    def update(self):
+    def _update(self):
         # Calculates the change in pulses from
         # last cycle to this cycle.
         if not self._isSetup:
@@ -94,7 +95,7 @@ class Encoder(Sensor):
             GPIO.waitForEdge(pin, GPIO.FALLING)
         else:
             GPIO.waitForEdge(pin, GPIO.RISING)
-        self.update()
+        self._update()
 
     def _waitForA(self):
         self._waitForEdge(self._pinA)
@@ -139,6 +140,9 @@ class Encoder(Sensor):
         return self.getAngle(), self.getDistance()
 
     def getDataForPacket(self):
-        return Util.inttobin(round(self.getAngle()), 16)
+        return Util.intobin(round(self.getAngle()), 16)
 
+    def stop(self):
+        self._threadA.join(0.02)
+        self._threadB.join(0.02)
 

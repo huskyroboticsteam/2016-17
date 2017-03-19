@@ -1,14 +1,18 @@
 import sys
 import time
 import UV_Sensor as UV
+import Adafruit_BBIO.ADC as ADC  # Ignore compilation errors
 from Thermocouple import Thermocouple
 from DistanceSensor import DistanceSensor
 from Humidity import Humidity
-import Adafruit_BBIO.ADC as ADC  # Ignore compilation errors
-import Encoder
+from Encoder import Encoder
 from threading import Thread
-import CommHandler as Comms
+from CommHandler import CommHandler
 from Sensor import SensorHandler
+from Packet import Packet
+from Error import Error
+from Limit import Limit
+from SystemTelemetry import SystemTelemetry
 
 # Define constants
 PinDataIn = "P9_18"
@@ -25,7 +29,9 @@ INTERNAL_TCP_RECEIVE_PORT = 5000
 
 # Initialize hardware
 ADC.setup()
-CommHandling = Comms.CommHandler(INTERNAL_IP, INTERNAL_TCP_RECEIVE_PORT)
+CommHandling = CommHandler(INTERNAL_IP, INTERNAL_TCP_RECEIVE_PORT)
+Packet.setDefaultTarget(MAIN_IP, PRIMARY_TCP_SEND_PORT)
+SystemTelemetry.initializeTelemetry()
 
 # Start Communication Thread
 COMMS_THREAD = Thread(target=CommHandling.receiveMessagesOnThread)
@@ -37,18 +43,24 @@ Thermocouple = Thermocouple(PinClock, PinChipSel, PinDataIn)
 DistanceSensor = DistanceSensor()
 HumiditySensor = Humidity(1)
 # Need to write in the actual pin values here.
-encoder1 = Encoder.Encoder("PINA", "PINB", 220)
-encoder2 = Encoder.Encoder("PINA", "PINB", 220)
-encoder3 = Encoder.Encoder("PINA", "PINB", 220)
+encoder1 = Encoder("PINA", "PINB", 220)
+encoder2 = Encoder("PINA", "PINB", 220)
+encoder3 = Encoder("PINA", "PINB", 220)
+limit1 = Limit("PINA")
+limit2 = Limit("PINA")
+limit3 = Limit("PINA")
 
 # Add Sensors to handler
-SensorHandler.addPrimarySensors(UVSensor,
+SensorHandler.addPrimarySensors(DistanceSensor,
+                               UVSensor,
                                Thermocouple,
-                               DistanceSensor,
                                HumiditySensor)
 SensorHandler.addAccessorySensors(encoder1,
                                   encoder2,
-                                  encoder3)
+                                  encoder3,
+                                  limit1,
+                                  limit2,
+                                  limit3)
 
 # Setup and start all sensors
 SensorHandler.setupAll()
@@ -57,10 +69,32 @@ SensorHandler.startAll()
 
 while True:
 
-    # Update Sensor Data
+    # Update All Sensor Data In Main Thread
     SensorHandler.updateAll()
-    sys.stdout.write('{0}'.format(SensorHandler.getDataArray()))
+
+    # Send Primary Sensor Packet
+    primarySensorData = Packet(0x00)
+    primarySensorData.appendData(SensorHandler.getPrimarySensorData())
+    CommHandling.addCyclePacket(primarySensorData)
+
+    # Send Auxillary Sensor Packet
+    auxSensorData = Packet(0x02)
+    auxSensorData.appendData(SensorHandler.getAuxSensorData())
+    CommHandling.addCyclePacket(auxSensorData)
+
+    # Send System Telemetry Packet
+    SystemTelemetry.updateTelemetry()
+    systemPacket = Packet(0x03)
+    systemPacket.appendData(SystemTelemetry.getTelemetryData())
+    CommHandling.addCyclePacket(systemPacket)
+
+    CommHandling.sendAll()
+
+    # Says everything is okay if there have been no errors on this cycle
+    if not Error.areErrors():
+        Error.throw(0x00)
+    # Clears errors for next cycle
+    Error.clearErrors()
 
     sys.stdout.flush()
-    CommHandling.sendAll()
     time.sleep(1)
