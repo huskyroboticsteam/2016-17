@@ -52,7 +52,7 @@ class SensorHandler:
     @classmethod
     def updateAll(cls):
         for sensor in (cls._sensors + cls._auxSensors):
-            sensor._update()
+            sensor.update()
 
     @classmethod
     def setupAll(cls):

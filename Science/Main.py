@@ -9,7 +9,7 @@ from Encoder import Encoder
 from threading import Thread
 from CommHandler import CommHandler
 from Sensor import SensorHandler
-from Packet import Packet
+from Packet import Packet, PacketType
 from Error import Error
 from Limit import Limit
 from SystemTelemetry import SystemTelemetry
@@ -20,20 +20,18 @@ PinChipSel = "P9_17"
 PinClock = "P9_22"
 UV_ADDR_LSB = 0x38
 DIST_ADDR = 0x52
-
 # Communication Setup
 MAIN_IP = '192.168.0.10'
 PRIMARY_TCP_SEND_PORT = 24
 INTERNAL_IP = '127.0.0.1'
 INTERNAL_TCP_RECEIVE_PORT = 5000
 
-# Initialize hardware
+# Initialize hardware and communications
 ADC.setup()
 CommHandling = CommHandler(INTERNAL_IP, INTERNAL_TCP_RECEIVE_PORT)
 Packet.setDefaultTarget(MAIN_IP, PRIMARY_TCP_SEND_PORT)
 SystemTelemetry.initializeTelemetry()
-
-# Start Communication Thread
+# Start Communication / Receive Thread
 COMMS_THREAD = Thread(target=CommHandling.receiveMessagesOnThread)
 COMMS_THREAD.start()
 
@@ -73,18 +71,18 @@ while True:
     SensorHandler.updateAll()
 
     # Send Primary Sensor Packet
-    primarySensorData = Packet(0x00)
+    primarySensorData = Packet(PacketType.PrimarySensor)
     primarySensorData.appendData(SensorHandler.getPrimarySensorData())
     CommHandling.addCyclePacket(primarySensorData)
 
     # Send Auxillary Sensor Packet
-    auxSensorData = Packet(0x02)
+    auxSensorData = Packet(PacketType.AuxSensor)
     auxSensorData.appendData(SensorHandler.getAuxSensorData())
     CommHandling.addCyclePacket(auxSensorData)
 
     # Send System Telemetry Packet
     SystemTelemetry.updateTelemetry()
-    systemPacket = Packet(0x03)
+    systemPacket = Packet(PacketType.SystemTelemetry)
     systemPacket.appendData(SystemTelemetry.getTelemetryData())
     CommHandling.addCyclePacket(systemPacket)
 

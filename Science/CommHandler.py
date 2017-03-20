@@ -9,6 +9,7 @@ Questions/Comments? Email: jadenjb@uw.edu
 """
 import socket
 from threading import Thread
+from Error import Error
 
 
 class CommHandler:
@@ -50,10 +51,13 @@ class CommHandler:
     def getReceivingStatus(self):
         return self._receiving
 
+    # Returns messages and deletes them from the waiting queue
     def getMessages(self):
-        return self._messages
+        temp = self._messages
+        self._messages = []
+        return temp
 
-    # Meant to be threaded externally
+    # Meant to be threaded on system
     # Otherwise there will be an infinite loop
     def receiveMessagesOnThread(self):
         self._continue = True
@@ -63,16 +67,16 @@ class CommHandler:
                 client, clientAddr = self.SOCKET.accept()
                 self._receiving = True
                 data = client.recv(self.BYTE_BUFFER_SIZE)
+                self._receiving = False
                 self._messages += [Message(data, clientAddr)]
         except socket.error:
-            pass
-        self._receiving = False
+            Error.throw(0x00FF)  # Need to add actual error code here once documented.
 
 
 class Message:
 
     def __init__(self, data, fromAddr):
         self.DATA = data
-        self.ID = int(data[31:39])
         self.fromAddr = fromAddr
         # parse ID from given data
+        self.ID = int(data[31:39])

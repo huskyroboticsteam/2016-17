@@ -1,4 +1,4 @@
-from Packet import Packet
+from Packet import Packet, PacketType
 from Util import Util
 from CommHandler import CommHandler
 
@@ -14,7 +14,7 @@ class Error:
     @classmethod
     def throw(cls, errorCode):
         cls.errors.append(errorCode)
-        errorPack = Packet(0x01)
+        errorPack = Packet(PacketType.Error)
         errorPack.appendData(Util.inttobin(errorCode, 16))
         CommHandler.sendAsyncPacket(errorPack)
 

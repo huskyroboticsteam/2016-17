@@ -46,7 +46,7 @@ class Packet:
 
     # Sends data to constructor-specified client
     def send(self):
-        self.addTimeID()
+        self.addTimeID()  # Always add time and id to the packet
         s = socket.socket()
         s.connect((self._targetIP, self._targetPort))
         s.send(self._data)
@@ -56,3 +56,17 @@ class Packet:
     def setDefaultTarget(cls, targetIP, targetPort):
         cls.DEF_TARGET_IP = targetIP
         cls.DEF_TARGET_PORT = targetPort
+
+
+# Packet Type Enumeration:
+
+
+class PacketType:
+    PrimarySensor = 0x00
+    Error = 0x01
+    AuxSensor = 0x02
+    SystemTelemetry = 0x03
+    ImageRequest = 0x80
+    AuxControl = 0x81
+    SysControl = 0x82
+
