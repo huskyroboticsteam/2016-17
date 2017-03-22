@@ -22,6 +22,9 @@ from Error import Error
 
 class Humidity(Sensor):
 
+    _m = 1
+    _int = 0
+
     # Initializes the Humidity Sensor on given pin
     def __init__(self, pin):
         self._pin = str(pin)  # Pin for the sensor
@@ -35,9 +38,10 @@ class Humidity(Sensor):
                 Util.setADC_Status(True)
             except:
                 # Throw "Communication Failure"
-                Error.throw(0x0403)
+                Error.throw(0x0403, "Could Not initialize Humidity Sensor communications")
                 # Throw "ADC Could not initialize"
-                Error.throw(0x0101)
+                Error.throw(0x0001, "Failed to initialize ADC")
+                self.critical_status = True
 
     # Reads raw ADC value
     def readRaw(self):
@@ -45,6 +49,8 @@ class Humidity(Sensor):
         # which warns of a bug if you neglect to read
         # twice
         reading = 0
+        if self.critical_status:
+            return 0
         try:
             reading = ADC.read(self._pin)
             reading = ADC.read(self._pin) * 1.8  # To get voltage
@@ -63,7 +69,7 @@ class Humidity(Sensor):
     # Sets linear calibration constants for read()
     # slope = slope of linear calibration;
     # i = intercept of linear calibration.
-    def setCalibration(self, slope, i):
+    def setup(self, slope=_m, i=_int):
         self._m = slope
         self._int = i
 

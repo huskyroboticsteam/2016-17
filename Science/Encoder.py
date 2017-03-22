@@ -25,6 +25,10 @@ NOTE: Vibrations that can cause misalignment of the encoder wheel (especially
     in the case of optical encoders) is ignored
 NOTE: Run the update() method as often as possible
 NOTE: Assumes Encoder does not step more than one phase per update
+
+
+TODO: ADD ERROR THROWING TO INITIALIZED / READ GPIO
+
 """
 
 from math import pi
@@ -44,8 +48,7 @@ class Encoder(Sensor):
         self._pinB = pinB      # integer value for B channel
         GPIO.setup(self._pinA, GPIO.IN)  # sets input GPIO pins
         GPIO.setup(self._pinB, GPIO.IN)  # sets input GPIO pins
-        self._ppr = ppr        # pulses per revolution of the encoder, default to 1
-                               # instead of 0 so nothing breaks upon division
+        self._ppr = ppr        # pulses per revolution of the encoder
         self._steps = 0        # signed number of steps/pulses encoder has recorded
         self._distK = 1        # K Constant for distance multiplication
         self._lastA = False    # last pin position for channel A
@@ -138,7 +141,7 @@ class Encoder(Sensor):
         return self.getAngle(), self.getDistance()
 
     def getDataForPacket(self):
-        return Util.inttobin(round(self.getAngle()), 16)
+        return Util.inttobin(round(self.getAngle() % (2*pi)), 16)
 
     def stop(self):
         self._threadA.join(0.02)

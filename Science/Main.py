@@ -33,7 +33,7 @@ try:
     Util.setADC_Status(True)
 except:
     # Throw "ADC Could not initialize"
-    Error.throw(0x0001)
+    Error.throw(0x0001, "Failed to initialize ADC")
 CommHandling = CommHandler(INTERNAL_IP, INTERNAL_TCP_RECEIVE_PORT)
 Packet.setDefaultTarget(MAIN_IP, PRIMARY_TCP_SEND_PORT)
 SystemTelemetry.initializeTelemetry()
@@ -46,14 +46,13 @@ UVSensor = UV(UV_ADDR_LSB)
 Thermocouple = Thermocouple(PinClock, PinChipSel, PinDataIn)
 DistanceSensor = DistanceSensor()
 HumiditySensor = Humidity("AIN1")
-HumiditySensor.setCalibration(1, 0)  # Setup Humidity Calibration
-# Need to write in the actual pin values here.
-encoder1 = Encoder("PINA", "PINB", 220)
-encoder2 = Encoder("PINA", "PINB", 220)
-encoder3 = Encoder("PINA", "PINB", 220)
-limit1 = Limit("PINA")
-limit2 = Limit("PINA")
-limit3 = Limit("PINA")
+HumiditySensor.setup(1, 0)  # Setup Humidity Calibration
+encoder1 = Encoder("P8_22", "P8_24", 220)
+encoder2 = Encoder("P8_28", "P8_30", 220)
+encoder3 = Encoder("P8_34", "P8_36", 220)
+limit1 = Limit("P8_12")
+limit2 = Limit("P8_10")
+limit3 = Limit("P8_8")
 
 # Add Sensors to handler
 SensorHandler.addPrimarySensors(DistanceSensor, UVSensor, Thermocouple, HumiditySensor)

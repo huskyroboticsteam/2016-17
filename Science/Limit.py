@@ -12,6 +12,7 @@ Questions/Comments? Email: jadenjb@uw.edu
 import Adafruit_BBIO.GPIO as GPIO  # Ignore compiler errors
 from Sensor import Sensor
 from Util import Util
+from Error import Error
 
 
 class Limit(Sensor):
@@ -19,12 +20,25 @@ class Limit(Sensor):
     # Sets pin of limit switch
     def __init__(self, pin):
         self._pin = str(pin)
-        GPIO.setup(self._pin, GPIO.IN)
+        try:
+            GPIO.setup(self._pin, GPIO.IN)
+        except:
+            # Throw "Could not setup DIO Pin"
+            self.critical_status = True
+            Error.throw(0x0002)
 
     # Returns on/off (boolean) characteristic of the pin
     # at any given time
     def getValue(self):
-        return GPIO.input(self._pin)
+        if self.critical_status:
+            return 0
+        val = 0
+        try:
+            val = GPIO.input(self._pin)
+        except:
+            # Throw "Could not read DIO Pin"
+            Error.throw(0x0003)
+        return val
 
     # Returns data for packet
     def getDataForPacket(self):

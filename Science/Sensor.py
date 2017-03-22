@@ -1,5 +1,7 @@
 class Sensor:
 
+    critical_status = False
+
     # Sets up the sensor
     def setup(self, *args):
         pass
