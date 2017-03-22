@@ -2,7 +2,7 @@ import socket
 import sys
 
 SOCKET = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-SOCKET.bind(('192.168.0.10', 24))
+SOCKET.bind(('192.168.1.12', 24))
 while True:
     try:
         SOCKET.listen(1)

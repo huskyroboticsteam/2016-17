@@ -32,7 +32,6 @@ from threading import Thread
 from Sensor import Sensor
 from Util import Util
 import Adafruit_BBIO.GPIO as GPIO
-import Util
 
 
 class Encoder(Sensor):
@@ -108,9 +107,8 @@ class Encoder(Sensor):
     def setDistanceK(self, distK):
         self._distK = distK
 
-    # Returns current angle of encoder
-    # (Does not have to be in range 0 to 360;
-    # in fact, probably should be (-inf, inf)
+    # Returns current angle of encoder in radians
+    # (-inf, inf) (I.E. not mod 2pi)
     def getAngle(self):
         return self._steps * (2 * pi/self._ppr)
 
@@ -140,7 +138,7 @@ class Encoder(Sensor):
         return self.getAngle(), self.getDistance()
 
     def getDataForPacket(self):
-        return Util.intobin(round(self.getAngle()), 16)
+        return Util.inttobin(round(self.getAngle()), 16)
 
     def stop(self):
         self._threadA.join(0.02)

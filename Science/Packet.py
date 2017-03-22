@@ -9,6 +9,7 @@ Questions/Comments? Email: jadenjb@uw.edu
 """
 import socket
 import time
+from Error import Error
 from Util import Util
 
 
@@ -46,11 +47,15 @@ class Packet:
 
     # Sends data to constructor-specified client
     def send(self):
-        self.addTimeID()  # Always add time and id to the packet
-        s = socket.socket()
-        s.connect((self._targetIP, self._targetPort))
-        s.send(self._data)
-        s.close()
+        try:
+            self.addTimeID()  # Always add time and id to the packet
+            s = socket.socket()
+            s.connect((self._targetIP, self._targetPort))
+            s.send(self._data)
+            s.close()
+        except socket.error:
+            # Throw "Failed to send packet"
+            Error.throw(0x0503)
 
     @classmethod
     def setDefaultTarget(cls, targetIP, targetPort):

@@ -1,10 +1,10 @@
 import sys
 import time
-import UV_Sensor as UV
 import Adafruit_BBIO.ADC as ADC  # Ignore compilation errors
 from Thermocouple import Thermocouple
 from DistanceSensor import DistanceSensor
 from Humidity import Humidity
+from UV_Sensor import UV
 from Encoder import Encoder
 from threading import Thread
 from CommHandler import CommHandler
@@ -13,6 +13,7 @@ from Packet import Packet, PacketType
 from Error import Error
 from Limit import Limit
 from SystemTelemetry import SystemTelemetry
+from Util import Util
 
 # Define constants
 PinDataIn = "P9_18"
@@ -27,7 +28,12 @@ INTERNAL_IP = '127.0.0.1'
 INTERNAL_TCP_RECEIVE_PORT = 5000
 
 # Initialize hardware and communications
-ADC.setup()
+try:
+    ADC.setup()
+    Util.setADC_Status(True)
+except:
+    # Throw "ADC Could not initialize"
+    Error.throw(0x0001)
 CommHandling = CommHandler(INTERNAL_IP, INTERNAL_TCP_RECEIVE_PORT)
 Packet.setDefaultTarget(MAIN_IP, PRIMARY_TCP_SEND_PORT)
 SystemTelemetry.initializeTelemetry()
@@ -36,10 +42,11 @@ COMMS_THREAD = Thread(target=CommHandling.receiveMessagesOnThread)
 COMMS_THREAD.start()
 
 # Create Sensors
-UVSensor = UV.UV(UV_ADDR_LSB)
+UVSensor = UV(UV_ADDR_LSB)
 Thermocouple = Thermocouple(PinClock, PinChipSel, PinDataIn)
 DistanceSensor = DistanceSensor()
-HumiditySensor = Humidity(1)
+HumiditySensor = Humidity("AIN1")
+HumiditySensor.setCalibration(1, 0)  # Setup Humidity Calibration
 # Need to write in the actual pin values here.
 encoder1 = Encoder("PINA", "PINB", 220)
 encoder2 = Encoder("PINA", "PINB", 220)
@@ -49,16 +56,8 @@ limit2 = Limit("PINA")
 limit3 = Limit("PINA")
 
 # Add Sensors to handler
-SensorHandler.addPrimarySensors(DistanceSensor,
-                               UVSensor,
-                               Thermocouple,
-                               HumiditySensor)
-SensorHandler.addAccessorySensors(encoder1,
-                                  encoder2,
-                                  encoder3,
-                                  limit1,
-                                  limit2,
-                                  limit3)
+SensorHandler.addPrimarySensors(DistanceSensor, UVSensor, Thermocouple, HumiditySensor)
+SensorHandler.addAccessorySensors(encoder1, encoder2, encoder3, limit1, limit2, limit3)
 
 # Setup and start all sensors
 SensorHandler.setupAll()

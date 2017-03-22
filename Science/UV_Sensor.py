@@ -7,7 +7,7 @@ This code has been tested.
 """
 import Adafruit_GPIO.I2C as I2C
 from Sensor import Sensor
-import Util
+from Util import Util
 
 class UV(Sensor):
 

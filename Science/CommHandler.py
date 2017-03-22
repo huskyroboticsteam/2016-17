@@ -16,14 +16,17 @@ class CommHandler:
 
     SOCKET = None
     BYTE_BUFFER_SIZE = 1024
-    TCP_SEND_TIMEOUT = 300
 
     def __init__(self, internalIP, receivePort):
         self._internalIP = internalIP
         self._receivePort = receivePort
         self._packets = []
-        self.SOCKET = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.SOCKET.bind((self._internalIP, self._receivePort))
+        try:
+            self.SOCKET = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.SOCKET.bind((self._internalIP, self._receivePort))
+        except socket.error:
+            # Throw "Could not initialize comms"
+            Error.throw(0x0501)
         self._messages = []
         self._continue = True
         self._receiving = False
@@ -70,7 +73,11 @@ class CommHandler:
                 self._receiving = False
                 self._messages += [Message(data, clientAddr)]
         except socket.error:
-            Error.throw(0x00FF)  # Need to add actual error code here once documented.
+            # Throw "Failed to begin receive process"
+            Error.throw(0x0502)
+        except:
+            # Throw "Could not initialize comms"
+            Error.throw(0x0501)
 
 
 class Message:
