@@ -1,5 +1,5 @@
 import threading
-from Util import Util
+import Util
 
 
 class SystemTelemetry:
@@ -17,16 +17,16 @@ class SystemTelemetry:
 
     @classmethod
     def initializeTelemetry(cls):
-        cls.telemetry["ACTIVE_THREADS"] = threading.active_count()
+        cls.telemetry["ACTIVE_THREADS"] = (threading.active_count(), cls.telemetry["ACTIVE_THREADS"][1])
 
     @classmethod
     def updateTelemetry(cls):
-        cls.telemetry["ACTIVE_THREADS"] = threading.active_count()
+        cls.telemetry["ACTIVE_THREADS"] = (threading.active_count(), cls.telemetry["ACTIVE_THREADS"][1])
 
     @classmethod
     def getTelemetryData(cls):
         data = ""
         telemetry_keys = cls.telemetry.keys()
         for i in range(0, len(telemetry_keys)):
-            data += Util.inttobin(telemetry_keys[i][0], telemetry_keys[i][1])
+            data += Util.inttobin(cls.telemetry[telemetry_keys[i]][0], cls.telemetry[telemetry_keys[i]][1])
         return data

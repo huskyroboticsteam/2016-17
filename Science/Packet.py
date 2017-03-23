@@ -9,8 +9,8 @@ Questions/Comments? Email: jadenjb@uw.edu
 """
 import socket
 import time
-from Error import Error
-from Util import Util
+import Error
+import Util
 
 
 class Packet:
@@ -29,7 +29,7 @@ class Packet:
 
     # Appends 32bit UNIX timestamp to beginning of packet
     def addTimeID(self):
-        timestamp = Util.inttobin(time.time(), 32)
+        timestamp = Util.inttobin(int(time.time()), 32)
         id = Util.inttobin(self._id)
         self._data = timestamp + id + self._data
 

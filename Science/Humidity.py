@@ -13,11 +13,10 @@ this sensor.
 NOTE: Beaglebone Black ADC has a 12-bit resolution
 
 """
-
+import Util
+import Error
 import Adafruit_BBIO.ADC as ADC  # Ignore compilation errors
 from Sensor import Sensor
-from Util import Util
-from Error import Error
 
 
 class Humidity(Sensor):

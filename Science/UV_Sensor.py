@@ -5,10 +5,10 @@ Written by Jaden Bottemiller in January 2017
 EE Team of Husky Robotics
 This code has been tested.
 """
+import Util
+import Error
 import Adafruit_GPIO.I2C as I2C
 from Sensor import Sensor
-from Util import Util
-from Error import Error
 
 
 class UV(Sensor):

@@ -30,12 +30,11 @@ NOTE: Assumes Encoder does not step more than one phase per update
 TODO: ADD ERROR THROWING TO INITIALIZED / READ GPIO
 
 """
-
+import Util
+import Adafruit_BBIO.GPIO as GPIO
 from math import pi
 from threading import Thread
 from Sensor import Sensor
-from Util import Util
-import Adafruit_BBIO.GPIO as GPIO
 
 
 class Encoder(Sensor):

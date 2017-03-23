@@ -9,10 +9,11 @@ Questions/Comments? Email: jadenjb@uw.edu
 (Untested as of 2/6/2017)
 
 """
+
+import Util
+import Error
 import Adafruit_BBIO.GPIO as GPIO  # Ignore compiler errors
 from Sensor import Sensor
-from Util import Util
-from Error import Error
 
 
 class Limit(Sensor):

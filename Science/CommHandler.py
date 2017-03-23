@@ -8,8 +8,8 @@ Questions/Comments? Email: jadenjb@uw.edu
 
 """
 import socket
+import Error
 from threading import Thread
-from Error import Error
 
 
 class CommHandler:

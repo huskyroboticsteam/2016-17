@@ -7,11 +7,11 @@ EE Team of Husky Robotics
 This code has been tested.
 
 """
+import Error
+import time
+import Util
 import Adafruit_MAX31855.MAX31855 as MAX31855
 from Sensor import Sensor
-from Util import Util
-from Error import Error
-import time
 
 
 class Thermocouple(Sensor):

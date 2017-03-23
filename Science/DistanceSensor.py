@@ -35,9 +35,9 @@ NOTE: It is recommended to call stopRanging() at the end of getting distances, b
 
 import VL53L0X
 import time
+import Error
+import Util
 from Sensor import Sensor
-from Error import Error
-from Util import Util
 
 
 class DistanceSensor(Sensor):

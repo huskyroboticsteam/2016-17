@@ -1,5 +1,7 @@
 import sys
 import time
+import Error
+import Util
 import Adafruit_BBIO.ADC as ADC  # Ignore compilation errors
 from Thermocouple import Thermocouple
 from DistanceSensor import DistanceSensor
@@ -10,10 +12,9 @@ from threading import Thread
 from CommHandler import CommHandler
 from Sensor import SensorHandler
 from Packet import Packet, PacketType
-from Error import Error
 from Limit import Limit
 from SystemTelemetry import SystemTelemetry
-from Util import Util
+
 
 # Define constants
 PinDataIn = "P9_18"
@@ -73,7 +74,7 @@ while True:
     primarySensorData.appendData(SensorHandler.getPrimarySensorData())
     CommHandling.addCyclePacket(primarySensorData)
 
-    # Send Auxillary Sensor Packet
+    # Send Auxiliary Sensor Packet
     auxSensorData = Packet(PacketType.AuxSensor)
     auxSensorData.appendData(SensorHandler.getAuxSensorData())
     CommHandling.addCyclePacket(auxSensorData)

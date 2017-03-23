@@ -1,33 +1,31 @@
 import sys
-from Packet import Packet, PacketType
-from Util import Util
+import Packet
+import Util
 from CommHandler import CommHandler
 
 
-class Error:
+errors = []
 
+
+def clearErrors():
     errors = []
 
-    @classmethod
-    def clearErrors(cls):
-        cls.errors = []
 
-    @classmethod
-    def throw(cls, errorCode, comment="", fatal=False):
-        if len(comment) > 0:
-            comment = " Given information: " + comment + "\n"
-        sys.stdout.write("Error: " + errorCode + " | Refer to documentation for more information.\n" + comment + "\n")
-        cls.errors.append(errorCode)
-        errorPack = Packet(PacketType.Error)
-        errorPack.appendData(Util.inttobin(errorCode, 16))
-        CommHandler.sendAsyncPacket(errorPack)
-        if fatal:
-            sys.exit()
+def throw(errorCode, comment="", fatal=False):
+    if len(comment) > 0:
+        comment = " Given information: " + str(comment) + "\n"
+    sys.stderr.write("Error: " + str(errorCode) + " | Refer to documentation for more information.\n" + comment + "\n")
+    errors.append(errorCode)
+    errorPack = Packet.Packet(Packet.PacketType.Error)
+    errorPack.appendData(Util.inttobin(errorCode, 16))
+    CommHandler.sendAsyncPacket(errorPack)
+    if fatal:
+        sys.exit(0x00FF)
 
-    @classmethod
-    def getErrors(cls):
-        return cls.errors
 
-    @classmethod
-    def areErrors(cls):
-        return len(cls.errors) > 0
+def getErrors():
+    return errors
+
+
+def areErrors():
+    return len(errors) > 0
