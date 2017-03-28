@@ -1,5 +1,3 @@
-import threading
-
 from PyQt4 import QtCore, QtGui
 
 import sdl2
@@ -13,6 +11,7 @@ any race conditions.
 """
 
 sdl2.SDL_Init(sdl2.SDL_INIT_JOYSTICK)
+
 
 class _Joystick:
     """Instance of a joystick"""
@@ -49,6 +48,7 @@ class _Joystick:
         """Closes the joystick in SDL2"""
         sdl2.SDL_JoystickClose(self._sdl_joystick_obj)
 
+
 class _SDLUpdateLoop(QtGui.QWidget):
     """Continuously invokes a method via a QTimer"""
 
@@ -58,6 +58,7 @@ class _SDLUpdateLoop(QtGui.QWidget):
         for callback in args:
             self._timer.timeout.connect(callback)
         self._timer.start(1000 / 120) # Update at 120 Hz
+
 
 class _JoystickManager:
     """Manages joystick instances"""
