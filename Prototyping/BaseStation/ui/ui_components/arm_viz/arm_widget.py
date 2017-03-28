@@ -4,12 +4,13 @@ from armature import *
 from math import pi
 from gradient_descent import *
 
-"""
-Visualizes the arm using computations in 3d space mapped to a 2d surface
-Currently follows a target that is moved by mouse input but eventually will use real arm data
-"""
 
 class arm_widget(QtGui.QWidget):
+    """
+    Visualizes the arm using computations in 3d space mapped to a 2d surface
+    Currently follows a target that is moved by mouse input but eventually will use real arm data
+    """
+
     def __init__(self):
         super(arm_widget, self).__init__()
 
@@ -32,18 +33,36 @@ class arm_widget(QtGui.QWidget):
         self.pen = QtGui.QPen(QtCore.Qt.gray)
         self.pen.setWidth(8)
 
-    # We wait until the window is about to show before we initialize real draw origin
     def showEvent(self, e):
+        """
+        Overrides parent show event, resizes the window to draw properly once we know the window size
+        :param e: A PyQt ShowEvent object
+        :return: None
+        """
+
+        super(arm_widget, self).showEvent(e)
         self.resize_self()
 
-    # Recalculate width and height of the window if we resize
-    # Overrides parent class method but calls super so children resize properly
     def resizeEvent(self, QResizeEvent):
+        """
+        Recalculates the center for the drawing of the arm when the window is re-sized
+        :param QResizeEvent: A PyQt ResizeEvent object
+        :return: None
+        """
+
         super(arm_widget, self).resizeEvent(QResizeEvent)
         self.resize_self()
 
     # Overrides parent class method, called every time we move the mouse with left button down in window
     def mouseMoveEvent(self, e):
+        """
+        Called every time the we move the mouse with the left mouse button is pressed
+        Calculates whether the cursor is in range of the target and if true moves it to the appropriate location
+        :param e: A PyQt MouseMoveEvent object
+        :return: None
+        """
+
+        super(arm_widget, self).mouseMoveEvent(e)
         # Get mouse x and y in the window
         x = e.x()
         y = e.y()
@@ -61,6 +80,14 @@ class arm_widget(QtGui.QWidget):
             self.repaint()
 
     def paintEvent(self, QPaintEvent):
+        """
+        Redraws the widget every time the user updates it. Forces all points (calculated around the origin)
+        to be at the draw origin near the bottom middle of the widget
+        :param QPaintEvent: A PyQt PaintEvent object
+        :return: None
+        """
+
+        super(arm_widget, self).paintEvent(QPaintEvent)
 
         # Object that paints to the screen
         painter = QtGui.QPainter(self)
@@ -93,8 +120,13 @@ class arm_widget(QtGui.QWidget):
             self.flip_color(painter)
             painter.drawLine(points[i-1], points[i])
 
-    # Toggle the pen color
     def flip_color(self, painter):
+        """
+        Toggles the pen color between two options so the arm joints are differentiated
+        :param painter: A QPainter object attached to the widget
+        :return: None
+        """
+
         if self.pen.color() == QtCore.Qt.gray:
             self.pen.setColor(QtCore.Qt.black)
             painter.setPen(self.pen)
@@ -102,7 +134,10 @@ class arm_widget(QtGui.QWidget):
             self.pen.setColor(QtCore.Qt.gray)
             painter.setPen(self.pen)
 
-    # Recalculate the draw origin if the window is resized
     def resize_self(self):
+        """
+        Recalculate the draw origin if the window is resized
+        :return: None
+        """
         self.draw_origin = np.array([self.height() / 1.1, 0, self.width() / 2])
 

@@ -1,7 +1,7 @@
 import CustomWidgets
 import Recorder
 from PyQt4 import QtGui
-import math
+
 
 class Player(QtGui.QWidget):
 
@@ -10,13 +10,6 @@ class Player(QtGui.QWidget):
         self.sizeX = x
         self.sizeY = y
         self.createUI(urls)
-
-    # def resizeEvent(self, resizeEvent):
-    #     # print resizeEvent.size()
-    #     for i in range (0, len(self.videos)):
-    #         # print (math.floor(resizeEvent.size().width() / len(self.urls))), (math.floor(resizeEvent.size().width() / len(self.urls)) * 0.5625)
-    #         # if resizeEvent.size().width() > resizeEvent.size().height():
-    #         self.videos[i].resize((math.floor(resizeEvent.size().width() / len(self.urls))), (math.floor(resizeEvent.size().width() / len(self.urls)) * 0.5625))
 
     def createUI(self, urls):
         self.widget = QtGui.QWidget(self)

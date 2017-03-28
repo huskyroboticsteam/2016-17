@@ -2,14 +2,14 @@ import NetworkChecker
 from PyQt4 import QtGui, QtCore
 import subprocess, os
 
-"""
-Internally checks a give list of ips for status.
-Indicates visually with a red or green light whether the ip is active or not.
-Will warn the user if the local machine is not on the same network as the rover.
-"""
-
 
 class IPList(QtGui.QWidget):
+    """
+    Internally checks a given list of ips for status.
+    Indicates visually with a red or green light whether the ip is active or not.
+    Will warn the user in console if the local machine is detected to not be on the same network as the rover.
+    """
+
     def __init__(self, ip_map, update_time, parent=None):
         super(IPList, self).__init__(parent)
 
@@ -39,6 +39,13 @@ class IPList(QtGui.QWidget):
         timer.start(update_time)
 
     def update_ui(self, results):
+        """
+        Iterates through the results and updates the corresponding ip's "light" to the correct green or red state
+        :param results: A dictionary with the ip address mapped to a boolean of active state
+        True if active, False if cannot reach ip
+        :return: None
+        """
+
         for i in range(0, len(results)):
             # Get the QWidget indicator object by ip
             indicator = self.ui_map[results[i][0]]
@@ -60,6 +67,11 @@ class IPList(QtGui.QWidget):
                 indicator.setPalette(p)
 
     def build_list(self):
+        """
+        Builds the initial list of indicators and maps the ip address to the indicator object
+        :return: None
+        """
+
         # Vertically holds the list of friendly names for the ips and indicators
         vbox = QtGui.QVBoxLayout()
         for key, value in self.map.iteritems():
@@ -100,6 +112,10 @@ class IPList(QtGui.QWidget):
 
 class MyThread(QtCore.QObject):
 
+    """
+    Pings all ips in a given list and creates a dictionary mapping the ip to the active status as a boolean
+    """
+
     # A new signal that transmits a list object
     # Communicates through PyQt to the UI thread
     signalStatus = QtCore.pyqtSignal([list])
@@ -110,6 +126,10 @@ class MyThread(QtCore.QObject):
         self.paths = paths
 
     def start_work(self):
+        """
+        Pings through all ips in the list, making the ip to boolean map and emitting it
+        :return: Emits a dictionary
+        """
         results = []
 
         # Ping all ips in the list
@@ -122,10 +142,14 @@ class MyThread(QtCore.QObject):
 
     # Ping the remote host
     def ping(self, hostname):
-        """ Use the ping utility to attempt to reach the host. We send 5 packets
+
+        """ 
+        Use the ping utility to attempt to reach the host. We send 5 packets
         ('-c 5') and wait 3 milliseconds ('-W 3') for a response. The function
         returns the return code from the ping utility.
         Works on all operating systems.
+        :param hostname: IP address to ping as a string
+        :return: Boolean - true if pinging was successful
         """
 
         ret_code = subprocess.call(['ping', '-c', '5', '-W', '3', hostname],
