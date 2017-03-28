@@ -11,10 +11,20 @@ class SensorData(QtGui.QWidget):
         self.setLayout(self.build_list())
 
     def update_ui(self, dictionary):
+        """
+        Update all sensor values with the ones from the dictionary
+        :param dictionary: A map of the friendly names to the sensor value
+        :return: None
+        """
         for key in dictionary:
             self.ui_map[key].setText(dictionary[key])
 
     def build_list(self):
+        """
+        Builds the initial list to the screen
+        Maps the friendly name to the label we update with the sensor value
+        :return: The QVBoxLayout to add to the widget window
+        """
         dictionary = ["Potentiometer", "Magnetometer", "Encoder 1", "Encoder 2", "Encoder 3", "Encoder 4"]
         vbox = QtGui.QVBoxLayout()
 

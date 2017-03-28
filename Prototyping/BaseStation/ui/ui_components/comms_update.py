@@ -5,10 +5,16 @@ import joystick_rewrite
 
 class CommsUpdate(QtGui.QWidget):
 
+    """
+    Operates UDP and TCP connection between itself and the rover systems
+    """
+
+    # In order, rover ip, this computer, rover udp listening port
     ROVER_HOST = "192.168.0.50"
     LOCAL_HOST = "127.0.0.1"
     ROVER_PORT = 8840
 
+    # Rover tcp listening port
     ROVER_TCP_PORT = 8841
 
     signalStatus = QtCore.pyqtSignal([dict])
@@ -45,18 +51,33 @@ class CommsUpdate(QtGui.QWidget):
         self.stop = True
 
     def shutdown(self):
+        """
+        Called when the UI is being closed by the user, closes the UDP connection for anymore data
+        :return: None
+        """
         self.rover_sock.close()
 
     def open_tcp(self):
+        """
+        Opens a new TCP connection to the rover
+        :return: None
+        """
         # TCP connection to the rover
         self.auto_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.auto_sock.connect((self.ROVER_HOST, self.ROVER_TCP_PORT))
 
     def close_tcp(self):
+        """
+        Closes the open TCP connection
+        :return: None
+        """
         self.auto_sock.close()
 
     def send_message(self):
-        # print self.joy.joystick_axis[0][0]
+        """
+        Sends the rover throttle and steering information from joystick axises
+        :return: None
+        """
 
         throttle = 0
         steering = 0
@@ -93,6 +114,11 @@ class CommsUpdate(QtGui.QWidget):
         self.auto_sock.send(buff)
 
     def receive_message(self):
+        """
+        Receive the incoming UDP packets, unpack them and emit them so other UI components can use them
+        :return: Emit a dictionary of sensor values
+        :return: Emit a tuple of lat lng coordinates
+        """
 
         try:
             rover_data = self.rover_sock.recv(1024)
@@ -125,6 +151,15 @@ class CommsUpdate(QtGui.QWidget):
 
 # translate values from one range to another
 def translateValue(value, inMin, inMax, outMin, outMax):
+    """
+    Linearly maps from one range to another range
+    :param value: Input value to convert
+    :param inMin: Bottom of the input range
+    :param inMax: Top of the input range
+    :param outMin: Bottom of the output range
+    :param outMax: Top of the output range
+    :return: Value scaled to the new range dimensions
+    """
     # Figure out how 'wide' each range is
     inSpan = inMax - inMin
     outSpan = outMax - outMin
