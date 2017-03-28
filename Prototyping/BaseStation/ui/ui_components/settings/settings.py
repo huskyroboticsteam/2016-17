@@ -1,5 +1,5 @@
 from PyQt4 import QtCore
-from ui_components.map import Generator
+from ..map import Generator
 import math
 
 """
