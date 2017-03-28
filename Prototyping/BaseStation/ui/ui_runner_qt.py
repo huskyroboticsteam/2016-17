@@ -1,4 +1,4 @@
-from PyQt4 import QtGui
+from PyQt4 import QtGui, uic
 import sys
 from ui_components.map import Map
 from ui_components.ip_scanner import IPCheckerLayout
@@ -10,7 +10,6 @@ from ui_components.arm_viz import arm_widget
 from ui_components.sensors import SensorChecker
 from ui_components.list_widget import list_widget
 from ui_components.auto_indicator import auto
-from ui import Ui_MainWindow
 
 
 def quitting():
@@ -27,8 +26,10 @@ app = QtGui.QApplication(sys.argv)
 # Call this function when we are about to quit
 app.aboutToQuit.connect(quitting)
 win = QtGui.QMainWindow()
-main = Ui_MainWindow()
-main.setupUi(win)
+
+# Load the UI into the main window
+main = uic.loadUi("ui.ui", win)
+
 win.resize(1200, 675)
 
 '''Create all the custom widgets for the UI'''
