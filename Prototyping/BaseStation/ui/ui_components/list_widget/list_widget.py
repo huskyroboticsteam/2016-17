@@ -3,6 +3,11 @@ from PyQt4 import QtGui, QtCore
 
 class ListWidget(QtGui.QListWidget):
 
+    """
+    Mirrors the marker list maintained by the Map object while ignoring the rover marker
+    Emits signals that are picked up by other parts of the UI such as the COMMAND module
+    """
+
     count = 0
     markers = []
     signalStatus = QtCore.pyqtSignal([str])
@@ -18,18 +23,15 @@ class ListWidget(QtGui.QListWidget):
 
         self.itemDoubleClicked.connect(self.editing_item)
 
+    # Emits the command that will be added to the COMMAND window
     def editing_item(self, item):
         # self.currentRow() # Gives the index in the list
         cmd = 'update %s %s' %(self.currentItem().text(), self.currentRow() + 1)
         cmd = cmd.replace(',', '')
         self.signalStatus.emit(cmd)
-        # print cmd
 
-        # TODO: emit a signal so the command line can set this data
-
-    # Updated by command.py
+    # Updates the list by changing an array of markers into a list of strings
     def update_ui(self):
-        #marks = self.map.markers
 
         # Clear the list
         self.clear()
@@ -40,27 +42,22 @@ class ListWidget(QtGui.QListWidget):
             s = QtCore.QString(str(self.markers[i][0]) + ", " + str(self.markers[i][1]))
             l.append(s)
 
-        #print self.markers
+        self.addItems(l) # adds elements from the list widget in order
 
-        self.addItems(l) #adds elements from the list widget in order
-
+    # Called when things are added to the marker list
+    # Marked for removal in Map/List rework
     def add_to_ui(self, lat, long):
         self.markers.append((lat, long))
-        #self.count += 1
         self.update_ui()
 
-    #manually remove the
+    # Called when things are removed from the marker list
+    # Marked for removal in Map/List rework
     def remove_from_ui(self, lat, long):
-        # marks = self.map.markers
         length = len(self.markers)
         index = -1
         for i in range(0, length):
-            #print(lat, long)
-            #print i
             if self.markers[i][0] == lat and self.markers[i][1] == long:
                 index = i
-                #self.markers.pop(i)
-                #length = length - 1
         if index is not -1:
             self.markers.pop(index)
         self.update_ui()
