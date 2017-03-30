@@ -23,6 +23,7 @@ def quitting():
 
 # Specifying the new PyQt4 applicataion and main window
 app = QtGui.QApplication(sys.argv)
+
 # Call this function when we are about to quit
 app.aboutToQuit.connect(quitting)
 win = QtGui.QMainWindow()
@@ -37,6 +38,7 @@ sensors = SensorChecker.SensorData()
 sock = comms_update.CommsUpdate()
 setting_widget = settings.Settings(main)
 stop_widget = stop.Stop()
+
 vlc_widget = UI.Player(setting_widget.get_camera_urls(), 300, 200)
 iplist = IPCheckerLayout.IPList({"192.168.1.10": "Rover", "192.168.1.20": "Camera Two"}, 50)
 arm = arm_widget.arm_widget()

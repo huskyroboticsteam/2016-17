@@ -60,7 +60,7 @@ class _SDLUpdateLoop(QtGui.QWidget):
         self._timer.start(1000 / 120) # Update at 120 Hz
 
 
-class _JoystickManager:
+class JoystickManager:
     """Manages joystick instances"""
 
     def __init__(self):
@@ -86,6 +86,3 @@ class _JoystickManager:
             elif event.type == sdl2.SDL_JOYDEVICEREMOVED:
                 self.joysticks[event.which].close()
                 del self.joysticks[event.which]
-
-# Instantiate the joystick manager at the first import
-joystick_manager = _JoystickManager()

@@ -30,7 +30,7 @@ class CommsUpdate(QtGui.QWidget):
         # Reset the UI if emergency stopped
         self.stop = False
 
-        self.joys = joystick_rewrite.joystick_manager
+        self.joys = joystick_rewrite.JoystickManager()
 
         try:
             # UDP connection to the rover
