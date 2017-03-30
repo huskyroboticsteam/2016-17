@@ -3,10 +3,14 @@ from PyQt4.QtGui import *
 
 
 class command(QLineEdit):
+
+    """
+    Slated for being depreciated at some point, can be reworked as a separate module later
+    """
     signalStatus = QtCore.pyqtSignal([tuple])
     autoTrigger = QtCore.pyqtSignal(bool)
 
-    def __init__(self, map, sock, list_wid, parent = None):
+    def __init__(self, map, sock, list_wid, parent=None):
         super(command, self).__init__(parent)
 
         self.map = map
