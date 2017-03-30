@@ -4,6 +4,7 @@ class Marker:
 
     def __init__(self, x, y, centerX, centerY, zoom_level, lat, long, rover):
         """
+        A flexible marker that can be placed on the map by a user
         :param x (float): The x position of this marker on the display
         :param y (float): The y position of this marker on the display
         :param centerX (float): The shift of x coordinate of the map relative to the display screen
@@ -13,6 +14,7 @@ class Marker:
         :param long (float): Original longitude entered of marker
         :param rover (boolean): Is the marker the rover
         """
+
         self.x = x
         self.y = y
         self.centerX = centerX

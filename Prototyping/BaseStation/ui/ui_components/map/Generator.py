@@ -6,12 +6,26 @@ import Utility
 
 
 class Generator:
+    """
+    Downloads static map files through either the Bing or Google Map APIs. Allows for the user to specify
+    the folder where all of the map tiles are stored.
+    """
+
     def __init__(self, tile_size, api, num_tiles):
         self.TILE_SIZE = tile_size
         self.api = api
         self.num_tiles = num_tiles
 
     def retrieve_online_image(self, local_path, location, i, fname):
+
+        """
+        Retrieves a single map tile from the Bing or Google Static Maps API and stores it on the local machine
+        :param local_path: Folder name for a specific map zoom level
+        :param location: Specifies where the center tile is dependent on API
+        :param i: While tile of a specific map zoom level we are on
+        :param fname: Root folder name for entire map
+        :return: None
+        """
 
         if self.api == "Bing":
             baseUrl = "http://dev.virtualearth.net/REST/V1/"
@@ -40,6 +54,16 @@ class Generator:
         urllib.urlretrieve(queryString, os.path.join(local_path, "map" + str(i) + ".jpg"))
 
     def generate_single_map(self, zoom, lat, lng, tiles, fname):
+
+        """
+        Generates a single zoom level of a map centered on a specified lat and lng
+        :param zoom: The zoom level of the map (see API docs for details)
+        :param lat: The latitude coordinate in decimal form
+        :param lng: The longitude coordinate in decimal form
+        :param tiles: The number of tiles on this map (must be a square of an odd number, e.g.: 25, 49)
+        :param fname: The root folder name for the map
+        :return: None
+        """
 
         zoom = int(zoom)
         lat = float(lat)
@@ -71,6 +95,15 @@ class Generator:
                 x += self.TILE_SIZE
 
     def generate_maps(self, name, lat, lng):
+
+        """
+        Generates a map with zoom levels 15 - 19 centered on a given latitude and longitude
+        :param name: Name of root folder for map
+        :param lat: The latitude coordinate in decimal form
+        :param lng: The longitude coordinate in decimal form
+        :return: Boolean indicating whether the map successfully generated
+        """
+
         name = str(name)
         lat = str(lat)
         lng = str(lng)

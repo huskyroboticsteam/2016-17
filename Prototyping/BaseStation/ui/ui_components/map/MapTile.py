@@ -17,4 +17,12 @@ class MapTile:
 
     # Update the location on screen when moving
     def move(self, dx, dy):
+
+        """
+        Move the tile by a given dx and dy
+        :param dx: The number of pixels on the x-axis to move the tile (up is positive)
+        :param dy: The number of pixels on the y-axis to move the tile (right is positive)
+        :return: None
+        """
+
         self.screen_location = (self.screen_location[0] + dx, self.screen_location[1] + dy)
