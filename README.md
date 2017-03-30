@@ -23,5 +23,6 @@ pip install numpy
 
 ### SDL2 Installation:
 pip install PySDL2
+
 Also download SDL.dll from http://libsdl.org/download-2.0.php for your version of Python x86 SDL for x86 Python install
 
