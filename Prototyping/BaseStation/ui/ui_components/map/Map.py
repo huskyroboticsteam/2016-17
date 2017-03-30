@@ -9,6 +9,7 @@ from PyQt4 import QtGui, QtCore
 class Map(QtGui.QWidget):
     signal = QtCore.pyqtSignal(float, float)
     removeSignal = QtCore.pyqtSignal(float, float)
+
     def __init__(self, map_name):
         super(self.__class__, self).__init__()
         self.markers = []
@@ -59,13 +60,13 @@ class Map(QtGui.QWidget):
         self.setFocus()
 
     def mousePressEvent(self, QMouseEvent):
-        #print "Pressed"
+        # print "Pressed"
         super(self.__class__, self).mousePressEvent(QMouseEvent)
         if QMouseEvent.button() == QtCore.Qt.LeftButton:
             self.clicked = True
 
     def mouseReleaseEvent(self, QMouseEvent):
-        #print "Released"
+        # print "Released"
         super(self.__class__, self).mouseReleaseEvent(QMouseEvent)
         if QMouseEvent.button() == QtCore.Qt.LeftButton:
             self.clicked = False
@@ -77,7 +78,7 @@ class Map(QtGui.QWidget):
 
     def keyPressEvent(self, QKeyEvent):
         # super(self.__class__, self).keyPressEvent(QKeyEvent)
-        #print "KeyPress"
+        # print "KeyPress"
         if QKeyEvent.key() == QtCore.Qt.Key_Z:
             print "Z"
             self.zoom_out()
@@ -383,7 +384,7 @@ class Map(QtGui.QWidget):
         Removes marker from the map
         """
         if(index > -1):
-            if (self.markers[index].rover):
+            if self.markers[index].rover:
                 print "Do not remove the rover!"
             else:
                 point = self.markers.pop(index)
@@ -399,6 +400,7 @@ class Map(QtGui.QWidget):
 
         Removes marker from specified index, and insert updated marker in place
         """
+
         self.markers.pop(index)
         self.markers.insert(index, self.make_marker(x, y, False))
 
