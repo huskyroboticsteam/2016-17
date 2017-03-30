@@ -1,6 +1,13 @@
-Interface with the joystick code to build the packet
+Rewrite map and list widget to be less hacky and compact list widget
 
-Give indication if we are in auto mode
+Add extra list widget functionality for deletion of coordinates from storage through the UI tools
+
+Allow movement of points on the map... replacement method?? (Select a coord with list view
+and use special key to replace on map)
+
+Highlighting of a currently selected marker on the map
+
+Get command out of the way in GUI or put it in a separate out of interface module
 
 Arm Code?
 
