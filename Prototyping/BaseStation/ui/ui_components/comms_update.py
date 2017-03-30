@@ -87,7 +87,7 @@ class CommsUpdate(QtGui.QWidget):
             steering = self.joys.joysticks[0].axis[0]
             # steering = self.joy.joystick_axis[0][0]
         except:
-            print "Joystick not connected"
+            pass
         else:
             throttle = translateValue(throttle, -32768, 32768, 255, -255)
             steering = translateValue(steering, -32768, 32768, -100, 100)

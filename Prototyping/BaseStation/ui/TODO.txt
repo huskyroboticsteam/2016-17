@@ -9,6 +9,8 @@ Highlighting of a currently selected marker on the map
 
 Get command out of the way in GUI or put it in a separate out of interface module
 
+Check whether we can access the remote camera before we attempt to play the feed
+
 Arm Code?
 
 
