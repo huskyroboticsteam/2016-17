@@ -156,10 +156,10 @@ class Settings:
         f = open(".settings", "r")
 
         # Read in map value
-        self.main.map_val.setText(f.next().strip('\n').split("=")[1])
+        self.main.map_val.setText(f.next().strip('\n').strip('\r').split("=")[1])
 
         # Read in the list of cameras and their friendly names
-        camStr = f.next().strip('\n').split("=", 1)[1]
+        camStr = f.next().strip('\n').strip('\r').split("=", 1)[1]
         # Cam list alternates friendly name, file location, name...
         camList = camStr.split(",")
 
@@ -179,9 +179,9 @@ class Settings:
         self.main.cam3.addItems(list)
 
         # Read in default indices of the select boxes
-        self.main.cam1.setCurrentIndex(int(f.next().strip('\n').split("=")[1]))
-        self.main.cam2.setCurrentIndex(int(f.next().strip('\n').split("=")[1]))
-        self.main.cam3.setCurrentIndex(int(f.next().strip('\n').split("=")[1]))
+        self.main.cam1.setCurrentIndex(int(f.next().strip('\n').strip('\r').split("=")[1]))
+        self.main.cam2.setCurrentIndex(int(f.next().strip('\n').strip('\r').split("=")[1]))
+        self.main.cam3.setCurrentIndex(int(f.next().strip('\n').strip('\r').split("=")[1]))
 
         f.close()
 

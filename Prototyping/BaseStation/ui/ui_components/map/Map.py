@@ -117,16 +117,16 @@ class Map(QtGui.QWidget):
 
         # Open the file for reading
         f = open(name + ".dat", "r")
-        dir = f.next().strip('\n')
-        width = f.next().strip('\n')
-        height = f.next().strip('\n')
+        dir = f.next().strip('\n').strip('\r')
+        width = f.next().strip('\n').strip('\r')
+        height = f.next().strip('\n').strip('\r')
 
         self.TILE_SIZE[0] = int(width)
         self.TILE_SIZE[1] = int(height)
 
         # Setup how many tiles per level
         for i in range(15, 20):
-            tiles = f.next().strip('\n')
+            tiles = f.next().strip('\n').strip('\r')
             self.image_tiles[i]["tiles"] = int(tiles)
 
         # Quit if the tile size specified in the map is different than what we are trying to load
@@ -135,8 +135,8 @@ class Map(QtGui.QWidget):
             print "Quitting..."
             sys.exit(1)
 
-        lat = f.next().strip('\n')
-        lng = f.next().strip('\n')
+        lat = f.next().strip('\n').strip('\r')
+        lng = f.next().strip('\n').strip('\r')
         f.close()
 
         print "Map Location: " + dir
