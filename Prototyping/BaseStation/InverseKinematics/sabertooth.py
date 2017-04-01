@@ -1,15 +1,22 @@
 import serial
 
 class Sabertooth:
-	def __init__(self, motor_num, baud_rate=38400):
+	def __init__(self, serialPort, address, channel):
 		"""
-		Motor_num should be between 1-6
+		serialPort is a serial object that the sabertooth is connected to. 
+			Baud rate and output file are specified here
+		Address as the device address the sabertooth controller lives on. This
+			can be 128, 129 or 130. Each address can have two motors attached to it.
+		Channel is the starting channel on the controller that the specific motor
+			is connected to. Each controller has two starting channels, 0 and 4.
+
+		Passing in values that don't meet this specification may or may not work. 
 		"""
 		# Adresses should be 128, 129 or 130 for each pair of motors
-		self.address = (motor_num / 2) + 128
-		# Should be 0 or 4 depending on odd or even
-		self.channel_start = (motor_num % 2) * 4 
-		self.ser =  serial.Serial(port = "/dev/ttyO1", baudrate=baud_rate)
+		self.ser = serialPort 
+		self.address = address
+		# Should be 0 or 4
+		self.channel_start = channel 
 
 	# Resource management
 	def __enter__(self):
