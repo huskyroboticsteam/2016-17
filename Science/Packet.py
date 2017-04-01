@@ -4,7 +4,7 @@ Packet Handler wrapper.
 Written by Jaden Bottemiller in January 2017
 EE Team of Husky Robotics
 Questions/Comments? Email: jadenjb@uw.edu
-(Untested as of 2/6/2017)
+(Tested as of 3/26/2017)
 
 """
 import socket
@@ -17,7 +17,7 @@ class Packet:
 
     RECEIVE_BYTE_SIZE = 1024
 
-    DEF_TARGET_IP = '192.168.0.10'
+    DEF_TARGET_IP = '192.168.0.1'
     DEF_TARGET_PORT = 24
 
     def __init__(self, id=0x00, targetIP=DEF_TARGET_IP, targetPort=DEF_TARGET_PORT):
@@ -51,16 +51,17 @@ class Packet:
             self.addTimeID()  # Always add time and id to the packet
             s = socket.socket()
             s.connect((self._targetIP, self._targetPort))
-            s.send(self._data)
+            s.send(Util.full_bin_to_chr(self._data))
             s.close()
         except socket.error:
             # Throw "Failed to send packet"
-            Error.throw(0x0503)
+            Error.throw(0x0503, "Failed to send packet", "Packet.py", 58)
 
     @classmethod
     def setDefaultTarget(cls, targetIP, targetPort):
         cls.DEF_TARGET_IP = targetIP
         cls.DEF_TARGET_PORT = targetPort
+        time.sleep(0.03)
 
 
 # Packet Type Enumeration:

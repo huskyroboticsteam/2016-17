@@ -42,7 +42,46 @@ number of bits needed to represent 'n'
 TESTED? Yes
 """
 def inttobin(n, bits=8):
-    return ('{0:0' + str(bits) + 'b}').format(n)
+    return ('{0:0' + str(bits) + 'b}').format(int(n))
+
+
+"""
+Returns string of bits
+given an integer value
+TESTED? Yes
+"""
+def chartobytes(n):
+    ret_val = bin(n)
+    ret_val = ret_val[2:]
+    if len(ret_val) % 8 != 0:
+        ret_val = "00000000"[0:8 - (len(ret_val) % 8)] + ret_val
+    return ret_val
+
+
+"""
+Takes binary string n (length 8 bits)
+and converts to ASCII
+TESTED? Yes
+"""
+def bintochr(n):
+    return chr(int(n, 2))
+
+
+"""
+Takes binary string of any
+length and converts it to
+string of chars representing
+that binary data
+TESTED? Yes
+"""
+def full_bin_to_chr(n):
+    ret_val = ""
+    if len(n) % 8 != 0:
+        n += "00000000"[0:8-(len(n) % 8)]
+    while len(n) != 0:
+        ret_val += bintochr(n[0:8])
+        n = n[8:]
+    return ret_val
 
 
 """

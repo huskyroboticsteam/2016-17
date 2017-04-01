@@ -15,6 +15,7 @@ NOTE: Beaglebone Black ADC has a 12-bit resolution
 """
 import Util
 import Error
+import sys
 import Adafruit_BBIO.ADC as ADC  # Ignore compilation errors
 from Sensor import Sensor
 
@@ -37,9 +38,9 @@ class Humidity(Sensor):
                 Util.setADC_Status(True)
             except:
                 # Throw "Communication Failure"
-                Error.throw(0x0403, "Could Not initialize Humidity Sensor communications")
+                Error.throw(0x0403, "Could Not initialize Humidity Sensor communications", "Humidity.py", 40)
                 # Throw "ADC Could not initialize"
-                Error.throw(0x0001, "Failed to initialize ADC")
+                Error.throw(0x0001, "Failed to initialize ADC", "Humidity.py", 42)
                 self.critical_status = True
 
     # Reads raw ADC value
@@ -58,7 +59,8 @@ class Humidity(Sensor):
             Error.throw(0x0401)
         if not Util.isValidUnsigned(reading):
             # Throw "Reading Invalid"
-            Error.throw(0x0402)
+            # Error.throw(0x0402, "Humidity Reading Invalid", "Humidity.py", 61)
+            sys.stdout.write(str(reading))
         return reading
 
     # Reads calibrated raw values

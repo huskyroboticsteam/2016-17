@@ -1,6 +1,7 @@
 import sys
-import Packet
 import Util
+from Packet import Packet
+from Packet import PacketType
 from CommHandler import CommHandler
 
 
@@ -11,12 +12,18 @@ def clearErrors():
     errors = []
 
 
-def throw(errorCode, comment="", fatal=False):
+def throw(errorCode, comment="", file="", line=None, fatal=False):
     if len(comment) > 0:
         comment = " Given information: " + str(comment) + "\n"
-    sys.stderr.write("Error: " + str(errorCode) + " | Refer to documentation for more information.\n" + comment + "\n")
+    if file != "":
+        comment += "File: " + file
+    if not line is None:
+        comment += " | " + "Line: " + str(line)
+    comment += "\n"
+    error_out = "Error: " + hex(errorCode) + " | Refer to documentation for more information.\n" + comment + "\n"
+    sys.stderr.write(error_out)
     errors.append(errorCode)
-    errorPack = Packet.Packet(Packet.PacketType.Error)
+    errorPack = Packet(PacketType.Error)
     errorPack.appendData(Util.inttobin(errorCode, 16))
     CommHandler.sendAsyncPacket(errorPack)
     if fatal:

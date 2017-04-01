@@ -9,6 +9,8 @@ Questions/Comments? Email: jadenjb@uw.edu
 """
 import socket
 import Error
+import Parse
+import Util
 from threading import Thread
 
 
@@ -27,7 +29,6 @@ class CommHandler:
         except socket.error:
             # Throw "Could not initialize comms"
             Error.throw(0x0501)
-        self._messages = []
         self._continue = True
         self._receiving = False
 
@@ -46,19 +47,14 @@ class CommHandler:
     def _sendPackets(self):
         while len(self._packets) > 0:
             self._packets[0].send()
-            del self._packets[0]
+            if len(self._packets) > 0:
+                del self._packets[0]
 
     def stopComms(self):
         self._continue = False
 
     def getReceivingStatus(self):
         return self._receiving
-
-    # Returns messages and deletes them from the waiting queue
-    def getMessages(self):
-        temp = self._messages
-        self._messages = []
-        return temp
 
     # Meant to be threaded on system
     # Otherwise there will be an infinite loop
@@ -71,7 +67,7 @@ class CommHandler:
                 self._receiving = True
                 data = client.recv(self.BYTE_BUFFER_SIZE)
                 self._receiving = False
-                self._messages += [Message(data, clientAddr)]
+                Parse.queueMessage(Message(data, clientAddr))
         except socket.error:
             # Throw "Failed to begin receive process"
             Error.throw(0x0502)
@@ -83,7 +79,7 @@ class CommHandler:
 class Message:
 
     def __init__(self, data, fromAddr):
-        self.DATA = data
+        self.data = Util.chartobytes(data)
         self.fromAddr = fromAddr
         # parse ID from given data
-        self.ID = int(data[31:39])
+        self.ID = int(self.data[33:40])
