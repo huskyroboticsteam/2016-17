@@ -32,6 +32,7 @@ class Player(QtGui.QWidget):
             vbox.setContentsMargins(0, 0, 0, 0)
 
             label = QtGui.QLabel()
+            label.setSizePolicy(QtGui.QSizePolicy.Ignored, QtGui.QSizePolicy.Fixed)
             label.setFixedHeight(15)
             label.setText("URL: " + urls[i])
 
