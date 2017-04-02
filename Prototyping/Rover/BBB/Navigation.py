@@ -73,7 +73,6 @@ class Navigation:
         return (rawMag + angle) % 360
 
     # returns gps data
-    # TODO: get GPS to work
     def getGPS(self):
         return self.gps.getCoords()
 
@@ -107,10 +106,9 @@ class Navigation:
 
         return r * c  # kilometers
 
-    # TODO: make sure this is getting the correct values from the string
     # takes the dec min format and converts it to radians
     def radGPS(self, val):
-        return math.radians(val[-7:] + (val[:-7]/60))
+        return math.radians(val)
 
     # calculates desired new GPS coordinate based on distance
     # from current GPS location and current heading in degrees
