@@ -42,19 +42,21 @@ number of bits needed to represent 'n'
 TESTED? Yes
 """
 def inttobin(n, bits=8):
-    return ('{0:0' + str(bits) + 'b}').format(int(n))
+    return ('{0:0' + str(bits) + 'b}').format(n)
 
 
 """
 Returns string of bits
-given an integer value
-TESTED? Yes
+given an string of characters
+TESTED? No
 """
-def chartobytes(n):
-    ret_val = bin(n)
-    ret_val = ret_val[2:]
-    if len(ret_val) % 8 != 0:
-        ret_val = "00000000"[0:8 - (len(ret_val) % 8)] + ret_val
+def chartobytes(val):
+    ret_val = ""
+    for n in val:
+        this_val = bin(ord(n))[2:]
+        if len(this_val) % 8 != 0:
+            this_val = "00000000"[0:(8-(len(this_val) % 8))] + this_val
+        ret_val += this_val
     return ret_val
 
 
