@@ -113,6 +113,7 @@ class Settings:
         temp.append(self.cam_list[self.main.cam1.currentIndex()])
         temp.append(self.cam_list[self.main.cam2.currentIndex()])
         temp.append(self.cam_list[self.main.cam3.currentIndex()])
+        temp.append(self.cam_list[self.main.cam3.currentIndex()])
 
         return temp
 

@@ -31,6 +31,8 @@ class Player(QtGui.QWidget):
             vbox = QtGui.QVBoxLayout()
             vbox.setContentsMargins(0, 0, 0, 0)
 
+            vbox.set
+
             label = QtGui.QLabel()
             label.setFixedHeight(15)
             label.setText("URL: " + urls[i])
@@ -60,7 +62,7 @@ class Player(QtGui.QWidget):
         widgets = []
 
         for i in range(0, len(urls)):
-            vlc_widget = CustomWidgets.VLCWidget(urls[i], ":network-caching=0", self.sizeX, self.sizeY)
+            vlc_widget = CustomWidgets.VLCWidget(urls[i], ":network-caching=0")
             vlc_widget.id = i
             widgets.append(vlc_widget)
 

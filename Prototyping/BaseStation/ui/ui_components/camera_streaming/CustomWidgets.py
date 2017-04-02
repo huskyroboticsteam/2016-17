@@ -4,7 +4,7 @@ from PyQt4 import QtGui, QtCore
 
 
 class VLCWidget(QtGui.QFrame):
-    def __init__(self, url, options, sizeX, sizeY):
+    def __init__(self, url, options):
         QtGui.QFrame.__init__(self)
 
         self.instance = vlc.Instance("--no-audio")
@@ -20,7 +20,7 @@ class VLCWidget(QtGui.QFrame):
         self.setAutoFillBackground(True)
 
         # Set initial window size of widget
-        self.resize(sizeX, sizeY)
+        self.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
 
         # Set Media that will play
         self.player.set_media(self.instance.media_new(url, options))
