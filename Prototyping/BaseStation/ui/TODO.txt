@@ -1,7 +1,3 @@
-1. Rewrite map and list widget to be less hacky and compact list widget
-
-2. Add extra list widget functionality for deletion of coordinates from storage through the UI tools
-
 3. Allow movement of points on the map... replacement method?? (Select a coord with list view
 and use special key to replace on map)
 
