@@ -35,63 +35,33 @@ NOTE: It is recommended to call stopRanging() at the end of getting distances, b
 
 import VL53L0X
 import time
-import Error
-import Util
-from Sensor import Sensor
 
 
-class DistanceSensor(Sensor):
+class DistanceSensor:
 
     _ranging = False
     _distance = 0
 
     def __init__(self):
         self._sensor = None
-        try:
-            self._sensor = VL53L0X.VL53L0X()
-        except:
-            # Throw "Communication Failure"
-            self.critical_status = True
-            Error.throw(0x0303, "Could not initialize distance sensor communications")
+        self._sensor = VL53L0X.VL53L0X()
 
     def start(self):
-        if not self.critical_status:
-            try:
-                self._sensor.start_ranging(VL53L0X.VL53L0X_BETTER_ACCURACY_MODE)
-                self._ranging = True
-            except:
-                # Throw "Could not start ranging"
-                Error.throw(0x0304)
+        self._sensor.start_ranging(VL53L0X.VL53L0X_BETTER_ACCURACY_MODE)
+        self._ranging = True
 
     def stop(self):
         if not self.critical_status:
-            try:
-                self._sensor.stop_ranging()
-                self._ranging = False
-            except:
-                # Throw "Could not stop ranging"
-                Error.throw(0x0305)
+            self._sensor.stop_ranging()
+            self._ranging = False
 
     def getValue(self):
-        if self.critical_status:
-            return 0
         if not self._ranging:
             self.start()
-            time.sleep(0.3)
-        try:
-            timing = self._sensor.get_timing()
-            if timing < 20000:
-                timing = 20000
-            self._distance = self._sensor.get_distance()
-            time.sleep(timing / 1000000.00)
-        except:
-            # Throw "Could not get Reading"
-            Error.throw(0x0301)
-        if not Util.isValidUnsigned(self._distance):
-            # Throw "Reading Invalid"
-            Error.throw(0x0302)
+        time.sleep(0.3)
+        timing = self._sensor.get_timing()
+        if timing < 20000:
+            timing = 20000
+        self._distance = self._sensor.get_distance()
+        time.sleep(timing / 1000000.00)
         return self._distance
-
-    def getDataForPacket(self):
-        return Util.inttobin(self._distance, 16)
-
