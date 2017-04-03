@@ -2,6 +2,7 @@ import sys
 import time
 import Error
 import Util
+import Parse
 import Adafruit_BBIO.ADC as ADC  # Ignore compilation errors
 from Thermocouple import Thermocouple
 from DistanceSensor import DistanceSensor
@@ -35,6 +36,7 @@ try:
 except:
     # Throw "ADC Could not initialize"
     Error.throw(0x0001, "Failed to initialize ADC")
+Parse.setupParsing()
 CommHandling = CommHandler(INTERNAL_IP, INTERNAL_TCP_RECEIVE_PORT)
 Packet.setDefaultTarget(MAIN_IP, PRIMARY_TCP_SEND_PORT)
 SystemTelemetry.initializeTelemetry()

@@ -80,6 +80,5 @@ class Message:
 
     def __init__(self, data, fromAddr):
         self.data = Util.chartobytes(data)
-        self.fromAddr = fromAddr
-        # parse ID from given data
         self.ID = int(self.data[33:40])
+        self.fromAddr = fromAddr

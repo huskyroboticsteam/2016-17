@@ -42,7 +42,6 @@ class Encoder(Sensor):
     # Takes in channel A and B pin numbers
     # ppr = Pulses per revolution
     def __init__(self, pinA, pinB, ppr):
-
         self._pinA = pinA      # integer value for A channel
         self._pinB = pinB      # integer value for B channel
         GPIO.setup(self._pinA, GPIO.IN)  # sets input GPIO pins

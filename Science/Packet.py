@@ -76,3 +76,8 @@ class PacketType:
     AuxControl = 0x81
     SysControl = 0x82
 
+class AuxCtrlID:
+    MoveDrill = 0x00
+    DrillRPM = 0x01
+    CamFocusPos = 0x02
+

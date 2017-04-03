@@ -21,7 +21,7 @@ class Command:
 
     def _threadRun(self):
         while not self.isFinished():
-            self.run(self._setpoint)
+            self.run(self.setpoint())
 
     def stop(self):
         self.stopSafe()

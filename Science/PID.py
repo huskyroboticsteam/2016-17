@@ -71,6 +71,7 @@ class PID:
         self._lastError = error
         self._lastTime = curTime
         self._output = self._pVal + self._iVal + self._dVal
+        self._output = self.restrainOutput(self._output)
 
     # Resets current accumulations of the PID
     # Meant for internal (private) use only
@@ -91,3 +92,11 @@ class PID:
         self._p = kP
         self._i = kI
         self._d = kD
+
+    # Restrains output to (+/-)1
+    def restrainOutput(self, output):
+        if output > 1:
+            return 1
+        if output < -1:
+            return -1
+        return output
