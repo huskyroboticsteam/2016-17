@@ -30,7 +30,7 @@ class CommsUpdate(QtGui.QWidget):
         # Reset the UI if emergency stopped
         self.stop = False
 
-        self.joys = joystick_rewrite.JoystickManager()
+        joystick_rewrite.joystick_manager.start()
 
         try:
             # UDP connection to the rover
@@ -83,8 +83,8 @@ class CommsUpdate(QtGui.QWidget):
         steering = 0
 
         try:
-            throttle = self.joys.joysticks[0].axis[1]
-            steering = self.joys.joysticks[0].axis[0]
+            throttle = joystick_rewrite.joystick_manager.joysticks[0].axis[1]
+            steering = joystick_rewrite.joystick_manager.joysticks[0].axis[0]
             # steering = self.joy.joystick_axis[0][0]
         except:
             pass
