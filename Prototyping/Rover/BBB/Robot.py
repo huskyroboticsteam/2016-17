@@ -69,9 +69,9 @@ class Robot(object):
         elif is_using_big_motor:
             self.motors = [
                 BigMotor.BigMotor(1, "P8_13"),
-                BigMotor.BigMotor(2, "P8_19"),
+                BigMotor.BigMotor(2, "P9_28"),
                 BigMotor.BigMotor(3, "P9_14"),
-                BigMotor.BigMotor(4, "P8_16")
+                BigMotor.BigMotor(4, "P9_22")
                 ]
         self.r_comms = Robot_comms.Robot_comms("192.168.0.50", 8840, 8841, "<?hh", "<?ff", "<ffffffff")
         self.automode = 0

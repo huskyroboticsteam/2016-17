@@ -25,3 +25,5 @@ class BigMotor(Motor.Motor):
             self.prev_motor_val = motor_val
         except:
             print("motor: " + str(self.motor_id) + " disconnected")
+            print motor_val
+            print self.pin

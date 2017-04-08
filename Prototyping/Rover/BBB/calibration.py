@@ -1,9 +1,9 @@
 import Adafruit_BBIO.PWM as PWM
 import sys
 servo_pin_1 = "P9_14"
-servo_pin_2 = "P9_16"
+servo_pin_2 = "P9_22"
 servo_pin_3 = "P8_13"
-servo_pin_4 = "P8_19"
+servo_pin_4 = "P9_28"
 
 
 PWM.start(servo_pin_1, 1.5/17.6, 60)

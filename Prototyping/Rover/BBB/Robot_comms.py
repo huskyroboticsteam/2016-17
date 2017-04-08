@@ -47,13 +47,17 @@ class Robot_comms():
     # receives a packet and sets variables accordingly
     def receiveData(self, nav):
         try:
+            hasRecieved = False
             try:
                 while True:
                     data, udp_addr = self.udp_sock.recvfrom(1024)  # buffer size is 1024 bytes
+                    hasRecieved = True
             except socket.error:
-                self.base_station_ip = udp_addr
-                drive_unpacked = struct.unpack(self.driveFormat, data)
-                self.receivedDrive = drive_unpacked
+                if hasRecieved:
+                    self.base_station_ip = udp_addr
+                    drive_unpacked = struct.unpack(self.driveFormat, data)
+                    self.receivedDrive = drive_unpacked
+                    hasRecieved = False
         except socket.error:
             # TODO: catch exceptions from the non-blocking receive better
             pass
