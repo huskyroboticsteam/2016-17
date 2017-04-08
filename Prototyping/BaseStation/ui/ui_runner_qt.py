@@ -76,6 +76,7 @@ command_line.autoTrigger.connect(auto_lab.toggle_ui)
 map.signal.connect(list_wid.add_to_ui)
 map.removeSignal.connect(list_wid.remove_from_ui)
 stop_widget.stopEvent.connect(sock.stopping)
+list_wid.callToDelete.connect(map.remove_marker)
 
 # Show window and execute the app
 win.show()

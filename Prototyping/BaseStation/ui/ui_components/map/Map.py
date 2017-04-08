@@ -318,7 +318,7 @@ class Map(QtGui.QWidget):
 
         Adds position of rover to map
         """
-        self.markers.append(self.make_marker(x, y, True))
+        self.markers.append(self.make_marker(x, y, QtCore.Qt.blue))
         self.repaint()
 
     # add a new marker given the specified coordinates x and y, assuming that this isn't a rover
@@ -330,7 +330,7 @@ class Map(QtGui.QWidget):
         Adds marker onto map
         """
         # generates a new marker object
-        self.markers.append(self.make_marker(x, y, False))
+        self.markers.append(self.make_marker(x, y, QtCore.Qt.red))
         self.signal.emit(x, y)
         self.repaint()
 
@@ -351,12 +351,12 @@ class Map(QtGui.QWidget):
         """
         new_marker = []
         for marker in self.markers:
-            new_marker.append(self.make_marker(marker.coordX, marker.coordY, marker.rover))
+            new_marker.append(self.make_marker(marker.coordX, marker.coordY, marker.color))
 
         self.markers = new_marker
 
     # creates a new marker object with the given coordinate x and y
-    def make_marker(self, x, y, rover):
+    def make_marker(self, x, y, color):
         """
         :param x (float): Longitude
         :param y (float): Latitude
@@ -375,7 +375,7 @@ class Map(QtGui.QWidget):
         self.centerY2 -= self.TILE_SIZE[1] / 2
 
         return Marker.Marker(pixelCoord[0] + self.center_location[0], pixelCoord[1] + self.center_location[1],
-                             self.centerX2, self.centerY2, self.zoom_level, x, y, rover)
+                             self.centerX2, self.centerY2, self.zoom_level, x, y, color)
 
     def remove_marker(self, index):
         """
