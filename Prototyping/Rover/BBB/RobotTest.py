@@ -204,7 +204,7 @@ def main():
                 time.sleep(0.5)
 
         except KeyboardInterrupt:
-            for i in range(1, 5):
+            #for i in range(1, 5):
                 #robot.stopMotor(i)
             robot.r_comms.closeConn()
             print "exiting"
