@@ -49,10 +49,10 @@ class GPS:
         info = self.read()
         try:
             if info is not None:
-                lat = rawGPStodegGPS(info[2])
+                lat = self.rawGPStodegGPS(info[2])
                 print lat
                 latDir = info[3]
-                lon = rawGPStodegGPS(info[4])
+                lon = self.rawGPStodegGPS(info[4])
                 print lon
                 longDir = info[5]
                 coords = []
@@ -75,6 +75,6 @@ class GPS:
         deg = (gpsplit[0])[:-2]
         min1 = (gpsplit[0])[-2:]
         min2 = gpsplit[1]
-        min = min1 + min2
+        min = min1 + "." +  min2
         return float(deg) + (float(min)/60)
 
