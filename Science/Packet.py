@@ -11,16 +11,16 @@ import socket
 import time
 import Error
 import Util
+import sys
+
+CONNECTION_STATUS = True
 
 
 class Packet:
 
     RECEIVE_BYTE_SIZE = 1024
 
-    DEF_TARGET_IP = '192.168.0.1'
-    DEF_TARGET_PORT = 24
-
-    def __init__(self, id=0x00, targetIP=DEF_TARGET_IP, targetPort=DEF_TARGET_PORT):
+    def __init__(self, id=0x00, targetIP='192.168.0.1', targetPort=24):
         self._data = ""
         self._id = id
         self._recieved = ""
@@ -46,7 +46,11 @@ class Packet:
         self._data = ""
 
     # Sends data to constructor-specified client
+    # Returns whether or not send is successful
     def send(self):
+        sys.stdout.write(str(getConnectionStatus()) + " \n")
+        if self._data == Util.inttobin(0x0503, 16) and not getConnectionStatus():
+            return False
         try:
             self.addTimeID()  # Always add time and id to the packet
             s = socket.socket()
@@ -56,6 +60,10 @@ class Packet:
         except socket.error:
             # Throw "Failed to send packet"
             Error.throw(0x0503, "Failed to send packet", "Packet.py", 58)
+            setStatus(False)
+            return False
+        setStatus(True)
+        return True
 
     @classmethod
     def setDefaultTarget(cls, targetIP, targetPort):
@@ -76,8 +84,18 @@ class PacketType:
     AuxControl = 0x81
     SysControl = 0x82
 
+
 class AuxCtrlID:
     MoveDrill = 0x00
     DrillRPM = 0x01
     CamFocusPos = 0x02
 
+
+def setStatus(status):
+    global CONNECTION_STATUS
+    CONNECTION_STATUS = status
+
+
+def getConnectionStatus():
+    global CONNECTION_STATUS
+    return CONNECTION_STATUS

@@ -15,7 +15,7 @@ from Sensor import SensorHandler
 from Packet import Packet, PacketType
 from Limit import Limit
 from SystemTelemetry import SystemTelemetry
-
+from TalonMC import TalonMC
 
 # Define constants
 PinDataIn = "P9_18"
@@ -56,6 +56,9 @@ encoder3 = Encoder("P8_34", "P8_36", 220)
 limit1 = Limit("P8_12")
 limit2 = Limit("P8_10")
 limit3 = Limit("P8_8")
+
+# Create Motors
+DrillMotor = TalonMC("P8_13")
 
 # Add Sensors to handler
 SensorHandler.addPrimarySensors(DistanceSensor, UVSensor, Thermocouple, HumiditySensor)

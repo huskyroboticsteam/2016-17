@@ -10,11 +10,10 @@ from SystemTelemetry import SystemTelemetry
 
 def snedTestPacket():
     time.sleep(1)
-    testPacket = Packet(0x03, '192.168.1.6', 24)
+    testPacket = Packet(0x03, '192.168.0.1', 24)
     testPacket.appendData(SystemTelemetry.getTelemetryData())
     testPacket.send()
     time.sleep(3)
-    Error.throw(0x0503)
 
 def parsePacket(packetData):
     packetData = Util.chartobytes(packetData)
@@ -23,11 +22,11 @@ def parsePacket(packetData):
     packetID = int(packetData[33:40], 2)
     return "Timestamp: " + str(packetTimestamp) + "  |  ID: " + str(packetID)
 
-snedThread = threading.Thread(target=snedTestPacket)
-snedThread.start()
+# snedThread = threading.Thread(target=snedTestPacket)
+# snedThread.start()
 
 SOCKET = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-SOCKET.bind(('192.168.1.6', 24))
+SOCKET.bind(('192.168.0.1', 24))
 while True:
     try:
         SOCKET.listen(1)

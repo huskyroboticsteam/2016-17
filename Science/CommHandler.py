@@ -82,3 +82,4 @@ class Message:
         self.data = Util.chartobytes(data)
         self.ID = int(self.data[33:40])
         self.fromAddr = fromAddr
+

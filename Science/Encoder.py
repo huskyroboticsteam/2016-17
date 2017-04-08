@@ -139,7 +139,7 @@ class Encoder(Sensor):
         return self.getAngle(), self.getDistance()
 
     def getDataForPacket(self):
-        return Util.inttobin(round(self.getAngle() % (2*pi)), 16)
+        return Util.inttobin(int(round(self.getAngle() % (2*pi))), 16)
 
     def stop(self):
         self._threadA.join(0.02)

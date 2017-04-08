@@ -2,6 +2,7 @@ import sys
 import Util
 from Packet import Packet
 from Packet import PacketType
+from Packet import getConnectionStatus
 from CommHandler import CommHandler
 
 
@@ -13,11 +14,15 @@ def clearErrors():
 
 
 def throw(errorCode, comment="", file="", line=None, fatal=False):
+    if not getConnectionStatus() and errorCode == 0x0503:
+        return False
+    elif errorCode == 0x0503:
+        comment += "CHECK ETHERNET CABLE ATTACHMENT \n"
     if len(comment) > 0:
-        comment = " Given information: " + str(comment) + "\n"
+        comment += " Given information: " + str(comment) + "\n"
     if file != "":
         comment += "File: " + file
-    if not line is None:
+    if not (line is None):
         comment += " | " + "Line: " + str(line)
     comment += "\n"
     error_out = "Error: " + hex(errorCode) + " | Refer to documentation for more information.\n" + comment + "\n"

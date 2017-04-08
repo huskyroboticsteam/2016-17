@@ -57,10 +57,9 @@ class Humidity(Sensor):
         except:
             # Throw "Could not get reading"
             Error.throw(0x0401)
-        if not Util.isValidUnsigned(reading):
+        if reading < 0:
             # Throw "Reading Invalid"
-            # Error.throw(0x0402, "Humidity Reading Invalid", "Humidity.py", 61)
-            sys.stdout.write(str(reading))
+            Error.throw(0x0402, "Humidity Reading Invalid", "Humidity.py", 61)
         return reading
 
     # Reads calibrated raw values
@@ -75,4 +74,5 @@ class Humidity(Sensor):
         self._int = i
 
     def getDataForPacket(self):
-        return Util.inttobin(self.readRaw(), 16)
+        data = int(self.getValue() * 1023)
+        return Util.inttobin(data, 16)
