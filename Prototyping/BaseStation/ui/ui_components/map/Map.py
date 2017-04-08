@@ -8,7 +8,6 @@ from PyQt4 import QtGui, QtCore
 
 class Map(QtGui.QWidget):
     signal = QtCore.pyqtSignal(float, float)
-    removeSignal = QtCore.pyqtSignal(float, float)
 
     def __init__(self, map_name):
         super(self.__class__, self).__init__()
@@ -220,9 +219,7 @@ class Map(QtGui.QWidget):
     def paintEvent(self, e):
         super(self.__class__, self).paintEvent(e)
         painter = QtGui.QPainter(self)
-        pen = QtGui.QPen(QtCore.Qt.red)
-        pen.setWidth(5)
-        painter.setPen(pen)
+
 
         for i in range(1, self.image_tiles[self.zoom_level]["tiles"] + 1, 1):
             if self.image_tiles[self.zoom_level]["tilesImages"][i - 1].visible:
@@ -318,7 +315,7 @@ class Map(QtGui.QWidget):
 
         Adds position of rover to map
         """
-        self.markers.append(self.make_marker(x, y, QtCore.Qt.blue))
+        self.rover = self.make_marker(x, y, QtCore.Qt.blue)
         self.repaint()
 
     # add a new marker given the specified coordinates x and y, assuming that this isn't a rover
@@ -384,11 +381,8 @@ class Map(QtGui.QWidget):
         Removes marker from the map
         """
         if(index > -1):
-            if self.markers[index].rover:
-                print "Do not remove the rover!"
-            else:
-                point = self.markers.pop(index)
-                self.removeSignal.emit(point.coordX, point.coordY)
+            self.markers.pop(index)
+            self.repaint()
         else:
             print "Inavlid index at", (index + 1)
 
@@ -410,9 +404,11 @@ class Map(QtGui.QWidget):
 
         Update position of rover on map
         """
-        # Clear the rover marker
-        coord = (lat, lng)
-        for i in range(0, len(self.markers)):
-            if self.markers[i].rover:
-                self.markers.pop(i)
-                self.add_rover(coord[0], coord[1])
+        self.add_rover(lat, lng)
+
+    def highlight_marker(self, index):
+        for marker in self.markers:
+            marker.set_color(QtCore.Qt.red)
+        self.markers[index].set_color(QtCore.Qt.yellow)
+        self.repaint()
+        print("highlight_marker")

@@ -5,10 +5,6 @@ and use special key to replace on map)
 
 5. Get command out of the way in GUI or put it in a separate out of interface module
 
-6. Force markers to keep track of their own color
-
-7. Highlighting of a currently selected marker on the map
-
 8. Check whether we can access the remote camera before we attempt to play the feed
 
 Arm Code?

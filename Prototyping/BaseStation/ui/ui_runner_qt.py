@@ -74,9 +74,10 @@ sock.signalStatus.connect(sensors.update_ui)
 sock.signalUpdate.connect(map.update_rover_pos)
 command_line.autoTrigger.connect(auto_lab.toggle_ui)
 map.signal.connect(list_wid.add_to_ui)
-map.removeSignal.connect(list_wid.remove_from_ui)
 stop_widget.stopEvent.connect(sock.stopping)
 list_wid.callToDelete.connect(map.remove_marker)
+list_wid.highlightMarker.connect(map.highlight_marker)
+
 
 # Show window and execute the app
 win.show()

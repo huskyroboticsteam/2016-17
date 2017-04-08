@@ -12,6 +12,7 @@ class ListWidget(QtGui.QListWidget):
     markers = []
     signalStatus = QtCore.pyqtSignal([str])
     callToDelete = QtCore.pyqtSignal(int)
+    highlightMarker = QtCore.pyqtSignal(int)
 
     def __init__(self):
         super(self.__class__, self).__init__()
@@ -22,12 +23,16 @@ class ListWidget(QtGui.QListWidget):
         policy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Maximum)
         self.setSizePolicy(policy)
         self.index = None
-
+        self.itemClicked.connect(self.highlight_marker)
         self.itemDoubleClicked.connect(self.editing_item)
 
     def keyPressEvent(self, key):
         if key.key() == QtCore.Qt.Key_Delete:
             self.callToDelete.emit(self.currentRow())
+            self.remove_from_ui(self.currentRow())
+
+    def highlight_marker(self, item):
+        self.highlightMarker.emit(self.currentRow())
 
 
     # Emits the command that will be added to the COMMAND window

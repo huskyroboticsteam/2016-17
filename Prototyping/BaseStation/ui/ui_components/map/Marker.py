@@ -23,7 +23,7 @@ class Marker:
         self.zoom_level = zoom_level
         self.coordX = lat
         self.coordY = long
-        self.color = color
+        self.pen = QtGui.QPen(color)
 
     def draw(self, painter):
         """
@@ -32,5 +32,11 @@ class Marker:
         Draws a marker onto map.
         Blue marker if it is rover, red for other markers
         """
-        QtGui.QPen(self.color)
+        self.pen.setWidth(5)
+        painter.setPen(self.pen)
         painter.drawEllipse(int(self.x) - self.centerX - 10, int(self.y) - self.centerY - 10, 20, 20)
+        print("draw")
+
+    def set_color(self, color):
+        self.pen = QtGui.QPen(color)
+        print("set_color")
