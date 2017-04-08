@@ -26,12 +26,12 @@ class GPS:
         ser.flushInput()
         ser.flushOutput()
         
-        #this is where you write the commands you want to give the NMEA sentences
-        #to your serial object from earlier object.write(command) put sleep command after
+        # this is where you write the commands you want to give the NMEA sentences
+        # to your serial object from earlier object.write(command) put sleep command after
         
     def read(self):
         try:
-            #flush twice to make sure nothing is clogged
+            # flush twice to make sure nothing is clogged
             ser.flushInput()
             ser.flushInput()
             while ser.inWaiting() == 0:
@@ -71,5 +71,10 @@ class GPS:
 
     # TODO: check this is getting the right value
     def rawGPStodegGPS(self, val):
-        float(val[-7:]) + (float(val[:-7]))/60
-            
+        gpsplit = val.split(".")
+        deg = (gpsplit[0])[:-2]
+        min1 = (gpsplit[0])[-2:]
+        min2 = gpsplit[1]
+        min = min1 + min2
+        return float(deg) + (float(min)/60)
+
