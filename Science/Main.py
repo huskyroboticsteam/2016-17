@@ -59,6 +59,7 @@ limit3 = Limit("P8_8")
 
 # Create Motors
 DrillMotor = TalonMC("P8_13")
+DrillMotor.calibrate()
 
 # Add Sensors to handler
 SensorHandler.addPrimarySensors(DistanceSensor, UVSensor, Thermocouple, HumiditySensor)

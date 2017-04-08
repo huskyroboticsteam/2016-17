@@ -11,7 +11,6 @@ import socket
 import time
 import Error
 import Util
-import sys
 
 CONNECTION_STATUS = True
 
@@ -48,7 +47,6 @@ class Packet:
     # Sends data to constructor-specified client
     # Returns whether or not send is successful
     def send(self):
-        sys.stdout.write(str(getConnectionStatus()) + " \n")
         if self._data == Util.inttobin(0x0503, 16) and not getConnectionStatus():
             return False
         try:

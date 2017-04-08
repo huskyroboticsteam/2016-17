@@ -18,6 +18,7 @@ Page 29 has PWM Calibration information
 
 """
 import Adafruit_GPIO.PWM as PWM
+from TalonCalibration import TalonCalibration
 
 
 class TalonMC:
@@ -27,16 +28,21 @@ class TalonMC:
     def __init__(self, pin):
         self._pin = pin
         self._motor = PWM.BBIO_PWM_Adapter(PWM.get_platform_pwm())
+        self._motor.start(self._pin, 0.0, self._freq)
         self._motor.set_frequency(self._pin, self._freq)
+        self._calibration = TalonCalibration(self)
 
     def enable(self):
-        self._motor.start(self._pin, 0.0, self._freq)
+        pass
 
     def set(self, value):
-        self._motor.set_duty_cycle(self._pin, value)
+        self._motor.set_duty_cycle(self._pin, value * 100)
 
     def stop(self):
         self._motor.stop(self._pin)
+
+    def calibrate(self):
+        self._calibration.calibrate()
 
     def setFreq(self, freq): # do not call while motor running
         self._freq = freq

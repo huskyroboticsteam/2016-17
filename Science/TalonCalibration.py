@@ -24,8 +24,8 @@ class TalonCalibration:
 
     def calibrate(self):
         start_time = time.time()
-        while time.time() - start_time < 5:
+        while time.time() - start_time < 0.5:
             self._motor.set(1.0)
         start_time = time.time()
-        while time.time() - start_time < 5:
+        while time.time() - start_time < 0.5:
             self._motor.set(0.0)

@@ -6,7 +6,7 @@ import Util
 import threading
 from Packet import Packet
 from SystemTelemetry import SystemTelemetry
-
+from TalonMC import TalonMC
 
 def snedTestPacket():
     time.sleep(1)
@@ -25,6 +25,7 @@ def parsePacket(packetData):
 # snedThread = threading.Thread(target=snedTestPacket)
 # snedThread.start()
 
+"""
 SOCKET = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 SOCKET.bind(('192.168.0.1', 24))
 while True:
@@ -36,4 +37,15 @@ while True:
         sys.stdout.write("\n" + parsePacket(data) + "\n")
     except socket.error:
         pass
+"""
 
+"""
+DrillMotor = TalonMC("P8_13")
+DrillMotor.setFreq(10000)
+x = 0.0
+while x < 1.0:
+    DrillMotor.set(x)
+    x += 0.1
+    time.sleep(0.8)
+DrillMotor.set(0.0)
+"""
