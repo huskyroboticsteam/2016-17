@@ -47,7 +47,7 @@ class Robot(object):
         #     MiniMotor.MiniMotor(3, 2, 4, 3, self.pwm),
         #     MiniMotor.MiniMotor(4, 7, 6, 5, self.pwm),
         # ]
-        self.r_comms = Robot_comms.Robot_comms("192.168.0.40", 8840, 8841, "<?hh", "<?ff", "<ffffffff")
+        self.r_comms = Robot_comms.Robot_comms("192.168.0.50", 8840, 8841, "<?hh", "<?ff", "<ffffffff")
 
 
     # drives the motor with a value, negative numbers for reverse
