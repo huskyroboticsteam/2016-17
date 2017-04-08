@@ -28,8 +28,8 @@ class Robot(object):
     def __init__(self):
         ADC.setup()
         # setup i2c to motorshield
-        self.pwm = Adafruit_PCA9685.PCA9685(address=0x60, busnum=1)
-        self.pwm.set_pwm_freq(60)
+        # self.pwm = Adafruit_PCA9685.PCA9685(address=0x60, busnum=1)
+        # self.pwm.set_pwm_freq(60)
 
         self.pot_pid = PID.PID(-0.1, 0, 0)
 
