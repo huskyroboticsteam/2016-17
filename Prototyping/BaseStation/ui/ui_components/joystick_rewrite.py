@@ -44,6 +44,15 @@ class _Joystick:
         for i in range(self.button_count):
             self.button.append(0)
 
+    def __repr__(self):
+        return "<index: {}, axis: {}, ball: {}, hat: {}, button: {}>".format(
+            self.id,
+            self.axis,
+            self.ball,
+            self.hat,
+            self.button
+        )
+
     def close(self):
         """Closes the joystick in SDL2"""
         sdl2.SDL_JoystickClose(self._sdl_joystick_obj)
@@ -60,29 +69,60 @@ class _SDLUpdateLoop(QtGui.QWidget):
         self._timer.start(1000 / 120) # Update at 120 Hz
 
 
-class JoystickManager:
+class _JoystickManager:
     """Manages joystick instances"""
 
     def __init__(self):
         self.joysticks = dict()
-        self._sdl_update_loop = _SDLUpdateLoop()
-        self._sdl_update_loop.start_loop(self._sdl2_update_loop)
+        self._sdl_update_loop = None
+        self._callbacks = list()
 
         for index in range(sdl2.SDL_NumJoysticks()):
             self.joysticks[index] = _Joystick(index)
 
+    def start(self):
+        """
+        Starts the joystick listening loop.
+        
+        Run this after the Qt application has already started
+        """
+        self._sdl_update_loop = _SDLUpdateLoop()
+        self._sdl_update_loop.start_loop(self._sdl2_update_loop)
+
+    def add_callback(self, callback):
+        """Adds a callback after a SDL2 update event is processed"""
+        self._callbacks.append(callback)
+
     def _sdl2_update_loop(self):
         for event in sdl2.ext.get_events():
             if event.type == sdl2.SDL_JOYAXISMOTION:
-                self.joysticks[event.which].axis[event.axis] = event.value
+                self.joysticks[event.jaxis.which].axis[event.jaxis.axis] = event.jaxis.value
             elif event.type == sdl2.SDL_JOYBALLMOTION:
-                self.joysticks[event.which].ball[event.ball] = (event.xrel, event.yrel)
+                self.joysticks[event.jball.which].ball[event.jball.ball] = (event.jball.xrel, event.jball.yrel)
             elif event.type == sdl2.SDL_JOYHATMOTION:
-                self.joysticks[event.which].hat[event.hat] = event.value
+                self.joysticks[event.jhat.which].hat[event.jhat.hat] = event.jhat.value
             elif event.type == sdl2.SDL_JOYBUTTONUP or event.type == sdl2.SDL_JOYBUTTONDOWN:
-                self.joysticks[event.which].button[event.button] = event.state
+                self.joysticks[event.jbutton.which].button[event.jbutton.button] = event.jbutton.state
             elif event.type == sdl2.SDL_JOYDEVICEADDED:
-                self.joysticks[event.which] = _Joystick(event.which)
+                self.joysticks[event.jdevice.which] = _Joystick(event.jdevice.which)
             elif event.type == sdl2.SDL_JOYDEVICEREMOVED:
-                self.joysticks[event.which].close()
-                del self.joysticks[event.which]
+                self.joysticks[event.jdevice.which].close()
+                del self.joysticks[event.jdevice.which]
+        for callback in self._callbacks:
+            callback()
+
+joystick_manager = _JoystickManager()
+
+if __name__ == "__main__":
+    # Code that runs when the script is invoked directly
+    def _main():
+        import sys
+        app = QtGui.QApplication(sys.argv)
+        def print_callback():
+            print(joystick_manager.joysticks)
+        joystick_manager.add_callback(print_callback)
+        joystick_manager.start()
+        window = QtGui.QDialog()
+        window.show()
+        sys.exit(app.exec_())
+    _main()

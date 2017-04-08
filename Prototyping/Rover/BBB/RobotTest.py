@@ -28,8 +28,8 @@ class Robot(object):
     def __init__(self):
         ADC.setup()
         # setup i2c to motorshield
-        self.pwm = Adafruit_PCA9685.PCA9685(address=0x60, busnum=1)
-        self.pwm.set_pwm_freq(60)
+        # self.pwm = Adafruit_PCA9685.PCA9685(address=0x60, busnum=1)
+        # self.pwm.set_pwm_freq(60)
 
         self.pot_pid = PID.PID(-0.1, 0, 0)
 
@@ -40,14 +40,14 @@ class Robot(object):
         # 2: 13, 12, 11
         # 3: 2,  4,  3
         # 4: 7,  6,  5
-        self.motors = [
-            None, # motor IDs are 1-based, so placeholder for index 0
-            MiniMotor.MiniMotor(1, 8, 9, 10, self.pwm),
-            MiniMotor.MiniMotor(2, 13, 12, 11, self.pwm),
-            MiniMotor.MiniMotor(3, 2, 4, 3, self.pwm),
-            MiniMotor.MiniMotor(4, 7, 6, 5, self.pwm),
-        ]
-        self.r_comms = Robot_comms.Robot_comms("192.168.0.40", 8840, 8841, "<?hh", "<?ff", "<ffffffff")
+        # self.motors = [
+        #     None, # motor IDs are 1-based, so placeholder for index 0
+        #     MiniMotor.MiniMotor(1, 8, 9, 10, self.pwm),
+        #     MiniMotor.MiniMotor(2, 13, 12, 11, self.pwm),
+        #     MiniMotor.MiniMotor(3, 2, 4, 3, self.pwm),
+        #     MiniMotor.MiniMotor(4, 7, 6, 5, self.pwm),
+        # ]
+        self.r_comms = Robot_comms.Robot_comms("192.168.0.50", 8840, 8841, "<?hh", "<?ff", "<ffffffff")
 
 
     # drives the motor with a value, negative numbers for reverse
@@ -204,7 +204,7 @@ def main():
                 time.sleep(0.5)
 
         except KeyboardInterrupt:
-            for i in range(1, 5):
+            #for i in range(1, 5):
                 #robot.stopMotor(i)
             robot.r_comms.closeConn()
             print "exiting"
