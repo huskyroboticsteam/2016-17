@@ -40,13 +40,13 @@ class Robot(object):
         # 2: 13, 12, 11
         # 3: 2,  4,  3
         # 4: 7,  6,  5
-        self.motors = [
-            None, # motor IDs are 1-based, so placeholder for index 0
-            MiniMotor.MiniMotor(1, 8, 9, 10, self.pwm),
-            MiniMotor.MiniMotor(2, 13, 12, 11, self.pwm),
-            MiniMotor.MiniMotor(3, 2, 4, 3, self.pwm),
-            MiniMotor.MiniMotor(4, 7, 6, 5, self.pwm),
-        ]
+        # self.motors = [
+        #     None, # motor IDs are 1-based, so placeholder for index 0
+        #     MiniMotor.MiniMotor(1, 8, 9, 10, self.pwm),
+        #     MiniMotor.MiniMotor(2, 13, 12, 11, self.pwm),
+        #     MiniMotor.MiniMotor(3, 2, 4, 3, self.pwm),
+        #     MiniMotor.MiniMotor(4, 7, 6, 5, self.pwm),
+        # ]
         self.r_comms = Robot_comms.Robot_comms("192.168.0.40", 8840, 8841, "<?hh", "<?ff", "<ffffffff")
 
 
