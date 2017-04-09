@@ -1,4 +1,5 @@
 import sys
+import os
 import Util
 import Motor
 from Packet import Packet
@@ -20,7 +21,7 @@ def throw(errorCode, comment="", file="", line=None, fatal=False):
     elif errorCode == 0x0503:
         comment += "CHECK ETHERNET CABLE ATTACHMENT \n"
     if len(comment) > 0:
-        comment += " Given information: " + str(comment) + "\n"
+        comment += "Given information: " + str(comment) + "\n"
     if file != "":
         comment += "File: " + file
     if not (line is None):
@@ -34,6 +35,7 @@ def throw(errorCode, comment="", file="", line=None, fatal=False):
     CommHandler.sendAsyncPacket(errorPack)
     if fatal:
         Motor.Motor.stopAll()
+        os.system("sudo reboot")
         sys.exit(0x00FF)
 
 

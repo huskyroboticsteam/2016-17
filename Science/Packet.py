@@ -18,11 +18,18 @@ CONNECTION_STATUS = True
 class Packet:
 
     RECEIVE_BYTE_SIZE = 1024
+    DEFAULT_TARGET_IP = '192.168.0.1'
+    DEFAULT_TARGET_PORT = 24
 
-    def __init__(self, id=0x00, targetIP='192.168.0.1', targetPort=24):
+    def __init__(self, id=0x00, targetIP=None, targetPort=None):
         self._data = ""
         self._id = id
         self._recieved = ""
+        if targetPort == None:
+            targetIP = self.DEF_TARGET_IP
+            targetPort = self.DEF_TARGET_PORT
+        elif targetIP == None:
+            targetIP = self.DEF_TARGET_IP
         self._targetIP = targetIP
         self._targetPort = targetPort
 
@@ -87,6 +94,11 @@ class AuxCtrlID:
     MoveDrill = 0x00
     DrillRPM = 0x01
     CamFocusPos = 0x02
+
+
+class SysCtrlID:
+    Ping = 0x00
+    Reboot = 0x01
 
 
 def setStatus(status):

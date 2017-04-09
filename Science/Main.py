@@ -1,5 +1,4 @@
 import sys
-import time
 import Error
 import Util
 import Parse
@@ -63,8 +62,8 @@ limit3 = Limit("P8_8")
 
 # Create Motors
 DrillMotor = Motor.TalonMC("P8_13")
-DrillArmatureMotor = Motor.TalonMC("")
-CamFocusServo = Motor.Servo("")
+DrillArmatureMotor = Motor.TalonMC("P8_19")
+CamFocusServo = Motor.Servo("P8_45")
 Motor.Motor.enableAll()
 
 # Create Command Interface
@@ -73,6 +72,8 @@ armatureController = MoveDrill(DrillArmatureMotor, DistanceSensor)
 camFocusCommand = CamFocus(CamFocusServo)
 # Initialize All Commands (Set machine to relaxed state)
 Command.initializeAll()
+# Start All Commands
+Command.startAll()
 
 # Add Sensors to handler
 SensorHandler.addPrimarySensors(DistanceSensor, UVSensor, Thermocouple, HumiditySensor)
@@ -106,11 +107,4 @@ while True:
 
     CommHandling.sendAll()
 
-    # Says everything is okay if there have been no errors on this cycle
-    if not Error.areErrors():
-        Error.throw(0x00)
-    # Clears errors for next cycle
-    Error.clearErrors()
-
     sys.stdout.flush()
-    time.sleep(1)

@@ -14,6 +14,7 @@ def snedTestPacket():
     testPacket.appendData(SystemTelemetry.getTelemetryData())
     testPacket.send()
     time.sleep(3)
+    Error.throw(0x0402)
 
 def parsePacket(packetData):
     packetData = Util.chartobytes(packetData)
@@ -37,6 +38,7 @@ while True:
         sys.stdout.write("\n" + parsePacket(data) + "\n")
     except socket.error:
         pass
+
 """
 
 """
@@ -48,4 +50,5 @@ while x < 1.0:
     x += 0.1
     time.sleep(0.8)
 DrillMotor.set(0.0)
+
 """
