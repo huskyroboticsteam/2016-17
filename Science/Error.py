@@ -1,5 +1,6 @@
 import sys
 import Util
+import Motor
 from Packet import Packet
 from Packet import PacketType
 from Packet import getConnectionStatus
@@ -32,6 +33,7 @@ def throw(errorCode, comment="", file="", line=None, fatal=False):
     errorPack.appendData(Util.inttobin(errorCode, 16))
     CommHandler.sendAsyncPacket(errorPack)
     if fatal:
+        Motor.Motor.stopAll()
         sys.exit(0x00FF)
 
 

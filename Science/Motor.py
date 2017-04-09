@@ -34,8 +34,24 @@ class Motor:
         self._motor.set_frequency(self._pin, freq)
         self._freq = freq
 
-    def getMotors(self):
-        return self.motors
+    @classmethod
+    def getMotors(cls):
+        return cls.motors
+
+    @classmethod
+    def enableAll(cls):
+        for motor in cls.motors:
+            motor.enable()
+
+    @classmethod
+    def stopAll(cls):
+        for motor in cls.motors:
+            motor.stop()
+
+    @classmethod
+    def calibrateAll(cls):
+        for motor in cls.motors:
+            motor.calibrate()
 
 
 """

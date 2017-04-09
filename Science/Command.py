@@ -3,11 +3,14 @@ from threading import Thread
 
 class Command:
 
+    commands = []
+
     def __init__(self, pid=None):
         self._thread = Thread(target=self._threadRun)
         self._pid = pid
         self._pidCtrl = True
         self._setpoint = 0
+        self.commands += [self]
         if self._pid is None:
             self._pidCtrl = False
 
@@ -38,3 +41,18 @@ class Command:
 
     def isFinished(self):
         pass
+
+    @classmethod
+    def initializeAll(cls):
+        for command in cls.commands:
+            command.initialize()
+
+    @classmethod
+    def stopAllSafe(cls):
+        for command in cls.commands:
+            command.stopSafe()
+
+    @classmethod
+    def startAll(cls):
+        for command in cls.commands:
+            command.start()

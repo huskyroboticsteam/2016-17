@@ -3,6 +3,7 @@ import time
 import Error
 import Util
 import Parse
+import Motor
 import Adafruit_BBIO.ADC as ADC  # Ignore compilation errors
 from Thermocouple import Thermocouple
 from DistanceSensor import DistanceSensor
@@ -15,7 +16,10 @@ from Sensor import SensorHandler
 from Packet import Packet, PacketType
 from Limit import Limit
 from SystemTelemetry import SystemTelemetry
-from Motor import TalonMC
+from DrillCtrl import DrillCtrl
+from CamFocus import CamFocus
+from MoveDrill import MoveDrill
+from Command import Command
 
 # Define constants
 PinDataIn = "P9_18"
@@ -58,8 +62,17 @@ limit2 = Limit("P8_10")
 limit3 = Limit("P8_8")
 
 # Create Motors
-DrillMotor = TalonMC("P8_13")
-DrillMotor.calibrate()
+DrillMotor = Motor.TalonMC("P8_13")
+DrillArmatureMotor = Motor.TalonMC("")
+CamFocusServo = Motor.Servo("")
+Motor.Motor.enableAll()
+
+# Create Command Interface
+drillController = DrillCtrl(DrillMotor, encoder1)
+armatureController = MoveDrill(DrillArmatureMotor, DistanceSensor)
+camFocusCommand = CamFocus(CamFocusServo)
+# Initialize All Commands (Set machine to relaxed state)
+Command.initializeAll()
 
 # Add Sensors to handler
 SensorHandler.addPrimarySensors(DistanceSensor, UVSensor, Thermocouple, HumiditySensor)
