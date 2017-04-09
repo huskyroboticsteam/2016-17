@@ -11,6 +11,7 @@ class ListWidget(QtGui.QListWidget):
     count = 0
     markers = []
     signalStatus = QtCore.pyqtSignal([str])
+    callToDelete = QtCore.pyqtSignal(int)
 
     def __init__(self):
         super(self.__class__, self).__init__()
@@ -20,8 +21,14 @@ class ListWidget(QtGui.QListWidget):
         # Force it to be smaller than the map
         policy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Maximum)
         self.setSizePolicy(policy)
+        self.index = None
 
         self.itemDoubleClicked.connect(self.editing_item)
+
+    def keyPressEvent(self, key):
+        if key.key() == QtCore.Qt.Key_Delete:
+            self.callToDelete.emit(self.currentRow())
+
 
     # Emits the command that will be added to the COMMAND window
     def editing_item(self, item):
@@ -39,7 +46,7 @@ class ListWidget(QtGui.QListWidget):
         # Add all markers that aren't rover == True to the list
         l = QtCore.QStringList()
         for i in range(0, len(self.markers)):
-            s = QtCore.QString(str(self.markers[i][0]) + ", " + str(self.markers[i][1]))
+            s = QtCore.QString(str((i + 1)) + " " + str(self.markers[i][0]) + ", " + str(self.markers[i][1]))
             l.append(s)
 
         self.addItems(l) # adds elements from the list widget in order
@@ -52,12 +59,6 @@ class ListWidget(QtGui.QListWidget):
 
     # Called when things are removed from the marker list
     # Marked for removal in Map/List rework
-    def remove_from_ui(self, lat, long):
-        length = len(self.markers)
-        index = -1
-        for i in range(0, length):
-            if self.markers[i][0] == lat and self.markers[i][1] == long:
-                index = i
-        if index is not -1:
-            self.markers.pop(index)
+    def remove_from_ui(self, index):
+        self.markers.pop(index)
         self.update_ui()
