@@ -6,7 +6,7 @@ import Util
 import threading
 from Packet import Packet
 from SystemTelemetry import SystemTelemetry
-from TalonMC import TalonMC
+from Motor import TalonMC
 
 def snedTestPacket():
     time.sleep(1)

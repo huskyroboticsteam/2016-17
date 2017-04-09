@@ -15,7 +15,7 @@ from Sensor import SensorHandler
 from Packet import Packet, PacketType
 from Limit import Limit
 from SystemTelemetry import SystemTelemetry
-from TalonMC import TalonMC
+from Motor import TalonMC
 
 # Define constants
 PinDataIn = "P9_18"
