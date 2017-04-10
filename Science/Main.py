@@ -35,12 +35,6 @@ except:
     # Throw "ADC Could not initialize"
     Error.throw(0x0001, "Failed to initialize ADC")
 
-Parse.setupParsing()
-CommHandling = CommHandler(INTERNAL_IP, INTERNAL_TCP_RECEIVE_PORT)
-Packet.setDefaultTarget(MAIN_IP, PRIMARY_TCP_SEND_PORT)
-SystemTelemetry.initializeTelemetry()
-CommHandling.startCommsThread()  # Start communication receiving process
-
 # Create Sensors
 UVSensor = UV(0x38)
 Thermocouple = Thermocouple("P9_22", "P9_17", "P9_18")
@@ -54,9 +48,19 @@ limit1 = Limit("P8_12")
 limit2 = Limit("P8_10")
 limit3 = Limit("P8_8")
 
+Parse.setupParsing()
+CommHandling = CommHandler(INTERNAL_IP, INTERNAL_TCP_RECEIVE_PORT)
+Packet.setDefaultTarget(MAIN_IP, PRIMARY_TCP_SEND_PORT)
+SystemTelemetry.initializeTelemetry()
+CommHandling.startCommsThread()  # Start communication receiving process
+
 # Add Sensors to handler
 SensorHandler.addPrimarySensors(DistanceSensor, UVSensor, Thermocouple, HumiditySensor)
 SensorHandler.addAccessorySensors(encoder1, encoder2, encoder3, limit1, limit2, limit3)
+
+# Setup and start all sensors
+SensorHandler.setupAll()
+SensorHandler.startAll()
 
 # Create Command Interface
 drillController = DrillCtrl("P8_13", encoder1)
@@ -69,10 +73,6 @@ systemControl = SystemControl("P9_15")
 Command.initializeAll()
 # Start All Commands
 Command.startAll()
-
-# Setup and start all sensors
-SensorHandler.setupAll()
-SensorHandler.startAll()
 
 # Enable all Motors
 Motor.enableAll()
