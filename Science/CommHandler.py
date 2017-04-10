@@ -33,9 +33,34 @@ class CommHandler:
         self._receiving = False
 
     @classmethod
+    def startCommsThread(cls):
+        comms_thread = Thread(target=cls.receiveMessagesOnThread)
+        comms_thread.start()
+
+    @classmethod
     def sendAsyncPacket(cls, packet):
         _sendThread = Thread(target=packet.send)
         _sendThread.start()
+
+    # Meant to be threaded on system
+    # Otherwise there will be an infinite loop
+    @classmethod
+    def receiveMessagesOnThread(cls):
+        cls._continue = True
+        try:
+            while cls._continue:
+                cls.SOCKET.listen(1)
+                client, clientAddr = cls.SOCKET.accept()
+                cls._receiving = True
+                data = client.recv(cls.BYTE_BUFFER_SIZE)
+                cls._receiving = False
+                Parse.queueMessage(Message(data, clientAddr))
+        except socket.error:
+            # Throw "Failed to begin receive process"
+            Error.throw(0x0502)
+        except:
+            # Throw "Could not initialize comms"
+            Error.throw(0x0501)
 
     def addCyclePacket(self, packet):
         self._packets += [packet]
@@ -55,25 +80,6 @@ class CommHandler:
 
     def getReceivingStatus(self):
         return self._receiving
-
-    # Meant to be threaded on system
-    # Otherwise there will be an infinite loop
-    def receiveMessagesOnThread(self):
-        self._continue = True
-        try:
-            while self._continue:
-                self.SOCKET.listen(1)
-                client, clientAddr = self.SOCKET.accept()
-                self._receiving = True
-                data = client.recv(self.BYTE_BUFFER_SIZE)
-                self._receiving = False
-                Parse.queueMessage(Message(data, clientAddr))
-        except socket.error:
-            # Throw "Failed to begin receive process"
-            Error.throw(0x0502)
-        except:
-            # Throw "Could not initialize comms"
-            Error.throw(0x0501)
 
 
 class Message:

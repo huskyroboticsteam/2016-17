@@ -9,13 +9,9 @@ DEFAULT_PIN = "P8_45"
 
 class CamFocus(Command):
 
-    def __init__(self, servo):
+    def __init__(self, servo_pin=DEFAULT_PIN):
         Command.__init__(self, self._pid)
-        self._motor = servo
-        if not isinstance(self._motor, Servo):
-            # Throw Servo Motor Not initialized correctly
-            Error.throw(0x0004, "Servo Not Initialized correctly, defaulted to pin: " + DEFAULT_PIN)
-        self._motor = Servo(DEFAULT_PIN)
+        self._motor = Servo(servo_pin)
 
     def initialize(self):
         pass  # Initialize the servo, sets everything to relaxed state

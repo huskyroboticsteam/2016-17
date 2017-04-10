@@ -1,17 +1,18 @@
 import Parse
 from Packet import AuxCtrlID
 from PID import PID
+from Motor import TalonMC
 from Command import Command
 
 
 class MoveDrill(Command):
 
-    def __init__(self, armatureMotor, distanceSensor, kp=0, ki=0, kd=0):
+    def __init__(self, armatureMotorPin, distanceSensor, kp=0, ki=0, kd=0):
         # We cannot have undershoot, move slow
         # and calibrate well
         self._pid = PID(kp, ki, kd)
         Command.__init__(self, self._pid)
-        self.motor = armatureMotor
+        self.motor = TalonMC(armatureMotorPin)
         self.distanceSensor = distanceSensor
         self.currentPos = self.distanceSensor.getValue()
 

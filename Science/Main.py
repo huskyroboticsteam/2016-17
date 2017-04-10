@@ -2,14 +2,13 @@ import sys
 import Error
 import Util
 import Parse
-import Motor
 import Adafruit_BBIO.ADC as ADC  # Ignore compilation errors
+from Motor import Motor
 from Thermocouple import Thermocouple
 from DistanceSensor import DistanceSensor
 from Humidity import Humidity
 from UV_Sensor import UV
 from Encoder import Encoder
-from threading import Thread
 from CommHandler import CommHandler
 from Sensor import SensorHandler
 from Packet import Packet, PacketType
@@ -18,14 +17,10 @@ from SystemTelemetry import SystemTelemetry
 from DrillCtrl import DrillCtrl
 from CamFocus import CamFocus
 from MoveDrill import MoveDrill
+from SystemControl import SystemControl
+from RotateArmature import RotateArmature
 from Command import Command
 
-# Define constants
-PinDataIn = "P9_18"
-PinChipSel = "P9_17"
-PinClock = "P9_22"
-UV_ADDR_LSB = 0x38
-DIST_ADDR = 0x52
 # Communication Setup
 MAIN_IP = '192.168.0.1'
 PRIMARY_TCP_SEND_PORT = 24
@@ -39,17 +34,16 @@ try:
 except:
     # Throw "ADC Could not initialize"
     Error.throw(0x0001, "Failed to initialize ADC")
+
 Parse.setupParsing()
 CommHandling = CommHandler(INTERNAL_IP, INTERNAL_TCP_RECEIVE_PORT)
 Packet.setDefaultTarget(MAIN_IP, PRIMARY_TCP_SEND_PORT)
 SystemTelemetry.initializeTelemetry()
-# Start Communication / Receive Thread
-COMMS_THREAD = Thread(target=CommHandling.receiveMessagesOnThread)
-COMMS_THREAD.start()
+CommHandling.startCommsThread()  # Start communication receiving process
 
 # Create Sensors
-UVSensor = UV(UV_ADDR_LSB)
-Thermocouple = Thermocouple(PinClock, PinChipSel, PinDataIn)
+UVSensor = UV(0x38)
+Thermocouple = Thermocouple("P9_22", "P9_17", "P9_18")
 DistanceSensor = DistanceSensor()
 HumiditySensor = Humidity("AIN1")
 HumiditySensor.setup(1, 0)  # Setup Humidity Calibration
@@ -60,29 +54,28 @@ limit1 = Limit("P8_12")
 limit2 = Limit("P8_10")
 limit3 = Limit("P8_8")
 
-# Create Motors
-DrillMotor = Motor.TalonMC("P8_13")
-DrillArmatureMotor = Motor.TalonMC("P8_19")
-CamFocusServo = Motor.Servo("P8_45")
-Motor.Motor.enableAll()
+# Add Sensors to handler
+SensorHandler.addPrimarySensors(DistanceSensor, UVSensor, Thermocouple, HumiditySensor)
+SensorHandler.addAccessorySensors(encoder1, encoder2, encoder3, limit1, limit2, limit3)
 
 # Create Command Interface
-drillController = DrillCtrl(DrillMotor, encoder1)
-armatureController = MoveDrill(DrillArmatureMotor, DistanceSensor)
-camFocusCommand = CamFocus(CamFocusServo)
+drillController = DrillCtrl("P8_13", encoder1)
+rotateArmature = RotateArmature("P8_46", encoder2)
+armatureController = MoveDrill("P8_19", DistanceSensor)
+camFocusCommand = CamFocus("P8_45")
+systemControl = SystemControl("P9_15")
+
 # Initialize All Commands (Set machine to relaxed state)
 Command.initializeAll()
 # Start All Commands
 Command.startAll()
 
-# Add Sensors to handler
-SensorHandler.addPrimarySensors(DistanceSensor, UVSensor, Thermocouple, HumiditySensor)
-SensorHandler.addAccessorySensors(encoder1, encoder2, encoder3, limit1, limit2, limit3)
-
 # Setup and start all sensors
 SensorHandler.setupAll()
 SensorHandler.startAll()
 
+# Enable all Motors
+Motor.enableAll()
 
 while True:
 

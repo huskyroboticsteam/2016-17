@@ -37,7 +37,7 @@ Parse message into timestamp and id
 def parse(msg):
     global reset
     if len(msgQueue) == 0 and reset:
-        reset = False
+        reset = False  # Set reset back to default value
     if msg.ID == PacketType.AuxControl:
         parse_aux(msg)
     elif msg.ID == PacketType.SysControl:
@@ -52,9 +52,9 @@ def parse(msg):
 Parse Auxilliary Ctrl Packet
 """
 def parse_aux(msg):
-    aux_ctrl[0] = int(msg.data[0:33])
-    cmd_id = int(msg.data[40:48])
-    cmd_value = int(msg.data[48:80])
+    aux_ctrl[0] = int(msg.data[0:33], 2)
+    cmd_id = int(msg.data[40:48], 2)
+    cmd_value = int(msg.data[48:80], 2)
     aux_ctrl[cmd_id + 1] = cmd_value
 
 
@@ -62,9 +62,9 @@ def parse_aux(msg):
 Parse System Ctrl Packet
 """
 def parse_sysctrl(msg):
-    cam_ctrl[0] = int(msg.data[0:33])
-    cmd_id = int(msg.data[40:48])
-    cmd_value = int(msg.data[48:80])
+    cam_ctrl[0] = int(msg.data[0:33], 2)
+    cmd_id = int(msg.data[40:48], 2)
+    cmd_value = int(msg.data[48:80], 2)
     cam_ctrl[cmd_id + 1] = cmd_value
 
 
@@ -72,13 +72,13 @@ def parse_sysctrl(msg):
 Parse Img Request
 """
 def parse_imgreq(msg):
-    cam_ctrl[0] = int(msg.data[0:33])
-    cmd_id = int(msg.data[40:48])
-    cmd_value = int(msg.data[48:192])
+    cam_ctrl[0] = int(msg.data[0:33], 2)
+    cmd_id = int(msg.data[40:48], 2)
+    cmd_value = int(msg.data[48:192], 2)
     if cmd_value != "I can haz picture?":
         # Throw invalid request error
         Error.throw(0x0505)
-    cmd_camera = int(msg.data[192:200])
+    cmd_camera = int(msg.data[192:200], 2)
     cam_ctrl[cmd_camera] = True
 
 
@@ -108,7 +108,9 @@ def resetCam():
         cam_ctrl[i] = False
 
 
-
+"""
+Setup Parsing with all zero arrays
+"""
 def setupParsing():
     aux_ctrl = [0] * 32
     sys_ctrl = [0] * 32

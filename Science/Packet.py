@@ -94,7 +94,10 @@ class AuxCtrlID:
     MoveDrill = 0x00
     DrillRPM = 0x01
     CamFocusPos = 0x02
+    RotateArmature = 0x03
 
+class CameraID:
+    Microscope = 0x00
 
 class SysCtrlID:
     Ping = 0x00

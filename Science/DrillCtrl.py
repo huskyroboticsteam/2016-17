@@ -1,5 +1,6 @@
 import Parse
 from datetime import datetime
+from Motor import TalonMC
 from Packet import AuxCtrlID
 from PID import PID
 from Command import Command
@@ -7,10 +8,10 @@ from Command import Command
 
 class DrillCtrl(Command):
 
-    def __init__(self,  drillMotor, drillEncoder, kp=0, ki=0, kd=0):
+    def __init__(self,  drillMotorPin, drillEncoder, kp=0, ki=0, kd=0):
         self._pid = PID(kp, ki, kd)
         Command.__init__(self, self._pid)
-        self.drillMotor = drillMotor
+        self.drillMotor = TalonMC(drillMotorPin)
         self.drillEncoder = drillEncoder
         self.currentPos = 0
         self.currentRate = 0
