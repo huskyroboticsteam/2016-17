@@ -4,10 +4,10 @@ from PyQt4 import QtGui, QtCore
 
 
 class VLCWidget(QtGui.QFrame):
-    def __init__(self, url, options):
+    def __init__(self, url, options, instance):
         QtGui.QFrame.__init__(self)
 
-        self.instance = vlc.Instance("--no-audio")
+        self.instance = instance
 
         # Creates the VLC Player Object
         self.player = self.instance.media_player_new()
