@@ -8,9 +8,6 @@ from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.patches import Circle
 from random import random
 
-# TODO: fix case with start/target inside the obstacles
-# http://stackoverflow.com/questions/33311616/find-coordinate-of-closest-point-on-polygon-shapely
-
 # TODO: Steer rover to follow this line.
 # Maybe use PID loop?
 
