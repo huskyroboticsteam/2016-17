@@ -31,13 +31,21 @@ class SensorTest:
         print(readVal)
 
 
-    def readDis(self):
-        readVal = ADC.read("AIN6")
-        readVal = 1064 * readVal -193
+    def readDis(self): # Calculates distance in inches
+        readVal = ADC.read("AIN6") # Trust the numbers
+        readVal -= 0.197
+        readVal = (readVal / 0.0064) * 2.0 * (10.0/9.0)
+        readVal += 8.0
+        readVal = readVal * (1/0.8915)
         print(readVal)
 
+
+    def readDis2(self):  # Calculates distance in inches
+        readVal = ADC.read("AIN6")  # Trust the numbers
+        readVal = (readVal * 370.3) - 57.83
+        print(readVal)
 
 
 caller = SensorTest()
 while(1):
-    caller.readDis()
+    caller.readDis2()
