@@ -102,12 +102,9 @@ class Robot(object):
             return
         self.motors[motor_id].set_motor_exactly(0)
 
-    def getDriveParms(self, auto):
+    def getDriveParms(self):
         """
         Gets the driving parameters of the rover.
-
-        Args:
-            auto: unknown purpose. Maybe this should be removed
 
         Returns:
             tuple of (int, int): The drive parameters in the format (throttle, turn).
