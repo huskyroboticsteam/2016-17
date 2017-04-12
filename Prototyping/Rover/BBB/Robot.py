@@ -294,7 +294,7 @@ def main():
             while True:
                 robot.get_robot_comms().receiveData(robot.get_nav())
                 robot.get_robot_comms().sendData(robot.get_nav())
-                driveParms = robot.getDriveParms(robot.get_nav().getAuto())
+                driveParms = robot.getDriveParms()
                 MotorParms = robot.convertParmsToMotorVals(driveParms)
                 for i in range(1, 5):
                     robot.driveMotor(i, MotorParms[i - 1])
