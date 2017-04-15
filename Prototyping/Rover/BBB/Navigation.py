@@ -93,10 +93,10 @@ class Navigation:
     def distance(self, desLong, desLat):
         gps = GPS.GPS()
         cord = gps.getCoords()
-        lat1 = self.radGPS(cord[0])
-        long1 = self.radGPS(cord[1])
-        lat2 = self.radGPS(desLat)
-        long2 = self.radGPS(desLong)
+        lat1 = math.radians(cord[0])
+        long1 = math.radians(cord[1])
+        lat2 = math.radians(desLat)
+        long2 = math.radians(desLong)
         r = 6371  # radius of earth
         dlat = lat2 - lat1
         dlon = long2 - long1
@@ -106,14 +106,10 @@ class Navigation:
 
         return r * c  # kilometers
 
-    # takes the dec min format and converts it to radians
-    def radGPS(self, val):
-        return math.radians(val)
-
     # calculates desired new GPS coordinate based on distance
     # from current GPS location and current heading in degrees
     def calculateDesiredNewCoordinate(self, currHeading, distance):
-        theta = Utils.translateValue(self, currHeading, 0, 360, 0, 2 * math.pi)
+        theta = math.radians(currHeading)
         x = distance * math.cos(theta)
         y = distance * math.sin(theta)
         coords = (x, y)
