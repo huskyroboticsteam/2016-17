@@ -60,6 +60,7 @@ class PathControl:
         Returns (float): The turn value of the robot. 100 is full right. -100 is full left. 0 is straight.
         """
         self._refresh_path(location)
+        assert not self.is_done(location)
         return self.path_follower.go(location, heading)
 
     def is_done(self, location):
