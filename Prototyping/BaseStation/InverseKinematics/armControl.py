@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 import Adafruit_BBIO.UART as uart
 import serial
-from time import sleep
+import time
 from math import *
 from sabertooth import *
 import argparse
 from timedeltatype import *
+import threading
 
 uart.setup("UART1")
 uart.setup("UART2")
@@ -32,12 +33,26 @@ def float_range(min, max):
         return x
     return float_test
 
+def set_motors(motors, value):
+    for motor in motors:
+        motor.write(value)
 
 parser = argparse.ArgumentParser(description='Arm control script')
-parser.add_argument('joint', choices=motors.keys(), help='The joint to control.')
 parser.add_argument('strength', type=float_range(-1,1), help='Strength as a value between -1 and 1. -1 is reverse')
-parser.add_argument('duration', type=TimeDeltaType(), help='Amonut of time to run the motor for')
+parser.add_argument('joints', choices=motors.keys(), help='The joint to control.', nargs='+')
+parser.add_argument('-d','--duration', type=TimeDeltaType(), help='Amonut of time to run the motor for', nargs='?')
 args = parser.parse_args()
 
-print "Running %s at %.3f for %.3fs"%(args.joint, args.strength, args.duration.total_seconds())
-motors[args.joint].write(args.strength)
+motors = [motors[j] for j in args.joints]
+if args.duration == None:
+    print "Running %s at %.3f"%(args.joints, args.strength)
+    set_motors(motors, args.strength)
+else:
+    print "Running %s at %.3f for %.3fs"%(args.joints, args.strength, args.duration.total_seconds())
+    set_motors(motors, args.strength)
+    time.sleep(args.duration.total_seconds())
+    set_motors(motors, 0)
+    print "Stopped %s"%(args.joints)
+
+ser1.close()
+ser2.close()
