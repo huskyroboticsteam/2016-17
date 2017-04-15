@@ -6,10 +6,9 @@ import Util
 import threading
 from Packet import Packet
 from SystemTelemetry import SystemTelemetry
-from Motor import TalonMC
 
 def snedTestPacket():
-    time.sleep(1)
+    time.sleep(10)
     testPacket = Packet(0x81, '192.168.0.90', 5000)
     testPacket.appendData(SystemTelemetry.getTelemetryData())
     testPacket.send()
@@ -39,7 +38,7 @@ DrillMotor.set(0.0)
 """
 
 SOCKET = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-SOCKET.bind(('192.168.0.90', 5000))
+SOCKET.bind(('192.168.0.1', 24))
 while True:
     try:
         SOCKET.listen(1)

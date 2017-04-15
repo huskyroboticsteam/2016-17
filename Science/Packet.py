@@ -70,6 +70,9 @@ class Packet:
         setStatus(True)
         return True
 
+    def getData(self):
+        return self._data
+
     @classmethod
     def setDefaultTarget(cls, targetIP, targetPort):
         cls.DEF_TARGET_IP = targetIP

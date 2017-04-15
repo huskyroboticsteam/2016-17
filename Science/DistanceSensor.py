@@ -94,6 +94,5 @@ class DistanceSensor(Sensor):
         return self._distance
 
     def getDataForPacket(self):
-        sys.stdout.write(self._distance)
         return Util.inttobin(self._distance, 16)
 

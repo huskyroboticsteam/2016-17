@@ -48,6 +48,7 @@ class Motor:
     def stopAll(cls):
         for motor in cls.motors:
             motor.stop()
+            cls.pwm_handler.stop(motor._pin)
 
     @classmethod
     def calibrateAll(cls):
