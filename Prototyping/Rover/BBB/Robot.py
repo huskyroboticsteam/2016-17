@@ -46,7 +46,7 @@ class Robot(object):
 
         self.pot_pid = PID.PID(-0.1, 0, 0)
 
-        self.nav = Navigation.Navigation(0.55000, (0.55000 + 0.11111) / 2, 0.11111, 0.01, "AIN2")
+        self.nav = Navigation.Navigation(0.560000002384, 0.325555562973, 0.115000002086, 0.001, "AIN2")
         # setup motors
         # motor: throttle, F, B
         # 1: 8,  9,  10
@@ -68,8 +68,8 @@ class Robot(object):
             ]
         elif is_using_big_motor:
             self.motors = [
-                BigMotor.BigMotor(1, "P8_13"),
-                BigMotor.BigMotor(2, "P9_28"),
+                BigMotor.BigMotor(1, "P9_21"),
+                BigMotor.BigMotor(2, "P9_16"),
                 BigMotor.BigMotor(3, "P9_14"),
                 BigMotor.BigMotor(4, "P9_22")
                 ]
