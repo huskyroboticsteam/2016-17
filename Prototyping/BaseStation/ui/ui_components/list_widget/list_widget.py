@@ -13,6 +13,7 @@ class ListWidget(QtGui.QListWidget):
     signalStatus = QtCore.pyqtSignal([str])
     callToDelete = QtCore.pyqtSignal(int)
     highlightMarker = QtCore.pyqtSignal(int)
+    replaceMarker = QtCore.pyqtSignal(int)
 
     def __init__(self):
         super(self.__class__, self).__init__()
@@ -30,6 +31,7 @@ class ListWidget(QtGui.QListWidget):
         if key.key() == QtCore.Qt.Key_Delete:
             self.callToDelete.emit(self.currentRow())
             self.remove_from_ui(self.currentRow())
+
 
     def highlight_marker(self, item):
         self.highlightMarker.emit(self.currentRow())
@@ -66,4 +68,9 @@ class ListWidget(QtGui.QListWidget):
     # Marked for removal in Map/List rework
     def remove_from_ui(self, index):
         self.markers.pop(index)
+        self.update_ui()
+
+    def update_from_ui(self, lat, long, index):
+        self.remove_from_ui(index)
+        self.markers.insert(index, (lat, long))
         self.update_ui()

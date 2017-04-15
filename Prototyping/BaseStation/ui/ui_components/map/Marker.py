@@ -35,8 +35,6 @@ class Marker:
         self.pen.setWidth(5)
         painter.setPen(self.pen)
         painter.drawEllipse(int(self.x) - self.centerX - 10, int(self.y) - self.centerY - 10, 20, 20)
-        print("draw")
 
     def set_color(self, color):
         self.pen = QtGui.QPen(color)
-        print("set_color")

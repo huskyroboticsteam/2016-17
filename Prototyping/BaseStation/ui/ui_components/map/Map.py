@@ -8,6 +8,7 @@ from PyQt4 import QtGui, QtCore
 
 class Map(QtGui.QWidget):
     signal = QtCore.pyqtSignal(float, float)
+    updateList = QtCore.pyqtSignal(float, float, int)
 
     def __init__(self, map_name):
         super(self.__class__, self).__init__()
@@ -90,9 +91,13 @@ class Map(QtGui.QWidget):
         elif QKeyEvent.key() == QtCore.Qt.Key_E:
             self.get_mouse_lat_lng((self.x, self.y))
             print self.image_tiles[15]["tilesImages"][0].image.size().height()
+        elif QKeyEvent.key() == QtCore.Qt.Key_R:
+            self.replace_marker(self.list_index)
+            self.repaint()
+            print("done")
         '''elif QKeyEvent.key() == "Double Click":
-            lat, long = self.get_mouse_lat_lng((self.x, self.y))
-            self.add_marker(lat, long)'''
+                    lat, long = self.get_mouse_lat_lng((self.x, self.y))
+                    self.add_marker(lat, long)'''
 
     def open_map(self, map_name):
         # Clear all map tiles
@@ -401,7 +406,8 @@ class Map(QtGui.QWidget):
         """
 
         self.markers.pop(index)
-        self.markers.insert(index, self.make_marker(x, y, False))
+        self.markers.insert(index, self.make_marker(x, y, QtCore.Qt.red))
+        self.updateList.emit(x, y, index)
 
     def update_rover_pos(self, (lat, lng)):
         """
@@ -412,8 +418,14 @@ class Map(QtGui.QWidget):
         self.add_rover(lat, lng)
 
     def highlight_marker(self, index):
+        self.list_index = index
         for marker in self.markers:
             marker.set_color(QtCore.Qt.red)
         self.markers[index].set_color(QtCore.Qt.yellow)
         self.repaint()
-        print("highlight_marker")
+
+    def replace_marker(self, index):
+        print("hi")
+        lat, long = self.get_mouse_lat_lng((self.x, self.y))
+        self.update_marker(lat, long, index)
+
