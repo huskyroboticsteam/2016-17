@@ -1,6 +1,6 @@
 from PyQt4 import QtCore, QtGui
 import socket, struct
-import joystick_rewrite
+import joystickv1
 
 
 class CommsUpdate(QtGui.QWidget):
@@ -30,7 +30,8 @@ class CommsUpdate(QtGui.QWidget):
         # Reset the UI if emergency stopped
         self.stop = False
 
-        joystick_rewrite.joystick_manager.start()
+        self.joys = joystickv1.Joystick()
+        self.joys.start()
 
         try:
             # UDP connection to the rover
@@ -83,8 +84,8 @@ class CommsUpdate(QtGui.QWidget):
         steering = 0
 
         try:
-            throttle = joystick_rewrite.joystick_manager.joysticks[0].axis[1]
-            steering = joystick_rewrite.joystick_manager.joysticks[0].axis[0]
+            throttle = self.joys.joystick_axis[0][1]
+            steering = self.joys.joystick_axis[0][0]
             # steering = self.joy.joystick_axis[0][0]
         except:
             pass
