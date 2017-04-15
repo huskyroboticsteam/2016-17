@@ -1,3 +1,4 @@
+import sys
 import Parse
 import Error
 from Packet import AuxCtrlID
@@ -10,11 +11,12 @@ DEFAULT_PIN = "P8_45"
 class CamFocus(Command):
 
     def __init__(self, servo_pin=DEFAULT_PIN):
-        Command.__init__(self, self._pid)
         self._motor = Servo(servo_pin)
+        Command.__init__(self)
 
     def initialize(self):
-        pass  # Initialize the servo, sets everything to relaxed state
+        if not self._motor.isStarted():
+            sys.stdout.write("\n\n>>>>>dafuq?<<<<<<\n\n")
 
     def run(self, setpoint):
         self._motor.moveTo(setpoint)

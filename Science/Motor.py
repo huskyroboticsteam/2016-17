@@ -8,30 +8,31 @@ import time
 
 class Motor:
 
+    pwm_handler = PWM.get_platform_pwm()
     motors = []
-
     _freq = 2000
+    _started = False
 
     def __init__(self, pin):
         self._pin = pin
-        self._motor = PWM.BBIO_PWM_Adapter(PWM.get_platform_pwm())
-        self._motor.start(self._pin, 0.0, self._freq)
+        self.pwm_handler.start(self._pin, 0.0)
+        self._started = True
         self.motors += [self]
 
     def enable(self):
         pass
 
     def set(self, value):
-        self._motor.set_duty_cycle(self._pin, value * 100.0)
+        self.pwm_handler.set_duty_cycle(self._pin, value * 100.0)
 
     def stop(self):
-        self._motor.stop(self._pin)
+        self.pwm_handler.stop(self._pin)
 
     def calibrate(self):
         pass
 
     def setFreq(self, freq):
-        self._motor.set_frequency(self._pin, freq)
+        self.pwm_handler.set_frequency(self._pin, freq)
         self._freq = freq
 
     @classmethod
@@ -53,6 +54,8 @@ class Motor:
         for motor in cls.motors:
             motor.calibrate()
 
+    def isStarted(self):
+        return self._started
 
 """
 Interfaces Beaglebone Black PWM outputs with
@@ -108,7 +111,7 @@ class Servo(Motor):
 
     def moveTo(self, angle):
         dutyCycle = 100 - ((angle / 180.0) * (self._maxDutyCycle - self._minDutyCycle) + self._minDutyCycle)
-        self._motor.set_duty_cycle(self._pin, dutyCycle)
+        self.pwm_handler.set_duty_cycle(self._pin, dutyCycle)
 
 
 """

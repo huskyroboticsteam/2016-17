@@ -1,3 +1,4 @@
+import sys
 import Error
 from Packet import PacketType
 
@@ -112,6 +113,9 @@ def resetCam():
 Setup Parsing with all zero arrays
 """
 def setupParsing():
+    global aux_ctrl
+    global sys_ctrl
+    global cam_ctrl
     aux_ctrl = [0] * 32
     sys_ctrl = [0] * 32
     cam_ctrl = [0] + [False] * 31

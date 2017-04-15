@@ -14,7 +14,7 @@ class SystemControl(Command):
     def __init__(self, microscopeRelayPin):
         self.microscopeRelayPin = microscopeRelayPin
         try:
-            GPIO.setup(self.microscopeRelayPin, GPIO.IN)
+            GPIO.setup(self.microscopeRelayPin, GPIO.OUT)
         except:
             # Throw "Could not setup DIO Pin"
             Error.throw(0x0002)
