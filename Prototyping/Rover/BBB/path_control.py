@@ -52,6 +52,7 @@ class PathControl:
     def go(self, location, heading):
         """
         Finds how much the robot should turn. Assumes that the robot always moves forward.
+        Should be called periodically.
         Args:
             location (tuple of (float, float)): The current x, y coordinates of the robot.
             heading (float): The current heading of the robot.
