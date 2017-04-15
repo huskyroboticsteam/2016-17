@@ -52,6 +52,8 @@ class Map(QtGui.QWidget):
         self.x = 0
         self.y = 0
 
+        self.rover = None
+
         self.open_map(map_name)
 
     def enterEvent(self, QEvent):
@@ -340,6 +342,9 @@ class Map(QtGui.QWidget):
         """
         for marker in self.markers:
             marker.draw(painter)
+
+        if self.rover is not None:
+            self.rover.draw(painter)
 
     # changes the position of markers after zooming in
     def zoom_marker(self):

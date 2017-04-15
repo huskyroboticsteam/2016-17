@@ -152,7 +152,7 @@ class MyThread(QtCore.QObject):
         :return: Boolean - true if pinging was successful
         """
 
-        ret_code = subprocess.call(['ping', '-c', '5', '-W', '3', hostname],
+        ret_code = subprocess.call("ping -w 200 " + hostname,
                                    stdout=open(os.devnull, 'w'),
                                    stderr=open(os.devnull, 'w'))
         return ret_code == 0

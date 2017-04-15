@@ -1,6 +1,7 @@
 import CustomWidgets
 import Recorder
 from PyQt4 import QtGui
+import vlc
 
 
 class Player(QtGui.QWidget):
@@ -60,8 +61,10 @@ class Player(QtGui.QWidget):
         # Empty list to hold vlc widgets
         widgets = []
 
+        instance = vlc.Instance('--quiet', '--no-video-on-top')
         for i in range(0, len(urls)):
-            vlc_widget = CustomWidgets.VLCWidget(urls[i], ":network-caching=0")
+            print urls[i]
+            vlc_widget = CustomWidgets.VLCWidget(urls[i], ":network-caching=0", instance)
             vlc_widget.id = i
             widgets.append(vlc_widget)
 

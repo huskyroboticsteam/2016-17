@@ -9,3 +9,20 @@ def translateValue(value, inMin, inMax, outMin, outMax):
 
     # Convert the 0-1 range into a value in the right range.
     return outMin + (valueScaled * outSpan)
+
+
+def normalize_angle(angle):
+    """
+    Args:
+        angle (float): the angle in degrees
+    Returns (float): the normalized angle such that it is between 0.0 and 360.0
+
+    Isn't this function made simpler by: "return angle % 360.0" ?
+    - Jaden Bottemiller
+
+    """
+    while angle >= 360.0:
+        angle -= 360.0
+    while angle < 0.0:
+        angle += 360.0
+    return angle
