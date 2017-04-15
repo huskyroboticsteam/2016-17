@@ -10,11 +10,10 @@ from Motor import TalonMC
 
 def snedTestPacket():
     time.sleep(1)
-    testPacket = Packet(0x03, '192.168.0.1', 24)
+    testPacket = Packet(0x81, '192.168.0.90', 5000)
     testPacket.appendData(SystemTelemetry.getTelemetryData())
     testPacket.send()
     time.sleep(3)
-    Error.throw(0x0402)
 
 def parsePacket(packetData):
     packetData = Util.chartobytes(packetData)
@@ -23,23 +22,9 @@ def parsePacket(packetData):
     packetID = int(packetData[33:40], 2)
     return "Timestamp: " + str(packetTimestamp) + "  |  ID: " + str(packetID)
 
-# snedThread = threading.Thread(target=snedTestPacket)
-# snedThread.start()
+snedThread = threading.Thread(target=snedTestPacket)
+snedThread.start()
 
-"""
-SOCKET = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-SOCKET.bind(('192.168.0.1', 24))
-while True:
-    try:
-        SOCKET.listen(1)
-        client, clientAddr = SOCKET.accept()
-        data = client.recv(1024)
-        sys.stdout.write("Received: {0}\n".format(data))
-        sys.stdout.write("\n" + parsePacket(data) + "\n")
-    except socket.error:
-        pass
-
-"""
 
 """
 DrillMotor = TalonMC("P8_13")
@@ -52,3 +37,16 @@ while x < 1.0:
 DrillMotor.set(0.0)
 
 """
+
+SOCKET = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+SOCKET.bind(('192.168.0.90', 5000))
+while True:
+    try:
+        SOCKET.listen(1)
+        client, clientAddr = SOCKET.accept()
+        data = client.recv(1024)
+        sys.stdout.write("Received: {0}\n".format(data))
+        sys.stdout.write("\n" + parsePacket(data) + "\n")
+    except socket.error:
+        pass
+

@@ -7,6 +7,7 @@ Questions/Comments? Email: jadenjb@uw.edu
 (Untested as of 2/6/2017)
 
 """
+import sys
 import socket
 import Error
 import Parse
@@ -55,6 +56,7 @@ class CommHandler:
                 data = client.recv(cls.BYTE_BUFFER_SIZE)
                 cls._receiving = False
                 Parse.queueMessage(Message(data, clientAddr))
+                sys.stdout.write("Message received: " + str(data))
         except socket.error:
             # Throw "Failed to begin receive process"
             Error.throw(0x0502)

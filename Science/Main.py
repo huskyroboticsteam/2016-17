@@ -24,7 +24,7 @@ from Command import Command
 # Communication Setup
 MAIN_IP = '192.168.0.1'
 PRIMARY_TCP_SEND_PORT = 24
-INTERNAL_IP = '127.0.0.1'
+INTERNAL_IP = '192.168.0.90'
 INTERNAL_TCP_RECEIVE_PORT = 5000
 
 # Initialize hardware and communications
@@ -64,9 +64,9 @@ SensorHandler.startAll()
 
 # Create Command Interface
 drillController = DrillCtrl("P8_13", encoder1)
-rotateArmature = RotateArmature("P8_46", encoder2)
+rotateArmature = RotateArmature("P9_16", encoder2)
 armatureController = MoveDrill("P8_19", DistanceSensor)
-camFocusCommand = CamFocus("P8_45")
+camFocusCommand = CamFocus("P9_14")
 systemControl = SystemControl("P9_15")
 
 # Initialize All Commands (Set machine to relaxed state)
