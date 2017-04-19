@@ -75,6 +75,8 @@ class Robot(object):
                 ]
         self.r_comms = Robot_comms.Robot_comms("192.168.0.50", 8840, 8841, "<?hh", "<?ff", "<ffffffff")
         self.automode = 0
+        self.intialized = false
+        self.path_follower = PathFollower()
 
     def driveMotor(self, motor_id, motor_val):
         """
@@ -115,27 +117,25 @@ class Robot(object):
             return 0, 0
         auto = self.r_comms.receivedDrive[0]
         if auto:
-            if self.automode == 0:  # Auto drive normally
-                if self.nav.isObstacle():  # if obstacle in front then switch mode
-                    self.automode = 1
-                else:
-                    return 20, self.nav.calculateDesiredTurn(self.nav.getMag(), self.nav.calculateDesiredHeading())
-            if self.automode == 1:  # Turn rover head to left to prepare to scan
-                if self.nav.readPot() < self.nav.get_pot_left():
-                    leftheading = (self.nav.getMag() - 40) % 360
-                    if leftheading < 0:
-                        leftheading = 360 - leftheading
-                    return 0, self.nav.calculateDesiredTurn(self.nav.getMag(), leftheading)
-                else:
-                    self.automode = 2
-            if self.automode == 2:  # Scan in front of rover at an arch from left to right recording values
-                if self.nav.readPot() > self.nav.get_pot_right():
-                    self.nav.appendScannedHeadings()
-                    rightheading = (self.nav.getMag() + 40) % 360
-                    return 0, self.nav.calculateDesiredTurn(self.nav.getMag(), rightheading)
-                else:
-                    self.nav.addDestination()  # Get a new heading and add a temp value to coordinate list
-                    self.automode = 0  # start driving in auto normally
+            if not self.intialized:
+                location = self.nav.getGPS()
+                # TODO: read target from wireless
+                target = (random(), random())
+                # TODO: get obstacles from wireless or sensor
+                obstacles = []
+                buffer_width = 0.1
+                path = find_path(start, target, obstacles, buffer_width)
+                heading = self.nav.getMag()
+                self.path_follower.set_path(path)
+                self.initialized = True
+            if not self.path_follower.is_done(location):
+                heading = self.nav.getMag()
+                location = self.nav.getGPS()
+                turn = self.path_follower.go(location, heading)
+                return (100, turn)
+            return (0, 0)
+            self.initialized = False
+            #TODO: send back "we're here" signal
         else:
             return self.r_comms.receivedDrive[1], self.r_comms.receivedDrive[2]
 
