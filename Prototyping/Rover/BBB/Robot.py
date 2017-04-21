@@ -44,7 +44,7 @@ class Robot(object):
         """
         ADC.setup()
 
-        self.pot_pid = PID.PID(-0.1, 0, 0)
+        self.pot_pid = PID.PID(-0.4, 0, 0)
 
         self.nav = Navigation.Navigation(0.560000002384, 0.325555562973, 0.115000002086, 0.001, "AIN2")
         # setup motors
