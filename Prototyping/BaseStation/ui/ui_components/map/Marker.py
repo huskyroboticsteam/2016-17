@@ -32,9 +32,16 @@ class Marker:
         Draws a marker onto map.
         Blue marker if it is rover, red for other markers
         """
-        self.pen.setWidth(5)
+        font = QtGui.QFont()
+        font.setPixelSize(40)
+        painter.setFont(font)
         painter.setPen(self.pen)
-        painter.drawEllipse(int(self.x) - self.centerX - 10, int(self.y) - self.centerY - 10, 20, 20)
+        painter.drawText(int(self.x) - self.centerX - 10, int(self.y) - self.centerY + 10, "x")
+
+        #self.pen.setFont(5)
+        #painter.setPen(self.pen)
+
+        #painter.drawEllipse(int(self.x) - self.centerX - 10, int(self.y) - self.centerY - 10, 20, 20)
 
     def set_color(self, color):
         self.pen = QtGui.QPen(color)
