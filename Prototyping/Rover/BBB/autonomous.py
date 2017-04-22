@@ -4,7 +4,7 @@ from path_following import PathFollower
 # TODO: Integrate this code into main code.
 
 
-class PathControl:
+class Autonomous:
     """
     Plans and follows paths to avoid obstacles.
     Attributes:
