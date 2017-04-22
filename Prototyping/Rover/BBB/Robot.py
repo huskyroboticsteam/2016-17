@@ -12,8 +12,6 @@ import sys
 from autonomous import Autonomous
 from random import random
 
-# TODO document initialize, autonomous
-
 class Robot(object):
     """
     Class for controlling the whole robot.
@@ -24,6 +22,8 @@ class Robot(object):
         motors (list of Motor.Motor): The list (of length 4, 0-based) of motors.
         r_comms (Robot_comms.Robot_comms): Object for managing communicationg
             with the base station.
+        autonomous_initialized (bool): True iff we initialized and set target for the autonomous mode.
+        autonomous (Autonomous): Object for managing autonomous navigation (and path finding).
 
     ROBOT motor configuration:
 
@@ -130,6 +130,7 @@ class Robot(object):
             location = self.nav.getGPS()
             if self.autonomous.is_done(location):
                 # Reached the target
+                self.autonomous_initialized = False
                 # TODO: send back "we're here" signal
                 return 0, 0
             else:
