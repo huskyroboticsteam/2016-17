@@ -5,7 +5,7 @@ from ui_components.ip_scanner import IPCheckerLayout
 from ui_components.camera_streaming import UI
 from ui_components.emergency_stop import stop
 from ui_components.settings import settings
-from ui_components import Command, comms_update
+from ui_components import comms_update
 from ui_components.arm_viz import arm_widget
 from ui_components.sensors import SensorChecker
 from ui_components.list_widget import list_widget
@@ -44,8 +44,7 @@ iplist = IPCheckerLayout.IPList({"192.168.0.22": "Camera One", "192.168.0.42": "
 arm = arm_widget.arm_widget()
 list_wid = list_widget.ListWidget()
 map = Map.Map(setting_widget.get_map_name())
-command_line = Command.command(map, sock, list_wid)
-auto_lab = auto.Auto()
+auto_button = auto.Auto() # Mark
 
 '''Add all the custom widgets to the UI containers'''
 # Create the emergency stop button
@@ -60,19 +59,19 @@ main.joystick_container.addWidget(arm)
 main.reading_container.addWidget(sensors)
 # Add the map to the ui
 main.map_container.addWidget(map)
-# Add the command line to the ui
-main.map_container.addWidget(command_line)
 # Add the marker list view to the ui
 main.list_container.addWidget(list_wid)
 # Add the label that indicates autonomous mode to the ui
-main.list_container.addWidget(auto_lab)
+main.list_container.addWidget(auto_button)
 
 '''Connect all events for each of the components to talk to one another'''
-command_line.signalStatus.connect(sock.send_auto_mode)
-list_wid.signalStatus.connect(command_line.update)
+auto_button.sendData.connect(sock.send_auto_mode)
+auto_button.enableAutoTrigger.connect(sock.connection)
+auto_button.requestMarkers.connect(list_wid.get_markers)
+list_wid.giveMarkers.connect(auto_button.set_markers)
+
 sock.signalStatus.connect(sensors.update_ui)
 sock.signalUpdate.connect(map.update_rover_pos)
-command_line.autoTrigger.connect(auto_lab.toggle_ui)
 map.signal.connect(list_wid.add_to_ui)
 map.updateList.connect(list_wid.update_from_ui)
 stop_widget.stopEvent.connect(sock.stopping)

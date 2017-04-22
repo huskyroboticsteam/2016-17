@@ -24,6 +24,7 @@ class CommsUpdate(QtGui.QWidget):
         super(self.__class__,self).__init__()
 
         # Indicates whether the rovers is in autonomous mode
+        self.auto_sock = None
         self.auto = False
 
         # Indicates whether emergency stop has been pressed (CANNOT BE UNDONE)
@@ -58,6 +59,14 @@ class CommsUpdate(QtGui.QWidget):
         """
         self.rover_sock.close()
 
+    def connection(self, send_status, enable_connection):
+        self.auto = send_status
+
+        if enable_connection:
+            self.open_tcp()
+        else:
+            self.close_tcp()
+
     def open_tcp(self):
         """
         Opens a new TCP connection to the rover
@@ -72,7 +81,9 @@ class CommsUpdate(QtGui.QWidget):
         Closes the open TCP connection
         :return: None
         """
-        self.auto_sock.close()
+        if self.auto_sock is not None:
+            self.auto_sock.close()
+            self.auto_sock = None
 
     def send_message(self):
         """
@@ -111,7 +122,6 @@ class CommsUpdate(QtGui.QWidget):
 
         # Put the first boolean value in the buffer
         buff = struct.pack("<?ff", more, lat, lng)
-
         self.auto_sock.send(buff)
 
     def receive_message(self):
