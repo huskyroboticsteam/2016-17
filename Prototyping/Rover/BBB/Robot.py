@@ -9,7 +9,10 @@ import Robot_comms
 import Navigation
 import Utils
 import sys
+from autonomous import Autonomous
+from random import random
 
+# TODO document initialize, autonomous
 
 class Robot(object):
     """
@@ -72,9 +75,8 @@ class Robot(object):
                 BigMotor.BigMotor(4, "P9_22")
                 ]
         self.r_comms = Robot_comms.Robot_comms("192.168.0.50", 8840, 8841, "<?hh", "<?ff", "<ffffffff")
-        self.automode = 0
-        self.intialized = false
-        self.path_follower = PathFollower()
+        self.autonomous_initialized = false
+        self.autonomous = Autonomous()
 
     def driveMotor(self, motor_id, motor_val):
         """
@@ -115,25 +117,25 @@ class Robot(object):
             return 0, 0
         auto = self.r_comms.receivedDrive[0]
         if auto:
-            if not self.intialized:
-                location = self.nav.getGPS()
+            if not self.autonomous_intialized:
                 # TODO: read target from wireless
                 target = (random(), random())
                 # TODO: get obstacles from wireless or sensor
                 obstacles = []
-                buffer_width = 0.1
-                path = find_path(start, target, obstacles, buffer_width)
+                self.set_target(target)
+                self.autonomous.clear_all_obstacles()
+                for coord in obstacles:
+                    self.autonomous.add_obstacle(coord)
+                self.autonomous_initialized = True
+            location = self.nav.getGPS()
+            if self.autonomous.is_done(location):
+                # Reached the target
+                # TODO: send back "we're here" signal
+                return 0, 0
+            else:
                 heading = self.nav.getMag()
-                self.path_follower.set_path(path)
-                self.initialized = True
-            if not self.path_follower.is_done(location):
-                heading = self.nav.getMag()
-                location = self.nav.getGPS()
-                turn = self.path_follower.go(location, heading)
-                return (100, turn)
-            return (0, 0)
-            self.initialized = False
-            #TODO: send back "we're here" signal
+                turn = self.autonomous.go(location, heading)
+                return 100, turn
         else:
             return self.r_comms.receivedDrive[1], self.r_comms.receivedDrive[2]
 
