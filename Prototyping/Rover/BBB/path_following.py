@@ -5,7 +5,7 @@ from Utils import normalize_angle
 class PathFollower:
     """
     Uses a PID loop to steer the robot to follow a path.
-    Used by path_control.py
+    Used by autonomous.py
     Attributes:
         path (list of tuple of (float, float)): The list of current destinations to go to.
         pid (PID): The PID controller for the angle

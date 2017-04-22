@@ -7,7 +7,7 @@ def find_path(start, target, obstacles, buffer_width):
     """
     Finds a path from one point to another while not getting near obstacles
     Assumes that the actual start and target points are outside of obstacles, but the values given might be inaccurate.
-    Used by path_control.py
+    Used by autonomous.py
     Args:
         start, target (tuple of (float, float)): starting points and target points
         obstacles (list of tuple of (float, float)): list of obstacles

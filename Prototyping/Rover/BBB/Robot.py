@@ -9,7 +9,8 @@ import Robot_comms
 import Navigation
 import Utils
 import sys
-
+from autonomous import Autonomous
+from random import random
 
 class Robot(object):
     """
@@ -21,8 +22,8 @@ class Robot(object):
         motors (list of Motor.Motor): The list (of length 4, 0-based) of motors.
         r_comms (Robot_comms.Robot_comms): Object for managing communicationg
             with the base station.
-        automode (int): Code for what mode the rover is in in regards to
-            autonomous driving.
+        autonomous_initialized (bool): True iff we initialized and set target for the autonomous mode.
+        autonomous (Autonomous): Object for managing autonomous navigation (and path finding).
 
     ROBOT motor configuration:
 
@@ -74,9 +75,8 @@ class Robot(object):
                 BigMotor.BigMotor(4, "P9_22")
                 ]
         self.r_comms = Robot_comms.Robot_comms("192.168.0.50", 8840, 8841, "<?hh", "<?ff", "<ffffffff")
-        self.automode = 0
-        self.intialized = false
-        self.path_follower = PathFollower()
+        self.autonomous_initialized = False
+        self.autonomous = Autonomous()
 
     def driveMotor(self, motor_id, motor_val):
         """
@@ -117,33 +117,28 @@ class Robot(object):
             return 0, 0
         auto = self.r_comms.receivedDrive[0]
         if auto:
-            if not self.intialized:
-                location = self.nav.getGPS()
+            if not self.autonomous_initialized:
                 # TODO: read target from wireless
                 target = (random(), random())
                 # TODO: get obstacles from wireless or sensor
                 obstacles = []
-                buffer_width = 0.1
-                path = find_path(start, target, obstacles, buffer_width)
+                self.autonomous.set_target(target)
+                self.autonomous.clear_all_obstacles()
+                for coord in obstacles:
+                    self.autonomous.add_obstacle(coord)
+                self.autonomous_initialized = True
+            location = self.nav.getGPS()
+            if self.autonomous.is_done(location):
+                # Reached the target
+                self.autonomous_initialized = False
+                # TODO: send back "we're here" signal
+                return 0, 0
+            else:
                 heading = self.nav.getMag()
-                self.path_follower.set_path(path)
-                self.initialized = True
-            if not self.path_follower.is_done(location):
-                heading = self.nav.getMag()
-                location = self.nav.getGPS()
-                turn = self.path_follower.go(location, heading)
-                return (100, turn)
-            return (0, 0)
-            self.initialized = False
-            #TODO: send back "we're here" signal
+                turn = self.autonomous.go(location, heading)
+                return 100, turn
         else:
             return self.r_comms.receivedDrive[1], self.r_comms.receivedDrive[2]
-
-    # returns automatic drive parms from gps, mag, sonar and destination
-    # TODO: figure out a way to change throttle while on autopilot?
-    def getAutoDriveParms(self):
-        # print self.getGPS()
-        return 10, self.nav.calculateDesiredTurn(self.nav.getMag(), self.nav.calculateDesiredHeading())
 
     # returns a tuple of (motor1, motor2, motor3, motor4) from the driveParms modified by the pot reading
     def convertParmsToMotorVals(self, driveParms):
