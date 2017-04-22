@@ -75,7 +75,7 @@ class Robot(object):
                 BigMotor.BigMotor(4, "P9_22")
                 ]
         self.r_comms = Robot_comms.Robot_comms("192.168.0.50", 8840, 8841, "<?hh", "<?ff", "<ffffffff")
-        self.autonomous_initialized = false
+        self.autonomous_initialized = False
         self.autonomous = Autonomous()
 
     def driveMotor(self, motor_id, motor_val):
@@ -117,12 +117,12 @@ class Robot(object):
             return 0, 0
         auto = self.r_comms.receivedDrive[0]
         if auto:
-            if not self.autonomous_intialized:
+            if not self.autonomous_initialized:
                 # TODO: read target from wireless
                 target = (random(), random())
                 # TODO: get obstacles from wireless or sensor
                 obstacles = []
-                self.set_target(target)
+                self.autonomous.set_target(target)
                 self.autonomous.clear_all_obstacles()
                 for coord in obstacles:
                     self.autonomous.add_obstacle(coord)
