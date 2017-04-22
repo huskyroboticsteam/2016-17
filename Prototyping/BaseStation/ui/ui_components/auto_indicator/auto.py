@@ -28,6 +28,8 @@ class Auto(QtGui.QWidget):
         self.label.setText("Autonomous")
 
         self.button = QtGui.QPushButton()
+        policy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        self.button.setSizePolicy(policy)
         self.button.setFont(self.font)
         self.button.setText("Disabled")
         self.button.clicked.connect(self.pressed)

@@ -19,10 +19,8 @@ class ListWidget(QtGui.QListWidget):
     def __init__(self):
         super(self.__class__, self).__init__()
 
-        self.setMaximumHeight(75)
-
         # Force it to be smaller than the map
-        policy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Maximum)
+        policy = QtGui.QSizePolicy(QtGui.QSizePolicy.MinimumExpanding, QtGui.QSizePolicy.Maximum)
         self.setSizePolicy(policy)
         self.index = None
         self.itemClicked.connect(self.highlight_marker)

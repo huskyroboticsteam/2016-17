@@ -1,9 +1,12 @@
 1. Open TCP connection to send autonomous data in a separate thread (so it doesn't lock the UI if failed)
 
-2. Make the auto button fill the space
+2. Load in the map data on separate threads
 
-3. Add science telemetry to the sensor module
 
-4. Figure out how to make science stuff send us a picture
+3. Force Joystick data to go to zero if the joystick was disconnected so the rover stops
+
+4. Add science telemetry to the sensor module
+
+5. Figure out how to make science stuff send us a picture
 
 Arm?????
