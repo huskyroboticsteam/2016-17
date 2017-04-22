@@ -1,8 +1,6 @@
 from path_finding import find_path
 from path_following import PathFollower
 
-# TODO: Integrate this code into main code.
-
 
 class Autonomous:
     """
