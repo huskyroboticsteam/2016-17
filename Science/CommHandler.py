@@ -58,7 +58,7 @@ class CommHandler:
                     break
                 CommHandler._receiving = False
                 Parse.queueMessage(Message(data, clientAddr))
-                sys.stdout.write("\nMessage received: " + str(data) + "\n")
+                sys.stdout.write("\nMessage received: " + str(Util.chartobytes(data)) + "\n")
                 client.close()
         except socket.error:
             # Throw "Failed to begin receive process"
