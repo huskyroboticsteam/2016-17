@@ -2,6 +2,7 @@ import Adafruit_BBIO.ADC as ADC
 import Adafruit_PCA9685
 import PID
 import math
+import Servo_Sweep
 import threading
 import MiniMotor
 import BigMotor
@@ -47,6 +48,8 @@ class Robot(object):
 
         self.pot_pid = PID.PID(-0.4, 0, 0)
 
+        self.Sweeper = Servo_Sweep.Servo_Sweep()
+
         self.nav = Navigation.Navigation(0.560000002384, 0.325555562973, 0.115000002086, 0.001, "AIN2")
         # setup motors
         # motor: throttle, F, B
@@ -77,6 +80,9 @@ class Robot(object):
         self.r_comms = Robot_comms.Robot_comms("192.168.0.50", 8840, 8841, "<?hh", "<?ff", "<ffffffff")
         self.autonomous_initialized = False
         self.autonomous = Autonomous()
+
+    def moveServo(self):
+        self.Sweeper.move()
 
     def driveMotor(self, motor_id, motor_val):
         """
@@ -287,6 +293,7 @@ def main():
         robot = Robot(sys.argv[1])
         try:
             while True:
+                robot.moveServo() # Might not move very fast with print statements
                 robot.get_robot_comms().receiveData(robot.get_nav())
                 robot.get_robot_comms().sendData(robot.get_nav())
                 driveParms = robot.getDriveParms()
