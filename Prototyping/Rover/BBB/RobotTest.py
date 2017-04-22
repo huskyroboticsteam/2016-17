@@ -74,12 +74,6 @@ class Robot(object):
         else:
             return self.r_comms.receivedDrive[1], self.r_comms.receivedDrive[2]
 
-    # returns automatic drive parms from gps, mag, sonar and destination
-    # TODO: figure out a way to change throttle while on autopilot?
-    def getAutoDriveParms(self):
-        # print self.getGPS()
-        return 10, self.nav.calculateDesiredTurn(self.nav.getMag())
-
     # returns a tuple of (motor1, motor2, motor3, motor4) from the driveParms modified by the pot reading
     def convertParmsToMotorVals(self, driveParms):
         potReading = self.nav.readPot()

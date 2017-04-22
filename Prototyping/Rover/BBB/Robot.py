@@ -21,8 +21,6 @@ class Robot(object):
         motors (list of Motor.Motor): The list (of length 4, 0-based) of motors.
         r_comms (Robot_comms.Robot_comms): Object for managing communicationg
             with the base station.
-        automode (int): Code for what mode the rover is in in regards to
-            autonomous driving.
 
     ROBOT motor configuration:
 
@@ -138,12 +136,6 @@ class Robot(object):
             #TODO: send back "we're here" signal
         else:
             return self.r_comms.receivedDrive[1], self.r_comms.receivedDrive[2]
-
-    # returns automatic drive parms from gps, mag, sonar and destination
-    # TODO: figure out a way to change throttle while on autopilot?
-    def getAutoDriveParms(self):
-        # print self.getGPS()
-        return 10, self.nav.calculateDesiredTurn(self.nav.getMag(), self.nav.calculateDesiredHeading())
 
     # returns a tuple of (motor1, motor2, motor3, motor4) from the driveParms modified by the pot reading
     def convertParmsToMotorVals(self, driveParms):
