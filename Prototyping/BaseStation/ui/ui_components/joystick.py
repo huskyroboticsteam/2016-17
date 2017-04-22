@@ -19,8 +19,6 @@ class Joystick(QtGui.QWidget):
     def __init__(self):
         self.sdl_instance = SDLInstance()    # Initializes PySDL2 to read and stores joystick input
 
-
-
         self.joy_num = sdl2.SDL_NumJoysticks()
         self.sdl_instance.init_joy_vars(self.joy_num)
         self.rd = ReceiveData(self.sdl_instance, self.joy_num)
