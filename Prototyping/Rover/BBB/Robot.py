@@ -46,7 +46,7 @@ class Robot(object):
         """
         ADC.setup()
 
-        self.pot_pid = PID.PID(-0.4, 0, 0)
+        self.pot_pid = PID.PID(-0.3, 0, 0)
 
         self.Sweeper = Servo_Sweep.Servo_Sweep()
 
@@ -58,19 +58,17 @@ class Robot(object):
         # 3: 2,  4,  3
         # 4: 7,  6,  5
 
-        if not is_using_big_motor:
+        if is_using_big_motor == 0:
             # setup i2c to motorshield
             pwm = Adafruit_PCA9685.PCA9685(address=0x60, busnum=1)
             pwm.set_pwm_freq(60)
             self.motors = [
-
-                None,  # motor IDs are 1-based, so placeholder for index 0
-                MiniMotor.MiniMotor(1, 8, 9, 10, pwm),
+		MiniMotor.MiniMotor(1, 8, 9, 10, pwm),
                 MiniMotor.MiniMotor(2, 13, 12, 11, pwm),
                 MiniMotor.MiniMotor(3, 2, 4, 3, pwm),
                 MiniMotor.MiniMotor(4, 7, 6, 5, pwm),
             ]
-        elif is_using_big_motor:
+        elif is_using_big_motor == 1:
             self.motors = [
                 BigMotor.BigMotor(1, "P9_21"),
                 BigMotor.BigMotor(2, "P9_16"),
