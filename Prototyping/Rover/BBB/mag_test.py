@@ -1,11 +1,11 @@
-import Orientation
+from mag import Magnetometer
 import time
 
 
 def main():
-    orientation = Orientation.Orientation()
+    mag = Magnetometer()
     while True:
-        print orientation.get_heading()
+        print mag.read()
         time.sleep(0.1)
 
 if __name__ == '__main__':

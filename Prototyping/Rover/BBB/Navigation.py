@@ -52,7 +52,6 @@ class Navigation:
         return result
 
     # returns heading of front body or -1 if error
-    # TODO: Use code from Orientation.py and test it.
     def getMag(self):
         rawMag = self.mag.read()
         print "back: " + str(rawMag)
