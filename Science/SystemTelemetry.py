@@ -25,8 +25,9 @@ class SystemTelemetry:
 
     @classmethod
     def getTelemetryData(cls):
-        data = ""
+        data = 0
         telemetry_keys = cls.telemetry.keys()
         for i in range(0, len(telemetry_keys)):
-            data += Util.inttobin(cls.telemetry[telemetry_keys[i]][0], cls.telemetry[telemetry_keys[i]][1])
+            buffer = Util.byteMap(cls.telemetry[telemetry_keys[i]][0], cls.telemetry[telemetry_keys[i]][1])
+            data |= data << cls.telemetry[telemetry_keys[i]][1] | buffer
         return data

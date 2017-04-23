@@ -24,6 +24,7 @@ Queue a message to the handler
 def queueMessage(msg):
     global msgQueue
     msgQueue += [msg]
+    sys.stdout.write(str(msg))
 
 """
 Get Message from Queue

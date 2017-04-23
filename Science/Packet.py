@@ -22,7 +22,7 @@ class Packet:
     DEFAULT_TARGET_PORT = 24
 
     def __init__(self, id=0x00, targetIP=None, targetPort=None):
-        self._data = ""
+        self._data = 0
         self._id = id
         self._recieved = ""
         if targetPort == None:
@@ -35,14 +35,16 @@ class Packet:
 
     # Appends 32bit UNIX timestamp to beginning of packet
     def addTimeID(self):
-        timestamp = Util.inttobin(int(time.time()), 32)
-        id = Util.inttobin(self._id)
-        self._data = timestamp + id + self._data
+        timestamp = Util.byteMap(int(time.time()), 32)
+        id = Util.byteMap(self._id, 8)
+        time_id = (timestamp << 8) | id
+        self._data |= time_id << Util.binaryLength(self._data)
 
     # Append bitwise list to current packet buffer
     # EG [0,1,1,0]
     def appendData(self, data):
-        self._data += str(data)
+        data = int(data)
+        self._data = self._data << Util.binaryLength(data) | data
 
     def getRecieved(self):
         return self._recieved
@@ -54,13 +56,13 @@ class Packet:
     # Sends data to constructor-specified client
     # Returns whether or not send is successful
     def send(self):
-        if self._data == Util.inttobin(0x0503, 16) and not getConnectionStatus():
+        if self._data == 0x0503 and not getConnectionStatus():
             return False
         try:
             self.addTimeID()  # Always add time and id to the packet
             s = socket.socket()
             s.connect((self._targetIP, self._targetPort))
-            s.send(Util.full_bin_to_chr(self._data))
+            s.send(Util.long_to_bytes(self._data))
             s.close()
         except socket.error:
             # Throw "Failed to send packet"

@@ -18,7 +18,7 @@ from threading import Thread
 class CommHandler:
 
     SOCKET = None
-    BYTE_BUFFER_SIZE = 1024
+    BYTE_BUFFER_SIZE = 2048
 
     def __init__(self, internalIP, receivePort):
         CommHandler._internalIP = internalIP
@@ -58,7 +58,6 @@ class CommHandler:
                     break
                 CommHandler._receiving = False
                 Parse.queueMessage(Message(data, clientAddr))
-                sys.stdout.write("\nMessage received: " + str(Util.chartobytes(data)) + "\n")
                 client.close()
         except socket.error:
             # Throw "Failed to begin receive process"
@@ -88,7 +87,9 @@ class CommHandler:
 class Message:
 
     def __init__(self, data, fromAddr):
-        self.data = Util.chartobytes(data)
-        self.ID = int(self.data[32:40], 2)
+        self.data = Util.long_to_bytes(data)
+        self.ID = ord(self.data[4])
         self.fromAddr = fromAddr
 
+    def __str__(self):
+        return "\nID: " + hex(self.ID) + "\tData:" + str(self.data) + "\n"
