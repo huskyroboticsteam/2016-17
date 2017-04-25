@@ -1,6 +1,6 @@
 import NetworkChecker
 from PyQt4 import QtGui, QtCore
-import subprocess, os
+import subprocess, os, time
 
 
 class IPList(QtGui.QWidget):
@@ -23,20 +23,13 @@ class IPList(QtGui.QWidget):
         self.setLayout(self.build_list())
 
         # Operate the updates on a new separate thread so we don't block the UI thread
-        self.worker = MyThread(self.map)
-        self.worker_thread = QtCore.QThread()
-        self.worker.moveToThread(self.worker_thread)
+        self.worker = PingThread(update_time, self.map)
 
         # Start the thread; is stopped when the application closes
-        self.worker_thread.start()
+        self.worker.start()
 
         # If the thread emits on signalStatus run the update ui method
         self.worker.signalStatus.connect(self.update_ui)
-
-        # Refresh the IP list every given time
-        timer = QtCore.QTimer(self)
-        timer.timeout.connect(self.worker.start_work)
-        timer.start(update_time)
 
     def update_ui(self, results):
         """
@@ -110,7 +103,7 @@ class IPList(QtGui.QWidget):
         return vbox
 
 
-class MyThread(QtCore.QObject):
+class PingThread(QtCore.QThread):
 
     """
     Pings all ips in a given list and creates a dictionary mapping the ip to the active status as a boolean
@@ -121,24 +114,28 @@ class MyThread(QtCore.QObject):
     signalStatus = QtCore.pyqtSignal([list])
 
     # Takes in the ips we want to check
-    def __init__(self, paths):
-        super(MyThread, self).__init__()
+    def __init__(self, update_time, paths):
+        super(PingThread, self).__init__()
         self.paths = paths
+        self.update_time = update_time
 
     def start_work(self):
         """
         Pings through all ips in the list, making the ip to boolean map and emitting it
         :return: Emits a dictionary
         """
-        results = []
+        while True:
+            results = []
 
-        # Ping all ips in the list
-        for key, value in self.paths.iteritems():
-            results.append((key, self.ping(key)))
+            # Ping all ips in the list
+            for key, value in self.paths.iteritems():
+                results.append((key, self.ping(key)))
 
-        # Tell PyQt the work is done and send the results to listeners
-        # Results list is contains tuples of (ip, isActive boolean)
-        self.signalStatus.emit(results)
+            # Tell PyQt the work is done and send the results to listeners
+            # Results list is contains tuples of (ip, isActive boolean)
+            self.signalStatus.emit(results)
+
+            time.sleep(self.update_time)
 
     # Ping the remote host
     def ping(self, hostname):

@@ -13,13 +13,12 @@ from ui_components.auto_indicator import auto
 
 
 def quitting():
-    # Close all open sockets
+    # Close all connection threads
     sock.shutdown()
     # Shutdown the networking thread
-    iplist.worker_thread.quit()
+    iplist.worker.quit()
     # Save the changes to the settings by the user
     setting_widget.save()
-
 
 # Specifying the new PyQt4 applicataion and main window
 app = QtGui.QApplication(sys.argv)
@@ -35,7 +34,7 @@ win.resize(1200, 675)
 
 '''Create all the custom widgets for the UI'''
 sensors = SensorChecker.SensorData()
-sock = comms_update.CommsUpdate()
+sock = comms_update.ConnectionManager()
 setting_widget = settings.Settings(main)
 stop_widget = stop.Stop()
 
@@ -65,16 +64,16 @@ main.list_container.addWidget(list_wid)
 main.list_container.addWidget(auto_button)
 
 '''Connect all events for each of the components to talk to one another'''
-auto_button.sendData.connect(sock.send_auto_mode)
-auto_button.enableAutoTrigger.connect(sock.connection)
-auto_button.requestMarkers.connect(list_wid.get_markers)
-list_wid.giveMarkers.connect(auto_button.set_markers)
+auto_button.enableAutoTrigger.connect(sock.enable_tcp)
+auto_button.enableAutoTrigger.connect(sock.drive.enable_tcp)
+sock.tcp.requestMarkers.connect(list_wid.get_markers)
+list_wid.giveMarkers.connect(sock.tcp.set_markers)
 
-sock.signalStatus.connect(sensors.update_ui)
-sock.signalUpdate.connect(map.update_rover_pos)
+sock.drive.sensorUpdate.connect(sensors.update_ui)
+sock.drive.gpsUpdate.connect(map.update_rover_pos)
 map.signal.connect(list_wid.add_to_ui)
 map.updateList.connect(list_wid.update_from_ui)
-stop_widget.stopEvent.connect(sock.stopping)
+stop_widget.stopEvent.connect(sock.drive.stopping)
 list_wid.callToDelete.connect(map.remove_marker)
 list_wid.highlightMarker.connect(map.highlight_marker)
 list_wid.replaceMarker.connect(map.replace_marker)

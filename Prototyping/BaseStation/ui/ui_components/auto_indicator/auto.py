@@ -7,9 +7,7 @@ class Auto(QtGui.QWidget):
     """
 
     # Expects auto comms status, connection open?
-    enableAutoTrigger = QtCore.pyqtSignal(bool, bool)
-    requestMarkers = QtCore.pyqtSignal()
-    sendData = QtCore.pyqtSignal(bool, float, float)
+    enableAutoTrigger = QtCore.pyqtSignal(bool)
 
     def __init__(self):
         super(self.__class__, self).__init__()
@@ -39,35 +37,17 @@ class Auto(QtGui.QWidget):
 
         self.setLayout(self.vbox)
 
-    def pressed(self, e):
+    def pressed(self):
 
         if self.enabled:
             self.enabled = False
             self.button.setText("Disabled")
             # Stop sending auto over udp, keep tcp closed
-            self.enableAutoTrigger.emit(False, False)
+            self.enableAutoTrigger.emit(False)
         else:
             self.enabled = True
-            self.requestMarkers.emit()
             self.button.setText("Enabled")
-            self.send_data()
-
-    def send_data(self):
-        # Set comms to send true, set it to open connection
-        self.enableAutoTrigger.emit(True, True)
-
-        for i in range(0, len(self.markers)):
-
-            lat = float(self.markers[i][0])
-            lng = float(self.markers[i][1])
-
-            if i == len(self.markers) - 1:
-                self.sendData.emit(False, lat, lng)
-            else:
-                self.sendData.emit(True, lat, lng)
-
-        # Keep sending auto: true over udp but close tcp connection
-        self.enableAutoTrigger.emit(True, False)
+            self.enableAutoTrigger.emit(True)
 
     def set_markers(self, markers):
         self.markers = markers

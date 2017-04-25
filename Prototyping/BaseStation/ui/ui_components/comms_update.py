@@ -1,30 +1,43 @@
-from PyQt4 import QtCore, QtGui
-import socket, struct
+from PyQt4 import QtCore
+import socket
+import struct
 import joystickv1
 
 
-class CommsUpdate(QtGui.QWidget):
-
-    """
-    Operates UDP and TCP connection between itself and the rover systems
-    """
-
-    # In order, rover ip, this computer, rover udp listening port
-    ROVER_HOST = "192.168.0.50"
-    LOCAL_HOST = "127.0.0.1"
-    ROVER_PORT = 8840
-
-    # Rover tcp listening port
-    ROVER_TCP_PORT = 8841
-
-    signalStatus = QtCore.pyqtSignal([dict])
-    signalUpdate = QtCore.pyqtSignal([tuple])
-
+class ConnectionManager:
     def __init__(self):
-        super(self.__class__,self).__init__()
+
+        self.ROVER_HOST = "192.168.0.50"
+        self.LOCAL_HOST = "127.0.0.1"
+        self.ROVER_TCP_PORT = 8841
+        self.ROVER_PORT = 8840
+
+        self.tcp = TCPConnection(self.ROVER_HOST, self.ROVER_TCP_PORT)
+        # Kill the thread when the work is done
+        self.tcp.finished.connect(self.tcp.quit)
+
+        self.drive = DriveConnection(self.ROVER_HOST, self.ROVER_PORT)
+        self.drive.start()
+
+    def enable_tcp(self, enable):
+        if enable:
+            self.tcp.start()
+
+    # Safely close all threads
+    def shutdown(self):
+        self.tcp.quit()
+        self.drive.quit()
+
+
+class DriveConnection(QtCore.QThread):
+
+    sensorUpdate = QtCore.pyqtSignal([dict])
+    gpsUpdate = QtCore.pyqtSignal([tuple])
+
+    def __init__(self, host, port):
+        super(self.__class__, self).__init__()
 
         # Indicates whether the rovers is in autonomous mode
-        self.auto_sock = None
         self.auto = False
 
         # Indicates whether emergency stop has been pressed (CANNOT BE UNDONE)
@@ -49,41 +62,11 @@ class CommsUpdate(QtGui.QWidget):
             self.timer.timeout.connect(self.receive_message)
             self.timer.start(10)
 
+    def enable_tcp(self, enable):
+        self.auto = enable
+
     def stopping(self):
         self.stop = True
-
-    def shutdown(self):
-        """
-        Called when the UI is being closed by the user, closes the UDP connection for anymore data
-        :return: None
-        """
-        self.rover_sock.close()
-
-    def connection(self, send_status, enable_connection):
-        self.auto = send_status
-
-        if enable_connection:
-            self.open_tcp()
-        else:
-            self.close_tcp()
-
-    def open_tcp(self):
-        """
-        Opens a new TCP connection to the rover
-        :return: None
-        """
-        # TCP connection to the rover
-        self.auto_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.auto_sock.connect((self.ROVER_HOST, self.ROVER_TCP_PORT))
-
-    def close_tcp(self):
-        """
-        Closes the open TCP connection
-        :return: None
-        """
-        if self.auto_sock is not None:
-            self.auto_sock.close()
-            self.auto_sock = None
 
     def send_message(self):
         """
@@ -114,15 +97,7 @@ class CommsUpdate(QtGui.QWidget):
         try:
             self.rover_sock.sendto(buff, (self.ROVER_HOST, self.ROVER_PORT))
         except:
-            print "Failed to send"
-
-        # TODO: Add sending code for the arm
-
-    def send_auto_mode(self, more, lat, lng):
-
-        # Put the first boolean value in the buffer
-        buff = struct.pack("<?ff", more, lat, lng)
-        self.auto_sock.send(buff)
+            pass
 
     def receive_message(self):
         """
@@ -151,13 +126,65 @@ class CommsUpdate(QtGui.QWidget):
             dictionary = {"Potentiometer": str(pot), "Magnetometer": str(mag),
                       "Encoder 1": str(enc_1), "Encoder 2": str(enc_2), "Encoder 3": str(enc_3), "Encoder 4": str(enc_4)}
 
-            self.signalStatus.emit(dictionary)
+            self.sensorUpdate.emit(dictionary)
+            self.gpsUpdate.emit((lat, lng))
 
-            print lat, lng
 
-            self.signalUpdate.emit((lat, lng))
+# Open a TCP connect in a separate thread
+class TCPConnection(QtCore.QThread):
 
-            # TODO: add arm packets structure
+    requestMarkers = QtCore.pyqtSignal()
+
+    def __init__(self, host, port):
+        super(self.__class__, self).__init__()
+
+        self.ROVER_HOST = host
+        self.ROVER_TCP_PORT = port
+        self.auto_sock = None
+        self.markers = []
+
+    def set_markers(self, markers):
+        self.markers = markers
+
+    def run(self):
+        # Ask the map for markers
+        self.requestMarkers.emit()
+
+        # TCP connection to the rover
+        try:
+            self.auto_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.auto_sock.connect((self.ROVER_HOST, self.ROVER_TCP_PORT))
+        except socket.error:
+            print "Failed to connect over TCP"
+        else:
+            # TODO: Emit some data allowing button label to change to enabled
+            self.send_data()
+
+    def send_data(self):
+        for i in range(0, len(self.markers)):
+
+            lat = float(self.markers[i][0])
+            lng = float(self.markers[i][1])
+
+            if i == len(self.markers) - 1:
+                self.send_auto_mode(False, lat, lng)
+            else:
+                self.send_auto_mode(True, lat, lng)
+
+        self.close_tcp()
+
+    def send_auto_mode(self, more, lat, lng):
+
+        # Put the first boolean value in the buffer
+        buff = struct.pack("<?ff", more, lat, lng)
+        self.auto_sock.send(buff)
+
+    def close_tcp(self):
+        if self.auto_sock is not None:
+            self.auto_sock.close()
+            self.auto_sock = None
+
+
 
 
 # translate values from one range to another
