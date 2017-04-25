@@ -121,6 +121,7 @@ class Robot(object):
             return 0, 0
         auto = self.r_comms.receivedDrive[0]
         if auto:
+            location = (self.r_comms.lat, self.r_comms.long)
             if not self.autonomous_initialized:
                 # TODO: read target from wireless
                 target = (random(), random())
@@ -131,7 +132,6 @@ class Robot(object):
                 for coord in obstacles:
                     self.autonomous.add_obstacle(coord)
                 self.autonomous_initialized = True
-            location = self.nav.getGPS()
             if self.autonomous.is_done(location):
                 # Reached the target
                 self.autonomous_initialized = False

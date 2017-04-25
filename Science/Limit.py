@@ -43,4 +43,5 @@ class Limit(Sensor):
 
     # Returns data for packet
     def getDataForPacket(self):
-        return Util.inttobin(int(self.getValue()), 1)
+        return Util.byteMap(int(self.getValue()), 1)
+

@@ -2,24 +2,28 @@ import Error
 import sys
 import socket
 import time
+import math
 import Util
 import threading
 from Packet import Packet
 from SystemTelemetry import SystemTelemetry
 
 def snedTestPacket():
-    time.sleep(10)
-    testPacket = Packet(0x81, '192.168.0.90', 5000)
-    testPacket.appendData(SystemTelemetry.getTelemetryData())
-    testPacket.send()
-    time.sleep(3)
+    while True:
+        time.sleep(10)
+        testPacket = Packet(0x81, '192.168.0.90', 5000)
+        testPacket.appendData(SystemTelemetry.getTelemetryData())
+        testPacket.send()
+        time.sleep(3)
 
 def snedTestPacket2():
-    time.sleep(10)
-    testPacket = Packet(0x80, '192.168.0.90', 5000)
-    testPacket.appendData(0x00492063616E2068617A20706963747572653F)
-    testPacket.send()
-    time.sleep(3)
+    i = 0
+    while True:
+        i += 1
+        time.sleep(5)
+        testPacket = Packet(i, '192.168.0.90', 5000)
+        testPacket.appendData(i*i)
+        testPacket.send()
 
 def parsePacket(packetData):
     packetData = Util.chartobytes(packetData)

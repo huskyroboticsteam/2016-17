@@ -12,7 +12,9 @@ Tested/Untested states of methods are given in
 method comments below.
 
 """
-
+import sys
+import math
+from binascii import unhexlify
 
 ADC_SETUP = False
 
@@ -44,6 +46,69 @@ TESTED? Yes
 def inttobin(n, bits=8):
     return ('{0:0' + str(bits) + 'b}').format(n)
 
+"""
+Returns an int with binary length = 'bits'
+n = signed integer value to convert into binary
+bits = number of bits to represent n (default = 8)
+* If 'n' cannot be represented in 'bits' number of
+bits, it will return a binary int with the smallest
+number of bits needed to represent 'n'
+TESTED? Yes
+"""
+def byteMap(data, bits=8):
+    digits = binaryLength(data)
+    if digits < bits:
+        return data << int(bits - digits)
+    else:
+        return data
+
+"""
+"""
+def binaryLength(n):
+    if n > 0:
+        digits = int(math.log(n, 2)) + 1
+    elif n == 0:
+        digits = 1
+    else:
+        digits = int(math.log(-n, 2)) + 2
+    return int(digits)
+
+"""
+Copied from StackOverflow
+"""
+def long_to_bytes (val, endianness='big'):
+    """
+    Use :ref:`string formatting` and :func:`~binascii.unhexlify` to
+    convert ``val``, a :func:`long`, to a byte :func:`str`.
+
+    :param long val: The value to pack
+
+    :param str endianness: The endianness of the result. ``'big'`` for
+      big-endian, ``'little'`` for little-endian.
+
+    If you want byte- and word-ordering to differ, you're on your own.
+
+    Using :ref:`string formatting` lets us use Python's C innards.
+    """
+
+    # one (1) hex digit per four (4) bits
+    width = val.bit_length()
+
+    # unhexlify wants an even multiple of eight (8) bits, but we don't
+    # want more digits than we need (hence the ternary-ish 'or')
+    width += 8 - ((width % 8) or 8)
+
+    # format width specifier: four (4) bits per hex digit
+    fmt = '%%0%dx' % (width // 4)
+
+    # prepend zero (0) to the width, to zero-pad the output
+    s = unhexlify(fmt % val)
+
+    if endianness == 'little':
+        # see http://stackoverflow.com/a/931095/309233
+        s = s[::-1]
+
+    return s
 
 """
 Returns string of bits
@@ -85,6 +150,12 @@ def full_bin_to_chr(n):
         n = n[8:]
     return ret_val
 
+
+"""
+I have no idea what is happening.
+"""
+def reverseBits(n):
+    return int(bin(n)[:1:-1], 2)
 
 """
 Returns the status of the ADC configuration on board the
