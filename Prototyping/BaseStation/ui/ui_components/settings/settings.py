@@ -103,6 +103,7 @@ class Settings:
 
     # Get the urls that each feed is set to on startup
     def get_camera_urls(self):
+
         """
         Gets the urls of the rtsp streams to play in order from left to right on the screen
         :return: A list containing the urls for the 3 feeds to play
@@ -112,7 +113,6 @@ class Settings:
 
         temp.append(self.cam_list[self.main.cam1.currentIndex()])
         temp.append(self.cam_list[self.main.cam2.currentIndex()])
-        temp.append(self.cam_list[self.main.cam3.currentIndex()])
         temp.append(self.cam_list[self.main.cam3.currentIndex()])
 
         return temp
