@@ -66,8 +66,7 @@ class Navigation:
 
     # find distance between two points using the haversine formula
     def distance(self, desLong, desLat):
-        gps = GPS.GPS()
-        cord = gps.getCoords()
+        cord = self.gps.getCoords()
         lat1 = math.radians(cord[0])
         long1 = math.radians(cord[1])
         lat2 = math.radians(desLat)
