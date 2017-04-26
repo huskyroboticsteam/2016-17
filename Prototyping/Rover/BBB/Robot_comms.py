@@ -62,6 +62,7 @@ class Robot_comms():
                     drive_unpacked = struct.unpack(self.driveFormat, data)
                     self.receivedDrive = drive_unpacked
                     hasRecieved = False
+                # If one second has elapsed since the last packet received, stop
                 if time.time() - self.most_recent_packet == 1:
                     self.receivedDrive = None
 
