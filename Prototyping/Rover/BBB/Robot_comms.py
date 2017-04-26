@@ -89,6 +89,7 @@ class Robot_comms():
         except socket.error:
             pass
 
+    # sends true, lat, long, true to base station, indicating that the robot is at the desired position
     def sendAtLocationPacket(self, nav):
         self.nav = nav
         try:

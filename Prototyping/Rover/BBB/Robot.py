@@ -135,7 +135,7 @@ class Robot(object):
             if self.autonomous.is_done(location):
                 # Reached the target
                 self.autonomous_initialized = False
-                # TODO: send back "we're here" signal
+                # sends back "we're here" signal
                 self.r_comms.sendAtLocationPacket(robot.get_nav())
                 return 0, 0
             else:
