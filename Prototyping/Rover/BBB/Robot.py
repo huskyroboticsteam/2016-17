@@ -75,7 +75,7 @@ class Robot(object):
                 BigMotor.BigMotor(3, "P9_14"),
                 BigMotor.BigMotor(4, "P9_22")
                 ]
-        self.r_comms = Robot_comms.Robot_comms("192.168.0.50", 8840, 8841, "<?hh", "<?ff", "<ffffffff")
+        self.r_comms = Robot_comms.Robot_comms("192.168.0.50", 8840, 8841, "<?hh", "<?ff", "<ffffffff", "<?ff?")
         self.autonomous_initialized = False
         self.autonomous = Autonomous()
 
@@ -136,6 +136,7 @@ class Robot(object):
                 # Reached the target
                 self.autonomous_initialized = False
                 # TODO: send back "we're here" signal
+                self.r_comms.sendAtLocationPacket(robot.get_nav())
                 return 0, 0
             else:
                 heading = self.nav.getMag()

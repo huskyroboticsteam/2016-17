@@ -4,7 +4,7 @@ import threading
 
 class Robot_comms():
 
-    def __init__(self, robot_ip, udp_port, tcp_port, d_format, gps_format, rtb_format):
+    def __init__(self, robot_ip, udp_port, tcp_port, d_format, gps_format, rtb_format, aut_format):
         self.receivedDrive = None
         self.robot_ip = robot_ip
         self.udp_port = udp_port
@@ -13,6 +13,7 @@ class Robot_comms():
         self.driveFormat = d_format
         self.gpsFormat = gps_format
         self.rtbFormat = rtb_format
+        self.aut_format = aut_format
         self.udp_sock = socket.socket(socket.AF_INET,  # Internet
                                   socket.SOCK_DGRAM)  # UDP
         self.udp_sock.bind((self.robot_ip, self.udp_port))
@@ -84,6 +85,16 @@ class Robot_comms():
             if self.base_station_ip is not None:
                 # Follows format: potentiometer, magnetometer, encoders 1-4, latitude, longitude
                 MESSAGE = struct.pack(self.rtbFormat, nav.readPot(), nav.getMag(), 0, 0, 0, 0, self.lat, self.longitude)
+                self.udp_sock.sendto(MESSAGE, self.base_station_ip)
+        except socket.error:
+            pass
+
+    def sendAtLocationPacket(self, nav):
+        self.nav = nav
+        try:
+            if self.base_station_ip is not None:
+                # Follows format: potentiometer, magnetometer, encoders 1-4, latitude, longitude
+                MESSAGE = struct.pack(self.aut_format, True, self.lat, self.longitude, True)
                 self.udp_sock.sendto(MESSAGE, self.base_station_ip)
         except socket.error:
             pass
