@@ -94,7 +94,7 @@ class Robot_comms():
         self.nav = nav
         try:
             if self.base_station_ip is not None:
-                # Follows format: potentiometer, magnetometer, encoders 1-4, latitude, longitude
+                # Follows format: true, lat, long, true
                 MESSAGE = struct.pack(self.aut_format, True, self.lat, self.longitude, True)
                 self.udp_sock.sendto(MESSAGE, self.base_station_ip)
         except socket.error:
