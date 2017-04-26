@@ -1,6 +1,7 @@
 import socket
 import struct
 import threading
+import time
 
 class Robot_comms():
 
@@ -28,6 +29,7 @@ class Robot_comms():
         self.lat = 0
         self.longitude = 0
         self.nav = None
+        self.most_recent_packet = None
         # Starts gps looping and updating every second
         self.updateGPS()
 
@@ -53,12 +55,17 @@ class Robot_comms():
                 while True:
                     data, udp_addr = self.udp_sock.recvfrom(1024)  # buffer size is 1024 bytes
                     hasRecieved = True
+                    self.most_recent_packet = time.time()
             except socket.error:
                 if hasRecieved:
                     self.base_station_ip = udp_addr
                     drive_unpacked = struct.unpack(self.driveFormat, data)
                     self.receivedDrive = drive_unpacked
                     hasRecieved = False
+                # If one second has elapsed since the last packet received, stop
+                if time.time() - self.most_recent_packet == 1:
+                    self.receivedDrive = None
+
         except socket.error:
             # TODO: catch exceptions from the non-blocking receive better
             pass
