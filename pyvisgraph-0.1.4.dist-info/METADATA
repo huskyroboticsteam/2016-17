@@ -1,0 +1,15 @@
+Metadata-Version: 2.0
+Name: pyvisgraph
+Version: 0.1.4
+Summary: Given a set of simple obstacle polygons, build a visibility graph and find the shortest path between two points.
+Home-page: https://github.com/TaipanRex/pyvisgraph
+Author: Christian Reksten-Monsen
+Author-email: christian@reksten-monsen.com
+License: UNKNOWN
+Download-URL: https://github.com/TaipanRex/pyvisgraph/tarball/0.1.4
+Keywords: visibility,graph,shortest
+Platform: UNKNOWN
+
+UNKNOWN
+
+
