@@ -13,15 +13,20 @@ class Sonar:
 
     def readAna(self): # Get raw analog value from sensor
         readVal = ADC.read("AIN6")
-        print(readVal)
+        return readVal
 
     def readDisInch(self):  # Calculates distance in inches
         readVal = ADC.read("AIN6")
         readVal = (readVal * 370.3) - 57.83 # Calculated through linear best fit
-        print(readVal)
+        return readVal
 
     def readDisCm(self): # Calculates distance in centimeters
         readVal = ADC.read("AIN6")
         readVal = ((readVal * 370.3) - 57.83) * 2.54  # Calculated through linear best fit
-        print(readVal)
+        preturn readVal
 
+
+    def readDisKm(self):  # Calculates distance in kilometers
+        readVal = ADC.read("AIN6")
+        readVal = readDisCm / 1000  # Calculated through linear best fit
+        return readVal
