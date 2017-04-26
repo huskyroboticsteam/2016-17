@@ -1,30 +1,27 @@
-import Adafruit_BBIO.GPIO as GPIO
-import time
+import serial
+import Adafruit_BBIO.UART as UART
+import Adafruit_BBIO.ADC as ADC
+from time import sleep
+UART.setup("UART1")
+ser = serial.Serial('/dev/ttyO1', 9600)
 
 
-trig_p = "p8_8"
-echo_p = "p8_10"
-pulse_start = 0
-pulse_end = 0
+class Sonar:
+    def __init__(self):
+        ADC.setup()
+        self.maxAnaVal = 0.8
 
-GPIO.setup(trig_p, GPIO.OUT)
-GPIO.setup(echo_p, GPIO.IN)
+    def readAna(self): # Get raw analog value from sensor
+        readVal = ADC.read("AIN6")
+        print(readVal)
 
-GPIO.output(trig_p, GPIO.HIGH)
-time.sleep(0.00005)
-GPIO.output(trig_p, GPIO.LOW)
-GPIO.cleanup()
+    def readDisInch(self):  # Calculates distance in inches
+        readVal = ADC.read("AIN6")
+        readVal = (readVal * 370.3) - 57.83 # Calculated through linear best fit
+        print(readVal)
 
-#GPIO.setup(echo_p, GPIO.IN)
+    def readDisCm(self): # Calculates distance in centimeters
+        readVal = ADC.read("AIN6")
+        readVal = ((readVal * 370.3) - 57.83) * 2.54  # Calculated through linear best fit
+        print(readVal)
 
-while GPIO.input(echo_p) == 1:
-    pulse_start = time.time()
-
-while GPIO.input(echo_p) == 0:
-    pulse_end = time.time()
-
-pulse_duration = pulse_end - pulse_start
-distance = pulse_duration * 17150
-distance = round(distance, 2)
-print "Distance:", distance, "cm"
-GPIO.cleanup()
