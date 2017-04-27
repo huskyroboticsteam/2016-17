@@ -39,6 +39,8 @@ class DriveConnection(QtCore.QThread):
 
         # Indicates whether the rovers is in autonomous mode
         self.auto = False
+        self.ROVER_HOST = host
+        self.ROVER_PORT = port
 
         # Indicates whether emergency stop has been pressed (CANNOT BE UNDONE)
         # Reset the UI if emergency stopped
@@ -47,20 +49,15 @@ class DriveConnection(QtCore.QThread):
         self.joys = joystickv1.Joystick()
         self.joys.start()
 
-        try:
-            # UDP connection to the rover
-            self.rover_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            self.rover_sock.setblocking(False)
+        # UDP connection to the rover
+        self.rover_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.rover_sock.setblocking(False)
 
-        except socket.error():
-            print "Can't connect to rover"
-
-        # Do this code if there was no exception in connecting
-        else:
-            self.timer = QtCore.QTimer()
-            self.timer.timeout.connect(self.send_message)
-            self.timer.timeout.connect(self.receive_message)
-            self.timer.start(10)
+    def run(self):
+        self.timer = QtCore.QTimer()
+        self.timer.timeout.connect(self.send_message)
+        self.timer.timeout.connect(self.receive_message)
+        self.timer.start(10)
 
     def enable_tcp(self, enable):
         self.auto = enable
@@ -80,7 +77,6 @@ class DriveConnection(QtCore.QThread):
         try:
             throttle = self.joys.joystick_axis[0][1]
             steering = self.joys.joystick_axis[0][0]
-            # steering = self.joy.joystick_axis[0][0]
         except:
             pass
         else:
@@ -94,10 +90,8 @@ class DriveConnection(QtCore.QThread):
         # Put the first 2 boolean values in the buffer
         buff = struct.pack("<?hh", self.auto, int(throttle), int(steering))
 
-        try:
-            self.rover_sock.sendto(buff, (self.ROVER_HOST, self.ROVER_PORT))
-        except:
-            pass
+        # Will send even if we can't reach the rover?
+        self.rover_sock.sendto(buff, (self.ROVER_HOST, self.ROVER_PORT))
 
     def receive_message(self):
         """
@@ -108,7 +102,7 @@ class DriveConnection(QtCore.QThread):
 
         try:
             rover_data = self.rover_sock.recv(1024)
-        except:
+        except socket.error:
             # Do nothing
             pass
         else:
