@@ -4,8 +4,8 @@ Code base for the 2016-17 buld season
 ## UI Dependencies
 
 ### Python VLC
-Install python-vlc with pip and then overwrite the vlc.py file with the one included in the dependencies directory
-Make sure 32 bit VLC player is installed to the OS:
+pip install python-vlc
+ALSO make sure 32 bit VLC player is installed to the OS:
 
 | Operating System | Installation |
 | :----------------: | :----------------------------------------------: |
@@ -24,5 +24,6 @@ pip install numpy
 ### SDL2 Installation:
 pip install PySDL2
 
-Also download SDL.dll from http://libsdl.org/download-2.0.php for your version of Python x86 SDL for x86 Python install
+Also download SDL.dll from http://libsdl.org/download-2.0.php for your version of Python (i.e.: x86 SDL for x86 Python install)
+Add to Python install directory under DLLs and add PYSDL2_DLL_PATH=<Your python dll directory> to the system path
 
