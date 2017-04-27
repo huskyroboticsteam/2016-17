@@ -25,5 +25,5 @@ pip install numpy
 pip install PySDL2
 
 Also download SDL.dll from http://libsdl.org/download-2.0.php for your version of Python (i.e.: x86 SDL for x86 Python install)
-Add to Python install directory under DLLs and add PYSDL2_DLL_PATH=<Your python dll directory> to the system path
+Add to Python install directory under DLLs and add PYSDL2_DLL_PATH=\<Your python dll directory\> to the system path
 
