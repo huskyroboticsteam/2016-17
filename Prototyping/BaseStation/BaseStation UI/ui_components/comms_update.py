@@ -53,6 +53,8 @@ class DriveConnection(QtCore.QThread):
         self.rover_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.rover_sock.setblocking(False)
 
+        self.timer = None
+
     def run(self):
         self.timer = QtCore.QTimer()
         self.timer.timeout.connect(self.send_message)
