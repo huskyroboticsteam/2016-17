@@ -49,6 +49,7 @@ class Robot_comms():
 
     # receives a packet and sets variables accordingly
     def receiveData(self, nav):
+        # There's no reason for this outside try except thing. Sorry.
         try:
             hasRecieved = False
             try:
