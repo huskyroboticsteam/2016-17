@@ -121,7 +121,7 @@ class Robot(object):
             return 0, 0
         auto = self.r_comms.receivedDrive[0]
         if auto:
-            location = (self.r_comms.lat, self.r_comms.long)
+            location = (self.r_comms.lat, self.r_comms.longitude)
             if not self.autonomous_initialized:
                 # TODO: read target from wireless
                 target = (random(), random())
