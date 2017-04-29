@@ -29,7 +29,7 @@ class Robot_comms():
         self.lat = 0
         self.longitude = 0
         self.nav = None
-        self.most_recent_packet = None
+        self.most_recent_packet = time.time()
         # Starts gps looping and updating every second
         self.updateGPS()
 
@@ -64,7 +64,7 @@ class Robot_comms():
                     self.receivedDrive = drive_unpacked
                     hasRecieved = False
                 # If one second has elapsed since the last packet received, stop
-                if time.time() - self.most_recent_packet == 1:
+                if time.time() - self.most_recent_packet > 1:
                     self.receivedDrive = None
 
         except socket.error:
