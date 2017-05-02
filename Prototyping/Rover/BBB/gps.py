@@ -43,7 +43,7 @@ class GPS:
         except AttributeError:
             return -1
     
-    # returns coordinates of current location in an array [lat, long]
+    # returns coordinates of current location in tuple (lat, long)
     # negative lat corresponds to S direction; negative long corresponds to W
     def getCoords(self):
         info = self.read()
@@ -55,17 +55,12 @@ class GPS:
                 lon = self.rawGPStodegGPS(info[4])
                 print lon
                 longDir = info[5]
-                coords = []
                 if (latDir == 'S'):
-                    coords.append(lat * -1)
-                else:
-                    coords.append(lat)
+                    lat = -lat
                 if(longDir == 'W'):
-                    coords.append(lon * -1)
-                else:
-                    coords.append(lon)
-                print coords
-                return coords
+                    lon = -lon
+                print (lat, lon)
+                return lat, lon
         except:
             self.getCoords()
 

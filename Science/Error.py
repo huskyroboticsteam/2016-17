@@ -11,6 +11,7 @@ errors = []
 
 
 def clearErrors():
+    global errors
     errors = []
 
 
@@ -31,8 +32,9 @@ def throw(errorCode, comment="", file="", line=None, fatal=False):
     sys.stderr.write(error_out)
     errors.append(errorCode)
     errorPack = Packet(PacketType.Error)
-    errorPack.appendData(Util.inttobin(errorCode, 16))
+    errorPack.appendData(Util.byteMap(errorCode, 16))
     CommHandler.sendAsyncPacket(errorPack)
+    errorPack = None
     if fatal:
         os.system("sudo reboot")
         sys.exit(0x00FF)

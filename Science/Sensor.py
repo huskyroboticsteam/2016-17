@@ -1,3 +1,5 @@
+import Util
+
 class Sensor:
 
     critical_status = False
@@ -75,16 +77,18 @@ class SensorHandler:
 
     @classmethod
     def getPrimarySensorData(cls):
-        data = ""
+        data = 0
         for sensor in cls._sensors:
-            data += str(sensor.getDataForPacket())
+            buffer = sensor.getDataForPacket()
+            data |= data << Util.binaryLength(buffer)
         return data
 
     @classmethod
     def getAuxSensorData(cls):
-        data = ""
+        data = 0
         for sensor in cls._auxSensors:
-            data += str(sensor.getDataForPacket())
+            buffer = sensor.getDataForPacket()
+            data |= data << Util.binaryLength(buffer)
         return data
 
     @classmethod

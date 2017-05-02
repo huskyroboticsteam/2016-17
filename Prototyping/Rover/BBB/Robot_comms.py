@@ -1,10 +1,11 @@
 import socket
 import struct
 import threading
+import time
 
 class Robot_comms():
 
-    def __init__(self, robot_ip, udp_port, tcp_port, d_format, gps_format, rtb_format):
+    def __init__(self, robot_ip, udp_port, tcp_port, d_format, gps_format, rtb_format, aut_format):
         self.receivedDrive = None
         self.robot_ip = robot_ip
         self.udp_port = udp_port
@@ -13,6 +14,7 @@ class Robot_comms():
         self.driveFormat = d_format
         self.gpsFormat = gps_format
         self.rtbFormat = rtb_format
+        self.aut_format = aut_format
         self.udp_sock = socket.socket(socket.AF_INET,  # Internet
                                   socket.SOCK_DGRAM)  # UDP
         self.udp_sock.bind((self.robot_ip, self.udp_port))
@@ -27,6 +29,7 @@ class Robot_comms():
         self.lat = 0
         self.longitude = 0
         self.nav = None
+        self.most_recent_packet = time.time()
         # Starts gps looping and updating every second
         self.updateGPS()
 
@@ -46,18 +49,24 @@ class Robot_comms():
 
     # receives a packet and sets variables accordingly
     def receiveData(self, nav):
+        # There's no reason for this outside try except thing. Sorry.
         try:
             hasRecieved = False
             try:
                 while True:
                     data, udp_addr = self.udp_sock.recvfrom(1024)  # buffer size is 1024 bytes
                     hasRecieved = True
+                    self.most_recent_packet = time.time()
             except socket.error:
                 if hasRecieved:
                     self.base_station_ip = udp_addr
                     drive_unpacked = struct.unpack(self.driveFormat, data)
                     self.receivedDrive = drive_unpacked
                     hasRecieved = False
+                # If one second has elapsed since the last packet received, stop
+                if time.time() - self.most_recent_packet > 1:
+                    self.receivedDrive = None
+
         except socket.error:
             # TODO: catch exceptions from the non-blocking receive better
             pass
@@ -84,6 +93,17 @@ class Robot_comms():
             if self.base_station_ip is not None:
                 # Follows format: potentiometer, magnetometer, encoders 1-4, latitude, longitude
                 MESSAGE = struct.pack(self.rtbFormat, nav.readPot(), nav.getMag(), 0, 0, 0, 0, self.lat, self.longitude)
+                self.udp_sock.sendto(MESSAGE, self.base_station_ip)
+        except socket.error:
+            pass
+
+    # sends true, lat, long, true to base station, indicating that the robot is at the desired position
+    def sendAtLocationPacket(self, nav):
+        self.nav = nav
+        try:
+            if self.base_station_ip is not None:
+                # Follows format: true, lat, long, true
+                MESSAGE = struct.pack(self.aut_format, True, self.lat, self.longitude, True)
                 self.udp_sock.sendto(MESSAGE, self.base_station_ip)
         except socket.error:
             pass

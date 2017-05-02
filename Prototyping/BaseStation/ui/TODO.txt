@@ -1,9 +1,0 @@
-1. Open TCP connection to send autonomous data in a separate thread (so it doesn't lock the UI if failed)
-
-2. Make the auto button fill the space
-
-3. Add science telemetry to the sensor module
-
-4. Figure out how to make science stuff send us a picture
-
-Arm?????

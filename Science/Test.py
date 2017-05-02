@@ -2,17 +2,28 @@ import Error
 import sys
 import socket
 import time
+import math
 import Util
 import threading
 from Packet import Packet
 from SystemTelemetry import SystemTelemetry
 
 def snedTestPacket():
-    time.sleep(10)
-    testPacket = Packet(0x81, '192.168.0.90', 5000)
-    testPacket.appendData(SystemTelemetry.getTelemetryData())
-    testPacket.send()
-    time.sleep(3)
+    while True:
+        time.sleep(10)
+        testPacket = Packet(0x81, '192.168.0.90', 5000)
+        testPacket.appendData(SystemTelemetry.getTelemetryData())
+        testPacket.send()
+        time.sleep(3)
+
+def snedTestPacket2():
+    i = 0
+    while True:
+        i += 1
+        time.sleep(5)
+        testPacket = Packet(i, '192.168.0.90', 5000)
+        testPacket.appendData(i*i)
+        testPacket.send()
 
 def parsePacket(packetData):
     packetData = Util.chartobytes(packetData)
@@ -21,8 +32,11 @@ def parsePacket(packetData):
     packetID = int(packetData[33:40], 2)
     return "Timestamp: " + str(packetTimestamp) + "  |  ID: " + str(packetID)
 
-snedThread = threading.Thread(target=snedTestPacket)
-snedThread.start()
+#snedThread = threading.Thread(target=snedTestPacket)
+#snedThread.start()
+
+snedThread2 = threading.Thread(target=snedTestPacket2)
+snedThread2.start()
 
 
 """
@@ -44,8 +58,8 @@ while True:
         SOCKET.listen(1)
         client, clientAddr = SOCKET.accept()
         data = client.recv(1024)
-        sys.stdout.write("Received: {0}\n".format(data))
-        sys.stdout.write("\n" + parsePacket(data) + "\n")
+        #sys.stdout.write("Received: {0}\n".format(data))
+        #sys.stdout.write("\n" + parsePacket(data) + "\n")
     except socket.error:
         pass
 
