@@ -1,3 +1,4 @@
+import sys
 import Error
 from Packet import PacketType
 
@@ -21,12 +22,14 @@ reset = False
 Queue a message to the handler
 """
 def queueMessage(msg):
-    msgQueue[len(msgQueue) - 1] = msg
+    global msgQueue
+    msgQueue += [msg]
 
 """
 Get Message from Queue
 """
 def nextMsg():
+    global msgQueue
     temp = msgQueue[0]
     del msgQueue[0]
     return temp
@@ -35,6 +38,7 @@ def nextMsg():
 Parse message into timestamp and id
 """
 def parse(msg):
+    global msgQueue
     global reset
     if len(msgQueue) == 0 and reset:
         reset = False  # Set reset back to default value
@@ -52,6 +56,7 @@ def parse(msg):
 Parse Auxilliary Ctrl Packet
 """
 def parse_aux(msg):
+    global aux_ctrl
     aux_ctrl[0] = int(msg.data[0:33], 2)
     cmd_id = int(msg.data[40:48], 2)
     cmd_value = int(msg.data[48:80], 2)
@@ -62,6 +67,7 @@ def parse_aux(msg):
 Parse System Ctrl Packet
 """
 def parse_sysctrl(msg):
+    global cam_ctrl
     cam_ctrl[0] = int(msg.data[0:33], 2)
     cmd_id = int(msg.data[40:48], 2)
     cmd_value = int(msg.data[48:80], 2)
@@ -72,6 +78,7 @@ def parse_sysctrl(msg):
 Parse Img Request
 """
 def parse_imgreq(msg):
+    global cam_ctrl
     cam_ctrl[0] = int(msg.data[0:33], 2)
     cmd_id = int(msg.data[40:48], 2)
     cmd_value = int(msg.data[48:192], 2)
@@ -112,6 +119,9 @@ def resetCam():
 Setup Parsing with all zero arrays
 """
 def setupParsing():
+    global aux_ctrl
+    global sys_ctrl
+    global cam_ctrl
     aux_ctrl = [0] * 32
     sys_ctrl = [0] * 32
     cam_ctrl = [0] + [False] * 31

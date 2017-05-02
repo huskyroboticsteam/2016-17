@@ -1,10 +1,9 @@
 import sys
 import os
 import Util
-import Motor
 from Packet import Packet
 from Packet import PacketType
-from Packet import getConnectionStatus
+from Packet import getConnectionStatus, setStatus
 from CommHandler import CommHandler
 
 
@@ -19,7 +18,8 @@ def throw(errorCode, comment="", file="", line=None, fatal=False):
     if not getConnectionStatus() and errorCode == 0x0503:
         return False
     elif errorCode == 0x0503:
-        comment += "CHECK ETHERNET CABLE ATTACHMENT \n"
+        comment += "\nCHECK ETHERNET CABLE ATTACHMENT \n"
+        setStatus(False)
     if len(comment) > 0:
         comment += "Given information: " + str(comment) + "\n"
     if file != "":
@@ -34,7 +34,6 @@ def throw(errorCode, comment="", file="", line=None, fatal=False):
     errorPack.appendData(Util.inttobin(errorCode, 16))
     CommHandler.sendAsyncPacket(errorPack)
     if fatal:
-        Motor.Motor.stopAll()
         os.system("sudo reboot")
         sys.exit(0x00FF)
 

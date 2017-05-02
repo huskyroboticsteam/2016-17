@@ -1,6 +1,6 @@
 from PyQt4 import QtCore, QtGui
 import socket, struct
-import joystick_rewrite
+import joystickv1
 
 
 class CommsUpdate(QtGui.QWidget):
@@ -24,13 +24,15 @@ class CommsUpdate(QtGui.QWidget):
         super(self.__class__,self).__init__()
 
         # Indicates whether the rovers is in autonomous mode
+        self.auto_sock = None
         self.auto = False
 
         # Indicates whether emergency stop has been pressed (CANNOT BE UNDONE)
         # Reset the UI if emergency stopped
         self.stop = False
 
-        joystick_rewrite.joystick_manager.start()
+        self.joys = joystickv1.Joystick()
+        self.joys.start()
 
         try:
             # UDP connection to the rover
@@ -57,6 +59,14 @@ class CommsUpdate(QtGui.QWidget):
         """
         self.rover_sock.close()
 
+    def connection(self, send_status, enable_connection):
+        self.auto = send_status
+
+        if enable_connection:
+            self.open_tcp()
+        else:
+            self.close_tcp()
+
     def open_tcp(self):
         """
         Opens a new TCP connection to the rover
@@ -71,7 +81,9 @@ class CommsUpdate(QtGui.QWidget):
         Closes the open TCP connection
         :return: None
         """
-        self.auto_sock.close()
+        if self.auto_sock is not None:
+            self.auto_sock.close()
+            self.auto_sock = None
 
     def send_message(self):
         """
@@ -83,8 +95,8 @@ class CommsUpdate(QtGui.QWidget):
         steering = 0
 
         try:
-            throttle = joystick_rewrite.joystick_manager.joysticks[0].axis[1]
-            steering = joystick_rewrite.joystick_manager.joysticks[0].axis[0]
+            throttle = self.joys.joystick_axis[0][1]
+            steering = self.joys.joystick_axis[0][0]
             # steering = self.joy.joystick_axis[0][0]
         except:
             pass
@@ -110,7 +122,6 @@ class CommsUpdate(QtGui.QWidget):
 
         # Put the first boolean value in the buffer
         buff = struct.pack("<?ff", more, lat, lng)
-
         self.auto_sock.send(buff)
 
     def receive_message(self):

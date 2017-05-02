@@ -14,7 +14,7 @@ from struct import *
 import time
 
 # Change this to the bluetooth port on your computer
-ser = serial.Serial('/dev/cu.hc01comHC-05-DevB-2')
+ser = serial.Serial('/dev/cu.HC-05-DevB')
 
 
 class App:
@@ -88,14 +88,17 @@ class App:
     def send_packet(self):
         throttle = self.check_axis(1)
         turn = self.check_axis(0)
-        adjustFB = int(throttle*62 + 63)
+        power = self.check_axis(3)
+        adjustFB = int(throttle*62*(power*-1 + 1)/2 + 63)
         adjustLR = int(turn*63 + 190)
         time.sleep(.015)
-        print adjustLR
         print adjustFB
-        ser.write('a')
-        #ser.write(struct.pack('>B', adjustFB))
-        #ser.write(struct.pack('>B', adjustLR))
+        try:
+            ser.write(struct.pack('>B', adjustFB))
+            ser.write(struct.pack('>B', adjustLR))
+        except:
+            pass
+#
 
 
     def main(self):

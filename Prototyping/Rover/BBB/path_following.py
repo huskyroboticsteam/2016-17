@@ -5,6 +5,7 @@ from Utils import normalize_angle
 class PathFollower:
     """
     Uses a PID loop to steer the robot to follow a path.
+    Used by path_control.py
     Attributes:
         path (list of tuple of (float, float)): The list of current destinations to go to.
         pid (PID): The PID controller for the angle
@@ -26,7 +27,7 @@ class PathFollower:
         Returns (float): The turn value of the robot. 100 is full right. -100 is full left. 0 is straight.
         """
         assert not self.is_done(location)
-        self.remove_reached_destinations(location)
+        self._remove_reached_destinations(location)
         assert self.path != []
         dest = self.path[0]
         dx = dest[0] - location[0]
@@ -43,7 +44,7 @@ class PathFollower:
         """
         Returns (bool): whether the robot has reached the final destination yet
         """
-        self.remove_reached_destinations(location)
+        self._remove_reached_destinations(location)
         return self.path == []
 
     def set_path(self, path):
@@ -56,7 +57,10 @@ class PathFollower:
         self.pid.reset()
         self.pid.setTarget(0.0)
 
-    def remove_reached_destinations(self, location):
+    def _remove_reached_destinations(self, location):
+        """
+        Internal use only
+        """
         while self.path != [] and \
                         hypot(self.path[0][0] - location[0], self.path[0][1] - location[1]) <= self.position_epsilon:
             del self.path[0]

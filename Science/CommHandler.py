@@ -7,6 +7,7 @@ Questions/Comments? Email: jadenjb@uw.edu
 (Untested as of 2/6/2017)
 
 """
+import sys
 import socket
 import Error
 import Parse
@@ -20,17 +21,17 @@ class CommHandler:
     BYTE_BUFFER_SIZE = 1024
 
     def __init__(self, internalIP, receivePort):
-        self._internalIP = internalIP
-        self._receivePort = receivePort
+        CommHandler._internalIP = internalIP
+        CommHandler._receivePort = receivePort
         self._packets = []
         try:
-            self.SOCKET = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.SOCKET.bind((self._internalIP, self._receivePort))
+            CommHandler.SOCKET = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            CommHandler.SOCKET.bind((CommHandler._internalIP, CommHandler._receivePort))
         except socket.error:
             # Throw "Could not initialize comms"
             Error.throw(0x0501)
-        self._continue = True
-        self._receiving = False
+        CommHandler._continue = True
+        CommHandler._receiving = False
 
     @classmethod
     def startCommsThread(cls):
@@ -46,19 +47,24 @@ class CommHandler:
     # Otherwise there will be an infinite loop
     @classmethod
     def receiveMessagesOnThread(cls):
-        cls._continue = True
+        CommHandler._continue = True
         try:
-            while cls._continue:
-                cls.SOCKET.listen(1)
-                client, clientAddr = cls.SOCKET.accept()
-                cls._receiving = True
-                data = client.recv(cls.BYTE_BUFFER_SIZE)
-                cls._receiving = False
+            while CommHandler._continue:
+                CommHandler.SOCKET.listen(1)
+                client, clientAddr = CommHandler.SOCKET.accept()
+                CommHandler._receiving = True
+                data = client.recv(CommHandler.BYTE_BUFFER_SIZE)
+                if not data:
+                    break
+                CommHandler._receiving = False
                 Parse.queueMessage(Message(data, clientAddr))
+                sys.stdout.write("\nMessage received: " + str(data) + "\n")
+                client.close()
         except socket.error:
             # Throw "Failed to begin receive process"
             Error.throw(0x0502)
         except:
+            sys.stderr.write("\nUnexpected error: " + str(sys.exc_info()[0]) + "\n")
             # Throw "Could not initialize comms"
             Error.throw(0x0501)
 
@@ -70,22 +76,19 @@ class CommHandler:
         _sendThread.start()
 
     def _sendPackets(self):
-        while len(self._packets) > 0:
+        while len(self._packets) >= 1:
             self._packets[0].send()
-            if len(self._packets) > 0:
+            if len(self._packets) >= 1:
                 del self._packets[0]
 
     def stopComms(self):
-        self._continue = False
-
-    def getReceivingStatus(self):
-        return self._receiving
+        CommHandler._continue = False
 
 
 class Message:
 
     def __init__(self, data, fromAddr):
         self.data = Util.chartobytes(data)
-        self.ID = int(self.data[33:40])
+        self.ID = int(self.data[32:40], 2)
         self.fromAddr = fromAddr
 

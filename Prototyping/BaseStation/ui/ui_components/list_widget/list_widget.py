@@ -10,10 +10,11 @@ class ListWidget(QtGui.QListWidget):
 
     count = 0
     markers = []
-    signalStatus = QtCore.pyqtSignal([str])
     callToDelete = QtCore.pyqtSignal(int)
     highlightMarker = QtCore.pyqtSignal(int)
     replaceMarker = QtCore.pyqtSignal(int)
+
+    giveMarkers = QtCore.pyqtSignal(list)
 
     def __init__(self):
         super(self.__class__, self).__init__()
@@ -25,24 +26,14 @@ class ListWidget(QtGui.QListWidget):
         self.setSizePolicy(policy)
         self.index = None
         self.itemClicked.connect(self.highlight_marker)
-        self.itemDoubleClicked.connect(self.editing_item)
 
     def keyPressEvent(self, key):
         if key.key() == QtCore.Qt.Key_Delete:
             self.callToDelete.emit(self.currentRow())
             self.remove_from_ui(self.currentRow())
 
-
     def highlight_marker(self, item):
         self.highlightMarker.emit(self.currentRow())
-
-
-    # Emits the command that will be added to the COMMAND window
-    def editing_item(self, item):
-        # self.currentRow() # Gives the index in the list
-        cmd = 'update %s %s' %(self.currentItem().text(), self.currentRow() + 1)
-        cmd = cmd.replace(',', '')
-        self.signalStatus.emit(cmd)
 
     # Updates the list by changing an array of markers into a list of strings
     def update_ui(self):
@@ -56,7 +47,7 @@ class ListWidget(QtGui.QListWidget):
             s = QtCore.QString(str((i + 1)) + " " + str(self.markers[i][0]) + ", " + str(self.markers[i][1]))
             l.append(s)
 
-        self.addItems(l) # adds elements from the list widget in order
+        self.addItems(l)  # adds elements from the list widget in order
 
     # Called when things are added to the marker list
     # Marked for removal in Map/List rework
@@ -74,3 +65,6 @@ class ListWidget(QtGui.QListWidget):
         self.remove_from_ui(index)
         self.markers.insert(index, (lat, long))
         self.update_ui()
+
+    def get_markers(self):
+        self.giveMarkers.emit(self.markers)

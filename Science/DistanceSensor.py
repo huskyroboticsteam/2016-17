@@ -34,6 +34,7 @@ NOTE: It is recommended to call stopRanging() at the end of getting distances, b
 """
 
 import VL53L0X
+import sys
 import time
 import Error
 import Util

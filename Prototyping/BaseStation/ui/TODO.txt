@@ -1,12 +1,9 @@
-3. Allow movement of points on the map... replacement method?? (Select a coord with list view
-and use special key to replace on map)
+1. Open TCP connection to send autonomous data in a separate thread (so it doesn't lock the UI if failed)
 
-4. Add auto mode button, replacing auto_indicator modules with a button (depreciate COMMAND)
+2. Make the auto button fill the space
 
-5. Get command out of the way in GUI or put it in a separate out of interface module
+3. Add science telemetry to the sensor module
 
-8. Check whether we can access the remote camera before we attempt to play the feed
+4. Figure out how to make science stuff send us a picture
 
-Arm Code?
-
-
+Arm?????
