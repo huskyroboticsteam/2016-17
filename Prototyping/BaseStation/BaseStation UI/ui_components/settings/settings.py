@@ -84,11 +84,22 @@ class Settings:
 
         # Generate a new map
         arr = [zoom15, zoom16, zoom17, zoom18, zoom19]
-        g = Generator.Generator(tile_size, api, arr)
-        result = g.generate_maps(name, lat, lng)
+        self.g = Generator.Generator(tile_size, api, arr)
+        self.g.name = name
+        self.g.lat = lat
+        self.g.lng = lng
+        self.g.start()
 
+        self.g.finished.connect(self.reset_generator)
+        self.g.finished.connect(self.g.quit)
+
+    def reset_generator(self):
         # If we generated successfully the following user data is validated
-        if result:
+        if self.g.success:
+            self.g.success = False
+            self.g.name = None
+            self.g.lat = None
+            self.g.lng = None
             self.main.map_name.setText("")
             self.main.lat.setText("")
             self.main.lng.setText("")

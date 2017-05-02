@@ -40,14 +40,26 @@ class Auto(QtGui.QWidget):
     def pressed(self):
 
         if self.enabled:
-            self.enabled = False
-            self.button.setText("Disabled")
             # Stop sending auto over udp, keep tcp closed
             self.enableAutoTrigger.emit(False)
+            self.enabled = False
+            self.button.setText("Disabled")
         else:
+            self.enableAutoTrigger.emit(True)
+
+    def set_enabled(self, enabled):
+        if enabled is True:
             self.enabled = True
             self.button.setText("Enabled")
-            self.enableAutoTrigger.emit(True)
+        else:
+            self.enabled = False
+            self.button.setText("FAILURE")
+
+            # Reset the text after 4 seconds
+            QtCore.QTimer.singleShot(4000, self.reset_text)
+
+    def reset_text(self):
+        self.button.setText("Disabled")
 
     def set_markers(self, markers):
         self.markers = markers

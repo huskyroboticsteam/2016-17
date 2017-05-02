@@ -56,10 +56,10 @@ class DriveConnection(QtCore.QThread):
         self.timer = None
 
     def run(self):
-        self.timer = QtCore.QTimer()
-        self.timer.timeout.connect(self.send_message)
-        self.timer.timeout.connect(self.receive_message)
-        self.timer.start(10)
+        while True:
+            self.send_message()
+            self.receive_message()
+            self.msleep(10)
 
     def enable_tcp(self, enable):
         self.auto = enable
@@ -130,6 +130,7 @@ class DriveConnection(QtCore.QThread):
 class TCPConnection(QtCore.QThread):
 
     requestMarkers = QtCore.pyqtSignal()
+    tcp_enabled = QtCore.pyqtSignal(bool)
 
     def __init__(self, host, port):
         super(self.__class__, self).__init__()
@@ -152,8 +153,9 @@ class TCPConnection(QtCore.QThread):
             self.auto_sock.connect((self.ROVER_HOST, self.ROVER_TCP_PORT))
         except socket.error:
             print "Failed to connect over TCP"
+            self.tcp_enabled.emit(False)
         else:
-            # TODO: Emit some data allowing button label to change to enabled
+            self.tcp_enabled.emit(True)
             self.send_data()
 
     def send_data(self):

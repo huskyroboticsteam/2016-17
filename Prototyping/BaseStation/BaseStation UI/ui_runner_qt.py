@@ -65,7 +65,8 @@ main.list_container.addWidget(auto_button)
 
 '''Connect all events for each of the components to talk to one another'''
 auto_button.enableAutoTrigger.connect(sock.enable_tcp)
-auto_button.enableAutoTrigger.connect(sock.drive.enable_tcp)
+sock.tcp.tcp_enabled.connect(sock.drive.enable_tcp)
+sock.tcp.tcp_enabled.connect(auto_button.set_enabled)
 sock.tcp.requestMarkers.connect(list_wid.get_markers)
 list_wid.giveMarkers.connect(sock.tcp.set_markers)
 
