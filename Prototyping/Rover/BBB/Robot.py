@@ -46,11 +46,6 @@ class Robot(object):
         """
         ADC.setup()
 
-        self.pot_pid = PID.PID(-0.3, 0, 0)
-
-        self.Sweeper = Servo_Sweep.Servo_Sweep()
-
-        self.nav = Navigation.Navigation(0.560000002384, 0.325555562973, 0.115000002086, 0.001, "AIN2")
         # setup motors
         # motor: throttle, F, B
         # 1: 8,  9,  10
@@ -58,26 +53,32 @@ class Robot(object):
         # 3: 2,  4,  3
         # 4: 7,  6,  5
 
-        if is_using_big_motor == 0:
+        if is_using_big_motor == "0":
             # setup i2c to motorshield
             pwm = Adafruit_PCA9685.PCA9685(address=0x60, busnum=1)
             pwm.set_pwm_freq(60)
+            self.pot_pid = PID.PID(-0.1, 0, 0) #TODO Adjust
+            self.nav = Navigation.Navigation(0.560000002384, 0.325555562973, 0.115000002086, 0.001, "AIN2") # TODO Adjust
+            self.r_comms = Robot_comms.Robot_comms("192.168.0.40", 8840, 8841, "<?hh", "<?ff", "<ffffffff", "<?ff?")
             self.motors = [
-		MiniMotor.MiniMotor(1, 8, 9, 10, pwm),
+		        MiniMotor.MiniMotor(1, 8, 9, 10, pwm),
                 MiniMotor.MiniMotor(2, 13, 12, 11, pwm),
                 MiniMotor.MiniMotor(3, 2, 4, 3, pwm),
                 MiniMotor.MiniMotor(4, 7, 6, 5, pwm),
             ]
-        elif is_using_big_motor == 1:
+        else:
+            self.pot_pid = PID.PID(-0.3, 0, 0)
+            self.nav = Navigation.Navigation(0.560000002384, 0.325555562973, 0.115000002086, 0.001, "AIN2")
+            self.r_comms = Robot_comms.Robot_comms("192.168.0.50", 8840, 8841, "<?hh", "<?ff", "<ffffffff", "<?ff?")
             self.motors = [
                 BigMotor.BigMotor(1, "P9_21"),
                 BigMotor.BigMotor(2, "P9_16"),
                 BigMotor.BigMotor(3, "P9_14"),
                 BigMotor.BigMotor(4, "P9_22")
                 ]
-        self.r_comms = Robot_comms.Robot_comms("192.168.0.50", 8840, 8841, "<?hh", "<?ff", "<ffffffff", "<?ff?")
         self.autonomous_initialized = False
         self.autonomous = Autonomous()
+        self.Sweeper = Servo_Sweep.Servo_Sweep()
 
     def moveServo(self):
         self.Sweeper.move()
