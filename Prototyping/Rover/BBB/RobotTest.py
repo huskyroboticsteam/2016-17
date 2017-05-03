@@ -46,11 +46,11 @@ class RobotTest(object):
         """
         ADC.setup()
 
-        self.pot_pid = PID.PID(-0.3, 0, 0)
+        self.pot_pid = PID.PID(-0.1, 0, 0)
 
         self.Sweeper = Servo_Sweep.Servo_Sweep()
 
-        self.nav = Navigation.Navigation(0.560000002384, 0.325555562973, 0.115000002086, 0.001, "AIN2")
+        self.nav = Navigation.Navigation(0.76, 0.56, 0.33, 0.001, "AIN2")
         # setup motors
         # motor: throttle, F, B
         # 1: 8,  9,  10
@@ -58,7 +58,7 @@ class RobotTest(object):
         # 3: 2,  4,  3
         # 4: 7,  6,  5
 
-        if is_using_big_motor == 0:
+        if is_using_big_motor == "0":
             # setup i2c to motorshield
             pwm = Adafruit_PCA9685.PCA9685(address=0x60, busnum=1)
             pwm.set_pwm_freq(60)
@@ -68,7 +68,7 @@ class RobotTest(object):
                 MiniMotor.MiniMotor(3, 2, 4, 3, pwm),
                 MiniMotor.MiniMotor(4, 7, 6, 5, pwm),
             ]
-        elif is_using_big_motor == 1:
+        elif is_using_big_motor == "1":
             self.motors = [
                 BigMotor.BigMotor(1, "P9_21"),
                 BigMotor.BigMotor(2, "P9_16"),
@@ -141,7 +141,8 @@ class RobotTest(object):
             else:
                 heading = self.nav.getMag()
                 print "heading: ", heading
-                turn = self.autonomous.go(location, heading)
+                print "location: ", location
+                turn = self.autonomous.go(location, heading) * -1
                 print "turn: ", turn
                 return 100, turn
         else:
