@@ -61,22 +61,6 @@ class Navigation:
     def getGPS(self):
         return self.gps.getCoords()
 
-    # find distance between two points using the haversine formula
-    def distance(self, desLong, desLat):
-        cord = self.gps.getCoords()
-        lat1 = math.radians(cord[0])
-        long1 = math.radians(cord[1])
-        lat2 = math.radians(desLat)
-        long2 = math.radians(desLong)
-        r = 6371  # radius of earth
-        dlat = lat2 - lat1
-        dlon = long2 - long1
-
-        a = math.sin(dlat/2)**2 + math.cos(lat1)*math.cos(lat2)*math.sin(dlon/2)**2
-        c = 2*math.asin(math.sqrt(a))
-
-        return r * c  # kilometers
-
     # TODO Return a bool determining if there is something in way
     #      If false, there is no obstacle within checkingDistance of rover sensor
     def isObstacle(self):

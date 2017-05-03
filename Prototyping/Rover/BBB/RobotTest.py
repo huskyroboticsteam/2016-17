@@ -12,6 +12,7 @@ import Utils
 import sys
 from autonomous import Autonomous
 from random import random
+from Utils import scale_coords
 
 class RobotTest(object):
     """
@@ -78,6 +79,7 @@ class RobotTest(object):
         self.r_comms = Robot_comms.Robot_comms("192.168.0.40", 8840, 8841, "<?hh", "<?ff", "<ffffffff", "<?ff?")
         self.autonomous_initialized = False
         self.autonomous = Autonomous()
+        self.target = None
 
     def moveServo(self):
         self.Sweeper.move()
@@ -124,15 +126,15 @@ class RobotTest(object):
             location = (self.r_comms.lat, self.r_comms.longitude)
             if not self.autonomous_initialized:
                 # TODO: read target from wireless
-                target = (47.654116, -122.304557)
+                self.target = (47.654116, -122.304557)
                 # TODO: get obstacles from wireless or sensor
                 obstacles = []
-                self.autonomous.set_target(target)
+                self.autonomous.set_target(scale_coords(self.target, self.target))
                 self.autonomous.clear_all_obstacles()
                 # for coord in obstacles:
-                #     self.autonomous.add_obstacle(coord)
+                #     self.autonomous.add_obstacle(scale_coords(coord, self.target))
                 self.autonomous_initialized = True
-            if self.autonomous.is_done(location):
+            if self.autonomous.is_done(scale_coords(location, self.target)):
                 # Reached the target
                 self.autonomous_initialized = False
                 # sends back "we're here" signal
@@ -146,7 +148,7 @@ class RobotTest(object):
                 if location == (0.0, 0.0) or location == (0, 0):
                     print "gps not received, staying still"
                     return 0, 0
-                turn = self.autonomous.go(location, heading) * -1
+                turn = self.autonomous.go(scale_coords(location, self.target), heading) * -1
                 print "turn: ", turn
                 return 100, turn
         else:
