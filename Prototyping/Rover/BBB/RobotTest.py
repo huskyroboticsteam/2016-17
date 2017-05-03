@@ -136,12 +136,16 @@ class RobotTest(object):
                 # Reached the target
                 self.autonomous_initialized = False
                 # sends back "we're here" signal
-                self.r_comms.sendAtLocationPacket(robot.get_nav())
+                print "arrived at desired location"
+                self.r_comms.sendAtLocationPacket(self.nav)
                 return 0, 0
             else:
                 heading = self.nav.getMag()
                 print "heading: ", heading
                 print "location: ", location
+                if location == (0.0, 0.0) or location == (0, 0):
+                    print "gps not received, staying still"
+                    return 0, 0
                 turn = self.autonomous.go(location, heading) * -1
                 print "turn: ", turn
                 return 100, turn
