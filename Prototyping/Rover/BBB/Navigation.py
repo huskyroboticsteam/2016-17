@@ -47,17 +47,14 @@ class Navigation:
     def readPot(self):
         result = self.POT_MIDDLE - ADC.read(self.POT_PIN)
         if result > self.POT_MIDDLE - self.POT_RIGHT or result < self.POT_MIDDLE - self.POT_LEFT:
-            print result
             return -1
         return result
 
     # returns heading of front body or -1 if error
     def getMag(self):
         rawMag = self.mag.read()
-        print "back: " + str(rawMag)
         pot = self.readPot()
         angle = Utils.translateValue(pot, self.POT_LEFT - self.POT_MIDDLE, self.POT_RIGHT - self.POT_MIDDLE, -40, 40)
-        print "front: " + str((rawMag + angle) % 360)
         return (rawMag + angle) % 360
 
     # returns gps data

@@ -63,7 +63,7 @@ class RobotTest(object):
             pwm = Adafruit_PCA9685.PCA9685(address=0x60, busnum=1)
             pwm.set_pwm_freq(60)
             self.motors = [
-        MiniMotor.MiniMotor(1, 8, 9, 10, pwm),
+                MiniMotor.MiniMotor(1, 8, 9, 10, pwm),
                 MiniMotor.MiniMotor(2, 13, 12, 11, pwm),
                 MiniMotor.MiniMotor(3, 2, 4, 3, pwm),
                 MiniMotor.MiniMotor(4, 7, 6, 5, pwm),
@@ -140,7 +140,9 @@ class RobotTest(object):
                 return 0, 0
             else:
                 heading = self.nav.getMag()
+                print "heading: ", heading
                 turn = self.autonomous.go(location, heading)
+                print "turn: ", turn
                 return 100, turn
         else:
             return self.r_comms.receivedDrive[1], self.r_comms.receivedDrive[2]
@@ -155,7 +157,7 @@ class RobotTest(object):
                                                     self.nav.get_pot_right() - self.nav.get_pot_middle(), 100, -100)
             self.pot_pid.run(scaledPotReading)
             finalTurn = self.pot_pid.getOutput()
-            print str(driveParms)
+            #print str(driveParms)
             result = (self.scale_motor_val(driveParms[0] + finalTurn),
                       self.scale_motor_val(driveParms[0] - finalTurn),
                       self.scale_motor_val(driveParms[0] - finalTurn),
@@ -166,12 +168,12 @@ class RobotTest(object):
             # Potentiometer error
             # reset PID:
             self.pot_pid.setTarget(0)
-            print str(driveParms)
+            #print str(driveParms)
             result = (self.scale_motor_val(driveParms[0] + driveParms[1]),
                       self.scale_motor_val(driveParms[0] - driveParms[1]),
                       self.scale_motor_val(driveParms[0] - driveParms[1]),
                       self.scale_motor_val(driveParms[0] + driveParms[1]))
-            print str(result)
+            #print str(result)
             return result
 
     @staticmethod
