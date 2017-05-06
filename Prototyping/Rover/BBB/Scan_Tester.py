@@ -6,15 +6,15 @@ import Sonar
 
 class Scan_Tester:
     def __init__(self):
-        self.rotater = Servo_Sweep()
-        self.scanner = Sonar()
+        self.rotater = Servo_Sweep.Servo_Sweep()
+        self.scanner = Sonar.Sonar()
 
     def run (self):
         self.rotater.move()
         angle = self.rotater.getSonarHeading()
         distance = self.scanner.readDisKm()
-        print("angle: " + angle)
-        print("distance: " + distance)
+        print "angle: " + str(angle)
+        print"distance: " + str(distance)
 
 def main():
     runner = Scan_Tester()
