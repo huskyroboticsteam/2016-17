@@ -24,8 +24,8 @@ class Motor(object):
         diff = motor_val - self.prev_motor_val
         diff = max(-self.MAX_MOTOR_VAL_DIFF, min(self.MAX_MOTOR_VAL_DIFF, diff))  # clamp value into range
         actual_motor_val = self.prev_motor_val + diff
-        print "trying to drive motor: " + str(self.motor_id) + " with value: " + str(motor_val) \
-              + ", actual value: " + str(actual_motor_val)
+        # print "trying to drive motor: " + str(self.motor_id) + " with value: " + str(motor_val) \
+        #      + ", actual value: " + str(actual_motor_val)
         self.set_motor_exactly(actual_motor_val)
 
     def set_motor_exactly(self, motor_val):
