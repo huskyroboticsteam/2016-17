@@ -150,7 +150,7 @@ class RobotTest(object):
                     return 0, 0
                 turn = self.autonomous.go(scale_coords(location, self.target), heading)
                 print "turn: ", turn
-                return 100, turn
+                return 50, turn
         else:
             return self.r_comms.receivedDrive[1], self.r_comms.receivedDrive[2]
 
