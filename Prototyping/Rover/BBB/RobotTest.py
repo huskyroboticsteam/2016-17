@@ -126,7 +126,7 @@ class RobotTest(object):
             location = (self.r_comms.lat, self.r_comms.longitude)
             if not self.autonomous_initialized:
                 # TODO: read target from wireless
-                self.target = (47.654116, -122.304557)
+                self.target = (47.654121, -122.305060)
                 # TODO: get obstacles from wireless or sensor
                 obstacles = []
                 self.autonomous.set_target(scale_coords(self.target, self.target))
