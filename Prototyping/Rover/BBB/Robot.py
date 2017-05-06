@@ -12,6 +12,7 @@ import Utils
 import sys
 from autonomous import Autonomous
 from random import random
+from Utils import scale_coords
 
 class Robot(object):
     """
@@ -79,6 +80,7 @@ class Robot(object):
         self.autonomous_initialized = False
         self.autonomous = Autonomous()
         self.Sweeper = Servo_Sweep.Servo_Sweep()
+        self.target = None
 
     def moveServo(self):
         self.Sweeper.move()
@@ -128,12 +130,12 @@ class Robot(object):
                 target = (random(), random())
                 # TODO: get obstacles from wireless or sensor
                 obstacles = []
-                self.autonomous.set_target(target)
+                self.autonomous.set_target(scale_coords(self.target, self.target))
                 self.autonomous.clear_all_obstacles()
                 for coord in obstacles:
-                    self.autonomous.add_obstacle(coord)
+                    self.autonomous.add_obstacle(scale_coords(coord, self.target))
                 self.autonomous_initialized = True
-            if self.autonomous.is_done(location):
+            if self.autonomous.is_done(scale_coords(location, self.target)):
                 # Reached the target
                 self.autonomous_initialized = False
                 # sends back "we're here" signal
@@ -141,7 +143,7 @@ class Robot(object):
                 return 0, 0
             else:
                 heading = self.nav.getMag()
-                turn = self.autonomous.go(location, heading)
+                turn = self.autonomous.go(scale_coords(location, self.target), heading) * -1
                 return 100, turn
         else:
             return self.r_comms.receivedDrive[1], self.r_comms.receivedDrive[2]
