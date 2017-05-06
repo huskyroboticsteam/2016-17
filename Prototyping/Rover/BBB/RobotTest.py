@@ -51,7 +51,7 @@ class RobotTest(object):
 
         self.Sweeper = Servo_Sweep.Servo_Sweep()
 
-        self.nav = Navigation.Navigation(0.76, 0.56, 0.33, 0.001, "AIN2")
+        self.nav = Navigation.Navigation(0.77, 0.55, 0.34, 0.001, "AIN2")
         # setup motors
         # motor: throttle, F, B
         # 1: 8,  9,  10
