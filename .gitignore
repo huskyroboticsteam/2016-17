@@ -5,4 +5,9 @@
 # InverseKinematics
 .idea/
 
+# Science: Visual Studio
+*.suo
+*.pyproj
+*.sln
+
 **/.DS_Store
