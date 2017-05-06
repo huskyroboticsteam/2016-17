@@ -148,7 +148,7 @@ class RobotTest(object):
                 if location == (0.0, 0.0) or location == (0, 0):
                     print "gps not received, staying still"
                     return 0, 0
-                turn = self.autonomous.go(scale_coords(location, self.target), heading) * -1
+                turn = self.autonomous.go(scale_coords(location, self.target), heading)
                 print "turn: ", turn
                 return 100, turn
         else:
