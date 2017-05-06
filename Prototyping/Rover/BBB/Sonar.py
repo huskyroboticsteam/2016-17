@@ -25,7 +25,9 @@ class Sonar:
         readVal = ((readVal * 370.3) - 57.83) * 2.54  # Calculated through linear best fit
         return readVal
 
-
     def readDisKm(self):  # Calculates distance in kilometers
-        readVal = readDisCm / 1000  # Calculated through linear best fit
+        readVal = self.readDisCm()/ 1000  # Calculated through linear best fit
         return readVal
+
+    def getMaxDisKm(self): # Returns max distance readble in Km
+        return self.readDisKm(self.maxAnaVal)
