@@ -59,7 +59,7 @@ class Robot(object):
             pwm = Adafruit_PCA9685.PCA9685(address=0x60, busnum=1)
             pwm.set_pwm_freq(60)
             self.pot_pid = PID.PID(-0.1, 0, 0) #TODO Adjust
-            self.nav = Navigation.Navigation(0.560000002384, 0.325555562973, 0.115000002086, 0.001, "AIN2") # TODO Adjust
+            self.nav = Navigation.Navigation(0.765555, 0.552777, 0.348333, 0.001, "AIN2")
             self.r_comms = Robot_comms.Robot_comms("192.168.0.40", 8840, 8841, "<?hh", "<?ff", "<ffffffff", "<?ff?")
             self.motors = [
 		        MiniMotor.MiniMotor(1, 8, 9, 10, pwm),
