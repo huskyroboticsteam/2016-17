@@ -16,7 +16,6 @@ class PathFollower:
         # TODO fine tune this
         self.pid = PID(0.5, 0.0, 0.0)
         self.pid.setTarget(0.0)
-        # Note that .000005 is about 1 meter in terms of lat/longitude
         self.position_epsilon = 1
 
     def go(self, location, heading):
