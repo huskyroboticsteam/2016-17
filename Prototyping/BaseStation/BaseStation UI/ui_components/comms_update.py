@@ -7,7 +7,7 @@ import joystickv1
 class ConnectionManager:
     def __init__(self):
 
-        self.ROVER_HOST = "192.168.0.50"
+        self.ROVER_HOST = "192.168.0.40"
         self.LOCAL_HOST = "127.0.0.1"
         self.ROVER_TCP_PORT = 8841
         self.ROVER_PORT = 8840
@@ -79,6 +79,7 @@ class DriveConnection(QtCore.QThread):
         try:
             throttle = self.joys.joystick_axis[0][1]
             steering = self.joys.joystick_axis[0][0]
+            print throttle, steering
         except:
             pass
         else:
