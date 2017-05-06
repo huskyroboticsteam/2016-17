@@ -81,10 +81,20 @@ class ReceiveData(QtGui.QWidget):
     # Runs every cycle and updates the input from the joystick
     def update_input(self):
         self.sdl_instance.update_sdl2()
-
-
-class Joystick(QtGui.QWidget):
+        
+# Singleton
+def getJoysticks():
+    if getJoysticks._joysticks is None:
+        getJoysticks._joysticks = Joysticks()
+    return getJoysticks._joysticks
+getJoysticks._joysticks = None
+        
+class Joysticks(QtGui.QWidget):
+    
     def __init__(self):
+        """
+        Don't call this directly, instead use getJoysticks()
+        """
         if sdl2.SDL_Init(sdl2.SDL_INIT_JOYSTICK) < 0:
             print "Couldn't initiate joysitck(s)."
         else:
@@ -94,6 +104,7 @@ class Joystick(QtGui.QWidget):
             self.sdl_instance.init_joy_vars(joy_num)
 
             self.rd = ReceiveData(self.sdl_instance)
+        self.ready = False
 
     def start(self):
         # Ties window refresh to joystick refresh
@@ -108,3 +119,8 @@ class Joystick(QtGui.QWidget):
         self.joystick_ball = self.sdl_instance.joystick_ball
         self.joystick_hat = self.sdl_instance.joystick_hat
         self.joystick_button = self.sdl_instance.joystick_button
+        
+        # Enable to debug the raw input from the joystick
+        #print str(self.joystick_axis[0])+ " " + str(self.joystick_button[0]) + " " + str(self.joystick_hat[0])
+        
+        self.ready = True

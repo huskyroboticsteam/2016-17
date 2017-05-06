@@ -22,25 +22,26 @@ atexit.register(exit_handler)
 
 
 motors = {}
-motors["base_rotation"] = Sabertooth(ser2, 128, 0)
-motors["shoulder"] = Sabertooth(ser1, 130, 0)
-motors["elbow"] = Sabertooth(ser2, 128, 4)
-motors["wrist_lift"] = Sabertooth(ser2, 129, 4)
-motors["wrist_rotation"] = Sabertooth(ser1, 130, 4)
-motors["hand_grip"] = Sabertooth(ser2, 129, 0)
-
-def float_range(min, max):
-    def float_test(x):
-        x = float(x)
-        if x < min or x > max:
-            raise argparse.ArgumentTypeError("%r not in range [%.1f, %.1f]"%(x,min,max))
-        return x
-    return float_test
+motorNames = ["base_rotation", "shoulder", "elbow", "wrist_lift", "wrist_rotation", "hand_grip"]
+motors[0] = Sabertooth(ser2, 128, 0)
+motors[1] = Sabertooth(ser1, 130, 0)
+motors[2] = Sabertooth(ser2, 128, 4)
+motors[3] = Sabertooth(ser2, 129, 4)
+motors[4] = Sabertooth(ser1, 130, 4)
+motors[5] = Sabertooth(ser2, 129, 0)
 
 if __name__ == "__main__":
     import argparse
     from timedeltatype import *
     import time 
+
+    def float_range(min, max):
+        def float_test(x):
+            x = float(x)
+            if x < min or x > max:
+                raise argparse.ArgumentTypeError("%r not in range [%.1f, %.1f]"%(x,min,max))
+            return x
+        return float_test
     
     def set_motors(motors, value):
         for motor in motors:
@@ -48,11 +49,11 @@ if __name__ == "__main__":
         
     parser = argparse.ArgumentParser(description='Arm control script')
     parser.add_argument('strength', type=float_range(-1,1), help='Strength as a value between -1 and 1. -1 is reverse')
-    parser.add_argument('joints', choices=motors.keys(), help='The joint to control.', nargs='+')
+    parser.add_argument('joints', choices=motorNames, help='The joint to control.', nargs='+')
     parser.add_argument('-d','--duration', type=TimeDeltaType(), help='Amonut of time to run the motor for', nargs='?')
     args = parser.parse_args()
 
-    motors = [motors[j] for j in args.joints]
+    motors = [motors[motorNames.index(j)] for j in args.joints]
     if args.duration == None:
         print "Running %s at %.3f"%(args.joints, args.strength)
         set_motors(motors, args.strength)

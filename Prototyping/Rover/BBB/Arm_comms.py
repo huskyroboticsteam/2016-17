@@ -27,13 +27,13 @@ class Arm_comms():
         self.udp_sock.bind((self.robot_ip, self.udp_port))
         self.udp_sock.setblocking(False)
 
-        self.tcp_sock = socket.socket(socket.AF_INET, # Internet
-                                    socket.SOCK_STREAM) # TCP
-        self.tcp_sock.bind((self.robot_ip, self.tcp_port))
-        self.tcp_sock.setblocking(False)
-        self.tcp_sock.listen(1)
+        # self.tcp_sock = socket.socket(socket.AF_INET, # Internet
+        #                             socket.SOCK_STREAM) # TCP
+        # self.tcp_sock.bind((self.robot_ip, self.tcp_port))
+        # self.tcp_sock.setblocking(False)
+        # self.tcp_sock.listen(1)
         self.conn = None
-        self.most_recent_packet = None
+        self.most_recent_packet = time.time()
 
     # receives a packet and sets variables accordingly
     def receiveData(self):
@@ -48,6 +48,7 @@ class Arm_comms():
                 if hasRecieved:
                     self.base_station_ip = udp_addr
                     control_unpacked = struct.unpack(self.control_format, data)
+                    
                     self.receivedDrive = control_unpacked
                     hasRecieved = False
                 # If one second has elapsed since the last packet received, stop

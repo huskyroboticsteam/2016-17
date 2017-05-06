@@ -8,9 +8,11 @@ class ConnectionManager:
     def __init__(self):
 
         self.ROVER_HOST = "192.168.0.50"
+        self.ARM_HOST = "192.168.7.2" # "192.168.0.80"
         self.LOCAL_HOST = "127.0.0.1"
         self.ROVER_TCP_PORT = 8841
         self.ROVER_PORT = 8840
+        self.ARM_PORT = 53204
 
         self.tcp = TCPConnection(self.ROVER_HOST, self.ROVER_TCP_PORT)
         # Kill the thread when the work is done
@@ -18,6 +20,9 @@ class ConnectionManager:
 
         self.drive = DriveConnection(self.ROVER_HOST, self.ROVER_PORT)
         self.drive.start()
+        
+        self.arm = ArmConnection(self.ARM_HOST, self.ARM_PORT)
+        self.arm.start()
 
     def enable_tcp(self, enable):
         if enable:
@@ -28,38 +33,48 @@ class ConnectionManager:
         self.tcp.quit()
         self.drive.quit()
 
-
-class DriveConnection(QtCore.QThread):
-
-    sensorUpdate = QtCore.pyqtSignal([dict])
-    gpsUpdate = QtCore.pyqtSignal([tuple])
-
-    def __init__(self, host, port):
-        super(self.__class__, self).__init__()
-
-        # Indicates whether the rovers is in autonomous mode
-        self.auto = False
-        self.ROVER_HOST = host
-        self.ROVER_PORT = port
-
-        # Indicates whether emergency stop has been pressed (CANNOT BE UNDONE)
-        # Reset the UI if emergency stopped
-        self.stop = False
-
-        self.joys = joystickv1.Joystick()
-        self.joys.start()
+# TODO conform to python's conventions for abstract classes instead of passing with a comment
+class UdpConnection(QtCore.QThread):    
+    def __init__(self, host, port):        
+        QtCore.QThread.__init__(self)
+        
+        self.host = host
+        self.port = port
 
         # UDP connection to the rover
-        self.rover_sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        self.rover_sock.setblocking(False)
-
-        self.timer = None
-
+        self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self.sock.setblocking(False)
+        
+        
+    # Subclasses implement this!!
+    def send_message(self):
+        pass
+        
     def run(self):
         while True:
             self.send_message()
             self.receive_message()
             self.msleep(10)
+
+    
+class DriveConnection(UdpConnection):
+    sensorUpdate = QtCore.pyqtSignal([dict])
+    gpsUpdate = QtCore.pyqtSignal([tuple])
+
+    def __init__(self, host, port):
+        UdpConnection.__init__(self, host, port)
+        
+        # Indicates whether the rovers is in autonomous mode
+        self.auto = False
+        
+        # Indicates whether emergency stop has been pressed (CANNOT BE UNDONE)
+        # Reset the UI if emergency stopped
+        self.stop = False
+        
+        self.joys = joystickv1.getJoysticks()
+        self.joys.start()
+
+        self.timer = None
 
     def enable_tcp(self, enable):
         self.auto = enable
@@ -93,7 +108,7 @@ class DriveConnection(QtCore.QThread):
         buff = struct.pack("<?hh", self.auto, int(throttle), int(steering))
 
         # Will send even if we can't reach the rover?
-        self.rover_sock.sendto(buff, (self.ROVER_HOST, self.ROVER_PORT))
+        self.sock.sendto(buff, (self.host, self.port))
 
     def receive_message(self):
         """
@@ -103,7 +118,7 @@ class DriveConnection(QtCore.QThread):
         """
 
         try:
-            rover_data = self.rover_sock.recv(1024)
+            rover_data = self.sock.recv(1024)
         except socket.error:
             # Do nothing
             pass
@@ -124,6 +139,57 @@ class DriveConnection(QtCore.QThread):
 
             self.sensorUpdate.emit(dictionary)
             self.gpsUpdate.emit((lat, lng))
+            
+ 
+# TODO Refactor this and DriveConnection to instead share a common class, UdpConnection 
+class ArmConnection(DriveConnection):
+    def __init__(self, host, port):
+        super(self.__class__, self).__init__(host, port)
+         # Make this joystick #2
+        self.joys = joystickv1.getJoysticks()
+        self.joys.start()
+
+        self.JOYSTICK_NUM = 0
+        
+    def send_message(self):
+        if not self.joys.ready:
+            return
+                    
+        # These mappings are for my Logitech F710 controller. 
+        # Change accordingly if your controller is different
+        base_rotation = self._joy_axis(2) # Triggers
+        shoulder = - self._joy_axis(1) # Left stick Y axis
+        elbow = self._joy_axis(3) # Right stick Y axis
+        wrist_lift = self._button_axis(1, 3) # B is down, Y is up (B is right, Y is up)
+        wrist_rotation = self._hat_axis(4, 5) # Bumpers
+        hand_grip = self._button_axis(2, 0) # X- open hand, A- Close hand. (x left, a bottom)
+        
+        buff = struct.pack("<ffffff", base_rotation, shoulder, elbow, wrist_lift, wrist_rotation, hand_grip)
+        
+        #print (base_rotation, shoulder, elbow, wrist_lift, wrist_rotation, hand_grip)
+
+        # Will send even if we can't reach the rover?
+        self.sock.sendto(buff, (self.host, self.port))
+        
+    
+    def _joy_axis(self, axisNum):
+        """
+        Returns the value at the specificed joystick axis. The value will be on
+        the scale of 0-1.
+        """
+        val = self.joys.joystick_axis[self.JOYSTICK_NUM][axisNum];
+        val /= 32768.0
+        
+        # Deadzone
+        return 0 if (abs(val) < .10) else val
+            
+    def _button_axis(self, forwardBtn, reverseBtn):
+        if self.joys.joystick_button[self.JOYSTICK_NUM][forwardDir]:
+            return 1
+        elif self.joys.joystick_button[self.JOYSTICK_NUM][reverseDir]:
+            return -1
+        else:
+            return 0
 
 
 # Open a TCP connect in a separate thread
