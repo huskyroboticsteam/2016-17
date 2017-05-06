@@ -7,8 +7,8 @@ import joystickv1
 class ConnectionManager:
     def __init__(self):
 
-        self.ROVER_HOST = "192.168.0.50"
-        self.ARM_HOST = "192.168.7.2" # "192.168.0.80"
+        self.ROVER_HOST = "192.168.0.40"
+        self.ARM_HOST = "192.168.0.80" # "192.168.7.2" # 7.2 for over USB
         self.LOCAL_HOST = "127.0.0.1"
         self.ROVER_TCP_PORT = 8841
         self.ROVER_PORT = 8840
@@ -94,6 +94,7 @@ class DriveConnection(UdpConnection):
         try:
             throttle = self.joys.joystick_axis[0][1]
             steering = self.joys.joystick_axis[0][0]
+            print throttle, steering
         except:
             pass
         else:
@@ -140,9 +141,7 @@ class DriveConnection(UdpConnection):
             self.sensorUpdate.emit(dictionary)
             self.gpsUpdate.emit((lat, lng))
             
- 
-# TODO Refactor this and DriveConnection to instead share a common class, UdpConnection 
-class ArmConnection(DriveConnection):
+ class ArmConnection(UdpConnection):
     def __init__(self, host, port):
         super(self.__class__, self).__init__(host, port)
          # Make this joystick #2

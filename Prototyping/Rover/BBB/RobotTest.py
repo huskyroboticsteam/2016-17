@@ -51,7 +51,7 @@ class RobotTest(object):
 
         self.Sweeper = Servo_Sweep.Servo_Sweep()
 
-        self.nav = Navigation.Navigation(0.76, 0.56, 0.33, 0.001, "AIN2")
+        self.nav = Navigation.Navigation(0.77, 0.55, 0.34, 0.001, "AIN2")
         # setup motors
         # motor: throttle, F, B
         # 1: 8,  9,  10
@@ -126,7 +126,7 @@ class RobotTest(object):
             location = (self.r_comms.lat, self.r_comms.longitude)
             if not self.autonomous_initialized:
                 # TODO: read target from wireless
-                self.target = (47.654116, -122.304557)
+                self.target = (47.654121, -122.305060)
                 # TODO: get obstacles from wireless or sensor
                 obstacles = []
                 self.autonomous.set_target(scale_coords(self.target, self.target))
@@ -148,9 +148,9 @@ class RobotTest(object):
                 if location == (0.0, 0.0) or location == (0, 0):
                     print "gps not received, staying still"
                     return 0, 0
-                turn = self.autonomous.go(scale_coords(location, self.target), heading) * -1
+                turn = self.autonomous.go(scale_coords(location, self.target), heading)
                 print "turn: ", turn
-                return 100, turn
+                return 50, turn
         else:
             return self.r_comms.receivedDrive[1], self.r_comms.receivedDrive[2]
 

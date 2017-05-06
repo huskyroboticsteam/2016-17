@@ -16,7 +16,7 @@ class PathFollower:
         # TODO fine tune this
         self.pid = PID(0.5, 0.0, 0.0)
         self.pid.setTarget(0.0)
-        self.position_epsilon = 0.05
+        self.position_epsilon = 1
 
     def go(self, location, heading):
         """
