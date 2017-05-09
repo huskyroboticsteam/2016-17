@@ -6,9 +6,8 @@ import joystickv1
 
 class ConnectionManager:
     def __init__(self):
-
         self.ROVER_HOST = "192.168.0.40"
-        self.ARM_HOST = "192.168.0.80" # "192.168.7.2" # 7.2 for over USB
+        self.ARM_HOST = "192.168.0.80"  # "192.168.7.2" # 7.2 for over USB
         self.LOCAL_HOST = "127.0.0.1"
         self.ROVER_TCP_PORT = 8841
         self.ROVER_PORT = 8840
@@ -20,7 +19,7 @@ class ConnectionManager:
 
         self.drive = DriveConnection(self.ROVER_HOST, self.ROVER_PORT)
         self.drive.start()
-        
+
         self.arm = ArmConnection(self.ARM_HOST, self.ARM_PORT)
         self.arm.start()
 
@@ -33,44 +32,44 @@ class ConnectionManager:
         self.tcp.quit()
         self.drive.quit()
 
+
 # TODO conform to python's conventions for abstract classes instead of passing with a comment
-class UdpConnection(QtCore.QThread):    
-    def __init__(self, host, port):        
+class UdpConnection(QtCore.QThread):
+    def __init__(self, host, port):
         QtCore.QThread.__init__(self)
-        
+
         self.host = host
         self.port = port
 
         # UDP connection to the rover
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.setblocking(False)
-        
-        
+
     # Subclasses implement this!!
     def send_message(self):
         pass
-        
+
     def run(self):
         while True:
             self.send_message()
             self.receive_message()
             self.msleep(10)
 
-    
+
 class DriveConnection(UdpConnection):
     sensorUpdate = QtCore.pyqtSignal([dict])
     gpsUpdate = QtCore.pyqtSignal([tuple])
 
     def __init__(self, host, port):
         UdpConnection.__init__(self, host, port)
-        
+
         # Indicates whether the rovers is in autonomous mode
         self.auto = False
-        
+
         # Indicates whether emergency stop has been pressed (CANNOT BE UNDONE)
         # Reset the UI if emergency stopped
         self.stop = False
-        
+
         self.joys = joystickv1.getJoysticks()
         self.joys.start()
 
@@ -136,41 +135,42 @@ class DriveConnection(UdpConnection):
             lng = tup[7]
 
             dictionary = {"Potentiometer": str(pot), "Magnetometer": str(mag),
-                      "Encoder 1": str(enc_1), "Encoder 2": str(enc_2), "Encoder 3": str(enc_3), "Encoder 4": str(enc_4)}
+                          "Encoder 1": str(enc_1), "Encoder 2": str(enc_2), "Encoder 3": str(enc_3),
+                          "Encoder 4": str(enc_4)}
 
             self.sensorUpdate.emit(dictionary)
             self.gpsUpdate.emit((lat, lng))
-            
- class ArmConnection(UdpConnection):
+
+
+class ArmConnection(UdpConnection):
     def __init__(self, host, port):
         super(self.__class__, self).__init__(host, port)
-         # Make this joystick #2
+        # Make this joystick #2
         self.joys = joystickv1.getJoysticks()
         self.joys.start()
 
         self.JOYSTICK_NUM = 0
-        
+
     def send_message(self):
         if not self.joys.ready:
             return
-                    
+
         # These mappings are for my Logitech F710 controller. 
         # Change accordingly if your controller is different
-        base_rotation = self._joy_axis(2) # Triggers
-        shoulder = - self._joy_axis(1) # Left stick Y axis
-        elbow = self._joy_axis(3) # Right stick Y axis
-        wrist_lift = self._button_axis(1, 3) # B is down, Y is up (B is right, Y is up)
-        wrist_rotation = self._hat_axis(4, 5) # Bumpers
-        hand_grip = self._button_axis(2, 0) # X- open hand, A- Close hand. (x left, a bottom)
-        
+        base_rotation = self._joy_axis(2)  # Triggers
+        shoulder = - self._joy_axis(1)  # Left stick Y axis
+        elbow = self._joy_axis(3)  # Right stick Y axis
+        wrist_lift = self._button_axis(1, 3)  # B is down, Y is up (B is right, Y is up)
+        wrist_rotation = self._hat_axis(4, 5)  # Bumpers
+        hand_grip = self._button_axis(2, 0)  # X- open hand, A- Close hand. (x left, a bottom)
+
         buff = struct.pack("<ffffff", base_rotation, shoulder, elbow, wrist_lift, wrist_rotation, hand_grip)
-        
-        #print (base_rotation, shoulder, elbow, wrist_lift, wrist_rotation, hand_grip)
+
+        # print (base_rotation, shoulder, elbow, wrist_lift, wrist_rotation, hand_grip)
 
         # Will send even if we can't reach the rover?
         self.sock.sendto(buff, (self.host, self.port))
-        
-    
+
     def _joy_axis(self, axisNum):
         """
         Returns the value at the specificed joystick axis. The value will be on
@@ -178,10 +178,10 @@ class DriveConnection(UdpConnection):
         """
         val = self.joys.joystick_axis[self.JOYSTICK_NUM][axisNum];
         val /= 32768.0
-        
+
         # Deadzone
         return 0 if (abs(val) < .10) else val
-            
+
     def _button_axis(self, forwardBtn, reverseBtn):
         if self.joys.joystick_button[self.JOYSTICK_NUM][forwardDir]:
             return 1
@@ -193,7 +193,6 @@ class DriveConnection(UdpConnection):
 
 # Open a TCP connect in a separate thread
 class TCPConnection(QtCore.QThread):
-
     requestMarkers = QtCore.pyqtSignal()
     tcp_enabled = QtCore.pyqtSignal(bool)
 
@@ -246,8 +245,6 @@ class TCPConnection(QtCore.QThread):
         if self.auto_sock is not None:
             self.auto_sock.close()
             self.auto_sock = None
-
-
 
 
 # translate values from one range to another
