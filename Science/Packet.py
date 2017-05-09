@@ -102,7 +102,7 @@ class AuxCtrlID:
     RotateArmature = 0x03
 
 class CameraID:
-    Microscope = 0x00
+    Microscope = 0x01
 
 class SysCtrlID:
     Ping = 0x00

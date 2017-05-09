@@ -87,8 +87,8 @@ class CommHandler:
 class Message:
 
     def __init__(self, data, fromAddr):
-        self.data = Util.long_to_bytes(data)
-        self.ID = ord(self.data[4])
+        self.data = bytearray(data) 
+        self.ID = self.data[4]
         self.fromAddr = fromAddr
 
     def __str__(self):

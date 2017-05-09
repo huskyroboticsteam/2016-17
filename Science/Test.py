@@ -5,8 +5,10 @@ import time
 import math
 import Util
 import threading
+import Parse
 from Packet import Packet
 from SystemTelemetry import SystemTelemetry
+from CommHandler import Message
 
 def snedTestPacket():
     while True:
@@ -32,6 +34,16 @@ def parsePacket(packetData):
     packetID = int(packetData[33:40], 2)
     return "Timestamp: " + str(packetTimestamp) + "  |  ID: " + str(packetID)
 
+def testParsing():
+    Parse.setupParsing()
+    parsingThread = threading.Thread(target=Parse.thread_parsing)
+    parsingThread.start()
+    mes = Message(b'axbd\x81\x01zvgh', '192.168.0.1')
+    Parse.queueMessage(mes)
+
+testParsing()
+
+"""
 #snedThread = threading.Thread(target=snedTestPacket)
 #snedThread.start()
 
@@ -39,6 +51,7 @@ snedThread2 = threading.Thread(target=snedTestPacket2)
 snedThread2.start()
 
 
+"""
 """
 DrillMotor = TalonMC("P8_13")
 DrillMotor.setFreq(10000)
@@ -50,7 +63,7 @@ while x < 1.0:
 DrillMotor.set(0.0)
 
 """
-
+"""
 SOCKET = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 SOCKET.bind(('192.168.0.1', 24))
 while True:
@@ -62,4 +75,4 @@ while True:
         #sys.stdout.write("\n" + parsePacket(data) + "\n")
     except socket.error:
         pass
-
+"""

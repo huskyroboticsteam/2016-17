@@ -26,7 +26,7 @@ class SystemControl(Command):
     def run(self, reading):
         PING = Parse.sys_ctrl[SysCtrlID.Ping + 1] == 1
         REBOOT = Parse.sys_ctrl[SysCtrlID.Reboot + 1] == 1
-        MICROSCOPE_CAPTURE = Parse.cam_ctrl[CameraID.Microscope + 1] == 1
+        MICROSCOPE_CAPTURE = Parse.cam_ctrl[CameraID.Microscope]
         Parse.sys_ctrl[SysCtrlID.Ping + 1] = 0
         Parse.sys_ctrl[SysCtrlID.Reboot + 1] = 0
         Parse.cam_ctrl[CameraID.Microscope + 1] = 0

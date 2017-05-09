@@ -16,7 +16,7 @@ import sys
 import math
 from binascii import unhexlify
 
-ADC_SETUP = False
+ADC_STATUS = False
 
 """
 Maps a number from one range into another
@@ -63,6 +63,8 @@ def byteMap(data, bits=8):
         return data
 
 """
+Returns necessary binary length of base-10 integer n.
+TESTED? YES
 """
 def binaryLength(n):
     if n > 0:
@@ -74,9 +76,20 @@ def binaryLength(n):
     return int(digits)
 
 """
-Copied from StackOverflow
+Returns an integer from a hex encoded bytearray
+called data. From position start to stop
 """
-def long_to_bytes (val, endianness='big'):
+def intFromHexRange(data, start, stop):
+    return int(str(data[start:stop]).encode('hex'), 16)
+
+"""
+Copied from StackOverflow
+Takes in long of val and converts
+it into a char string to represent
+the data.
+TESTED? YES
+"""
+def long_to_bytes(val, endianness='big'):
     """
     Use :ref:`string formatting` and :func:`~binascii.unhexlify` to
     convert ``val``, a :func:`long`, to a byte :func:`str`.
@@ -113,7 +126,7 @@ def long_to_bytes (val, endianness='big'):
 """
 Returns string of bits
 given an string of characters
-TESTED? No
+TESTED? YES
 """
 def chartobytes(val):
     ret_val = ""
@@ -152,7 +165,9 @@ def full_bin_to_chr(n):
 
 
 """
-I have no idea what is happening.
+Reverses bits given an integer n,
+outputs result as an integer
+Tested? Yes
 """
 def reverseBits(n):
     return int(bin(n)[:1:-1], 2)
@@ -166,10 +181,11 @@ RESULTS.
 Returns:
 True if 'setADC_Status()' was last set to True
 False if 'setADC_Status()' was last set to False
-TESTED? No
+TESTED? Yes
 """
 def ADC_Status():
-    return ADC_SETUP
+    global ADC_STATUS
+    return ADC_STATUS
 
 
 """
@@ -178,7 +194,8 @@ Sets the status of the on board ADC to the given boolean value.
 TESTED? No
 """
 def setADC_Status(status):
-    ADC_SETUP = status
+    global ADC_STATUS
+    ADC_STATUS = status
 
 
 """
