@@ -203,42 +203,49 @@
                <number>5</number>
               </property>
               <item row="0" column="0">
-               <layout class="QGridLayout" name="reading_container">
-                <property name="leftMargin">
-                 <number>0</number>
+               <widget class="QScrollArea" name="scrollArea">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
                 </property>
-                <property name="rightMargin">
-                 <number>0</number>
+                <property name="widgetResizable">
+                 <bool>true</bool>
                 </property>
-                <item row="0" column="0">
-                 <widget class="QLabel" name="label_9">
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <family>MS Shell Dlg 2</family>
-                    <pointsize>11</pointsize>
-                    <weight>75</weight>
-                    <bold>true</bold>
-                    <kerning>true</kerning>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>Sensor Readings</string>
-                  </property>
-                  <property name="textFormat">
-                   <enum>Qt::LogText</enum>
-                  </property>
-                  <property name="alignment">
-                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
+                <widget class="QWidget" name="scrollAreaWidgetContents">
+                 <property name="geometry">
+                  <rect>
+                   <x>0</x>
+                   <y>0</y>
+                   <width>253</width>
+                   <height>381</height>
+                  </rect>
+                 </property>
+                 <layout class="QGridLayout" name="reading_container">
+                  <item row="0" column="0">
+                   <widget class="QLabel" name="label_9">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="font">
+                     <font>
+                      <pointsize>11</pointsize>
+                      <weight>75</weight>
+                      <bold>true</bold>
+                     </font>
+                    </property>
+                    <property name="text">
+                     <string>Drive Sensors</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </widget>
               </item>
              </layout>
             </widget>

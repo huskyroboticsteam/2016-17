@@ -25,10 +25,37 @@ class SensorData(QtGui.QWidget):
         Maps the friendly name to the label we update with the sensor value
         :return: The QVBoxLayout to add to the widget window
         """
-        dictionary = ["Potentiometer", "Magnetometer", "Encoder 1", "Encoder 2", "Encoder 3", "Encoder 4"]
+        dictionary = ["Potentiometer", "Magnetometer", "Drive Encoder 1", "Drive Encoder 2", "Drive Encoder 3", "Drive Encoder 4"]
+        science_sensors = ["Distance", "UV", "Thermo Internal", "Thermo External", "Humidity", "Science Encoder 1", "Science Encoder 2", "Science Encoder 3", "Limit Switch"]
         vbox = QtGui.QVBoxLayout()
 
         for key in dictionary:
+            hbox = QtGui.QHBoxLayout()
+
+            label = QtGui.QLabel()
+            label.setAlignment(QtCore.Qt.AlignHCenter)
+            label.setText(key)
+
+            label2 = QtGui.QLabel()
+            label2.setAlignment(QtCore.Qt.AlignHCenter)
+            label2.setText("No data")
+
+            hbox.addWidget(label)
+            hbox.addWidget(label2)
+
+            vbox.addLayout(hbox)
+
+            self.ui_map[key] = label2  # the keys of the map are IPs
+
+        science_label = QtGui.QLabel()
+        science_label.setText("Science Sensors")
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        font.setBold(True)
+        science_label.setFont(font)
+        vbox.addWidget(science_label)
+
+        for key in science_sensors:
             hbox = QtGui.QHBoxLayout()
 
             label = QtGui.QLabel()

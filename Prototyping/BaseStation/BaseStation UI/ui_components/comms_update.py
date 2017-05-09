@@ -135,8 +135,8 @@ class DriveConnection(UdpConnection):
             lng = tup[7]
 
             dictionary = {"Potentiometer": str(pot), "Magnetometer": str(mag),
-                          "Encoder 1": str(enc_1), "Encoder 2": str(enc_2), "Encoder 3": str(enc_3),
-                          "Encoder 4": str(enc_4)}
+                          "Drive Encoder 1": str(enc_1), "Drive Encoder 2": str(enc_2), "Drive Encoder 3": str(enc_3),
+                          "Drive Encoder 4": str(enc_4)}
 
             self.sensorUpdate.emit(dictionary)
             self.gpsUpdate.emit((lat, lng))
