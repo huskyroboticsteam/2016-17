@@ -62,7 +62,7 @@ class Robot(object):
             self.nav = Navigation.Navigation(0.765555, 0.552777, 0.348333, 0.001, "AIN2")
             self.r_comms = Robot_comms.Robot_comms("192.168.0.40", 8840, 8841, "<?hh", "<?ff", "<ffffffff", "<?ff?")
             self.motors = [
-		        MiniMotor.MiniMotor(1, 8, 9, 10, pwm),
+                MiniMotor.MiniMotor(1, 8, 9, 10, pwm),
                 MiniMotor.MiniMotor(2, 13, 12, 11, pwm),
                 MiniMotor.MiniMotor(3, 2, 4, 3, pwm),
                 MiniMotor.MiniMotor(4, 7, 6, 5, pwm),
@@ -139,7 +139,7 @@ class Robot(object):
                 # Reached the target
                 self.autonomous_initialized = False
                 # sends back "we're here" signal
-                self.r_comms.sendAtLocationPacket(robot.get_nav())
+                self.r_comms.sendAtLocationPacket(self.get_nav())
                 return 0, 0
             else:
                 heading = self.nav.getMag()

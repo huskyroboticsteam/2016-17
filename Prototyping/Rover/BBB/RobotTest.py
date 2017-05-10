@@ -46,12 +46,9 @@ class RobotTest(object):
             is_using_big_motor (bool): True if using BigMotor for controller motors.
         """
         ADC.setup()
-
         self.pot_pid = PID.PID(-0.1, 0, 0)
-
-        self.Sweeper = Servo_Sweep.Servo_Sweep()
-
         self.nav = Navigation.Navigation(0.77, 0.55, 0.34, 0.001, "AIN2")
+
         # setup motors
         # motor: throttle, F, B
         # 1: 8,  9,  10
@@ -79,6 +76,7 @@ class RobotTest(object):
         self.r_comms = Robot_comms.Robot_comms("192.168.0.50", 8840, 8841, "<?hh", "<?ff", "<ffffffff", "<?ff?")
         self.autonomous_initialized = False
         self.autonomous = Autonomous()
+        self.Sweeper = Servo_Sweep.Servo_Sweep()
         self.target = None
 
     def moveServo(self):
