@@ -45,7 +45,10 @@ class Robot_comms():
         except:
             pass
         # Currently set to 1 second
-        threading.Timer(.2, self.updateGPS).start()
+        timer = threading.Timer(.2, self.updateGPS)
+        # Make it a daemon thread
+        timer.daemon = True
+        timer.start()
 
     # receives a packet and sets variables accordingly
     def receiveData(self, nav):
