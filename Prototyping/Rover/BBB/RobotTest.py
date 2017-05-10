@@ -10,6 +10,7 @@ import Robot_comms
 import Navigation
 import Utils
 import sys
+import sleep
 from autonomous import Autonomous
 from random import random
 from Utils import scale_coords
@@ -123,6 +124,7 @@ class RobotTest(object):
         #     return 0, 0
         # auto = self.r_comms.receivedDrive[0]
         if True:
+            Time.sleep(.01)
             location = (self.r_comms.lat, self.r_comms.longitude)
             if not self.autonomous_initialized:
                 # TODO: read target from wireless
