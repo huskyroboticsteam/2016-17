@@ -81,7 +81,7 @@ class SensorHandler:
         for sensor in cls._sensors:
             buffer = sensor.getDataForPacket()
             data |= data << Util.binaryLength(buffer)
-        return data
+        return Util.long_to_bytes(data)
 
     @classmethod
     def getAuxSensorData(cls):
@@ -89,7 +89,7 @@ class SensorHandler:
         for sensor in cls._auxSensors:
             buffer = sensor.getDataForPacket()
             data |= data << Util.binaryLength(buffer)
-        return data
+        return Util.long_to_bytes(data)
 
     @classmethod
     def getCameraData(cls):
