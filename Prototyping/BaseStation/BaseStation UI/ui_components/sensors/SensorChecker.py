@@ -7,6 +7,8 @@ class SensorData(QtGui.QWidget):
 
         # Populated with keys from self.map to the QtLabel objects indicating activity
         self.ui_map = {}  # dictionary object
+        self.picture = QtGui.QPushButton()
+        self.picture.setText("Take a Picture!")
 
         self.setLayout(self.build_list())
 
@@ -72,6 +74,8 @@ class SensorData(QtGui.QWidget):
             vbox.addLayout(hbox)
 
             self.ui_map[key] = label2  # the keys of the map are IPs
+
+        vbox.addWidget(self.picture)
 
         vbox.setAlignment(QtCore.Qt.AlignTop)
         return vbox
