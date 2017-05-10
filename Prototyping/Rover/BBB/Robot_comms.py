@@ -45,6 +45,7 @@ class Robot_comms():
         except:
             pass
         # Currently set to 1 second
+
         threading.Timer(.4, self.updateGPS).start()
 
     # receives a packet and sets variables accordingly

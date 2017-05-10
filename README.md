@@ -32,10 +32,13 @@ Add to Python install directory under DLLs and add PYSDL2_DLL_PATH=*Your python 
 ```
 cd dependencies
 dpkg -i libgeos-3.3.3_3.3.3-1.1_armhf.deb
-dpkg -i libgeos-c1_3.3.3_3.3.3-1.1_armhf.deb
+dpkg -i libgeos-c1_3.3.3-1.1_armhf.deb
 tar -zxvf pyvisgraph-0.1.4.tar.gz
-python pyvisgraph-0.1.4.tar.gz/setup.py
+cd pyvisgraph-0.1.4
+python setup.py install
+cd ..
 tar -zxvf Shapely-1.6b4.tar.gz
-python Shapely-1.6b4.tar.gz/setup.py
+cd Shapely-1.6b4
+python setup.py install
+cd ..
 ```
-
