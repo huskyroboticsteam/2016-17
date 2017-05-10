@@ -22,7 +22,7 @@ class Packet:
     DEFAULT_TARGET_PORT = 24
 
     def __init__(self, id=0x00, targetIP=None, targetPort=None):
-        self._data = 0
+        self._data = b''  # bytearray
         self._id = id
         self._recieved = ""
         if targetPort == None:
@@ -35,16 +35,14 @@ class Packet:
 
     # Appends 32bit UNIX timestamp to beginning of packet
     def addTimeID(self):
-        timestamp = Util.byteMap(int(time.time()), 32)
-        id = Util.byteMap(self._id, 8)
-        time_id = (timestamp << 8) | id
-        self._data |= time_id << Util.binaryLength(self._data)
+        time_data = Util.long_to_bytes(time.time())
+        id_data = Util.long_to_bytes(self._id)
+        self._data = time_data + id_data + self._data
 
     # Append bitwise list to current packet buffer
     # EG [0,1,1,0]
     def appendData(self, data):
-        data = int(data)
-        self._data = self._data << Util.binaryLength(data) | data
+        self._data += Util.long_to_bytes(data)
 
     def getRecieved(self):
         return self._recieved
@@ -62,11 +60,11 @@ class Packet:
             self.addTimeID()  # Always add time and id to the packet
             s = socket.socket()
             s.connect((self._targetIP, self._targetPort))
-            s.send(Util.long_to_bytes(self._data))
+            s.send(self._data)
             s.close()
         except socket.error:
             # Throw "Failed to send packet"
-            Error.throw(0x0503, "Failed to send packet", "Packet.py", 58)
+            Error.throw(0x0503, "Failed to send packet", "Packet.py", 69)
             setStatus(False)
             return False
         setStatus(True)
@@ -102,7 +100,7 @@ class AuxCtrlID:
     RotateArmature = 0x03
 
 class CameraID:
-    Microscope = 0x00
+    Microscope = 0x01
 
 class SysCtrlID:
     Ping = 0x00

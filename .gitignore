@@ -9,5 +9,6 @@
 *.suo
 *.pyproj
 *.sln
+*/.vs
 
 **/.DS_Store

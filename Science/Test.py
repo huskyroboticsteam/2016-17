@@ -5,61 +5,37 @@ import time
 import math
 import Util
 import threading
+import Parse
 from Packet import Packet
 from SystemTelemetry import SystemTelemetry
+from CommHandler import Message
 
-def snedTestPacket():
-    while True:
-        time.sleep(10)
-        testPacket = Packet(0x81, '192.168.0.90', 5000)
-        testPacket.appendData(SystemTelemetry.getTelemetryData())
-        testPacket.send()
-        time.sleep(3)
+TEST_IP = '127.0.0.1'
+TEST_PORT = 22
+LISTEN = False
 
-def snedTestPacket2():
-    i = 0
-    while True:
-        i += 1
-        time.sleep(5)
-        testPacket = Packet(i, '192.168.0.90', 5000)
-        testPacket.appendData(i*i)
-        testPacket.send()
+def testParsing():
+    Parse.setupParsing()
+    parsingThread = threading.Thread(target=Parse.thread_parsing)
+    parsingThread.start()
+    mes = Message(b'axbd\x81\x01zvgh', '192.168.0.1')
+    Parse.queueMessage(mes)
 
-def parsePacket(packetData):
-    packetData = Util.chartobytes(packetData)
-    sys.stdout.write(packetData)
-    packetTimestamp = int(packetData[0:32], 2)
-    packetID = int(packetData[33:40], 2)
-    return "Timestamp: " + str(packetTimestamp) + "  |  ID: " + str(packetID)
+def testPacket():
+    pack = Packet(0x00)
+    pack.appendData('\x4e')
+    pack.appendData(Util.long_to_bytes(45))
+    # Data value = 0x4E2D , 20,013
+    pack.send()
 
-#snedThread = threading.Thread(target=snedTestPacket)
-#snedThread.start()
-
-snedThread2 = threading.Thread(target=snedTestPacket2)
-snedThread2.start()
-
-
-"""
-DrillMotor = TalonMC("P8_13")
-DrillMotor.setFreq(10000)
-x = 0.0
-while x < 1.0:
-    DrillMotor.set(x)
-    x += 0.1
-    time.sleep(0.8)
-DrillMotor.set(0.0)
-
-"""
 
 SOCKET = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-SOCKET.bind(('192.168.0.1', 24))
-while True:
-    try:
-        SOCKET.listen(1)
-        client, clientAddr = SOCKET.accept()
-        data = client.recv(1024)
-        #sys.stdout.write("Received: {0}\n".format(data))
-        #sys.stdout.write("\n" + parsePacket(data) + "\n")
-    except socket.error:
-        pass
+SOCKET.bind((TEST_IP, TEST_PORT))
 
+if LISTEN:
+        while True:
+            SOCKET.listen(1)
+            client, clientAddr = SOCKET.accept()
+            data = client.recv(1024)
+            sys.stdout.write("Data Received: " + str(data) + "\nFrom: " + str(clientAddr))
+            

@@ -121,7 +121,7 @@ class Encoder(Sensor):
     # Returns distance moved as though it were a disk with radius "_distK"
     # Set "_distK" in self.setDistanceK(...)
     def getDistance(self):
-        return self.getAngle() * self._distK
+        return self._steps * self._distK
 
     # Resets all accumulations
     def reset(self):

@@ -36,7 +36,7 @@ def throw(errorCode, comment="", file="", line=None, fatal=False):
     CommHandler.sendAsyncPacket(errorPack)
     errorPack = None
     if fatal:
-        os.system("sudo reboot")
+        os.system("sudo reboot")  # TODO: Test whether or not this works.
         sys.exit(0x00FF)
 
 
