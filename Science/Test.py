@@ -6,7 +6,7 @@ import math
 import Util
 import threading
 import Parse
-from Packet import Packet
+from Packet import Packet, CameraID, AuxCtrlID, PacketType
 from SystemTelemetry import SystemTelemetry
 from CommHandler import Message
 
@@ -31,10 +31,16 @@ def testPacket():
     pack.send()
 
 """
-Sends auxilliary command to the BBB
+Sends command to the BBB
+Only works for Aux and Sys Ctrl
+* Img Request Different (See requestImage())
+Per Documentation:
+    0x81 = Aux Ctrl
+    0x82 = Sys Ctrl
+Or import Packet.PacketType and use as enum
 """
-def sendAuxCommand(cmdID, cmdVal):
-    pack = Packet(0x81)
+def sendCommand(cmdTyp, cmdID, cmdVal):
+    pack = Packet(cmdTyp)
     data = _getCommandData(cmdID, cmdVal)
     pack.appendData(data)
     pack.send()
@@ -60,6 +66,28 @@ def _getCommandData(cmdID, cmdVal):
 
     return cmdBytes + cmdValBytes
 
+"""
+Asks BBB for image
+"""
+def requestImage(camID):
+    #pack = Packet(PacketType.ImageRequest)
+    data = Util.long_to_bytes(Parse.IMG_REQ_CONST)  # Turns img request into bytes
+    camID = Util.long_to_bytes(camID)  # Turns camID into bytes
+    
+    if len(camID) > 1:
+        camID = camID[0]
+    elif len(camID) < 1:
+        camID = Util.long_to_bytes(0x01)  # Default to cam ID 1
+    
+    Util.write(data + camID)
+
+    #pack.appendData(data + camID)
+    #pack.send()
+
+# Test Image Request
+
+requestImage(CameraID.Microscope)
+sendCommand(PacketType.AuxControl, AuxCtrlID.CamFocusPos, 90)
 
 SOCKET = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 if LISTEN:

@@ -128,54 +128,6 @@ def long_to_bytes(val, endianness='big'):
 
     return s
 
-"""
-Returns string of bits
-given an string of characters
-TESTED? YES
-"""
-def chartobytes(val):
-    ret_val = ""
-    for n in val:
-        this_val = bin(ord(n))[2:]
-        if len(this_val) % 8 != 0:
-            this_val = "00000000"[0:(8-(len(this_val) % 8))] + this_val
-        ret_val += this_val
-    return ret_val
-
-
-"""
-Takes binary string n (length 8 bits)
-and converts to ASCII
-TESTED? Yes
-"""
-def bintochr(n):
-    return chr(int(n, 2))
-
-
-"""
-Takes binary string of any
-length and converts it to
-string of chars representing
-that binary data
-TESTED? Yes
-"""
-def full_bin_to_chr(n):
-    ret_val = ""
-    if len(n) % 8 != 0:
-        n += "00000000"[0:8-(len(n) % 8)]
-    while len(n) != 0:
-        ret_val += bintochr(n[0:8])
-        n = n[8:]
-    return ret_val
-
-
-"""
-Reverses bits given an integer n,
-outputs result as an integer
-Tested? Yes
-"""
-def reverseBits(n):
-    return int(bin(n)[:1:-1], 2)
 
 """
 Returns the status of the ADC configuration on board the
@@ -205,10 +157,23 @@ def setADC_Status(status):
 
 """
 Returns true if 'value' is an integer greater than 0
-TESTED? No
+TESTED? Yes
 """
 def isValidUnsigned(value):
     return isinstance(value, int) and value > 0
+
+"""
+Returns true if 'value' is a signed integer 
+in the bit-width range b using two's complement
+Tested? Yes
+"""
+def isValidSigned(value, b=32):
+    if not isinstance(value, int):
+       return False
+    max = 2**b - 1
+    min = -(max + 1)
+    return value >= min and value <= max
+
 
 """
 Writes string to console. Attempts non-string to string conversion.
