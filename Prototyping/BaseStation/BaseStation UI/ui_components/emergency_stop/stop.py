@@ -34,7 +34,6 @@ class Stop(QtGui.QPushButton):
         self.setFont(font)
 
         self.setText("Emergency Stop")
-        self.setDisabled(True)
 
     def mousePressEvent(self, e):
         """
@@ -73,31 +72,6 @@ class Stop(QtGui.QPushButton):
         # If we release shift reset the text
         if e.key() == QtCore.Qt.Key_Shift:
             self.setText("Emergency Stop")
-
-    def enterEvent(self, e):
-        """
-        If we roll over the button set focus on it
-        Overrides parent method
-        :param e: A PyQT EventEvent object
-        :return: None
-        """
-
-        super(Stop, self).enterEvent(e)
-        # Set focus on the stop button because of mouse rollover
-        self.setFocus(1)
-
-    def leaveEvent(self, e):
-        """
-        If we leave the button area set focus anywhere else
-        Overrides parent method
-        :param e: A PyQT LeaveEvent object
-        :return: None
-        """
-
-        super(Stop, self).leaveEvent(e)
-        # Reset text and set focus on some other arbitrary widget
-        self.setText("Emergency Stop")
-        self.nextInFocusChain().setFocus(7)
 
 
 

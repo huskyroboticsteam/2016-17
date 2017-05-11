@@ -55,7 +55,7 @@ class Navigation:
         rawMag = self.mag.read()
         pot = self.readPot()
         angle = Utils.translateValue(pot, self.POT_LEFT - self.POT_MIDDLE, self.POT_RIGHT - self.POT_MIDDLE, -40, 40)
-        return (rawMag + angle) % 360
+        return (rawMag - angle - 140) % 360
 
     # returns gps data
     def getGPS(self):

@@ -8,14 +8,16 @@ class ConnectionManager:
     def __init__(self):
         self.ROVER_HOST = "192.168.0.40"
         self.ARM_HOST = "192.168.0.80"  # "192.168.7.2" # 7.2 for over USB
+        self.SCIENCE_HOST = "192.168.0.90"
         self.LOCAL_HOST = "127.0.0.1"
         self.ROVER_TCP_PORT = 8841
         self.ROVER_PORT = 8840
         self.ARM_PORT = 53204
+        self.SCIENCE_PORT = 5000
 
-        self.tcp = TCPConnection(self.ROVER_HOST, self.ROVER_TCP_PORT)
+        self.auto = AutonomousConnection(self.ROVER_HOST, self.ROVER_TCP_PORT)
         # Kill the thread when the work is done
-        self.tcp.finished.connect(self.tcp.quit)
+        self.auto.finished.connect(self.auto.quit)
 
         self.drive = DriveConnection(self.ROVER_HOST, self.ROVER_PORT)
         self.drive.start()
@@ -23,14 +25,30 @@ class ConnectionManager:
         self.arm = ArmConnection(self.ARM_HOST, self.ARM_PORT)
         self.arm.start()
 
+        self.science = ScienceConnection(self.SCIENCE_HOST, self.SCIENCE_PORT)
+        self.science.start()
+
     def enable_tcp(self, enable):
         if enable:
-            self.tcp.start()
+            self.auto.start()
 
-    # Safely close all threads
+    # Safely close all threads and sockets
     def shutdown(self):
-        self.tcp.quit()
+        # Close the socket then kill the thread
+        if self.auto.auto_sock is not None:
+            self.auto.auto_sock.shutdown(socket.SHUT_RDWR)
+            self.auto.auto_sock.close()
+        self.auto.quit()
+
+        if self.science.science_sock is not None:
+            self.science.science_sock.shutdown(socket.SHUT_RDWR)
+            self.science.science_sock.close()
+        self.science.quit()
+
+        # Kill the thread
         self.drive.quit()
+
+        self.arm.quit()
 
 
 # TODO conform to python's conventions for abstract classes instead of passing with a comment
@@ -47,6 +65,9 @@ class UdpConnection(QtCore.QThread):
 
     # Subclasses implement this!!
     def send_message(self):
+        pass
+
+    def receive_message(self):
         pass
 
     def run(self):
@@ -91,9 +112,10 @@ class DriveConnection(UdpConnection):
         steering = 0
 
         try:
-            throttle = self.joys.joystick_axis[0][1]
-            steering = self.joys.joystick_axis[0][0]
-            print throttle, steering
+            # Emit drive of zero if emergency stop isn't enabled
+            if self.stop is not False:
+                throttle = self.joys.joystick_axis[0][1]
+                steering = self.joys.joystick_axis[0][0]
         except:
             pass
         else:
@@ -191,8 +213,93 @@ class ArmConnection(UdpConnection):
             return 0
 
 
+class ScienceConnection(QtCore.QThread):
+    sensorUpdate = QtCore.pyqtSignal([dict])
+
+    def __init__(self, host, port):
+        super(self.__class__, self).__init__()
+
+        self.host = host
+        self.port = port
+
+        self.connected = False
+        self.failed = 0
+
+        self.science_sock = None
+
+    def run(self):
+        # Initial connection attempt
+        self.connect(5)
+
+        while True:
+            if self.failed < 10 and self.connected:
+                self.receive_message()
+                self.msleep(10)
+            else:
+                # Disconnect the socket and try to reconnect
+                self.connected = False
+                self.failed = 0
+                if self.science_sock is not None:
+                    self.science_sock.shutdown(socket.SHUT_RDWR)
+                    self.science_sock.close()
+                self.connect(10)
+
+    def connect(self, retry):
+        try:
+            self.science_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.science_sock.connect((self.host, self.port))
+        except socket.error:
+            print "Failed to Connect to Science Station retrying in 10 seconds"
+            self.sleep(10)
+            self.connect(retry - 1)
+        else:
+            self.connected = True
+
+    def send_message(self):
+        if self.connected:
+            buff = struct.pack(">ic18sc", 0x00000000, 0x80, "I can haz picture?", 0x00)
+            self.science_sock.send(buff)
+
+    def receive_message(self):
+        """
+        Receive the incoming UDP packets, unpack them and emit them so other UI components can use them
+        :return: Emit a dictionary of sensor values
+        :return: Emit a tuple of lat lng coordinates
+        """
+
+        try:
+            science_data = self.science_sock.recv(1024)
+        except socket.error:
+            self.failed = self.failed + 1
+        else:
+            # Unpack the first six floats of the packet
+            tup = struct.unpack_from(">ic", science_data, 0)
+            ide = tup[1]
+
+            if ide == 0x00:
+                tup = struct.unpack_from(">hihhh", science_data, 2)
+                distance = tup[0]
+                uv = tup[1]
+                thermo_ext = tup[2]
+                thermo_int = tup[3]
+                humidity = tup[4]
+                dictionary = {"Distance": str(distance), "UV": str(uv),
+                              "Thermo Internal": str(thermo_ext), "Thermo External": str(thermo_int),
+                              "Humidity": str(humidity)}
+                self.sensorUpdate.emit(dictionary)
+            elif ide == 0x02:
+                tup = struct.unpack_from(">hhh?", science_data, 2)
+                enc1 = tup[0]
+                enc2 = tup[1]
+                enc3 = tup[2]
+                limit = tup[3]
+                dictionary = {"Science Encoder 1": str(enc1), "Science Encoder 2": str(enc2),
+                              "Science Encoder 3": str(enc3), "Limit Switch": str(limit)}
+                self.sensorUpdate.emit(dictionary)
+
+
 # Open a TCP connect in a separate thread
-class TCPConnection(QtCore.QThread):
+class AutonomousConnection(QtCore.QThread):
     requestMarkers = QtCore.pyqtSignal()
     tcp_enabled = QtCore.pyqtSignal(bool)
 
@@ -216,7 +323,7 @@ class TCPConnection(QtCore.QThread):
             self.auto_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.auto_sock.connect((self.ROVER_HOST, self.ROVER_TCP_PORT))
         except socket.error:
-            print "Failed to connect over TCP"
+            print "Failed to Connect to Drive Over TCP"
             self.tcp_enabled.emit(False)
         else:
             self.tcp_enabled.emit(True)
@@ -243,6 +350,7 @@ class TCPConnection(QtCore.QThread):
 
     def close_tcp(self):
         if self.auto_sock is not None:
+            self.auto_sock.shutdown(socket.SHUT_RDWR)
             self.auto_sock.close()
             self.auto_sock = None
 
