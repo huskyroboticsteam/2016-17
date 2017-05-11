@@ -48,7 +48,7 @@ class RobotTest(object):
         """
         ADC.setup()
         self.pot_pid = PID.PID(-0.1, 0, 0)
-        self.nav = Navigation.Navigation(0.77, 0.55, 0.34, 0.001, "AIN2")
+        self.nav = Navigation.Navigation(0.765555, 0.552777, 0.348333, 0.001, "AIN2")
 
         # setup motors
         # motor: throttle, F, B
@@ -126,7 +126,7 @@ class RobotTest(object):
             location = (self.r_comms.lat, self.r_comms.longitude)
             if not self.autonomous_initialized:
                 # TODO: read target from wireless
-                self.target = (47.654121, -122.305060)
+                self.target = (47.652694, -122.307026)
                 # TODO: get obstacles from wireless or sensor
                 obstacles = []
                 self.autonomous.set_target(scale_coords(self.target, self.target))
