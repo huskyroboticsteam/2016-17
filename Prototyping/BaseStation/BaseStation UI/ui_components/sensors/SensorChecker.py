@@ -2,6 +2,9 @@ from PyQt4 import QtGui, QtCore
 
 
 class SensorData(QtGui.QWidget):
+
+    picture_signal = QtCore.pyqtSignal()
+
     def __init__(self, parent=None):
         super(self.__class__, self).__init__(parent)
 
@@ -9,8 +12,12 @@ class SensorData(QtGui.QWidget):
         self.ui_map = {}  # dictionary object
         self.picture = QtGui.QPushButton()
         self.picture.setText("Take a Picture!")
+        self.picture.clicked.connect(self.take_picture)
 
         self.setLayout(self.build_list())
+
+    def take_picture(self):
+        self.picture_signal.emit()
 
     def update_ui(self, dictionary):
         """
