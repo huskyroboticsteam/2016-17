@@ -84,6 +84,7 @@ def intFromHexRange(data, start, stop):
 
 """
 Copied from StackOverflow
+Added Zero-Case check
 Takes in long of val and converts
 it into a char string to represent
 the data.
@@ -103,6 +104,10 @@ def long_to_bytes(val, endianness='big'):
 
     Using :ref:`string formatting` lets us use Python's C innards.
     """
+
+    # Check zero case
+    if val == 0:
+        return unhexlify('00')
 
     # one (1) hex digit per four (4) bits
     width = val.bit_length()
@@ -205,4 +210,9 @@ TESTED? No
 def isValidUnsigned(value):
     return isinstance(value, int) and value > 0
 
-
+"""
+Writes string to console. Attempts non-string to string conversion.
+Adds a new line at the end
+"""
+def write(val):
+    sys.stdout.write(str(val) + "\n")
