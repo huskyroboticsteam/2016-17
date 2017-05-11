@@ -48,6 +48,8 @@ class ConnectionManager:
         # Kill the thread
         self.drive.quit()
 
+        self.arm.quit()
+
 
 # TODO conform to python's conventions for abstract classes instead of passing with a comment
 class UdpConnection(QtCore.QThread):
