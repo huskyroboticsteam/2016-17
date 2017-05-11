@@ -36,12 +36,12 @@ class ConnectionManager:
     def shutdown(self):
         # Close the socket then kill the thread
         if self.auto.auto_sock is not None:
-            self.auto.auto_sock.shutdown()
+            self.auto.auto_sock.shutdown(socket.SHUT_RDWR)
             self.auto.auto_sock.close()
         self.auto.quit()
 
         if self.science.science_sock is not None:
-            self.science.science_sock.shutdown()
+            self.science.science_sock.shutdown(socket.SHUT_RDWR)
             self.science.science_sock.close()
         self.science.quit()
 
@@ -240,7 +240,7 @@ class ScienceConnection(QtCore.QThread):
                 self.connected = False
                 self.failed = 0
                 if self.science_sock is not None:
-                    self.science_sock.shutdown()
+                    self.science_sock.shutdown(socket.SHUT_RDWR)
                     self.science_sock.close()
                 self.connect(10)
 
@@ -250,7 +250,6 @@ class ScienceConnection(QtCore.QThread):
             self.science_sock.connect((self.host, self.port))
         except socket.error:
             print "Failed to Connect to Science Station retrying in 10 seconds"
-            print "Will try " + str(retry) + " more times"
             self.sleep(10)
             self.connect(retry - 1)
         else:
@@ -324,7 +323,7 @@ class AutonomousConnection(QtCore.QThread):
             self.auto_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.auto_sock.connect((self.ROVER_HOST, self.ROVER_TCP_PORT))
         except socket.error:
-            print "Failed to connect over TCP"
+            print "Failed to Connect to Drive Over TCP"
             self.tcp_enabled.emit(False)
         else:
             self.tcp_enabled.emit(True)
@@ -351,6 +350,7 @@ class AutonomousConnection(QtCore.QThread):
 
     def close_tcp(self):
         if self.auto_sock is not None:
+            self.auto_sock.shutdown(socket.SHUT_RDWR)
             self.auto_sock.close()
             self.auto_sock = None
 
