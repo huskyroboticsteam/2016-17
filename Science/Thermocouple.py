@@ -104,5 +104,5 @@ class Thermocouple(Sensor):
         raw = self.getRawData() >> 4  # Get rid of status bits
         internalTemp = raw & 0x7FF  # Grab last 11 bits (internal temp reading)
         thermocoupleTemp = raw >> 14  # Grab thermocouple reading
-        return Util.byteMap((thermocoupleTemp << 11) & internalTemp, 32)
+        return Util.byteMap((thermocoupleTemp << 11) & internalTemp, 32)  # BYTEMAP?
 

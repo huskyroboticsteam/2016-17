@@ -5,31 +5,28 @@ import Util
 class SystemTelemetry:
 
     telemetry = {
-        "CPU_USAGE": (0, 16),
-        "RAM_USAGE": (0, 16),
-        "RAM_CAPACITY": (0, 16),
-        "ACTIVE_THREADS": (threading.active_count(), 16),
-        "FLASH_USAGE": (0, 16),
-        "FLASH_CAPACITY": (0, 16),
-        "SD_CARD_USAGE": (0, 32),
-        "SD_CARD_CAPACITY": (0, 32)
+        "0_CPU_USAGE": (1, 2),
+        "1_RAM_USAGE": (2, 2),
+        "2_RAM_CAPACITY": (0, 2),
+        "3_ACTIVE_THREADS": (threading.active_count(), 2),
+        "4_FLASH_USAGE": (0, 2),
+        "5_FLASH_CAPACITY": (0, 2),
+        "6_SD_CARD_USAGE": (0, 2),
+        "7_SD_CARD_CAPACITY": (0, 2)
     }
 
     @classmethod
     def initializeTelemetry(cls):
-        cls.telemetry["ACTIVE_THREADS"] = (threading.active_count(), cls.telemetry["ACTIVE_THREADS"][1])
+        cls.telemetry["3_ACTIVE_THREADS"] = (threading.active_count(), cls.telemetry["3_ACTIVE_THREADS"][1])
 
     @classmethod
     def updateTelemetry(cls):
-        cls.telemetry["ACTIVE_THREADS"] = (threading.active_count(), cls.telemetry["ACTIVE_THREADS"][1])
+        cls.telemetry["3_ACTIVE_THREADS"] = (threading.active_count(), cls.telemetry["3_ACTIVE_THREADS"][1])
 
     @classmethod
-
-    # Look into this method.... Doesn't seem to be parsing information correctly.
     def getTelemetryData(cls):
-        data = 0
-        telemetry_keys = cls.telemetry.keys()
-        for i in range(0, len(telemetry_keys)):
-            buffer = Util.byteMap(cls.telemetry[telemetry_keys[i]][0], cls.telemetry[telemetry_keys[i]][1])
-            data |= data << cls.telemetry[telemetry_keys[i]][1] | buffer
-        return Util.long_to_bytes(data) 
+        data = b''
+        for key in sorted(cls.telemetry.iterkeys()):
+            buffer = Util.long_to_byte_length(cls.telemetry[key][0], cls.telemetry[key][1])
+            data += buffer
+        return data

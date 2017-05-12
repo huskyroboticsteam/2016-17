@@ -14,6 +14,7 @@ method comments below.
 """
 import sys
 import math
+import struct
 from binascii import unhexlify
 
 ADC_STATUS = False
@@ -79,8 +80,21 @@ def binaryLength(n):
 Returns an integer from a hex encoded bytearray
 called data. From position start to stop
 """
-def intFromHexRange(data, start, stop):
+def bytesToInt(data, start, stop):
     return int(str(data[start:stop]).encode('hex'), 16)
+
+"""
+Returns val represented as bytes of bytearray length byte_length
+"""
+def long_to_byte_length(val, byte_length, endianness='big'):
+    valBytes = long_to_bytes(val)
+    valBA = bytearray(valBytes)
+    if len(valBA) > byte_length:
+        valBytes = b'' + valBA[:byte_length]
+    elif len(valBA) < byte_length:
+        valBytes = b'\x00'*(byte_length-len(valBA)) + valBA
+    return valBytes
+
 
 """
 Copied from StackOverflow
@@ -107,7 +121,7 @@ def long_to_bytes(val, endianness='big'):
 
     # Check zero case
     if val == 0:
-        return unhexlify('00')
+        return '\x00'
 
     # one (1) hex digit per four (4) bits
     width = val.bit_length()

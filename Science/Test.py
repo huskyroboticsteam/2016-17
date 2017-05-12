@@ -89,9 +89,11 @@ def testTelemetry():
     SystemTelemetry.initializeTelemetry()
     SystemTelemetry.updateTelemetry()
     tel = SystemTelemetry.getTelemetryData()
-    tel = bytearray(tel)
-    Util.write(tel)
-    Util.write(Util.intFromHexRange(tel, 6, 8))
+    c = 0
+    for i in tel:
+        Util.write(str(i) + " \t" + str(c))
+        c += 1
+    Util.write(str(Util.bytesToInt(tel, 6, 8)))
 
 
 # Test Telemetry
