@@ -34,7 +34,7 @@ def testPacket():
 Sends command to the BBB
 Only works for Aux and Sys Ctrl
 * Img Request Different (See requestImage())
-Per Documentation:
+Per Documentation for cmdTyp:
     0x81 = Aux Ctrl
     0x82 = Sys Ctrl
 Or import Packet.PacketType and use as enum
@@ -84,10 +84,24 @@ def requestImage(camID):
     #pack.appendData(data + camID)
     #pack.send()
 
-# Test Image Request
 
-requestImage(CameraID.Microscope)
-sendCommand(PacketType.AuxControl, AuxCtrlID.CamFocusPos, 90)
+def testTelemetry():
+    SystemTelemetry.initializeTelemetry()
+    SystemTelemetry.updateTelemetry()
+    tel = SystemTelemetry.getTelemetryData()
+    tel = bytearray(tel)
+    Util.write(tel)
+    Util.write(Util.intFromHexRange(tel, 6, 8))
+
+
+# Test Telemetry
+testTelemetry()
+
+# Test Image Request
+# requestImage(CameraID.Microscope)
+
+# Test command sending
+# sendCommand(PacketType.AuxControl, AuxCtrlID.CamFocusPos, 90)
 
 SOCKET = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 if LISTEN:

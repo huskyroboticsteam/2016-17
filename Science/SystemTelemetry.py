@@ -24,10 +24,12 @@ class SystemTelemetry:
         cls.telemetry["ACTIVE_THREADS"] = (threading.active_count(), cls.telemetry["ACTIVE_THREADS"][1])
 
     @classmethod
+
+    # Look into this method.... Doesn't seem to be parsing information correctly.
     def getTelemetryData(cls):
         data = 0
         telemetry_keys = cls.telemetry.keys()
         for i in range(0, len(telemetry_keys)):
             buffer = Util.byteMap(cls.telemetry[telemetry_keys[i]][0], cls.telemetry[telemetry_keys[i]][1])
             data |= data << cls.telemetry[telemetry_keys[i]][1] | buffer
-        return data
+        return Util.long_to_bytes(data) 
