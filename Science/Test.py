@@ -90,14 +90,11 @@ def testTelemetry():
     SystemTelemetry.updateTelemetry()
     tel = SystemTelemetry.getTelemetryData()
     c = 0
-    for i in tel:
-        Util.write(str(i) + " \t" + str(c))
-        c += 1
-    Util.write(str(Util.bytesToInt(tel, 6, 8)))
+    Util.write(str(Util.bytesToInt(tel, 6, 8)))  # Prints number of active threads
 
 
 # Test Telemetry
-testTelemetry()
+# testTelemetry()
 
 # Test Image Request
 # requestImage(CameraID.Microscope)
