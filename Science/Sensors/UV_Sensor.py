@@ -28,6 +28,7 @@ class UV(Sensor):
             self._uvl = I2C.Device(LSB_ADDR, I2C.get_default_bus())
             self._uvm = I2C.Device(LSB_ADDR + 1, I2C.get_default_bus())
         except:
+            sys.stderr.write("\nUnexpected error: " + str(sys.exc_info()[0]) + "\n")
             # Throw "Communication Failure"
             self.critical_status = True
             Error.throw(0x0203, "Could not initialize UV Sensor communications")

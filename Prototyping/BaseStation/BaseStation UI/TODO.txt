@@ -1,7 +1,0 @@
-2. Load in the map data on separate threads
-
-4. Add science telemetry to the sensor module
-
-5. Figure out how to make science stuff send us a picture
-
-Arm?????
