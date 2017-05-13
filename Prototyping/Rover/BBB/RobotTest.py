@@ -139,7 +139,6 @@ class RobotTest(object):
                 self.autonomous_initialized = True
             if self.autonomous.is_done(location):
                 # Reached the target
-                self.autonomous_initialized = False
                 # sends back "we're here" signal
                 print "arrived at desired location"
                 self.r_comms.sendAtLocationPacket(self.nav)
