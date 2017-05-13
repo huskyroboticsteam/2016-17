@@ -13,6 +13,19 @@ class SensorData(QtGui.QWidget):
         self.picture = QtGui.QPushButton()
         self.picture.setText("Take a Picture!")
         self.picture.clicked.connect(self.take_picture)
+        self.position_slider = QtGui.QSlider()
+        self.position_slider.setMaximum(100)
+        self.position_slider.setMinimum(0)
+        self.position_slider.setOrientation(0x1)
+        self.speed_slider = QtGui.QSlider()
+        self.speed_slider.setMaximum(100)
+        self.speed_slider.setMinimum(0)
+        self.speed_slider.setOrientation(0x1)
+        self.cam_focus_slider = QtGui.QSlider()
+        self.cam_focus_slider.setMaximum(100)
+        self.cam_focus_slider.setMinimum(0)
+        self.cam_focus_slider.setOrientation(0x1)
+        self.rotate_armature_box = QtGui.QCheckBox()
 
         self.setLayout(self.build_list())
 
@@ -36,6 +49,7 @@ class SensorData(QtGui.QWidget):
         """
         dictionary = ["Potentiometer", "Magnetometer", "Drive Encoder 1", "Drive Encoder 2", "Drive Encoder 3", "Drive Encoder 4"]
         science_sensors = ["Distance", "UV", "Thermo Internal", "Thermo External", "Humidity", "Science Encoder 1", "Science Encoder 2", "Science Encoder 3", "Limit Switch"]
+
         vbox = QtGui.QVBoxLayout()
 
         for key in dictionary:
@@ -84,7 +98,42 @@ class SensorData(QtGui.QWidget):
 
         vbox.addWidget(self.picture)
 
+        # the sliders for position, speed, and camera focus
+
+        self.position_slider.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed))
+        self.position_label = QtGui.QLabel()
+        self.position_slider.valueChanged.connect(self.update_labels)
+        self.position_label.setText("Distance from Ground: " + str(self.position_slider.value()))
+        vbox.addWidget(self.position_label)
+        vbox.addWidget(self.position_slider)
+
+        self.speed_slider.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed))
+        self.speed_label = QtGui.QLabel()
+        self.speed_slider.valueChanged.connect(self.update_labels)
+        self.speed_label.setText("Rotational speed: " + str(self.speed_slider.value()))
+        vbox.addWidget(self.speed_label)
+        vbox.addWidget(self.speed_slider)
+
+        self.cam_focus_slider.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Fixed))
+        self.cam_focus_label = QtGui.QLabel()
+        self.cam_focus_slider.valueChanged.connect(self.update_labels)
+        self.cam_focus_label.setText("Camera focus: " + str(self.cam_focus_slider.value()))
+        vbox.addWidget(self.cam_focus_label)
+        vbox.addWidget(self.cam_focus_slider)
+
+        self.rotate_armature_label = QtGui.QLabel()
+        self.rotate_armature_box.stateChanged.connect(self.update_labels)
+        self.rotate_armature_label.setText("Rotate armature: " + str(self.rotate_armature_box.isChecked()))
+        vbox.addWidget(self.rotate_armature_label)
+        vbox.addWidget(self.rotate_armature_box)
+
         vbox.setAlignment(QtCore.Qt.AlignTop)
         return vbox
 
+    # update the values on labels
+    def update_labels(self):
+        self.position_label.setText("Distance from Ground: " + str(self.position_slider.value()))
+        self.speed_label.setText("Rotational speed: " + str(self.speed_slider.value()))
+        self.cam_focus_label.setText("Camera focus: " + str(self.cam_focus_slider.value()))
+        self.rotate_armature_label.setText("Rotate armature: " + str(self.rotate_armature_box.isChecked()))
 
