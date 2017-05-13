@@ -12,7 +12,8 @@ def find_path(start, target, obstacles, buffer_width):
         start, target (tuple of (float, float)): starting points and target points
         obstacles (list of tuple of (float, float)): list of obstacles
         buffer_width (float): Do not go this near to the obstacles
-    Returns (list of tuple of (float, float)): The path.
+    Returns (list of tuple of (float, float)): The path as a list of coordinates. Does not include the starting point
+        but includes the ending point.
     """
     polygon_list = [Point(a).buffer(buffer_width, resolution=3) for a in obstacles]
     union_all = cascaded_union(polygon_list)
@@ -28,7 +29,10 @@ def find_path(start, target, obstacles, buffer_width):
     shortest = g.shortest_path(
         vg.Point(start_outside[0], start_outside[1]),
         vg.Point(target_outside[0], target_outside[1]))
-    return [(a.x, a.y) for a in shortest]
+    path = [(a.x, a.y) for a in shortest]
+    while path != [] and path[0] == start:
+        del path[0]
+    return path
 
 
 def _nearest_outside(p, area, epsilon=0.00001):
