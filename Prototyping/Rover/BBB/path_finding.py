@@ -32,6 +32,8 @@ def find_path(start, target, obstacles, buffer_width):
     path = [(a.x, a.y) for a in shortest]
     while path != [] and path[0] == start:
         del path[0]
+    if path == [] or path[-1] != target:
+        path.append(target)
     return path
 
 
