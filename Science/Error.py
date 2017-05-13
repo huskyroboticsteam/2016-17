@@ -22,7 +22,7 @@ def throw(errorCode, comment="", file="", line=None, fatal=False):
         comment += "\nCHECK ETHERNET CABLE ATTACHMENT \n"
         setStatus(False)
     if len(comment) > 0:
-        comment += "\tGiven information: " + str(comment) + "\n"
+        comment += "\n\tGiven information: " + str(comment) + "\n"
     if file != "":
         comment += "File: " + file
     if not (line is None):
