@@ -1,8 +1,4 @@
-1. Open TCP connection to send autonomous data in a separate thread (so it doesn't lock the UI if failed)
-
 2. Load in the map data on separate threads
-
-3. Force Joystick data to go to zero if the joystick was disconnected so the rover stops
 
 4. Add science telemetry to the sensor module
 

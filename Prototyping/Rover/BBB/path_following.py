@@ -16,7 +16,7 @@ class PathFollower:
         # TODO fine tune this
         self.pid = PID(0.5, 0.0, 0.0)
         self.pid.setTarget(0.0)
-        self.position_epsilon = 0.05
+        self.position_epsilon = 1
 
     def go(self, location, heading):
         """
@@ -38,7 +38,9 @@ class PathFollower:
             diff_angle -= 360.0
         self.pid.run(diff_angle)
         print dx, dy, heading, desired_heading, self.pid.getOutput()
-        return min(max(self.pid.getOutput(), -100.0), 100.0)
+        turn = min(max(self.pid.getOutput(), -100.0), 100.0)
+        print 'PathFollower: go() returning ' + str(turn)
+        return turn
 
     def is_done(self, location):
         """
@@ -66,3 +68,9 @@ class PathFollower:
             del self.path[0]
             self.pid.reset()
             self.pid.setTarget(0.0)
+        print 'Current position: ' + location
+        print 'Destinations' + str(self.path)
+        if self.path == []:
+            print 'At destination'
+        else:
+            print 'Distance to destination: ' + str(hypot(self.path[0][0] - location[0], self.path[0][1] - location[1]))

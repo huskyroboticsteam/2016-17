@@ -18,5 +18,5 @@ def check_network(ip_map):
     # We output a warning if the client is not on the same network as the rover
     for i in range(0, len(ipseg) - 1):
         if ipseg[i] != first_ip[i]:
-            print "WARNING: HOST MACHINE DOESN'T APPEAR TO BE ON SAME NETWORK AS ROVER"
+            print "Host Machine doesn't seem to be on the same network as the rover"
             break

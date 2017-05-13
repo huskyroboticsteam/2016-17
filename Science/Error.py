@@ -32,11 +32,11 @@ def throw(errorCode, comment="", file="", line=None, fatal=False):
     sys.stderr.write(error_out)
     errors.append(errorCode)
     errorPack = Packet(PacketType.Error)
-    errorPack.appendData(Util.byteMap(errorCode, 16))
+    errorPack.appendData(Util.byteMap(errorCode, 16))  # BYTEMAP?
     CommHandler.sendAsyncPacket(errorPack)
     errorPack = None
     if fatal:
-        os.system("sudo reboot")
+        os.system("sudo reboot")  # TODO: Test whether or not this works.
         sys.exit(0x00FF)
 
 

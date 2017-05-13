@@ -5,6 +5,8 @@ Written by Jaden Bottemiller in January 2017
 EE Team of Husky Robotics
 This code has been tested.
 """
+import sys
+sys.path.insert(0, '../')
 import Util
 import Error
 import Adafruit_GPIO.I2C as I2C
@@ -58,7 +60,7 @@ class UV(Sensor):
         return self.getRaw() * 5  # uW/cm/cm (multiplication factor of 5 given by the datasheet)
 
     def getDataForPacket(self):
-        return Util.byteMap(self.getValue(), 32)
+        return Util.byteMap(self.getValue(), 32) # BYTEMAP?
 
 
 

@@ -14,9 +14,10 @@ method comments below.
 """
 import sys
 import math
+import struct
 from binascii import unhexlify
 
-ADC_SETUP = False
+ADC_STATUS = False
 
 """
 Maps a number from one range into another
@@ -63,6 +64,8 @@ def byteMap(data, bits=8):
         return data
 
 """
+Returns necessary binary length of base-10 integer n.
+TESTED? YES
 """
 def binaryLength(n):
     if n > 0:
@@ -74,9 +77,34 @@ def binaryLength(n):
     return int(digits)
 
 """
-Copied from StackOverflow
+Returns an integer from a hex encoded bytearray
+called data. From position start to stop
 """
-def long_to_bytes (val, endianness='big'):
+def bytesToInt(data, start, stop):
+    return int(str(data[start:stop]).encode('hex'), 16)
+
+"""
+Returns val represented as bytes of bytearray length byte_length
+"""
+def long_to_byte_length(val, byte_length, endianness='big'):
+    valBytes = long_to_bytes(val)
+    valBA = bytearray(valBytes)
+    if len(valBA) > byte_length:
+        valBytes = b'' + valBA[:byte_length]
+    elif len(valBA) < byte_length:
+        valBytes = b'\x00'*(byte_length-len(valBA)) + valBA
+    return valBytes
+
+
+"""
+Copied from StackOverflow
+Added Zero-Case check
+Takes in long of val and converts
+it into a char string to represent
+the data.
+TESTED? YES
+"""
+def long_to_bytes(val, endianness='big'):
     """
     Use :ref:`string formatting` and :func:`~binascii.unhexlify` to
     convert ``val``, a :func:`long`, to a byte :func:`str`.
@@ -90,6 +118,10 @@ def long_to_bytes (val, endianness='big'):
 
     Using :ref:`string formatting` lets us use Python's C innards.
     """
+
+    # Check zero case
+    if val == 0:
+        return '\x00'
 
     # one (1) hex digit per four (4) bits
     width = val.bit_length()
@@ -110,52 +142,6 @@ def long_to_bytes (val, endianness='big'):
 
     return s
 
-"""
-Returns string of bits
-given an string of characters
-TESTED? No
-"""
-def chartobytes(val):
-    ret_val = ""
-    for n in val:
-        this_val = bin(ord(n))[2:]
-        if len(this_val) % 8 != 0:
-            this_val = "00000000"[0:(8-(len(this_val) % 8))] + this_val
-        ret_val += this_val
-    return ret_val
-
-
-"""
-Takes binary string n (length 8 bits)
-and converts to ASCII
-TESTED? Yes
-"""
-def bintochr(n):
-    return chr(int(n, 2))
-
-
-"""
-Takes binary string of any
-length and converts it to
-string of chars representing
-that binary data
-TESTED? Yes
-"""
-def full_bin_to_chr(n):
-    ret_val = ""
-    if len(n) % 8 != 0:
-        n += "00000000"[0:8-(len(n) % 8)]
-    while len(n) != 0:
-        ret_val += bintochr(n[0:8])
-        n = n[8:]
-    return ret_val
-
-
-"""
-I have no idea what is happening.
-"""
-def reverseBits(n):
-    return int(bin(n)[:1:-1], 2)
 
 """
 Returns the status of the ADC configuration on board the
@@ -166,10 +152,11 @@ RESULTS.
 Returns:
 True if 'setADC_Status()' was last set to True
 False if 'setADC_Status()' was last set to False
-TESTED? No
+TESTED? Yes
 """
 def ADC_Status():
-    return ADC_SETUP
+    global ADC_STATUS
+    return ADC_STATUS
 
 
 """
@@ -178,14 +165,33 @@ Sets the status of the on board ADC to the given boolean value.
 TESTED? No
 """
 def setADC_Status(status):
-    ADC_SETUP = status
+    global ADC_STATUS
+    ADC_STATUS = status
 
 
 """
 Returns true if 'value' is an integer greater than 0
-TESTED? No
+TESTED? Yes
 """
 def isValidUnsigned(value):
     return isinstance(value, int) and value > 0
 
+"""
+Returns true if 'value' is a signed integer 
+in the bit-width range b using two's complement
+Tested? Yes
+"""
+def isValidSigned(value, b=32):
+    if not isinstance(value, int):
+       return False
+    max = 2**b - 1
+    min = -(max + 1)
+    return value >= min and value <= max
 
+
+"""
+Writes string to console. Attempts non-string to string conversion.
+Adds a new line at the end
+"""
+def write(val):
+    sys.stdout.write(str(val) + "\n")

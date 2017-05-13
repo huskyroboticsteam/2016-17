@@ -273,7 +273,6 @@ class Map(QtGui.QWidget):
     def get_mouse_lat_lng(self, mouse_pos):
         x, y = self.get_mouse_pos_projection(mouse_pos)
         lat, lng = Utility.convert_pixels_to_degrees(self.zoom_level, x, y)
-        print lat, lng
         return lat, lng
 
     def adjust_map_for_zoom(self, mouse_pos, zoom):
@@ -425,7 +424,6 @@ class Map(QtGui.QWidget):
         self.repaint()
 
     def replace_marker(self, index):
-        print("hi")
         lat, long = self.get_mouse_lat_lng((self.x, self.y))
         self.update_marker(lat, long, index)
 

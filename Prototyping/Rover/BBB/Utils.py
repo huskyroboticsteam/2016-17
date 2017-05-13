@@ -1,3 +1,5 @@
+import math
+
 # translate values from one range to another
 def translateValue(value, inMin, inMax, outMin, outMax):
     # Figure out how 'wide' each range is
@@ -26,3 +28,45 @@ def normalize_angle(angle):
     while angle < 0.0:
         angle += 360.0
     return angle
+
+
+# find distance between two points using the haversine formula
+def distance(coord1, coord2):
+    """
+    Finds the distance between two points on earth using the haversine formula
+    Args:
+        coord1, coord2 (Tuple of (float, float)): The coordinates in the format (lat, long) in degrees.
+    Returns (float): The distance between the two points in meters.
+    """
+    lat1 = math.radians(coord1[0])
+    long1 = math.radians(coord1[1])
+    lat2 = math.radians(coord2[0])
+    long2 = math.radians(coord2[1])
+    r = 6371000  # radius of earth in meters
+    dlat = lat2 - lat1
+    dlon = long2 - long1
+
+    a = math.sin(dlat/2)**2 + math.cos(lat1)*math.cos(lat2)*math.sin(dlon/2)**2
+    c = 2*math.asin(math.sqrt(a))
+
+    return r * c  # meters
+
+
+def scale_coords(coord, reference):
+    """
+    Scales GPS coordinates into meter coordinates
+    Coordinates are given as (lat, long) in degrees
+    Args:
+        coord (Tuple of (float, float)): The coordinates to convert
+        reference (Tuple of (float, float)): The reference point to be converted to (0, 0)
+    Returns (Tuple of (float, float)): (x, y) coordinates in meters
+    """
+    DELTA = 0.001
+    # number of meters in a degree on x/y axis
+    x_scale = distance(reference, (reference[0], reference[1] + DELTA)) / DELTA
+    y_scale = distance(reference, (reference[0] + DELTA, reference[1])) / DELTA
+    d_lat  = coord[0] - reference[0]
+    d_long = coord[1] - reference[1]
+    x = d_long * x_scale
+    y = d_lat * y_scale
+    return x, y

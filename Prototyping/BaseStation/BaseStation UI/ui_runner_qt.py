@@ -65,12 +65,19 @@ main.list_container.addWidget(auto_button)
 
 '''Connect all events for each of the components to talk to one another'''
 auto_button.enableAutoTrigger.connect(sock.enable_tcp)
-auto_button.enableAutoTrigger.connect(sock.drive.enable_tcp)
-sock.tcp.requestMarkers.connect(list_wid.get_markers)
-list_wid.giveMarkers.connect(sock.tcp.set_markers)
+sock.auto.tcp_enabled.connect(sock.drive.enable_tcp)
+sock.auto.tcp_enabled.connect(auto_button.set_enabled)
+sock.auto.requestMarkers.connect(list_wid.get_markers)
+list_wid.giveMarkers.connect(sock.auto.set_markers)
+
+# Tell the science station to take a picture
+sensors.picture_signal.connect(sock.science.send_message)
 
 sock.drive.sensorUpdate.connect(sensors.update_ui)
+sock.science.sensorUpdate.connect(sensors.update_ui)
 sock.drive.gpsUpdate.connect(map.update_rover_pos)
+
+
 map.signal.connect(list_wid.add_to_ui)
 map.updateList.connect(list_wid.update_from_ui)
 stop_widget.stopEvent.connect(sock.drive.stopping)

@@ -5,6 +5,7 @@ from path_following import PathFollower
 class Autonomous:
     """
     Plans and follows paths to avoid obstacles.
+    All coordinates are in meters
     Attributes:
         target (tuple of (float, float) or None): (x, y) coordinate of target.
         obstacles (list of tuple of (float, float)): (x, y) locations of currently known obstacles.

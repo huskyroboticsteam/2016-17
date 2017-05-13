@@ -30,6 +30,8 @@ NOTE: Assumes Encoder does not step more than one phase per update
 TODO: ADD ERROR THROWING TO INITIALIZED / READ GPIO
 
 """
+import sys
+sys.path.insert(0, '../')
 import Util
 import Adafruit_BBIO.GPIO as GPIO
 from math import pi
@@ -121,7 +123,7 @@ class Encoder(Sensor):
     # Returns distance moved as though it were a disk with radius "_distK"
     # Set "_distK" in self.setDistanceK(...)
     def getDistance(self):
-        return self.getAngle() * self._distK
+        return self._steps * self._distK
 
     # Resets all accumulations
     def reset(self):
@@ -139,7 +141,7 @@ class Encoder(Sensor):
         return self.getAngle(), self.getDistance()
 
     def getDataForPacket(self):
-        return Util.byteMap(int(round(self.getAngle() % (2*pi))), 16)
+        return Util.byteMap(int(round(self.getAngle() % (2*pi))), 16)  # BYTEMAP?
 
 
     def stop(self):

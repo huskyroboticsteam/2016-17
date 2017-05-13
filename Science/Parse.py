@@ -1,6 +1,10 @@
 import sys
+import struct
 import Error
+import Util
 from Packet import PacketType
+
+IMG_REQ_CONST = 6370218008217978682469763330258393040577855L
 
 msgQueue = []
 
@@ -24,7 +28,6 @@ Queue a message to the handler
 def queueMessage(msg):
     global msgQueue
     msgQueue += [msg]
-    sys.stdout.write(str(msg))
 
 """
 Get Message from Queue
@@ -57,11 +60,15 @@ def parse(msg):
 Parse Auxilliary Ctrl Packet
 """
 def parse_aux(msg):
-    global aux_ctrl
-    aux_ctrl[0] = int(msg.data[0:33], 2)
-    cmd_id = int(msg.data[40:48], 2)
-    cmd_value = int(msg.data[48:80], 2)
+    global aux_ctrl    
+    # Set Timestamp
+    aux_ctrl[0] = Util.intFromHexRange(msg.data, 0, 4)
+    # Get Command ID at byte pos 5
+    cmd_id = msg.data[5]
+    # Get Command Value
+    cmd_value = Util.intFromHexRange(msg.data, 6, 10)
     aux_ctrl[cmd_id + 1] = cmd_value
+    sys.stdout.write(str(aux_ctrl))
 
 
 """
@@ -69,10 +76,14 @@ Parse System Ctrl Packet
 """
 def parse_sysctrl(msg):
     global cam_ctrl
-    cam_ctrl[0] = int(msg.data[0:33], 2)
-    cmd_id = int(msg.data[40:48], 2)
-    cmd_value = int(msg.data[48:80], 2)
-    cam_ctrl[cmd_id + 1] = cmd_value
+    # Set Timestamp
+    sys_ctrl[0] = Util.intFromHexRange(msg.data, 0, 4)
+    # Find Command ID at byte pos 5
+    cmd_id = msg.data[5]
+    # Find value as trailing 8 bytes
+    cmd_value = Util.intFromHexRange(msg.data, 6, 10)
+    # Set Controller to specified value at specified location
+    sys_ctrl[cmd_id + 1] = cmd_value
 
 
 """
@@ -80,13 +91,16 @@ Parse Img Request
 """
 def parse_imgreq(msg):
     global cam_ctrl
-    cam_ctrl[0] = int(msg.data[0:33], 2)
-    cmd_id = int(msg.data[40:48], 2)
-    cmd_value = int(msg.data[48:192], 2)
-    if cmd_value != "I can haz picture?":
+    # Set Timestamp
+    cam_ctrl[0] = Util.intFromHexRange(msg.data, 0, 4)
+    # Get CMD Value
+    cmd_value = Util.intFromHexRange(msg.data, 5, 23)
+    # Throw error if value incorrect
+    if cmd_value != IMG_REQ_CONST:
         # Throw invalid request error
         Error.throw(0x0505)
-    cmd_camera = int(msg.data[192:200], 2)
+    # Set the camera number
+    cmd_camera = msg.data[23]
     cam_ctrl[cmd_camera] = True
 
 
@@ -102,6 +116,7 @@ def parse_all():
 Threading method, call to setup thread
 """
 def thread_parsing():
+    global cam_ctrl
     while True:
         if reset:
             msgQueue = []

@@ -22,7 +22,7 @@ class Packet:
     DEFAULT_TARGET_PORT = 24
 
     def __init__(self, id=0x00, targetIP=None, targetPort=None):
-        self._data = 0
+        self._data = b''  # bytes
         self._id = id
         self._recieved = ""
         if targetPort == None:
@@ -34,17 +34,20 @@ class Packet:
         self._targetPort = targetPort
 
     # Appends 32bit UNIX timestamp to beginning of packet
+    # Automatically done when send() is called.
     def addTimeID(self):
-        timestamp = Util.byteMap(int(time.time()), 32)
-        id = Util.byteMap(self._id, 8)
-        time_id = (timestamp << 8) | id
-        self._data |= time_id << Util.binaryLength(self._data)
+        time_data = Util.long_to_bytes(time.time())
+        id_data = Util.long_to_bytes(self._id)
+        self._data = time_data + id_data + self._data
 
-    # Append bitwise list to current packet buffer
-    # EG [0,1,1,0]
+    # Takes in int or string of bytes and
+    # appends the data to the end of the current
+    # buffer for the packet.
     def appendData(self, data):
-        data = int(data)
-        self._data = self._data << Util.binaryLength(data) | data
+        if isinstance(data, int):
+            self._data += Util.long_to_bytes(data)
+        else:
+            self._data = data
 
     def getRecieved(self):
         return self._recieved
@@ -62,15 +65,13 @@ class Packet:
             self.addTimeID()  # Always add time and id to the packet
             s = socket.socket()
             s.connect((self._targetIP, self._targetPort))
-            s.send(Util.long_to_bytes(self._data))
+            s.send(self._data)
             s.close()
         except socket.error:
             # Throw "Failed to send packet"
-            Error.throw(0x0503, "Failed to send packet", "Packet.py", 58)
-            setStatus(False)
-            return False
-        setStatus(True)
-        return True
+            Error.throw(0x0503, "Failed to send packet", "Packet.py", 69)
+            return setStatus(False)
+        return setStatus(True)
 
     def getData(self):
         return self._data
@@ -102,7 +103,7 @@ class AuxCtrlID:
     RotateArmature = 0x03
 
 class CameraID:
-    Microscope = 0x00
+    Microscope = 0x01
 
 class SysCtrlID:
     Ping = 0x00
@@ -112,6 +113,7 @@ class SysCtrlID:
 def setStatus(status):
     global CONNECTION_STATUS
     CONNECTION_STATUS = status
+    return CONNECTION_STATUS
 
 
 def getConnectionStatus():

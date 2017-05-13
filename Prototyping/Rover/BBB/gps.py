@@ -62,7 +62,7 @@ class GPS:
                 print (lat, lon)
                 return lat, lon
         except:
-            self.getCoords()
+            return self.getCoords()
 
     # TODO: check this is getting the right value
     def rawGPStodegGPS(self, val):

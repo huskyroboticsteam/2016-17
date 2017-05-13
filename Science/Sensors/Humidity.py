@@ -13,9 +13,10 @@ this sensor.
 NOTE: Beaglebone Black ADC has a 12-bit resolution
 
 """
+import sys
+sys.path.insert(0, '../')
 import Util
 import Error
-import sys
 import Adafruit_BBIO.ADC as ADC  # Ignore compilation errors
 from Sensor import Sensor
 
@@ -75,4 +76,4 @@ class Humidity(Sensor):
 
     def getDataForPacket(self):
         data = int(self.getValue() * 1023)
-        return Util.byteMap(data, 16)
+        return Util.byteMap(data, 16)  # BYTEMAP?

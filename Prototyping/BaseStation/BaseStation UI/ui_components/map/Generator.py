@@ -1,17 +1,23 @@
 import math
 import os
 import urllib
-
+from PyQt4 import QtCore
 import Utility
 
 
-class Generator:
+class Generator(QtCore.QThread):
     """
     Downloads static map files through either the Bing or Google Map APIs. Allows for the user to specify
     the folder where all of the map tiles are stored.
     """
 
+    success = False
+    name = None
+    lat = None
+    lng = None
+
     def __init__(self, tile_size, api, num_tiles):
+        super(self.__class__, self).__init__()
         self.TILE_SIZE = tile_size
         self.api = api
         self.num_tiles = num_tiles
@@ -94,7 +100,7 @@ class Generator:
             else:
                 x += self.TILE_SIZE
 
-    def generate_maps(self, name, lat, lng):
+    def run(self):
 
         """
         Generates a map with zoom levels 15 - 19 centered on a given latitude and longitude
@@ -104,9 +110,9 @@ class Generator:
         :return: Boolean indicating whether the map successfully generated
         """
 
-        name = str(name)
-        lat = str(lat)
-        lng = str(lng)
+        name = str(self.name)
+        lat = str(self.lat)
+        lng = str(self.lng)
 
         # Don't try to download maps if the input is invalid
         if Utility.is_valid_coord(lat) and Utility.is_valid_coord(lng) and Utility.is_valid_file_name(name):
@@ -126,9 +132,9 @@ class Generator:
             for i in range(15, 20):
                 self.generate_single_map(i, lat, lng, self.num_tiles[i - 15], name)
 
-            return True
+            self.success = True
 
         else:
             print "Some input is invalid"
-            return False
+            self.success = False
 

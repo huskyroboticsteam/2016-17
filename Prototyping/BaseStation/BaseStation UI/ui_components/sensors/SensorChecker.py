@@ -2,13 +2,22 @@ from PyQt4 import QtGui, QtCore
 
 
 class SensorData(QtGui.QWidget):
+
+    picture_signal = QtCore.pyqtSignal()
+
     def __init__(self, parent=None):
         super(self.__class__, self).__init__(parent)
 
         # Populated with keys from self.map to the QtLabel objects indicating activity
         self.ui_map = {}  # dictionary object
+        self.picture = QtGui.QPushButton()
+        self.picture.setText("Take a Picture!")
+        self.picture.clicked.connect(self.take_picture)
 
         self.setLayout(self.build_list())
+
+    def take_picture(self):
+        self.picture_signal.emit()
 
     def update_ui(self, dictionary):
         """
@@ -25,7 +34,8 @@ class SensorData(QtGui.QWidget):
         Maps the friendly name to the label we update with the sensor value
         :return: The QVBoxLayout to add to the widget window
         """
-        dictionary = ["Potentiometer", "Magnetometer", "Encoder 1", "Encoder 2", "Encoder 3", "Encoder 4"]
+        dictionary = ["Potentiometer", "Magnetometer", "Drive Encoder 1", "Drive Encoder 2", "Drive Encoder 3", "Drive Encoder 4"]
+        science_sensors = ["Distance", "UV", "Thermo Internal", "Thermo External", "Humidity", "Science Encoder 1", "Science Encoder 2", "Science Encoder 3", "Limit Switch"]
         vbox = QtGui.QVBoxLayout()
 
         for key in dictionary:
@@ -45,6 +55,34 @@ class SensorData(QtGui.QWidget):
             vbox.addLayout(hbox)
 
             self.ui_map[key] = label2  # the keys of the map are IPs
+
+        science_label = QtGui.QLabel()
+        science_label.setText("Science Sensors")
+        font = QtGui.QFont()
+        font.setPointSize(11)
+        font.setBold(True)
+        science_label.setFont(font)
+        vbox.addWidget(science_label)
+
+        for key in science_sensors:
+            hbox = QtGui.QHBoxLayout()
+
+            label = QtGui.QLabel()
+            label.setAlignment(QtCore.Qt.AlignHCenter)
+            label.setText(key)
+
+            label2 = QtGui.QLabel()
+            label2.setAlignment(QtCore.Qt.AlignHCenter)
+            label2.setText("No data")
+
+            hbox.addWidget(label)
+            hbox.addWidget(label2)
+
+            vbox.addLayout(hbox)
+
+            self.ui_map[key] = label2  # the keys of the map are IPs
+
+        vbox.addWidget(self.picture)
 
         vbox.setAlignment(QtCore.Qt.AlignTop)
         return vbox
