@@ -2,16 +2,16 @@ import Adafruit_BBIO.PWM as PWM
 
 
 class Servo_Sweep(object):
-    def __init__(self):
-        self.servo_pin = "P8_13"
+    def __init__(self, speed, min, max, pin):
+        self.servo_pin = pin
         self.duty_min = 3
         self.duty_max = 14.5
         self.duty_span = self.duty_max - self.duty_min
-        self.turn_speed = 0.005
+        self.turn_speed = speed
         PWM.start(self.servo_pin, (100 - self.duty_min), 60.0, 1)
-        self.left = 179
-        self.center = 90
-        self.right = 1
+        self.left = max
+        self.right = min
+        self.center = (max + min) / 2
         self.clockwise = False
         self.currentAngle = 90.0
 

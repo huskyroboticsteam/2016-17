@@ -6,7 +6,7 @@ import Sonar
 
 class Scan_Tester:
     def __init__(self):
-        self.rotater = Servo_Sweep.Servo_Sweep()
+        self.rotater = Servo_Sweep.Servo_Sweep(0.5, 1, 179, "P8_13")
         self.scanner = Sonar.Sonar()
 
     def run (self):

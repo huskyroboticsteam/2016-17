@@ -79,7 +79,7 @@ class Robot(object):
                 ]
         self.autonomous_initialized = False
         self.autonomous = Autonomous()
-        self.Sweeper = Servo_Sweep.Servo_Sweep()
+        self.Sweeper = Servo_Sweep.Servo_Sweep(0.005, 1, 179, "P8_13")
         self.target = None
 
     def moveServo(self):

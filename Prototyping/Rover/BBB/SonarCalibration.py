@@ -91,7 +91,7 @@ def main():
         elif choice == "-1":
             calculator.readAna()
         else:
-            distance = int(choice[0])
+            distance = int(choice)
             calculator.addPoint(distance)
             #calculator.debug()
 
