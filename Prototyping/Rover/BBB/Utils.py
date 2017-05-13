@@ -51,22 +51,19 @@ def distance(coord1, coord2):
 
     return r * c  # meters
 
-
-def scale_coords(coord, reference):
-    """
-    Scales GPS coordinates into meter coordinates
-    Coordinates are given as (lat, long) in degrees
-    Args:
-        coord (Tuple of (float, float)): The coordinates to convert
-        reference (Tuple of (float, float)): The reference point to be converted to (0, 0)
-    Returns (Tuple of (float, float)): (x, y) coordinates in meters
-    """
-    DELTA = 0.001
-    # number of meters in a degree on x/y axis
-    x_scale = distance(reference, (reference[0], reference[1] + DELTA)) / DELTA
-    y_scale = distance(reference, (reference[0] + DELTA, reference[1])) / DELTA
-    d_lat  = coord[0] - reference[0]
-    d_long = coord[1] - reference[1]
-    x = d_long * x_scale
-    y = d_lat * y_scale
-    return x, y
+def scale_coords(self, coord, reference):
+      """
+      Scales GPS coordinates into meter coordinates
+      Coordinates are given as (lat, long) in degrees
+      Args:
+         coord (Tuple of (float, float)): The coordinates to convert
+         reference (Tuple of (float, float)): The reference point to be converted to (0, 0)
+      Returns (Tuple of (float, float)): (x, y) coordinates in meters
+      """
+      xDistance = self.distance(coord[0], coord[1], coord[0], reference[1])
+      if coord[1] < reference[1]:
+          xDistance = -xDistance
+      yDistance = self.distance(coord[0], coord[1], reference[0], coord[1])
+      if coord[0] < reference[0]:
+          yDistance = -yDistance
+      return (xDistance, yDistance)
