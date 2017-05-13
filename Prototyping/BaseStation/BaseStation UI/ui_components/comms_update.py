@@ -176,6 +176,9 @@ class ArmConnection(UdpConnection):
     def send_message(self):
         if not self.joys.ready:
             return
+        # Don't run if joystick not plugged in
+        if len(self.joys.joystick_axis) < self.JOYSTICK_NUM + 1:
+            return
 
         # These mappings are for my Logitech F710 controller. 
         # Change accordingly if your controller is different
