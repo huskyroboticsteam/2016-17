@@ -10,11 +10,11 @@ class Sonar:
     def __init__(self):
         ADC.setup()
         self.maxAnaVal = 0.8
-        reader = open("SonarCalibrationData.txt", "w")
-        values = reader.readLine().split()
+        reader = open("SonarCalibrationData.txt", "r")
+        values = reader.readline().split()
         reader.close()
-        self.slope = values[0]
-        self.intersecpt = values[1]
+        self.slope = float(values[0])
+        self.intersecpt = float(values[1])
 
 
     def readAna(self): # Get raw analog value from sensor

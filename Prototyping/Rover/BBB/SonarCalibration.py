@@ -19,12 +19,12 @@ class SonarCalibration:
         # X is for the analog readings
         # Y is for the distances in inches
 
-        self.xsum = 0
-        self.ysum = 0
-        self.xysum = 0
-        self.x2sum = 0
-        self.y2sum = 0
-        self.count = 0
+        self.xsum = 0.0
+        self.ysum = 0.0
+        self.xysum = 0.0
+        self.x2sum = 0.0
+        self.y2sum = 0.0
+        self.count = 0.0
 
         self.analogPin = "AIN6"
 
@@ -37,7 +37,7 @@ class SonarCalibration:
         # First get the average reading from 10 analog readings
         count = 0
         total = 0.0
-        while count < 0:
+        while count < 10:
             readVal = ADC.read(self.analogPin)
             total += readVal
             count += 1
@@ -62,37 +62,50 @@ class SonarCalibration:
         den = (self.count*self.x2sum - self.xsum*self.xsum) * (self.count*self.y2sum - self.ysum*self.ysum)
         return num / den
 
+    def debug(self):
+        print "X sum " + str(self.xsum)
+        print "Y sum " + str(self.ysum)
+        print "XY sum " + str(self.xysum)
+        print "X^2 sum " + str(self.x2sum)
+        print "Y^2 sum " + str(self.y2sum)
+        print "Count " + str(self.count)
+
 
 def main():
 
-    print('Calibrating the sonar to form linear best fit \n')
-    print('Stand certain distance away from sensor and record distance \n')
-    print('Can enter as many or as few distances as needed \n')
-    print('To end calibration enter distance of 0 \n')
+    print ""
+    print('Calibrating the sonar to form linear best fit')
+    print('Stand certain distance away from sensor and record distance')
+    print('Can enter as many or as few distances as needed')
+    print('To end calibration enter distance of 0 ')
+    print ""
 
     looping = True
 
     calculator = SonarCalibration()
 
     while looping:
-        choice = raw_input('Enter distance of object from sensor in inches: \n')
+        choice = raw_input('Enter distance of object from sensor in inches:')
         if choice[0] == '0':
             looping = False
+        elif choice == "-1":
+            calculator.readAna()
         else:
             distance = int(choice[0])
             calculator.addPoint(distance)
+            #calculator.debug()
 
-    print('Calibration Complete \n')
-    print('R squared value is ' + str(calculator.getCor()) + '\n')
-    choice2 = raw_input('Do you want to save calibrated data? (y/n) \n')
+    print('Calibration Complete')
+    print('R squared value is ' + str(calculator.getCor()))
+    choice2 = raw_input('Do you want to save calibrated data? (y/n)')
 
     if choice2[0] == 'y':
         writer = open("SonarCalibrationData.txt","w")
         writer.write(str(calculator.getSlope()) + " " + str(calculator.getIntersept()))
         writer.close()
-        print "Calibration saved \n"
+        print "Calibration saved"
     else:
-        print "Calibration not saved \n"
+        print "Calibration not saved"
 
 
 if __name__ == "__main__":
