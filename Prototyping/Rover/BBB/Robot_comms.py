@@ -44,9 +44,11 @@ class Robot_comms():
                 self.longitude = float(gps[1])
         except:
             pass
-        # Currently set to 1 second
-
-        threading.Timer(.4, self.updateGPS).start()
+        # Currently set to 0.4 second
+        timer = threading.Timer(.4, self.updateGPS)
+        # Make it a daemon thread so it stops automatically when the main thread stops
+        timer.daemon = True
+        timer.start()
 
     # receives a packet and sets variables accordingly
     def receiveData(self, nav):
