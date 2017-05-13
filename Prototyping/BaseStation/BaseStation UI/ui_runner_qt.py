@@ -1,3 +1,9 @@
+# For cx_freeze. This allows the DLLs to be loaded from the application directory, 
+# rather than the install directory which doesn't always exist
+import os
+if "PYSDL2_DLL_PATH" not in os.environ:
+    os.environ["PYSDL2_DLL_PATH"] = "."
+
 from PyQt4 import QtGui, uic
 import sys
 from ui_components.map import Map
@@ -10,7 +16,6 @@ from ui_components.arm_viz import arm_widget
 from ui_components.sensors import SensorChecker
 from ui_components.list_widget import list_widget
 from ui_components.auto_indicator import auto
-
 
 def quitting():
     # Close all connection threads
