@@ -137,7 +137,7 @@ class RobotTest(object):
                 # for coord in obstacles:
                 #     self.autonomous.add_obstacle(scale_coords(coord, self.target))
                 self.autonomous_initialized = True
-            if self.autonomous.is_done(location, self.target):
+            if self.autonomous.is_done(location):
                 # Reached the target
                 self.autonomous_initialized = False
                 # sends back "we're here" signal
