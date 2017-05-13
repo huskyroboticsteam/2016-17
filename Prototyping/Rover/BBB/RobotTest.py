@@ -147,6 +147,7 @@ class RobotTest(object):
                 heading = self.nav.getMag()
                 print "heading: ", heading
                 print "location: ", location
+                print "desired location: ", self.target
                 if location == (0.0, 0.0) or location == (0, 0):
                     print "gps not received, staying still"
                     return 0, 0
