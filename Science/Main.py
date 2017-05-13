@@ -1,7 +1,7 @@
 import sys
 
 # Import external files
-sys.path.insert(0, '/Sensors')
+sys.path.insert(0, '/Sensors/')
 
 import Error
 import Util

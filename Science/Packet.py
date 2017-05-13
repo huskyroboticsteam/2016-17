@@ -26,18 +26,18 @@ class Packet:
         self._id = id
         self._recieved = ""
         if targetPort == None:
-            targetIP = self.DEF_TARGET_IP
-            targetPort = self.DEF_TARGET_PORT
+            targetIP = self.DEFAULT_TARGET_IP
+            targetPort = self.DEFAULT_TARGET_PORT
         elif targetIP == None:
-            targetIP = self.DEF_TARGET_IP
+            targetIP = self.DEFAULT_TARGET_IP
         self._targetIP = targetIP
         self._targetPort = targetPort
 
     # Appends 32bit UNIX timestamp to beginning of packet
     # Automatically done when send() is called.
     def addTimeID(self):
-        time_data = Util.long_to_bytes(time.time())
-        id_data = Util.long_to_bytes(self._id)
+        time_data = Util.long_to_byte_length(int(time.time()), 4)
+        id_data = Util.long_to_byte_length(self._id, 1)
         self._data = time_data + id_data + self._data
 
     # Takes in int or string of bytes and
@@ -78,8 +78,8 @@ class Packet:
 
     @classmethod
     def setDefaultTarget(cls, targetIP, targetPort):
-        cls.DEF_TARGET_IP = targetIP
-        cls.DEF_TARGET_PORT = targetPort
+        cls.DEFAULT_TARGET_IP = targetIP
+        cls.DEFAULT_TARGET_PORT = targetPort
         time.sleep(0.03)
 
 

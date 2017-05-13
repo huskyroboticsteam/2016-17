@@ -81,8 +81,8 @@ def requestImage(camID):
     
     Util.write(data + camID)
 
-    #pack.appendData(data + camID)
-    #pack.send()
+    pack.appendData(data + camID)
+    pack.send()
 
 
 def testTelemetry():
