@@ -32,7 +32,6 @@ class UV(Sensor):
             # Throw "Communication Failure"
             self.critical_status = True
             Error.throw(0x0203, "Could not initialize UV Sensor communications")
-        self.setup(self._uvTConst)
 
     # Sets up device with time constant
     def setup(self, tConst=_uvTConst):  # tConst = 0, 1, 2, 3
@@ -55,6 +54,11 @@ class UV(Sensor):
             # Throw "Reading Invalid"
             Error.throw(0x0202)
         return uvData
+
+    # Sets UV Time constant either 0, 1, 2, 3
+    # For filtering. Call BEFORE setup()
+    def setUVtConst(self, tConst):
+        self._uvTConst = tConst
 
     # Gets data in uW/cm/cm
     def getValue(self):

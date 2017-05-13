@@ -1,14 +1,7 @@
 import sys
-import Adafruit_BBIO.GPIO as GPIO
+import Adafruit_GPIO.I2C as I2C
 
 
-def testEnc(channel, it=1000):
-    GPIO.setup(channel, GPIO.IN, pull_up_down=1)
-    for i in range(0, it):
-        if GPIO.input(channel):
-            sys.stdout.write("HIGH")
-        else:
-            sys.stdout.write("LOW")
-        sys.stdout.write("\n")
-
-testEnc("P9_22", 1000)
+dev = I2C.Device(0x38, I2C.get_default_bus())
+print (2<<2) | 2
+dev.writeRaw8((2<<2) | 2)
