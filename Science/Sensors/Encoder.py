@@ -30,6 +30,8 @@ NOTE: Assumes Encoder does not step more than one phase per update
 TODO: ADD ERROR THROWING TO INITIALIZED / READ GPIO
 
 """
+import sys
+sys.path.insert(0, '../')
 import Util
 import Adafruit_BBIO.GPIO as GPIO
 from math import pi
