@@ -9,7 +9,8 @@ Questions/Comments? Email: jadenjb@uw.edu
 (Untested as of 2/6/2017)
 
 """
-
+import sys
+sys.path.insert(0, '../')
 import Util
 import Error
 import Adafruit_BBIO.GPIO as GPIO  # Ignore compiler errors

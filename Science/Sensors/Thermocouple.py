@@ -7,6 +7,8 @@ EE Team of Husky Robotics
 This code has been tested.
 
 """
+import sys
+sys.path.insert(0, '../')
 import Error
 import time
 import Util
@@ -22,37 +24,33 @@ class Thermocouple(Sensor):
         try:
             self._device = MAX31855.MAX31855(clock, cs, data)
         except:
-            # Throw "Communication Failure"
             Error.throw(0x0108, "Could not initialize thermocouple communications")
             self.critical_status = True
-        self.critical_status = self.checkError()
+        self.checkError()
 
     def getRawData(self):
+        self.checkError()
         if self.critical_status:
             return 0
         raw = 0
         try:
             raw = self._device._read32()
         except:
-            # Throw "Communication Failure"
-            Error.throw(0x0108)
+            Error.throw(0x0108, "Could not initialize thermocouple communications")
         return raw
 
     def getInternalTemp(self):  # degrees C
         self.checkError()
         if self.critical_status:
             return 0
-        self.checkError()
         time.sleep(0.01)
         internal_temp = 0
         try:
             internal_temp = self._device.readInternalC()
         except:
-            # Throw "Could not get internal reading"
-            Error.throw(0x0102)
+            Error.throw(0x0102, "Could not get internal temperature reading")
         if not Util.isValidUnsigned(internal_temp):
-            # Throw "Reading Invalid"
-            Error.throw(0x0103)
+            Error.throw(0x0103, "Internal temperature reading invalid")
         return internal_temp
 
     def getTemp(self):
@@ -64,11 +62,9 @@ class Thermocouple(Sensor):
         try:
             temp = self._device.readTempC()
         except:
-            # Throw "Could not get reading"
-            Error.throw(0x0101)
+            Error.throw(0x0101, "Could not get external temperature reading")
         if not Util.isValidUnsigned(temp):
-            # Throw "Invalid Reading"
-            Error.throw(0x0103)
+            Error.throw(0x0103, "External temperature reading invalid")
         return self._device.readTempC()
 
     # Returns true if error detected, false
@@ -76,23 +72,17 @@ class Thermocouple(Sensor):
     # true if error is found. Does not set
     # to false if none is found
     def checkError(self):
-        if self.critical_status:
-            return True
         status = self._device.readState()
         if status == '':
             return False
         if status == 'openCircuit':
-            # Throw "Open Circuit" failure
-            Error.throw(0x0104)
+            Error.throw(0x0104, "Open Circuit detected on Thermocouple.")
         if status == 'shortGND':
-            # Throw "GND Short" failure
-            Error.throw(0x0105)
+            Error.throw(0x0105, "Ground short detected on Thermocouple.")
         if status == 'shortVCC':
-            # Throw "VCC Short" failure
-            Error.throw(0x0106)
+            Error.throw(0x0106, "VCC short detected on Thermocouple.")
         if status == 'fault':
-            # Throw "General Failure"
-            Error.throw(0x0107)
+            Error.throw(0x0107, "General failure on Thermocouple.")
 
         self.critical_status = True
         return True

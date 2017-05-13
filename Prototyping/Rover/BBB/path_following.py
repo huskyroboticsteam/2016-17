@@ -68,7 +68,7 @@ class PathFollower:
             del self.path[0]
             self.pid.reset()
             self.pid.setTarget(0.0)
-        print 'Current position: ' + location
+        print 'Current position: ' + str(location)
         print 'Destinations' + str(self.path)
         if self.path == []:
             print 'At destination'

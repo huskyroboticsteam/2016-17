@@ -5,6 +5,8 @@ Written by Jaden Bottemiller in January 2017
 EE Team of Husky Robotics
 This code has been tested.
 """
+import sys
+sys.path.insert(0, '../')
 import Util
 import Error
 import Adafruit_GPIO.I2C as I2C
