@@ -66,3 +66,7 @@ class PathFollower:
             del self.path[0]
             self.pid.reset()
             self.pid.setTarget(0.0)
+        if self.path == []:
+            print 'At destination'
+        else:
+            print 'Distance to destination: ' + str(hypot(self.path[0][0] - location[0], self.path[0][1] - location[1]))
