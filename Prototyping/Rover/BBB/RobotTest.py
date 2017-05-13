@@ -110,7 +110,7 @@ class RobotTest(object):
         if motor_id < 1 or motor_id > 4:
             print "bad motor num: " + motor_id
             return
-        self.motors[motor_id].set_motor_exactly(0)
+        self.motors[motor_id - 1].set_motor_exactly(0)
 
     def getDriveParms(self):
         """
@@ -129,15 +129,15 @@ class RobotTest(object):
             location = (self.r_comms.lat, self.r_comms.longitude)
             if not self.autonomous_initialized:
                 # TODO: read target from wireless
-                self.target = (47.652694, -122.307026)
+                self.target = (47.65322666666667, -122.30766)
                 # TODO: get obstacles from wireless or sensor
                 obstacles = []
-                self.autonomous.set_target(scale_coords(self.target, self.target))
+                self.autonomous.set_target(self.target)
                 self.autonomous.clear_all_obstacles()
                 # for coord in obstacles:
                 #     self.autonomous.add_obstacle(scale_coords(coord, self.target))
                 self.autonomous_initialized = True
-            if self.autonomous.is_done(scale_coords(location, self.target)):
+            if self.autonomous.is_done(location, self.target):
                 # Reached the target
                 self.autonomous_initialized = False
                 # sends back "we're here" signal
@@ -151,7 +151,7 @@ class RobotTest(object):
                 if location == (0.0, 0.0) or location == (0, 0):
                     print "gps not received, staying still"
                     return 0, 0
-                turn = self.autonomous.go(scale_coords(location, self.target), heading)
+                turn = self.autonomous.go(location, heading)
                 print "turn: ", turn
                 return 50, turn
         else:
