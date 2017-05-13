@@ -50,6 +50,7 @@ class GPS:
         try:
             if info is not None:
                 lat = self.rawGPStodegGPS(info[2])
+                print "================================================================"
                 print lat
                 latDir = info[3]
                 lon = self.rawGPStodegGPS(info[4])
@@ -60,6 +61,7 @@ class GPS:
                 if(longDir == 'W'):
                     lon = -lon
                 print (lat, lon)
+                print "================================================================"
                 return lat, lon
         except:
             return self.getCoords()
