@@ -41,7 +41,8 @@ class ConnectionManager:
         self.auto.quit()
 
         if self.science.science_sock is not None:
-            self.science.science_sock.shutdown(socket.SHUT_RDWR)
+            if self.science.connected:
+                self.science.science_sock.shutdown(socket.SHUT_RDWR)
             self.science.science_sock.close()
         self.science.quit()
 
@@ -167,7 +168,7 @@ class DriveConnection(UdpConnection):
 class ArmConnection(UdpConnection):
     def __init__(self, host, port):
         super(self.__class__, self).__init__(host, port)
-        # Make this joystick #2
+        # Make this joystick # 2
         self.joys = joystickv1.getJoysticks()
         self.joys.start()
 
