@@ -86,7 +86,7 @@ def main():
     print('R squared value is ' + str(calculator.getCor()) + '\n')
     choice2 = raw_input('Do you want to save calibrated data? (y/n) \n')
 
-    if choice[0] == 'y':
+    if choice2[0] == 'y':
         writer = open("SonarCalibrationData.txt","w")
         writer.write(str(calculator.getSlope()) + " " + str(calculator.getIntersept()))
         writer.close()
