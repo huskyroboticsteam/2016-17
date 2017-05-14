@@ -65,7 +65,7 @@ class UV(Sensor):
         return self.getRaw() * 5  # uW/cm/cm (multiplication factor of 5 given by the datasheet)
 
     def getDataForPacket(self):
-        return Util.byteMap(self.getValue(), 32) # BYTEMAP?
+        return Util.long_to_byte_length(self.getValue(), 4) # BYTEMAP?
 
 
 
