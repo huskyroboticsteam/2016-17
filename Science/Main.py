@@ -1,22 +1,19 @@
 import sys
 
-# Import external files
-sys.path.insert(0, '/Sensors/')
-
 import Error
 import Util
 import Parse
 import Adafruit_BBIO.ADC as ADC  # Ignore compilation errors
 from Motor import Motor
-from Thermocouple import Thermocouple
-from DistanceSensor import DistanceSensor
-from Humidity import Humidity
-from UV_Sensor import UV
-from Encoder import Encoder
+from Sensors.Thermocouple import Thermocouple
+from Sensors.DistanceSensor import DistanceSensor
+from Sensors.Humidity import Humidity
+from Sensors.UV_Sensor import UV
+from Sensors.Encoder import Encoder
 from CommHandler import CommHandler
-from Sensor import SensorHandler
+from Sensors.Sensor import SensorHandler
 from Packet import Packet, PacketType
-from Limit import Limit
+from Sensors.Limit import Limit
 from SystemTelemetry import SystemTelemetry
 from DrillCtrl import DrillCtrl
 from CamFocus import CamFocus

@@ -19,6 +19,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 import logging
+import sys
 import math
 
 import Adafruit_GPIO as GPIO
@@ -93,7 +94,8 @@ class MAX31855(object):
             'openCircuit': (v & (1 << 0)) > 0,
             'shortGND': (v & (1 << 1)) > 0,
             'shortVCC': (v & (1 << 2)) > 0,
-            'fault': (v & (1 << 16)) > 0
+            'fault': (v & (1 << 16)) > 0,
+            'none' : v & 0x10007 == 0  # Returns no status bit is indicated
         }
 
     def readLinearizedTempC(self):

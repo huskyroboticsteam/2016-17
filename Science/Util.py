@@ -80,21 +80,39 @@ def binaryLength(n):
 Returns an integer from a hex encoded bytearray
 called data. From position start to stop
 """
-def bytesToInt(data, start, stop):
-    return int(str(data[start:stop]).encode('hex'), 16)
+def bytesToInt(data, start=None, stop=None, signed=False):
+    """Convert a bytearray into an integer, considering the first bit as
+    sign. The data MUST be big-endian."""
+    data = data[start:stop]
+    if signed:
+        negative = data[0] & 0x80 > 0
+
+        if negative:
+            inverted = bytearray(~d % 256 for d in data)
+            return -signedbytes(inverted) - 1
+
+    encoded = str(data).encode('hex')
+    return int(encoded, 16)
 
 """
-Returns val represented as bytes of bytearray length byte_length
+Returns val represented as a bytearray length byte_length
+DEFINITELY WORKS!
 """
 def long_to_byte_length(val, byte_length, endianness='big'):
-    valBytes = long_to_bytes(val)
-    valBA = bytearray(valBytes)
+    valBA = bytearray(long_to_bytes(val))
     if len(valBA) > byte_length:
-        valBytes = b'' + valBA[:byte_length]
+        valBA = valBA[:byte_length]
     elif len(valBA) < byte_length:
-        valBytes = b'\x00'*(byte_length-len(valBA)) + valBA
-    return valBytes
+        valBA = b'\x00'*(byte_length-len(valBA)) + valBA
+    return valBA
 
+"""
+Appends Bytearray to end of parent bytearray
+"""
+def appendBytearray(parent, other):
+    for i in other:
+        parent.append(i)
+    return parent
 
 """
 Copied from StackOverflow
@@ -118,6 +136,10 @@ def long_to_bytes(val, endianness='big'):
 
     Using :ref:`string formatting` lets us use Python's C innards.
     """
+
+    # Negative case check
+    if val < 0:
+        return struct.pack('<l', val)
 
     # Check zero case
     if val == 0:

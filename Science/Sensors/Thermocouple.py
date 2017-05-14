@@ -46,7 +46,7 @@ class Thermocouple(Sensor):
         time.sleep(0.01)
         internal_temp = 0
         try:
-            internal_temp = self._device.readInternalC()
+            internal_temp = int(self._device.readInternalC() * 100)
         except:
             Error.throw(0x0102, "Could not get internal temperature reading")
         if not Util.isValidUnsigned(internal_temp):
@@ -60,12 +60,12 @@ class Thermocouple(Sensor):
         time.sleep(0.01)
         temp = 0
         try:
-            temp = self._device.readTempC()
+            temp = int(self._device.readTempC() * 100)
         except:
             Error.throw(0x0101, "Could not get external temperature reading")
-        if not Util.isValidUnsigned(temp):
+        if not Util.isValidUnsigned(int(temp)):
             Error.throw(0x0103, "External temperature reading invalid")
-        return self._device.readTempC()
+        return temp
 
     # Returns true if error detected, false
     # if otherwise. Sets critical status to
@@ -73,26 +73,34 @@ class Thermocouple(Sensor):
     # to false if none is found
     def checkError(self):
         status = self._device.readState()
-        if status == '':
-            return False
-        if status == 'openCircuit':
+
+        if status["openCircuit"]:
             Error.throw(0x0104, "Open Circuit detected on Thermocouple.")
-        if status == 'shortGND':
+        if status["shortGND"]:
             Error.throw(0x0105, "Ground short detected on Thermocouple.")
-        if status == 'shortVCC':
+        if status["shortVCC"]:
             Error.throw(0x0106, "VCC short detected on Thermocouple.")
-        if status == 'fault':
+        if status["fault"]:
             Error.throw(0x0107, "General failure on Thermocouple.")
+        if status["none"]:
+            self.critical_status = False
+            return self.critical_status
 
         self.critical_status = True
-        return True
+        return self.critical_status
 
+    # Returns tuple of (temp, internal temp)
     def getValue(self):
-        return self.getTemp(), self.getInternalTemp()
+        return (self.getTemp() / 100.0, self.getInternalTemp() / 100.0)
 
+    # Returns 4 byte data for packet sending
     def getDataForPacket(self):
         raw = self.getRawData() >> 4  # Get rid of status bits
-        internalTemp = raw & 0x7FF  # Grab last 11 bits (internal temp reading)
-        thermocoupleTemp = raw >> 14  # Grab thermocouple reading
-        return Util.byteMap((thermocoupleTemp << 11) & internalTemp, 32)  # BYTEMAP?
+        tempEncoded = bytearray()
+        internalTemp = raw & 0xFFF  # Grab last 12 bits (internal temp reading)
+        thermocoupleTemp = (raw >> 14) & 0x3FFF # Grab thermocouple reading
+        thermocoupleTempEncoded = Util.long_to_byte_length(thermocoupleTemp, 2)
+        internalTempEncoded = Util.long_to_byte_length(internalTemp, 2)
+        tempEncoded = Util.appendBytearray(thermocoupleTempEncoded, internalTempEncoded)
+        return tempEncoded
 
