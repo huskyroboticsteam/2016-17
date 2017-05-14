@@ -2,6 +2,9 @@ from PIL import Image
 import sys
 import math
 import time
+import RPi.GPIO as GPIO
+from subprocess import call
+import signal
 
 Debug = False
 
@@ -57,7 +60,38 @@ def TestImageSet(Min, Max):
         SharpnessBas = GetSharpnessBasic(ImgData, Size[0], Size[1]);
         sys.stdout.write(str(SharpnessBas) + "\n");
 
-millisS = int(round(time.time() * 1000))
-TestImageSet(30, 35);
-millisE = int(round(time.time() * 1000))
-sys.stdout.write("Took " + str(millisE - millisS) + "ms.\n")
+def UserExit(signal, frame):
+    sys.stdout.write("Ctrl+C detected, exiting...\n");
+    GPIO.cleanup();
+    sys.exit(0);
+
+def TakePicture():
+    call(["fswebcam", "-r", "1600x1200", "test060.jpg"]);
+    TestImageSet(60, 60);
+
+def DoAutofocus():
+    TakePicture();
+    pass
+
+signal.signal(signal.SIGINT, UserExit)
+
+GPIO.setmode(GPIO.BOARD);
+InputPin = 16;
+GPIO.setup(InputPin, GPIO.IN);
+
+def CamTrigger(channel):
+    time.sleep(0.015);
+    if(GPIO.input(InputPin)):
+        DoAutofocus();
+    else:
+        TakePicture();
+
+GPIO.add_event_detect(InputPin, GPIO.RISING, callback=CamTrigger);
+while True:
+    time.sleep(0.1);
+GPIO.cleanup();
+
+#millisS = int(round(time.time() * 1000))
+#TestImageSet(30, 35);
+#millisE = int(round(time.time() * 1000))
+#sys.stdout.write("Took " + str(millisE - millisS) + "ms.\n")
