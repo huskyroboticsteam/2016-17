@@ -45,7 +45,7 @@ class Packet:
     # buffer for the packet.
     def appendData(self, data):
         if isinstance(data, int):
-            self._data += Util.long_to_bytes(data)
+            self._data += Util.long_to_byte_length(data, 1)
         else:
             self._data = data
 
@@ -60,7 +60,7 @@ class Packet:
     # Returns whether or not send is successful
     def send(self):
         if self._data == 0x0503 and not getConnectionStatus():
-            return False
+            return True
         try:
             self.addTimeID()  # Always add time and id to the packet
             s = socket.socket()
@@ -69,7 +69,7 @@ class Packet:
             s.close()
         except socket.error:
             # Throw "Failed to send packet"
-            Error.throw(0x0503, "Failed to send packet", "Packet.py", 69)
+            Error.throw(0x0503, "Failed to send packet", "Packet.py", 72)
             return setStatus(False)
         return setStatus(True)
 

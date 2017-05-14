@@ -23,10 +23,13 @@ from Packet import Packet, PacketType
 from SystemTelemetry import SystemTelemetry
 
 # Communication Setup
-MAIN_IP = '192.168.0.1'
+#MAIN_IP = '192.168.0.1'  # Typical
+MAIN_IP = '192.168.0.2'  # Testing on Jaden's machine
 PRIMARY_TCP_SEND_PORT = 24
 INTERNAL_IP = '192.168.0.90'
 INTERNAL_TCP_RECEIVE_PORT = 5000
+
+Packet.setDefaultTarget(MAIN_IP, PRIMARY_TCP_SEND_PORT)
 
 # Initialize hardware and communications
 try:
@@ -98,7 +101,5 @@ while True:
     systemPacket = Packet(PacketType.SystemTelemetry)
     systemPacket.appendData(SystemTelemetry.getTelemetryData())
     CommHandling.addCyclePacket(systemPacket)
-
-    CommHandling.sendAll()
 
     sys.stdout.flush()

@@ -13,8 +13,8 @@ from CommHandler import Message
 LISTEN = False
 
 # BBB TCP IP / PORT
-Packet.DEF_TARGET_IP = '192.168.0.90' 
-Packet.DEF_TARGET_PORT = 5000
+Packet.DEFAULT_TARGET_IP = '192.168.0.90' 
+Packet.DEFAULT_TARGET_PORT = 5000
 
 def testParsing():
     Parse.setupParsing()

@@ -1,4 +1,3 @@
-
 import Util
 
 class Sensor:
@@ -85,6 +84,3 @@ class SensorHandler:
             Util.appendBytearray(data, buffer)
         return data
 
-    @classmethod
-    def getCameraData(cls):
-        return None

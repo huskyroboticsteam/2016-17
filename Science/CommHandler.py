@@ -23,7 +23,7 @@ class CommHandler:
     def __init__(self, internalIP, receivePort):
         CommHandler._internalIP = internalIP
         CommHandler._receivePort = receivePort
-        self._packets = []
+        CommHandler._packets = []
         try:
             CommHandler.SOCKET = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             CommHandler.SOCKET.bind((CommHandler._internalIP, CommHandler._receivePort))
@@ -37,6 +37,7 @@ class CommHandler:
     def startCommsThread(cls):
         comms_thread = Thread(target=cls.receiveMessagesOnThread)
         comms_thread.start()
+        cls.sendAll()
 
     @classmethod
     def sendAsyncPacket(cls, packet):
@@ -66,21 +67,26 @@ class CommHandler:
             sys.stderr.write("\nUnexpected error: " + str(sys.exc_info()[0]) + "\n")
             # Throw "Could not initialize comms"
             Error.throw(0x0501)
+    
+    @classmethod
+    def addCyclePacket(cls, packet):
+        cls._packets += [packet]
+        #Util.write(len(cls._packets))
 
-    def addCyclePacket(self, packet):
-        self._packets += [packet]
-
-    def sendAll(self):
-        _sendThread = Thread(target=self._sendPackets)
+    @classmethod
+    def sendAll(cls):
+        _sendThread = Thread(target=cls._sendPackets)
         _sendThread.start()
 
-    def _sendPackets(self):
-        while len(self._packets) >= 1:
-            self._packets[0].send()
-            if len(self._packets) >= 1:
-                del self._packets[0]
-
-    def stopComms(self):
+    @classmethod
+    def _sendPackets(cls):
+        while CommHandler._continue:
+            Util.write(len(cls._packets))
+            if len(cls._packets) > 0:
+                cls._packets.pop(0).send()
+    
+    @classmethod
+    def stopComms(cls):
         CommHandler._continue = False
 
 
