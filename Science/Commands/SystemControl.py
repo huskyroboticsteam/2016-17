@@ -27,6 +27,7 @@ class SystemControl(Command):
         PING = Parse.sys_ctrl[SysCtrlID.Ping + 1] == 1
         REBOOT = Parse.sys_ctrl[SysCtrlID.Reboot + 1] == 1
         MICROSCOPE_CAPTURE = Parse.cam_ctrl[CameraID.Microscope]
+        MICROSCOPE_AF_CAPTURE = Parse.cam_ctrl[CameraID.Microscope_AF]
         Parse.sys_ctrl[SysCtrlID.Ping + 1] = 0
         Parse.sys_ctrl[SysCtrlID.Reboot + 1] = 0
         Parse.cam_ctrl[CameraID.Microscope + 1] = 0
@@ -41,4 +42,8 @@ class SystemControl(Command):
             GPIO.output(self.microscopeRelayPin, GPIO.HIGH)
             time.sleep(self.microscopeTriggerTime)
             GPIO.output(self.microscopeRelayPin, GPIO.LOW)
-        time.sleep(1)
+        if MICROSCOPE_AF_CAPTURE:
+            GPIO.output(self.microscopeRelayPin, GPIO.HIGH)
+            time.sleep(2 * self.microscopeTriggerTime)
+            GPIO.output(self.microsopeRelayPin, GPIO.LOW)
+        time.sleep(0.02)

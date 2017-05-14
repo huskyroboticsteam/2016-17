@@ -16,7 +16,8 @@ class CamFocus(Command):
 
     def initialize(self):
         if not self._motor.isStarted():
-            sys.stdout.write("\n\n>>>>>dafuq?<<<<<<\n\n")
+            self._motor.__init__(self._motor._pin)
+        self._setpoint = 0
 
     def run(self, setpoint):
         self._motor.moveTo(setpoint)

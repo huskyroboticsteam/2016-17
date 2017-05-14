@@ -104,6 +104,7 @@ class AuxCtrlID:
 
 class CameraID:
     Microscope = 0x01
+    Microscope_AF = 0x02
 
 class SysCtrlID:
     Ping = 0x00

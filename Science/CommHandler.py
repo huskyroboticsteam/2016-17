@@ -20,7 +20,8 @@ class CommHandler:
     SOCKET = None
     BYTE_BUFFER_SIZE = 2048
 
-    def __init__(self, internalIP, receivePort):
+    @classmethod
+    def setup(cls, internalIP, receivePort):
         CommHandler._internalIP = internalIP
         CommHandler._receivePort = receivePort
         CommHandler._packets = []
@@ -32,6 +33,7 @@ class CommHandler:
             Error.throw(0x0501)
         CommHandler._continue = True
         CommHandler._receiving = False
+    
 
     @classmethod
     def startCommsThread(cls):

@@ -12,3 +12,6 @@
 */.vs
 
 **/.DS_Store
+*.sqlite
+.vs/VSWorkspaceState.json
+Science/Science.pyproj.user

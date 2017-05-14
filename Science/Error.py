@@ -1,10 +1,10 @@
 import sys
 import os
 import Util
+from CommHandler import CommHandler
 from Packet import Packet
 from Packet import PacketType
 from Packet import getConnectionStatus, setStatus
-from CommHandler import CommHandler
 
 
 errors = []
