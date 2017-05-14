@@ -1,10 +1,13 @@
 from PIL import Image
+import socket
 import sys
 import math
 import time
 import RPi.GPIO as GPIO
 from subprocess import call
+from binascii import unhexlify
 import signal
+import traceback
 
 Debug = False
 
@@ -29,6 +32,32 @@ def GetSharpnessBasic(ImgData, Width, Height):
             Sum += ((ImgData[X][Y][2] - ImgData[X][Y+1][2]) ** 2);
     return Sum;
 
+def TestImage(File):
+    if Debug:
+            sys.stdout.write("=== Image: " + File + " ===\n");
+    # Opens the image and gets basic parameters.
+    ImgObj = Image.open(File);
+    ImgDataRaw = ImgObj.load();
+    SizeRaw = ImgObj.size;
+    if Debug:
+        sys.stdout.write("Raw dimensions: [W:" + str(SizeRaw[0]) + " H:" + str(SizeRaw[1]) + "]\n");
+
+    # The region that will be checked for sharpness.
+    Left = (SizeRaw[0] * 1/3);
+    Right = (SizeRaw[0] * 2/3);
+    Top = (SizeRaw[1] * 1/3);
+    Bottom = (SizeRaw[1] * 2/3);
+    Size = (Right - Left), (Bottom - Top);
+
+    # Shrinks the data to the relevant region, and translates RGB into a single value for easier calculation.
+    if Debug:
+        sys.stdout.write("Shrinking to [W:" + str(Size[0]) + " H:" + str(Size[1]) + "] by using [X:" + str(Left) + "->" + str(Right) + "],[Y:" + str(Top) + "->" + str(Bottom) + "]\n");
+    ImgData = PrepareImageData(ImgDataRaw, Left, Top, Right, Bottom);
+    SharpnessBas = GetSharpnessBasic(ImgData, Size[0], Size[1]);
+    if Debug:
+        sys.stdout.write("Calculated sharpness: " + str(SharpnessBas) + "\n");
+    return SharpnessBas;
+
 # Calculates sharpness for a list of images.
 def TestImageSet(Min, Max):
     Images = [];
@@ -36,42 +65,59 @@ def TestImageSet(Min, Max):
         Images += ["test0" + str(I) + ".jpg"];
 
     for File in Images:
-        if Debug:
-            sys.stdout.write("=== Image: " + File + " ===\n");
-        # Opens the image and gets basic parameters.
-        ImgObj = Image.open(File);
-        ImgDataRaw = ImgObj.load();
-        SizeRaw = ImgObj.size;
-        if Debug:
-            sys.stdout.write("Raw dimensions: [W:" + str(SizeRaw[0]) + " H:" + str(SizeRaw[1]) + "]\n");
+        sys.stdout.write(str(TestImage(File)));
 
-        # The region that will be checked for sharpness.
-        Left = (SizeRaw[0] * 1/3);
-        Right = (SizeRaw[0] * 2/3);
-        Top = (SizeRaw[1] * 1/3);
-        Bottom = (SizeRaw[1] * 2/3);
-        Size = (Right - Left), (Bottom - Top);
+# Taken from Util.py by @baldstrom.
+def long_to_bytes(val, endianness='big'):
+    if val < 0:
+        return struct.pack('<l', val)
+    if val == 0:
+        return '\x00'
+    width = val.bit_length()
+    width += 8 - ((width % 8) or 8)
+    fmt = '%%0%dx' % (width // 4)
+    s = unhexlify(fmt % val)
+    if endianness == 'little':
+        s = s[::-1]
+    return s
 
-        # Shrinks the data to the relevant region, and translates RGB into a single value for easier calculation.
-        if Debug:
-            sys.stdout.write("Shrinking to [W:" + str(Size[0]) + " H:" + str(Size[1]) + "] by using [X:" + str(Left) + "->" + str(Right) + "],[Y:" + str(Top) + "->" + str(Bottom) + "]\n");
-        ImgData = PrepareImageData(ImgDataRaw, Left, Top, Right, Bottom);
-
-        SharpnessBas = GetSharpnessBasic(ImgData, Size[0], Size[1]);
-        sys.stdout.write(str(SharpnessBas) + "\n");
+# Taken from Util.py by @baldstrom.
+def long_to_byte_length(val, byte_length, endianness='big'):
+    valBA = bytearray(long_to_bytes(val))
+    if len(valBA) > byte_length:
+        valBA = valBA[:byte_length]
+    elif len(valBA) < byte_length:
+        valBA = b'\x00'*(byte_length-len(valBA)) + valBA
+    return valBA
 
 def UserExit(signal, frame):
     sys.stdout.write("Ctrl+C detected, exiting...\n");
     GPIO.cleanup();
     sys.exit(0);
 
+# Simply takes a picture.
 def TakePicture():
     call(["fswebcam", "-r", "1600x1200", "test060.jpg"]);
-    TestImageSet(60, 60);
 
+# Sends a "move servo" packet to the BeagleBone. Used for AF.
+def SendServo(NewValue):
+    Timestamp = long_to_byte_length(int(time.time()), 4);
+    ID = long_to_byte_length(0x81, 1);
+    Command = long_to_byte_length(0x02, 1);
+    Value = long_to_byte_length(NewValue, 4);
+    try:
+        Sock = socket.socket();
+        Sock.connect(("192.168.0.90", 5000));
+        Sock.send(Timestamp + ID + Command + Value);
+        Sock.close()
+    except:
+        sys.stdout.write("Something went wrong when sending packet.\n");
+        sys.stdout.write(traceback.format_exc());
+
+# Executes the AF routine.
 def DoAutofocus():
+    SendServo(1337);
     TakePicture();
-    pass
 
 signal.signal(signal.SIGINT, UserExit)
 
@@ -80,7 +126,7 @@ InputPin = 16;
 GPIO.setup(InputPin, GPIO.IN);
 
 def CamTrigger(channel):
-    time.sleep(0.015);
+    time.sleep(0.015); # 15ms. A non-AF pulse will be 10ms, AF will be 20ms.
     if(GPIO.input(InputPin)):
         DoAutofocus();
     else:
@@ -90,8 +136,3 @@ GPIO.add_event_detect(InputPin, GPIO.RISING, callback=CamTrigger);
 while True:
     time.sleep(0.1);
 GPIO.cleanup();
-
-#millisS = int(round(time.time() * 1000))
-#TestImageSet(30, 35);
-#millisE = int(round(time.time() * 1000))
-#sys.stdout.write("Took " + str(millisE - millisS) + "ms.\n")
