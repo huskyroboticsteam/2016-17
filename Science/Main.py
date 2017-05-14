@@ -10,17 +10,17 @@ from Sensors.DistanceSensor import DistanceSensor
 from Sensors.Humidity import Humidity
 from Sensors.UV_Sensor import UV
 from Sensors.Encoder import Encoder
-from CommHandler import CommHandler
-from Sensors.Sensor import SensorHandler
-from Packet import Packet, PacketType
 from Sensors.Limit import Limit
+from Sensors.Sensor import SensorHandler
+from Commands.DrillCtrl import DrillCtrl
+from Commands.CamFocus import CamFocus
+from Commands.MoveDrill import MoveDrill
+from Commands.SystemControl import SystemControl
+from Commands.RotateArmature import RotateArmature
+from Commands.Command import Command
+from CommHandler import CommHandler
+from Packet import Packet, PacketType
 from SystemTelemetry import SystemTelemetry
-from DrillCtrl import DrillCtrl
-from CamFocus import CamFocus
-from MoveDrill import MoveDrill
-from SystemControl import SystemControl
-from RotateArmature import RotateArmature
-from Command import Command
 
 # Communication Setup
 MAIN_IP = '192.168.0.1'
