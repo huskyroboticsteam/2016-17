@@ -34,7 +34,7 @@ VL53L0X_BEST_ACCURACY_MODE      = 2   # Best Accuracy mode
 VL53L0X_LONG_RANGE_MODE         = 3   # Longe Range mode
 VL53L0X_HIGH_SPEED_MODE         = 4   # High Speed mode
 
-i2cbus = smbus.SMBus(1)
+i2cbus = smbus.SMBus(2)
 
 # i2c bus read callback
 def i2c_read(address, reg, data_p, length):

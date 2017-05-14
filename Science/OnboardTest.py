@@ -2,10 +2,17 @@ import sys
 
 import Util
 from Sensors.Thermocouple import Thermocouple
+from Sensors.DistanceSensor import DistanceSensor
 
+dist = DistanceSensor()
 therm = Thermocouple("P9_22", "P9_17", "P9_18")
 
-def testAll():
+def testDistanceSensor():
+    dist.start()
+    Util.write(dist.getValue())
+    Util.write(dist.getDataForPacket())
+
+def testThermocouple():
     # Thermocouple Internal Temp
     Util.write("Internal Temp: ")
     Util.write(therm.getInternalTemp())
@@ -25,8 +32,6 @@ def testAll():
 def decodeTherm():
     data = therm.getDataForPacket()
     intData = Util.bytesToInt(data)
-    Util.write(intData)
-    Util.write(bin(intData))
     temp = (intData & 0xFFFF0000) >> 16
     tempInt = intData & 0x0000FFFF
     Util.write("Got Temp: ")
@@ -34,5 +39,4 @@ def decodeTherm():
     Util.write("Got Internal Temp: ")
     Util.write((tempInt*0.0625))
 
-testAll()
-decodeTherm()
+testDistanceSensor()

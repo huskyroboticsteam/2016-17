@@ -21,6 +21,8 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+import sys
+sys.path.insert(0, '../')
 
 import time
 from ctypes import *
@@ -32,7 +34,7 @@ VL53L0X_BEST_ACCURACY_MODE      = 2   # Best Accuracy mode
 VL53L0X_LONG_RANGE_MODE         = 3   # Longe Range mode
 VL53L0X_HIGH_SPEED_MODE         = 4   # High Speed mode
 
-i2cbus = smbus.SMBus(1)
+i2cbus = smbus.SMBus(2)
 
 # i2c bus read callback
 def i2c_read(address, reg, data_p, length):
@@ -65,7 +67,7 @@ def i2c_write(address, reg, data_p, length):
     return ret_val
 
 # Load VL53L0X shared lib 
-tof_lib = CDLL("../bin/vl53l0x_python.so")
+tof_lib = CDLL("VL53L0X_rasp_python/bin/vl53l0x_python.so")
 
 # Create read function pointer
 READFUNC = CFUNCTYPE(c_int, c_ubyte, c_ubyte, POINTER(c_ubyte), c_ubyte)

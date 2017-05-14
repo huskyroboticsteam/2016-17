@@ -94,6 +94,6 @@ class DistanceSensor(Sensor):
         return self._distance
 
     def getDataForPacket(self):
-        return Util.byteMap(self._distance, 16)  # BYTEMAP??
+        return Util.long_to_byte_length(self._distance, 2)
 
 
