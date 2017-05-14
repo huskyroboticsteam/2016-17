@@ -27,8 +27,8 @@ def GetSharpnessBasic(ImgData, Width, Height, Out):
     Out += [Sum];
     return Sum;
 
-# Creates and manages the threads to prepare image for processing. (PrepareImageData)
-def PrepImageAsync(ImgData, OffX, OffY, ThreadsX, ThreadsY, SizeX, SizeY):
+# Creates threads of PrepImageData, then passes that data into threads of GetSharpnessBasic. Returns an int representing the shapness of the image.
+def CalcImageAsync(ImgData, OffX, OffY, ThreadsX, ThreadsY, SizeX, SizeY):
     Threads = [[0 for Y in range(0, ThreadsY)] for X in range(0, ThreadsX)];
     Outputs = [[[] for Y in range(0, ThreadsY)] for X in range(0, ThreadsX)];
     for Y in range(0, ThreadsY):
@@ -95,7 +95,7 @@ def TestImageSet(Min, Max):
         Bottom = (SizeRaw[1] * 2/3);
         Size = (Right - Left), (Bottom - Top);
 
-        ThreadOut = PrepImageAsync(ImgDataRaw, Left, Top, 4, 4, Size[0], Size[1]);
+        ThreadOut = CalcImageAsync(ImgDataRaw, Left, Top, 4, 4, Size[0], Size[1]);
         sys.stdout.write(str(ThreadOut) + "\n");
 
 TestImageSet(30, 35);
