@@ -32,8 +32,6 @@ NOTE: It is recommended to call stopRanging() at the end of getting distances, b
       documentation for more details on ranging.
 
 """
-import sys
-sys.path.insert(0, '../')
 import VL53L0X
 import time
 import Error

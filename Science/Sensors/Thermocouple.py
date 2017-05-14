@@ -7,8 +7,6 @@ EE Team of Husky Robotics
 This code has been tested.
 
 """
-import sys
-sys.path.insert(0, '../')
 import Error
 import time
 import Util

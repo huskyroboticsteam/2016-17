@@ -1,5 +1,4 @@
-import sys
-sys.path.insert(0, '../')
+
 import Util
 
 class Sensor:
@@ -48,12 +47,12 @@ class SensorHandler:
     @classmethod
     def addPrimarySensors(cls, *args):
         for arg in args:
-            cls._sensors.append(arg)
+            cls.addPrimarySensor(arg)
 
     @classmethod
     def addAccessorySensors(cls, *args):
         for arg in args:
-            cls._auxSensors.append(arg)
+            cls.addAccessorySensor(arg)
 
     @classmethod
     def updateAll(cls):
@@ -71,27 +70,20 @@ class SensorHandler:
             sensor.start()
 
     @classmethod
-    def getDataArray(cls):
-        cls._dataArray = []
-        for sensor in (cls._sensors + cls._auxSensors):
-            cls._dataArray.append(sensor.getValue())
-        return cls._dataArray
-
-    @classmethod
     def getPrimarySensorData(cls):
-        data = 0
+        data = bytearray()
         for sensor in cls._sensors:
             buffer = sensor.getDataForPacket()
-            data |= data << Util.binaryLength(buffer)
-        return Util.long_to_bytes(data)
+            Util.appendBytearray(data, buffer)
+        return data
 
     @classmethod
     def getAuxSensorData(cls):
-        data = 0
+        data = bytearray()
         for sensor in cls._auxSensors:
             buffer = sensor.getDataForPacket()
-            data |= data << Util.binaryLength(buffer)
-        return Util.long_to_bytes(data)
+            Util.appendBytearray(data, buffer)
+        return data
 
     @classmethod
     def getCameraData(cls):

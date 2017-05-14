@@ -77,5 +77,5 @@ def decodeTherm():
     Util.write("Got Internal Temp: ")
     Util.write((tempInt*0.0625))
 
-testLim()
-decodeLim()
+testUV()
+decodeUV()
