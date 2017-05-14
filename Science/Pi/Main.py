@@ -2,6 +2,7 @@ from PIL import Image
 import sys
 import math
 import threading
+import time
 
 Debug = False
 
@@ -76,7 +77,7 @@ def CalcImageAsync(ImgData, OffX, OffY, ThreadsX, ThreadsY, SizeX, SizeY):
 def TestImageSet(Min, Max):
     Images = [];
     for I in range(Min, Max + 1):
-        Images += ["Pi/test0" + str(I) + ".jpg"];
+        Images += ["test0" + str(I) + ".jpg"];
 
     for File in Images:
         if Debug:
@@ -98,4 +99,7 @@ def TestImageSet(Min, Max):
         ThreadOut = CalcImageAsync(ImgDataRaw, Left, Top, 4, 4, Size[0], Size[1]);
         sys.stdout.write(str(ThreadOut) + "\n");
 
+millisS = int(round(time.time() * 1000))
 TestImageSet(30, 35);
+millisE = int(round(time.time() * 1000))
+sys.stdout.write("Took " + str(millisE - millisS) + "ms.\n")
