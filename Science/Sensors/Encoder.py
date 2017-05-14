@@ -141,7 +141,7 @@ class Encoder(Sensor):
         return self.getAngle(), self.getDistance()
 
     def getDataForPacket(self):
-        return Util.byteMap(int(round(self.getAngle() % (2*pi))), 16)  # BYTEMAP?
+        return Util.long_to_byte_length(int(round(self.getAngle() % (2*pi))), 2)
 
 
     def stop(self):

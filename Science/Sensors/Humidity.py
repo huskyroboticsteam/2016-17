@@ -76,4 +76,4 @@ class Humidity(Sensor):
 
     def getDataForPacket(self):
         data = int(self.getValue() * 1023)
-        return Util.byteMap(data, 16)  # BYTEMAP?
+        return Util.long_to_byte_length(data, 2)

@@ -1,14 +1,36 @@
 import sys
 
 import Util
+import Adafruit_BBIO.ADC as ADC
 from Sensors.Thermocouple import Thermocouple
 from Sensors.DistanceSensor import DistanceSensor
 from Sensors.UV_Sensor import UV
+from Sensors.Humidity import Humidity
+from Sensors.Limit import Limit
 
+ADC.setup()
 dist = DistanceSensor()
 therm = Thermocouple("P9_22", "P9_17", "P9_18")
 uv = UV(0x38)
+moist = Humidity("AIN1")
+limTest = Limit("P8_12")
 
+def testLim():
+    Util.write(limTest.getValue())
+
+def decodeLim():
+    val = limTest.getDataForPacket()
+    intData = Util.bytesToInt(val)
+    Util.write(intData)
+
+def testMoisture():
+    Util.write(moist.getValue())
+
+def decodeMoisture():
+    data = moist.getDataForPacket()
+    intData = Util.bytesToInt(data)
+    Util.write(intData / 1023.0)
+    
 def testUV():
     uv.setup()
     Util.write(uv.getValue())
@@ -55,5 +77,5 @@ def decodeTherm():
     Util.write("Got Internal Temp: ")
     Util.write((tempInt*0.0625))
 
-testUV()
-decodeUV()
+testLim()
+decodeLim()
