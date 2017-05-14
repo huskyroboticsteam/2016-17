@@ -73,7 +73,6 @@ class CommHandler:
     @classmethod
     def addCyclePacket(cls, packet):
         cls._packets += [packet]
-        #Util.write(len(cls._packets))
 
     @classmethod
     def sendAll(cls):
@@ -83,9 +82,9 @@ class CommHandler:
     @classmethod
     def _sendPackets(cls):
         while CommHandler._continue:
-            Util.write(len(cls._packets))
             if len(cls._packets) > 0:
-                cls._packets.pop(0).send()
+                cls._packets[0].send()
+                del cls._packets[0]
     
     @classmethod
     def stopComms(cls):
@@ -96,7 +95,7 @@ class Message:
 
     def __init__(self, data, fromAddr):
         self.data = bytearray(data) 
-        self.ID = self.data[4]
+        self.ID = Util.bytesToInt(data[4])
         self.fromAddr = fromAddr
 
     def __str__(self):

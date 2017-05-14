@@ -28,6 +28,7 @@ Queue a message to the handler
 def queueMessage(msg):
     global msgQueue
     msgQueue += [msg]
+    Util.write(msg)
 
 """
 Get Message from Queue
@@ -44,6 +45,7 @@ Parse message into timestamp and id
 def parse(msg):
     global msgQueue
     global reset
+    Util.write(msg)
     if len(msgQueue) == 0 and reset:
         reset = False  # Set reset back to default value
     if msg.ID == PacketType.AuxControl:
@@ -91,6 +93,7 @@ Parse Img Request
 """
 def parse_imgreq(msg):
     global cam_ctrl
+    Util.write(msg)
     # Set Timestamp
     cam_ctrl[0] = Util.intFromHexRange(msg.data, 0, 4)
     # Get CMD Value
@@ -117,6 +120,7 @@ Threading method, call to setup thread
 """
 def thread_parsing():
     global cam_ctrl
+    global reset
     while True:
         if reset:
             msgQueue = []

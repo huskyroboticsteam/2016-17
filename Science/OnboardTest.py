@@ -2,8 +2,6 @@ import sys
 
 import Util
 import Error
-from Packet import Packet
-from CommHandler import CommHandler
 import Adafruit_BBIO.ADC as ADC
 from Sensors.Thermocouple import Thermocouple
 from Sensors.DistanceSensor import DistanceSensor
@@ -11,37 +9,12 @@ from Sensors.UV_Sensor import UV
 from Sensors.Humidity import Humidity
 from Sensors.Limit import Limit
 
-TESTING_IP = '192.168.0.2'
-TESTING_PORT = 22
-
-Packet.setDefaultTarget(TESTING_IP, TESTING_PORT)
-
-Util.write(Packet.DEFAULT_TARGET_IP)
-Util.write(Packet.DEFAULT_TARGET_PORT)
-
 ADC.setup()
 dist = DistanceSensor()
 therm = Thermocouple("P9_22", "P9_17", "P9_18")
 uv = UV(0x38)
 moist = Humidity("AIN1")
 limTest = Limit("P8_12")
-pack = Packet()
-comms = CommHandler('192.168.0.90', 5000)
-comms.startCommsThread()
-
-pack.appendData(limTest.getDataForPacket())
-
-comms.addCyclePacket(pack)
-comms.addCyclePacket(pack)
-comms.addCyclePacket(pack)
-
-
-comms.sendAll()
-
-pack.appendData(Util.long_to_byte_length(47, 2))
-
-comms.sendAsyncPacket(pack)
-
 
 def testLim():
     Util.write(limTest.getValue())

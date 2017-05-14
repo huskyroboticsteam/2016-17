@@ -24,8 +24,8 @@ from SystemTelemetry import SystemTelemetry
 
 # Communication Setup
 #MAIN_IP = '192.168.0.1'  # Typical
-MAIN_IP = '192.168.0.2'  # Testing on Jaden's machine
-PRIMARY_TCP_SEND_PORT = 24
+MAIN_IP = '192.168.0.104'  # Testing on Jaden's machine
+PRIMARY_TCP_SEND_PORT = 22
 INTERNAL_IP = '192.168.0.90'
 INTERNAL_TCP_RECEIVE_PORT = 5000
 
@@ -53,10 +53,10 @@ limit2 = Limit("P8_10")
 limit3 = Limit("P8_8")
 
 Parse.setupParsing()
-CommHandling = CommHandler(INTERNAL_IP, INTERNAL_TCP_RECEIVE_PORT)
+CommHandler.setup(INTERNAL_IP, INTERNAL_TCP_RECEIVE_PORT)
 Packet.setDefaultTarget(MAIN_IP, PRIMARY_TCP_SEND_PORT)
 SystemTelemetry.initializeTelemetry()
-CommHandling.startCommsThread()  # Start communication receiving process
+CommHandler.startCommsThread()  # Start communication receiving process
 
 # Add Sensors to handler
 SensorHandler.addPrimarySensors(DistanceSensor, UVSensor, Thermocouple, HumiditySensor)
@@ -89,17 +89,17 @@ while True:
     # Send Primary Sensor Packet
     primarySensorData = Packet(PacketType.PrimarySensor)
     primarySensorData.appendData(SensorHandler.getPrimarySensorData())
-    CommHandling.addCyclePacket(primarySensorData)
+    CommHandler.addCyclePacket(primarySensorData)
 
     # Send Auxiliary Sensor Packet
     auxSensorData = Packet(PacketType.AuxSensor)
     auxSensorData.appendData(SensorHandler.getAuxSensorData())
-    CommHandling.addCyclePacket(auxSensorData)
+    CommHandler.addCyclePacket(auxSensorData)
 
     # Send System Telemetry Packet
     SystemTelemetry.updateTelemetry()
     systemPacket = Packet(PacketType.SystemTelemetry)
     systemPacket.appendData(SystemTelemetry.getTelemetryData())
-    CommHandling.addCyclePacket(systemPacket)
+    CommHandler.addCyclePacket(systemPacket)
 
     sys.stdout.flush()

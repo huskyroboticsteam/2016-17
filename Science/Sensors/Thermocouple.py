@@ -70,8 +70,9 @@ class Thermocouple(Sensor):
     # true if error is found. Does not set
     # to false if none is found
     def checkError(self):
+        status = {}
         status = self._device.readState()
-
+        
         if status["openCircuit"]:
             Error.throw(0x0104, "Open Circuit detected on Thermocouple.")
         if status["shortGND"]:

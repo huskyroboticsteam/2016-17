@@ -9,7 +9,7 @@ from Packet import SysCtrlID, CameraID
 
 class SystemControl(Command):
 
-    microscopeTriggerTime = 1  # Time for microscope to trigger in seconds
+    microscopeTriggerTime = 0.01  # Time for microscope to trigger in seconds
 
     def __init__(self, microscopeRelayPin):
         self.microscopeRelayPin = microscopeRelayPin
@@ -45,5 +45,4 @@ class SystemControl(Command):
         if MICROSCOPE_AF_CAPTURE:
             GPIO.output(self.microscopeRelayPin, GPIO.HIGH)
             time.sleep(2 * self.microscopeTriggerTime)
-            GPIO.output(self.microsopeRelayPin, GPIO.LOW)
         time.sleep(0.02)

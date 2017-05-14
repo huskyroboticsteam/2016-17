@@ -18,8 +18,8 @@ CONNECTION_STATUS = True
 class Packet:
 
     RECEIVE_BYTE_SIZE = 1024
-    DEFAULT_TARGET_IP = '192.168.0.1'
-    DEFAULT_TARGET_PORT = 24
+    DEFAULT_TARGET_IP = '192.168.0.104'
+    DEFAULT_TARGET_PORT = 22
 
     def __init__(self, id=0x00, targetIP=None, targetPort=None):
         self._data = b''  # bytes
@@ -75,6 +75,9 @@ class Packet:
 
     def getData(self):
         return self._data
+
+    def __str__(self):
+        return "Packet: " + str(self._id) + "\tData: " + str(self._data) + "\n"
 
     @classmethod
     def setDefaultTarget(cls, targetIP, targetPort):
