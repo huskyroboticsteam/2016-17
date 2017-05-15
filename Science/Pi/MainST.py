@@ -132,13 +132,28 @@ TakePic = False;
 DoAF = False;
 
 def CamTrigger(channel):
-    time.sleep(0.015); # 15ms. A non-AF pulse will be 10ms, AF will be 20ms.
+    global DoAF;
+    global TakePic;
+    time.sleep(0.150);
     if(GPIO.input(InputPin)):
         DoAF = False;
         TakePic = True;
     else:
         DoAF = True;
         TakePic = True;
+
+PicFoci = [];
+
+def Cycle(CurrFocus):
+    PicFoci += [CurrFocus];
+    Avg = AvgList(PicFoci);
+
+def AvgList(List):
+    Sum = 0;
+    for I in List:
+        Sum += I;
+    return (Sum) / len(List);
+
 
 GPIO.add_event_detect(InputPin, GPIO.RISING, callback=CamTrigger);
 while True:
