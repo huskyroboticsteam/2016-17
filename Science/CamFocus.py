@@ -1,7 +1,6 @@
 import sys
 import Parse
 import Error
-import Util
 from Packet import AuxCtrlID
 from Command import Command
 from Motor import Servo
@@ -17,11 +16,10 @@ class CamFocus(Command):
 
     def initialize(self):
         if not self._motor.isStarted():
-            self._motor.__init__(self._motor._pin)
+            sys.stdout.write("\n\n>>>>>dafuq?<<<<<<\n\n")
 
     def run(self, setpoint):
-        set = self.setpoint()
-        self._motor.moveTo(self.setpoint())
+        self._motor.moveTo(setpoint)
 
     def setpoint(self, setpoint=None):
         self._setpoint = Parse.aux_ctrl[AuxCtrlID.CamFocusPos + 1]

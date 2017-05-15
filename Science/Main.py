@@ -22,6 +22,7 @@ from CommHandler import CommHandler
 from Packet import Packet, PacketType
 from SystemTelemetry import SystemTelemetry
 
+
 # Communication Setup
 #MAIN_IP = '192.168.0.1'  # Typical
 MAIN_IP = '192.168.0.104'  # Testing on Jaden's machine
@@ -38,6 +39,9 @@ try:
 except:
     # Throw "ADC Could not initialize"
     Error.throw(0x0001, "Failed to initialize ADC")
+
+# Initialize all motors to off
+Motor.initializeAllPWMPins()
 
 # Create Sensors
 UVSensor = UV(0x38)

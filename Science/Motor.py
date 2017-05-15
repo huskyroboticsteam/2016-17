@@ -1,6 +1,6 @@
 import Adafruit_GPIO.PWM as PWM
 import time
-
+import Util
 
 """
 
@@ -10,6 +10,7 @@ import time
 class Motor:
 
     pwm_handler = PWM.get_platform_pwm()
+    pwm_working = ["P9_14", "P9_16", "P9_42", "P9_21", "P8_13", "P8_19"]
     motors = []
     _freq = 2000
     _started = False
@@ -24,7 +25,7 @@ class Motor:
         pass
 
     def set(self, value):
-        self.pwm_handler.set_duty_cycle(self._pin, value * 100.0)
+        self.pwm_handler.set_duty_cycle(self._pin, ((value % 100) * 100.0))
 
     def stop(self):
         self.pwm_handler.stop(self._pin)
@@ -50,6 +51,13 @@ class Motor:
         for motor in cls.motors:
             motor.stop()
             cls.pwm_handler.stop(motor._pin)
+        cls.pwm_handler.cleanup()
+
+    @classmethod
+    def initializeAllPWMPins(cls):
+        for pin in cls.pwm_working:
+            cls.pwm_handler.stop(pin)
+        
 
     @classmethod
     def calibrateAll(cls):
