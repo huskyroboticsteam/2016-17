@@ -116,23 +116,38 @@ def SendServo(NewValue):
 
 # Executes the AF routine.
 def DoAutofocus():
-    SendServo(1337);
     TakePicture();
+    sys.stdout.write("Picture taken, calculating sharpness...\n");
+    Sharpness = TestImage("test060.jpg");
+    sys.stdout.write("Sharpness: " + str(Sharpness) + "\n");
+    SendServo(Sharpness % 360);
+    sys.stdout.write("Packet sent.\n");
 
 signal.signal(signal.SIGINT, UserExit)
 
 GPIO.setmode(GPIO.BOARD);
 InputPin = 16;
 GPIO.setup(InputPin, GPIO.IN);
+TakePic = False;
+DoAF = False;
 
 def CamTrigger(channel):
     time.sleep(0.015); # 15ms. A non-AF pulse will be 10ms, AF will be 20ms.
     if(GPIO.input(InputPin)):
-        DoAutofocus();
+        DoAF = False;
+        TakePic = True;
     else:
-        TakePicture();
+        DoAF = True;
+        TakePic = True;
 
 GPIO.add_event_detect(InputPin, GPIO.RISING, callback=CamTrigger);
 while True:
-    time.sleep(0.1);
+    if TakePic:
+        if DoAF:
+            DoAutofocus();
+            TakePic = False;
+        else:
+            TakePicture();
+            TakePic = False;
+    time.sleep(0.050);
 GPIO.cleanup();
