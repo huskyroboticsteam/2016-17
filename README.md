@@ -5,7 +5,7 @@ Code base for the 2016-17 buld season
 
 ### Python VLC
 pip install python-vlc
-ALSO make sure 32 bit VLC player is installed to the OS:
+ALSO make sure 32 bit VLC player (required for built version of UI) is installed to the OS:
 
 | Operating System | Installation |
 | :----------------: | :----------------------------------------------: |
@@ -18,14 +18,17 @@ ALSO make sure 32 bit VLC player is installed to the OS:
 | Linux (Ubuntu) | sudo apt-get install python-qt4 |
 | Windows | http://sourceforge.net/projects/pyqt/files/PyQt4/PyQt-4.11.4/PyQt4-4.11.4-gpl-Py2.7-Qt4.8.7-x32.exe |
 
-### Numpy Installation:
-pip install numpy
+### Numpy Installation (Version 1.10.4 required for building):
+pip install numpy==1.10.4
 
 ### SDL2 Installation:
 pip install PySDL2
 
 Also download SDL.dll from http://libsdl.org/download-2.0.php for your version of Python (i.e.: x86 SDL for x86 Python install)
 Add to Python install directory under DLLs and add PYSDL2_DLL_PATH=*Your python dll directory* to the system path
+
+### UI Build Tools (cx_freeze)
+pip install cx_freeze==4.3.4
 
 ### Shapely and Pyvisgraph Installation
 
