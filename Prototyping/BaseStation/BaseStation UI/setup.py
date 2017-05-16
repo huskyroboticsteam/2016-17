@@ -18,7 +18,6 @@ import os
 import sdl2
 import glob
 sdl_dll_path = glob.glob(os.environ['PYSDL2_DLL_PATH'] + "\\*.dll")
-path = ('C:\\Program Files (x86)\\Python27\\Lib\\site-packages\\numpy\\core\\multiarray.pyd', 'multiarray.pyd')
 
 base = None
 if sys.platform == 'win32':
@@ -27,8 +26,7 @@ if sys.platform == 'win32':
 options = {
     'build_exe': {
         'includes': 'atexit',
-        'include_files': [sdl_dll_path, path],
-        'packages': ["numpy.core.multiarray"]
+        'include_files': sdl_dll_path
     }
 }
 
