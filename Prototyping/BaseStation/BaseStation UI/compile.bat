@@ -62,3 +62,7 @@
  mkdir build\exe.win32-2.7\ui_components
  mkdir build\exe.win32-2.7\ui_components\camera_streaming
  mkdir build\exe.win32-2.7\ui_components\camera_streaming\video_output
+ ECHO =============================
+ ECHO =============================
+ ECHO =============================
+ set /p=Hit ENTER to continue...
