@@ -33,9 +33,13 @@ class Servo_Sweep(object):
     def getSonarHeading(self):
         return self.currentAngle
 
+    def stop(self):
+        PWM.stop("P8_13")
+        PWM.cleanup()
+
 
 def main():
-    runner = Servo_Sweep()
+    runner = Servo_Sweep(0.5, 1, 179, "P8_13")
     while True:
         runner.move()
 

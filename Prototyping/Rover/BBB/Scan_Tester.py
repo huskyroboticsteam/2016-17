@@ -12,14 +12,35 @@ class Scan_Tester:
     def run (self):
         self.rotater.move()
         angle = self.rotater.getSonarHeading()
-        distance = self.scanner.readDisKm()
+        distance = self.scanner.readDisInch()
+
         print "angle: " + str(angle)
         print"distance: " + str(distance)
 
+    def getDis(self):
+        print self.scanner.readDisInch()
+
+    def stop(self):
+        self.rotater.stop()
+
 def main():
     runner = Scan_Tester()
+    mode = True
     while True:
-        runner.run()
+        try:
+            if mode:
+                runner.run()
+            else:
+                print runner.getDis()
+        except KeyboardInterrupt:
+            choice = raw_input('Press 0 to switch mode. Press 1 to continue. Anything else will exit')
+            if choice[0] == '1':
+                continue
+            elif choice[0] == '0':
+                mode = not mode
+            else:
+                runner.stop()
+                break
 
 
 if __name__ == "__main__":
