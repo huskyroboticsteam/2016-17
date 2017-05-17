@@ -114,7 +114,7 @@ class DriveConnection(UdpConnection):
 
         try:
             # Emit drive of zero if emergency stop isn't enabled
-            if self.stop is not False:
+            if self.stop is False:
                 throttle = self.joys.joystick_axis[0][1]
                 steering = self.joys.joystick_axis[0][0]
         except:
@@ -126,6 +126,8 @@ class DriveConnection(UdpConnection):
                 throttle = 0
             if abs(steering) < 20:
                 steering = 0
+
+            print throttle, steering
 
         # Put the first 2 boolean values in the buffer
         buff = struct.pack("<?hh", self.auto, int(throttle), int(steering))
