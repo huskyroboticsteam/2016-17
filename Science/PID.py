@@ -17,7 +17,8 @@ Basic Implementation as follows:
     (Units do not matter as long as they are used uniformly in the loop)
 3) Use run() to run the PID loop given a sensor reading
     (Should be called iteratively, since it depends on system time)
-4) Use getOutput() to return the desired output.
+4) Use getOutput() to return the desired output 
+    (Output restrained to +/-1, tune PID coefficients accordingly)
 
 NOTE: This output will be relative to the units given in the run() method.
 Map this output to a given range if necessary, for example, in using motors.
@@ -45,18 +46,18 @@ class PID:
     # Initializes coefficients and sets target to 0
     def __init__(self, kP, kI, kD):
         self.setCoefficients(kP, kI, kD)
-        self._target = 0
-        self._lastError = 0
-        self._lastTime = 0
-        self._output = 0
-        self._pVal = 0
-        self._iVal = 0
-        self._dVal = 0
+        self._target = 0.0
+        self._lastError = 0.0
+        self._lastTime = 0.0
+        self._output = 0.0
+        self._pVal = 0.0
+        self._iVal = 0.0
+        self._dVal = 0.0
 
     # Set target of control loop.
     # **Can be changed during operation without consequence
     def setTarget(self, target):
-        self._target = target
+        self._target = float(target)
         self._reset()
 
     # Runs PID Algorithm
@@ -76,10 +77,10 @@ class PID:
     # Resets current accumulations of the PID
     # Meant for internal (private) use only
     def _reset(self):
-        self._pVal = 0
-        self._iVal = 0
-        self._dVal = 0
-        self._lastError = 0
+        self._pVal = 0.0
+        self._iVal = 0.0
+        self._dVal = 0.0
+        self._lastError = 0.0
 
     # Returns last accumulated output for the PID loop
     def getOutput(self):
@@ -89,14 +90,10 @@ class PID:
     # Can be used externally if needed,
     # but is not recommended.
     def setCoefficients(self, kP, kI, kD):
-        self._p = kP
-        self._i = kI
-        self._d = kD
+        self._p = float(kP)
+        self._i = float(kI)
+        self._d = float(kD)
 
     # Restrains output to (+/-)1
     def restrainOutput(self, output):
-        if output > 1:
-            return 1
-        if output < -1:
-            return -1
-        return output
+        return output % 1

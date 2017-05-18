@@ -69,7 +69,6 @@ def parse_aux(msg):
     # Get Command Value
     cmd_value = Util.bytesToInt(msg.data, 6, 10)
     aux_ctrl[cmd_id + 1] = cmd_value
-    sys.stdout.write(str(aux_ctrl))
 
 
 """
@@ -103,7 +102,6 @@ def parse_imgreq(msg):
     # Set the camera number
     cmd_camera = msg.data[28]
     cam_ctrl[cmd_camera] = True
-    Util.write(str(cam_ctrl))
 
 
 """
