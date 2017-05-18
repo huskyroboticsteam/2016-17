@@ -1,7 +1,7 @@
 from math import hypot, atan2, degrees
 from PID import PID 
 from Utils import normalize_angle
-import Navigation
+import Utils
 
 class PathFollower:
     """
@@ -46,9 +46,9 @@ class PathFollower:
         # updates made by Brian 5/18/17
         # uses new distance code in Navigation
         # get the heading between cur location and first in path
-        desired_heading = Navigation.bearing(location, self.path[0])
+        desired_heading = Utils.bearing(location, self.path[0])
         # use PID to get the turn value from desired heading
-        self.pid.run(desired_heading)
+        self.pid.run(heading - desired_heading)
         turn = min(max(self.pid.getOutput(), -100.0), 100.0)
 
         return turn
@@ -74,7 +74,7 @@ class PathFollower:
         """
         Internal use only
         """
-        while self.path != [] and Navigation.dist(self.path[0], location) <= self.position_epsilon:
+        while self.path != [] and Utils.dist(self.path[0], location) <= self.position_epsilon:
             del self.path[0]
             self.pid.reset()
             self.pid.setTarget(0.0)
