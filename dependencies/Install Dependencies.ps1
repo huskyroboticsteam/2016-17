@@ -49,7 +49,7 @@ function setup($url, $file, $name, $options) {
 
 function unzip($zipFile, $outPath) {
     Add-Type -AssemblyName System.IO.Compression.FileSystem
-    [System.IO.Compression.ZipFile]::ExtractToDirectory($zipfile, "$pwd\$outpath")
+    [System.IO.Compression.ZipFile]::ExtractToDirectory("$pwd\$zipfile", "$pwd\$outpath")
 }
 
 function install {
