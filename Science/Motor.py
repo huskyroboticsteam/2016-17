@@ -1,4 +1,5 @@
 import Adafruit_GPIO.PWM as PWM
+import Adafruit_BBIO.PWM as PWM
 import time
 import Util
 
@@ -57,6 +58,7 @@ class Motor:
     def initializeAllPWMPins(cls):
         for pin in cls.pwm_working:
             cls.pwm_handler.stop(pin)
+        PWM.cleanup()
         
 
     @classmethod

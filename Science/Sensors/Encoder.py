@@ -1,5 +1,5 @@
 """
-WARNING: Brian wrote this.
+WARNING: Brian Dai wrote this.
 This code is untested and
 has known bugs. Do Not Attempt
 to Interface with this class yet.
@@ -21,13 +21,8 @@ Basic Implementation as follows:
 ...
 
 NOTE: Only two channel encoders
-NOTE: Vibrations that can cause misalignment of the encoder wheel (especially
-    in the case of optical encoders) is ignored
-NOTE: Run the update() method as often as possible
-NOTE: Assumes Encoder does not step more than one phase per update
 
-
-TODO: ADD ERROR THROWING TO INITIALIZED / READ GPIO
+TODO: ADD ERROR THROWING TO INITIALIZATION / READ GPIO
 
 """
 import Util
@@ -38,6 +33,8 @@ from Sensor import Sensor
 
 
 class Encoder(Sensor):
+
+    STOP_JOIN_T_CONST = 0.02  # Seconds
 
     # Takes in channel A and B pin numbers
     # ppr = Pulses per revolution
@@ -66,6 +63,22 @@ class Encoder(Sensor):
         self._threadA.start()
         self._threadB.start()
 
+    def _threadAChannel(self):
+        while True:
+            self._waitForEdge(self._pinA)
+
+    def _threadBChannel(self):
+        while True:
+            self._waitForEdge(self._pinB)
+    
+    def _waitForEdge(self, pin):
+        current = GPIO.input(pin)
+        if current:
+            GPIO.waitForEdge(pin, GPIO.FALLING)
+        else:
+            GPIO.waitForEdge(pin, GPIO.RISING)
+        self._update()
+
     # Updates encoder values
     # Assumes the Encoder does not go past a whole phase change
     def _update(self):
@@ -73,6 +86,8 @@ class Encoder(Sensor):
         # last cycle to this cycle.
         if not self._isSetup:
             self._setup()
+
+        # Get current readings from GPIO
         curA = GPIO.input(self._pinA)
         curB = GPIO.input(self._pinB)
 
@@ -89,20 +104,6 @@ class Encoder(Sensor):
         self._lastA = curA
         self._lastB = curB
 
-    def _waitForEdge(self, pin):
-        current = GPIO.input(pin)
-        if current:
-            GPIO.waitForEdge(pin, GPIO.FALLING)
-        else:
-            GPIO.waitForEdge(pin, GPIO.RISING)
-        self._update()
-
-    def _waitForA(self):
-        self._waitForEdge(self._pinA)
-
-    def _waitForB(self):
-        self._waitForEdge(self._pinB)
-
     # This method sets a constant whose product with the accumulated angle is
     # the distance traveled
     def setDistanceK(self, distK):
@@ -111,7 +112,7 @@ class Encoder(Sensor):
     # Returns current angle of encoder in radians
     # (-inf, inf) (I.E. not mod 2pi)
     def getAngle(self):
-        return self._steps * (2 * pi/self._ppr)
+        return self._steps * (2 * pi/self._ppr) 
 
     # Returns true if the direction the encoder is moving clockwise
     def _isClockwise(self, lastA, lastB, curA, curB):
@@ -127,14 +128,6 @@ class Encoder(Sensor):
     def reset(self):
         self._steps = 0
 
-    def _threadAChannel(self):
-        while True:
-            self._waitForA()
-
-    def _threadBChannel(self):
-        while True:
-            self._waitForB()
-
     def getValue(self):
         return self.getAngle(), self.getDistance()
 
@@ -143,6 +136,7 @@ class Encoder(Sensor):
 
 
     def stop(self):
-        self._threadA.join(0.02)
-        self._threadB.join(0.02)
+        global STOP_JOIN_T_CONST
+        self._threadA.join(STOP_JOIN_T_CONST)
+        self._threadB.join(STOP_JOIN_T_CONST)
 

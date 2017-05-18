@@ -69,7 +69,7 @@ class Packet:
             s.close()
         except socket.error:
             # Throw "Failed to send packet"
-            Error.throw(0x0503, "Failed to send packet", "Packet.py", 72)
+            Error.throw(0x0503)
             return setStatus(False)
         return setStatus(True)
 
