@@ -1,6 +1,7 @@
 from math import hypot, atan2, degrees
 from PID import PID 
 from Utils import normalize_angle
+import Navigation
 
 class PathFollower:
     """
@@ -9,14 +10,14 @@ class PathFollower:
     Attributes:
         path (list of tuple of (float, float)): The list of current destinations to go to.
         pid (PID): The PID controller for the angle
-        position_epsilon(float): How close the robot has to be for a destination to be considered reached
+        position_epsilon(float): How close in METERS the robot has to be for a destination to be considered reached
     """
     def __init__(self):
         self.path = []
         # TODO fine tune this
         self.pid = PID(0.5, 0.0, 0.0)
         self.pid.setTarget(0.0)
-        self.position_epsilon = 1
+        self.position_epsilon = 3
 
     def go(self, location, heading):
         """
@@ -29,6 +30,7 @@ class PathFollower:
         assert not self.is_done(location)
         self._remove_reached_destinations(location)
         assert self.path != []
+        '''
         dest = self.path[0]
         dx = dest[0] - location[0]
         dy = dest[1] - location[1]
@@ -40,6 +42,15 @@ class PathFollower:
         print dx, dy, heading, desired_heading, self.pid.getOutput()
         turn = min(max(self.pid.getOutput(), -100.0), 100.0)
         print 'PathFollower: go() returning ' + str(turn)
+        '''
+        # updates made by Brian 5/18/17
+        # uses new distance code in Navigation
+        # get the heading between cur location and first in path
+        desired_heading = Navigation.bearing(location, self.path[0])
+        # use PID to get the turn value from desired heading
+        self.pid.run(desired_heading)
+        turn = min(max(self.pid.getOutput(), -100.0), 100.0)
+
         return turn
 
     def is_done(self, location):
@@ -63,8 +74,7 @@ class PathFollower:
         """
         Internal use only
         """
-        while self.path != [] and \
-                        hypot(self.path[0][0] - location[0], self.path[0][1] - location[1]) <= self.position_epsilon:
+        while self.path != [] and Navigation.dist(self.path[0], location) <= self.position_epsilon:
             del self.path[0]
             self.pid.reset()
             self.pid.setTarget(0.0)
@@ -73,4 +83,4 @@ class PathFollower:
         if self.path == []:
             print 'At destination'
         else:
-            print 'Distance to destination: ' + str(hypot(self.path[0][0] - location[0], self.path[0][1] - location[1]))
+            print 'Distance to destination: ' + str(Navigation.dist(self.path[0], location))
