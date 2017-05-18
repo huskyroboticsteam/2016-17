@@ -80,11 +80,12 @@ class RobotTest(object):
                 ]
         self.autonomous_initialized = False
         self.autonomous = Autonomous()
-        self.Sweeper = Servo_Sweep.Servo_Sweep()
+        #self.Sweeper = Servo_Sweep.Servo_Sweep()
         self.target = None
 
     def moveServo(self):
-        self.Sweeper.move()
+        pass
+        #self.Sweeper.move()
 
     def driveMotor(self, motor_id, motor_val):
         """
