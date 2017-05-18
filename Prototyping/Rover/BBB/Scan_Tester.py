@@ -10,9 +10,9 @@ import Navigation
 
 class Scan_Tester:
     def __init__(self):
-        self.rotater = Servo_Sweep.Servo_Sweep(0.5, 1, 179, "P8_13")
+        self.rotater = Servo_Sweep.Servo_Sweep(0.3, 1, 179, "P8_13")
         self.scanner = Sonar.Sonar()
-        self.nav = Navigation.Navigation()
+        self.nav = Navigation.Navigation(0.765555, 0.552777, 0.348333, 0.001, "AIN2")
 
     def run (self):
         self.rotater.move()
