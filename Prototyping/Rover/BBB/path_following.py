@@ -44,7 +44,7 @@ class PathFollower:
         print 'PathFollower: go() returning ' + str(turn)
         '''
         # updates made by Brian 5/18/17
-        # uses new distance code in Navigation
+        # uses new distance code in Utils
         # get the heading between cur location and first in path
         desired_heading = Utils.bearing(location, self.path[0])
         # use PID to get the turn value from desired heading
@@ -83,4 +83,4 @@ class PathFollower:
         if self.path == []:
             print 'At destination'
         else:
-            print 'Distance to destination: ' + str(Navigation.dist(self.path[0], location))
+            print 'Distance to destination: ' + str(Utils.dist(self.path[0], location))
