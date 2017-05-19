@@ -1,4 +1,3 @@
-import math
 import Utils
 import mag as MAG
 import gps as GPS
@@ -78,3 +77,7 @@ class Navigation:
     # appends a destination to the list of destinations
     def append_destiniation(self, dest):
         self.destinations.append(dest)
+
+
+
+
