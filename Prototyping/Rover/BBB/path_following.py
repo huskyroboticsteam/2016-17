@@ -49,6 +49,11 @@ class PathFollower:
         desired_heading = Utils.bearing(location, self.path[0])
         # use PID to get the turn value from desired heading
         self.pid.run(heading - desired_heading)
+        print "desired heading: " + str(desired_heading)
+        print "cur heading: " + str(heading)
+        print "desired location: " + str(self.path[0])
+        print "cur location: " + str(location)
+
         turn = min(max(self.pid.getOutput(), -100.0), 100.0)
 
         return turn
