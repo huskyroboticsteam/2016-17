@@ -82,7 +82,6 @@ class Map(QtGui.QWidget):
         # super(self.__class__, self).keyPressEvent(QKeyEvent)
         # print "KeyPress"
         if QKeyEvent.key() == QtCore.Qt.Key_Z:
-            print "Z"
             self.zoom_out()
             self.repaint()
         elif QKeyEvent.key() == QtCore.Qt.Key_X:
@@ -108,7 +107,7 @@ class Map(QtGui.QWidget):
         self.build_tiles()
 
     def zoom_in(self):
-        if self.zoom_level < 19:
+        if self.zoom_level < 18:
             self.adjust_map_for_zoom((self.x, self.y), self.zoom_level + 1)
             self.zoom_level += 1
             self.zoom_marker()
@@ -187,18 +186,19 @@ class Map(QtGui.QWidget):
     # Chooses whether to set have the tile be visible or not which affects if it is rendered
     # Not Yet Implemented
     def set_visibility(self, tile):
-        display_x = 1600
-        display_y = 1100
-        top_left_x = tile.screen_location[0]
-        top_left_y = tile.screen_location[1]
-        bottom_right_x = top_left_x + 2000
-        bottom_right_y = top_left_y + 1500
-        if bottom_right_x < 0 or bottom_right_y < 0:
-            tile.visible = False
-        elif top_left_x > display_x or top_left_y > display_y:
-            tile.visible = False
-        else:
-            tile.visible = True
+        tile.visible = True
+        # display_x = 1600
+        # display_y = 1100
+        # top_left_x = tile.screen_location[0]
+        # top_left_y = tile.screen_location[1]
+        # bottom_right_x = top_left_x + 2000
+        # bottom_right_y = top_left_y + 1500
+        # if bottom_right_x < 0 or bottom_right_y < 0:
+        #     tile.visible = False
+        # elif top_left_x > display_x or top_left_y > display_y:
+        #     tile.visible = False
+        # else:
+        #     tile.visible = True
 
     # Move the map around, takes a dx and dy from mouse movement event
     def mouseMoveEvent(self, e):

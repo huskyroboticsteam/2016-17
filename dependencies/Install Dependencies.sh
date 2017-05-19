@@ -1,5 +1,7 @@
 #!bin/bash
 
+# Expected to work on Ubuntu
+
 sudo apt update
 sudo apt -y install python3.4
 sudo apt -y install python3-pip

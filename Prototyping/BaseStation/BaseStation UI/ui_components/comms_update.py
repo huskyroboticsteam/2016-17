@@ -101,7 +101,12 @@ class DriveConnection(UdpConnection):
         self.auto = enable
 
     def stopping(self):
-        self.stop = True
+        if self.stop:
+            self.stop = False
+            print "Starting"
+        else:
+            print "Stopping"
+            self.stop = True
 
     def send_message(self):
         """

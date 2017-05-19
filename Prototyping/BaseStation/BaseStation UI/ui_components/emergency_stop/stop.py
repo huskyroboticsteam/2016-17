@@ -33,6 +33,8 @@ class Stop(QtGui.QPushButton):
         font.setWeight(75)
         self.setFont(font)
 
+        self.stopped = False
+
         self.setText("Emergency Stop")
 
     def mousePressEvent(self, e):
@@ -45,7 +47,16 @@ class Stop(QtGui.QPushButton):
 
         super(Stop, self).mousePressEvent(e)
         if self.text().compare("STOP!!!") == 0:
+            self.stopped = True
+            self.setText("Stopped")
             self.stopEvent.emit()
+            return
+
+        if self.text().compare("Stopped") == 0:
+            self.stopped = False
+            self.setText("Emergency Stop")
+            self.stopEvent.emit()
+            return
 
     def keyPressEvent(self, e):
         """
@@ -57,7 +68,7 @@ class Stop(QtGui.QPushButton):
 
         super(Stop, self).keyPressEvent(e)
         # If we have focus and press shift we will go to the next phase
-        if self.hasFocus() and e.key() == QtCore.Qt.Key_Shift:
+        if e.key() == QtCore.Qt.Key_Shift and not self.stopped:
             self.setText("STOP!!!")
 
     def keyReleaseEvent(self, e):
@@ -70,10 +81,8 @@ class Stop(QtGui.QPushButton):
 
         super(Stop, self).keyReleaseEvent(e)
         # If we release shift reset the text
-        if e.key() == QtCore.Qt.Key_Shift:
+        if e.key() == QtCore.Qt.Key_Shift and not self.stopped:
             self.setText("Emergency Stop")
 
-
-
-
-
+    def enterEvent(self, e):
+        self.setFocus(1)
