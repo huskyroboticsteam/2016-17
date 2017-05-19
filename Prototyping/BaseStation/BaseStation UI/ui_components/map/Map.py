@@ -107,7 +107,7 @@ class Map(QtGui.QWidget):
         self.build_tiles()
 
     def zoom_in(self):
-        if self.zoom_level < 18:
+        if self.zoom_level < 19:
             self.adjust_map_for_zoom((self.x, self.y), self.zoom_level + 1)
             self.zoom_level += 1
             self.zoom_marker()
