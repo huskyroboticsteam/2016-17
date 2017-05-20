@@ -25,6 +25,8 @@ class GPS:
         sleep(1)
         ser.flushInput()
         ser.flushOutput()
+        # clears the debugging file
+        open('gps.txt', 'w').close()
         
         # this is where you write the commands you want to give the NMEA sentences
         # to your serial object from earlier object.write(command) put sleep command after
@@ -62,6 +64,9 @@ class GPS:
                     lon = -lon
                 print (lat, lon)
                 print "================================================================"
+                # logs fo debugging
+                with open("gps.txt", "a") as myfile:
+                    myfile.write(str((lat,lon)) + '\n')
                 return lat, lon
         except:
             return self.getCoords()
