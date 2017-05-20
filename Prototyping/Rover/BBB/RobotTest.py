@@ -62,7 +62,7 @@ class RobotTest(object):
             pwm.set_pwm_freq(60)
             self.pot_pid = PID.PID(-0.1, 0, 0) #TODO Adjust
             self.nav = Navigation.Navigation(0.765555, 0.552777, 0.348333, 0.001, "AIN2")
-            self.r_comms = Robot_comms.Robot_comms("192.168.0.40", 8840, 8841, "<?hh", "<?ff", "<ffffffff", "<?ff?")
+            self.r_comms = Robot_comms.Robot_comms("192.168.0.40", 8840, 8841, "<?hh", "<?ff", "<ffffffff", "<?ff?", self.nav)
             self.motors = [
                 MiniMotor.MiniMotor(1, 8, 9, 10, pwm),
                 MiniMotor.MiniMotor(2, 13, 12, 11, pwm),
@@ -72,7 +72,7 @@ class RobotTest(object):
         else:
             self.pot_pid = PID.PID(-0.3, 0, 0)
             self.nav = Navigation.Navigation(0.560000002384, 0.325555562973, 0.115000002086, 0.001, "AIN2")
-            self.r_comms = Robot_comms.Robot_comms("192.168.0.50", 8840, 8841, "<?hh", "<?ff", "<ffffffff", "<?ff?")
+            self.r_comms = Robot_comms.Robot_comms("192.168.0.50", 8840, 8841, "<?hh", "<?ff", "<ffffffff", "<?ff?", self.nav)
             self.motors = [
                 BigMotor.BigMotor(1, "P9_21"),
                 BigMotor.BigMotor(2, "P9_16"),

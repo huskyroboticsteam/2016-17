@@ -5,7 +5,7 @@ import time
 
 class Robot_comms():
 
-    def __init__(self, robot_ip, udp_port, tcp_port, d_format, gps_format, rtb_format, aut_format):
+    def __init__(self, robot_ip, udp_port, tcp_port, d_format, gps_format, rtb_format, aut_format, nav):
         self.receivedDrive = None
         self.robot_ip = robot_ip
         self.udp_port = udp_port
@@ -28,10 +28,10 @@ class Robot_comms():
         self.conn = None
         self.lat = 0
         self.longitude = 0
-        self.nav = None
+        self.nav = nav
         self.most_recent_packet = time.time()
         # Starts gps looping and updating every second
-        self.updateGPS()
+        self.nav.getGPS()
 
     # Attempts to update the GPS coords every second. Only should work every 2 seconds
     # since gps only sends the correct message 50% of the time. If there is latency,
