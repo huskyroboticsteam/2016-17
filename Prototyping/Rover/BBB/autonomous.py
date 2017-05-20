@@ -9,18 +9,16 @@ class Autonomous:
     Attributes:
         target (tuple of (float, float) or None): (x, y) coordinate of target.
         obstacles (list of tuple of (float, float)): (x, y) locations of currently known obstacles.
-        buffer_width (float): How far must the center of the robot be from detected obstacles.
         path (list of tuple of (float, float)): The currently planned path. "None" if not calculated yet.
         path_follower (PathFollower): Object for managing path-following state.
     """
-    def __init__(self, buffer_width=0.1):
+    def __init__(self):
         """
         Args:
             target (tuple of (float, float)): The target x, y coordinates
         """
         self.target = None
         self.obstacles = []
-        self.buffer_width = buffer_width
         self.path = None
         self.path_follower = PathFollower()
 
@@ -84,5 +82,5 @@ class Autonomous:
         """
         assert self.target is not None
         if self.path is None:
-            self.path = find_path(location, self.target, self.obstacles, self.buffer_width)
+            self.path = find_path(location, self.target, self.obstacles)
             self.path_follower.set_path(self.path)

@@ -3,7 +3,7 @@ from shapely.ops import cascaded_union
 import pyvisgraph as vg
 
 
-def find_path(start, target, obstacles, buffer_width):
+def find_path(start, target, obstacles, buffer_width=0.1):
     """
     Finds a path from one point to another while not getting near obstacles
     Assumes that the actual start and target points are outside of obstacles, but the values given might be inaccurate.
@@ -11,7 +11,7 @@ def find_path(start, target, obstacles, buffer_width):
     Args:
         start, target (tuple of (float, float)): starting points and target points
         obstacles (list of tuple of (float, float)): list of obstacles
-        buffer_width (float): Do not go this near to the obstacles
+        buffer_width (float): How far must the center of the robot be from detected obstacles.
     Returns (list of tuple of (float, float)): The path as a list of coordinates. Does not include the starting point
         but includes the ending point.
     """
