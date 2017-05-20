@@ -39,7 +39,7 @@ class Servo_Sweep(object):
 
 
 def main():
-    runner = Servo_Sweep(0.5, 1, 179, "P8_13")
+    runner = Servo_Sweep(0.3, 1, 179, "P8_13")
     while True:
         runner.move()
 

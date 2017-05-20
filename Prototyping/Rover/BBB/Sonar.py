@@ -37,7 +37,7 @@ class Sonar:
         return readVal
 
     def getMaxDisM(self): # Returns max distance readble in meters
-        return self.maxAnaVal * self.slope + self.intersecpt
+        return (self.maxAnaVal * self.slope + self.intersecpt) * 254
 
     def readTrueDisInch(self, angle):
         return math.cos(angle) * self.readDisInch()
