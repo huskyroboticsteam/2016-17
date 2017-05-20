@@ -79,10 +79,16 @@ def main():
         while True:
             looping = True
             print "Scanning ..... "
+            count = 0
             while looping:
                 runner.move()
                 if (runner.getDis() < 150): # TODO: Made this if statement distance a global variable
-                    looping = False
+                    if count > 5:
+                        looping = False
+                    else:
+                        count+= 1
+                else:
+                    count = 0
             print "Obstacle Detected! "
             runner.getVals()
             choice = raw_input('Press any key to continue')
