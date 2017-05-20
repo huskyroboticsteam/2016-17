@@ -1,7 +1,11 @@
-import Utils
 import mag as MAG
 import gps as GPS
 import Adafruit_BBIO.ADC as ADC
+from time import sleep, time
+from threading import Thread
+
+# The number of seconds before a GPS reading is considered to be invalid
+STALE_GPS_TIME = 2.0
 
 class Navigation:
     """
@@ -26,6 +30,8 @@ class Navigation:
             pot_tol (float): Currently unused. Maybe some kind of tolerance
                 value. Maybe we should remove this?
             pot_pin (str): The name of the pin the potentiometer is connected to.
+            lastGPS (tuple of (float, float)): Lastest GPS reading
+            lastGPSTime (float): timestamp when lastGPS was read
         """
         self.mag = MAG.Magnetometer()
         self.gps = GPS.GPS()
@@ -34,6 +40,11 @@ class Navigation:
         self.POT_RIGHT = float(pot_right)
         self.POT_MIDDLE = float(pot_middle)
         self.POT_TOL = float(pot_tol)
+        self.lastGPS = None
+        self.lastGPSTime = time() - STALE_GPS_TIME * 2
+        thread = Thread(target = self.updateGPS)
+        thread.daemon = True
+        thread.start()
 
     # returns a float of how far from straight the potentiomer is. > 0 for Right, < 0 for left
     # returns -1 if error
@@ -53,8 +64,21 @@ class Navigation:
         return (rawMag - 170) % 360
 
     # returns gps data
+    # returns None if no gps reading performed within SLATE_GPS_TIME
     def getGPS(self):
-        return self.gps.getCoords()
+        if time() - self.lastGPSTime <= STALE_GPS_TIME:
+            return self.lastGPS
+        else:
+            return None
+
+    # Periodically updates the GPS data
+    def updateGPS(self):
+        while True:
+            gps = self.gps.getCoords()
+            if gps is not None:
+                self.lastGPS = gps
+                self.lastGPSTime = time()
+            sleep(0.2)
 
     def get_pot_left(self):
         return self.POT_LEFT
@@ -64,7 +88,3 @@ class Navigation:
 
     def get_pot_middle(self):
         return self.POT_MIDDLE
-
-
-
-

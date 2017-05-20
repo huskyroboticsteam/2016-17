@@ -30,25 +30,6 @@ class Robot_comms():
         self.longitude = 0
         self.nav = nav
         self.most_recent_packet = time.time()
-        # Starts gps looping and updating every second
-        self.nav.getGPS()
-
-    # Attempts to update the GPS coords every second. Only should work every 2 seconds
-    # since gps only sends the correct message 50% of the time. If there is latency,
-    # it is because the GPS is being updated too frequently.
-    # def updateGPS(self):
-    #     try:
-    #         gps = self.nav.getGPS()
-    #         if gps is not None:
-    #             self.lat = float(gps[0])
-    #             self.longitude = float(gps[1])
-    #     except:
-    #         pass
-    #     # Currently set to 0.4 second
-    #     timer = threading.Timer(.4, self.updateGPS)
-    #     # Make it a daemon thread so it stops automatically when the main thread stops
-    #     timer.daemon = True
-    #     timer.start()
 
     # receives a packet and sets variables accordingly
     def receiveData(self, nav):
