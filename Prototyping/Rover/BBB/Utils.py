@@ -98,7 +98,7 @@ def distance(coord1, coord2):
 
     return r * c  # meters
 
-def scale_coords(self, coord, reference):
+def scale_coords(coord, reference):
       """
       Scales GPS coordinates into meter coordinates
       Coordinates are given as (lat, long) in degrees
@@ -107,10 +107,10 @@ def scale_coords(self, coord, reference):
          reference (Tuple of (float, float)): The reference point to be converted to (0, 0)
       Returns (Tuple of (float, float)): (x, y) coordinates in meters
       """
-      xDistance = self.distance(coord[0], coord[1], coord[0], reference[1])
+      xDistance = distance(coord[0], coord[1], coord[0], reference[1])
       if coord[1] < reference[1]:
           xDistance = -xDistance
-      yDistance = self.distance(coord[0], coord[1], reference[0], coord[1])
+      yDistance = distance(coord[0], coord[1], reference[0], coord[1])
       if coord[0] < reference[0]:
           yDistance = -yDistance
       return (xDistance, yDistance)
