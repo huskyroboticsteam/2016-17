@@ -3,6 +3,7 @@ import Adafruit_PCA9685
 import PID
 import math
 import Servo_Sweep
+import Sonar
 import threading
 import MiniMotor
 import BigMotor
@@ -80,12 +81,12 @@ class RobotTest(object):
                 ]
         self.autonomous_initialized = False
         self.autonomous = Autonomous()
-        #self.Sweeper = Servo_Sweep.Servo_Sweep()
+        self.Sweeper = Servo_Sweep.Servo_Sweep(0.005, 1, 179, "P8_13")
+        self.sonar = Sonar.Sonar()
         self.target = None
 
     def moveServo(self):
-        pass
-        #self.Sweeper.move()
+        self.Sweeper.move()
 
     def driveMotor(self, motor_id, motor_val):
         """
@@ -133,6 +134,8 @@ class RobotTest(object):
                 self.target = (47.6529566, -122.3063133)
                 # TODO: get obstacles from wireless or sensor
                 obstacles = []
+                if self.sonar.readDisM() < self.sonar.getMaxDisM():
+                    obstacles = [Utils.point_at_end(self.nav.getGPS(), Utils.normalize_angle(90 - self.Sweeper.currentAngle), self.sonar.readDisM())]
                 self.autonomous.set_target(self.target)
                 self.autonomous.clear_all_obstacles()
                 # for coord in obstacles:
@@ -305,7 +308,7 @@ def main():
         robot = RobotTest(sys.argv[1])
         try:
             while True:
-                robot.moveServo() # Might not move very fast with print statements
+                robot.moveServo() 
                 robot.get_robot_comms().receiveData(robot.get_nav())
                 robot.get_robot_comms().sendData(robot.get_nav())
                 driveParms = robot.getDriveParms()
