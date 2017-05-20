@@ -138,12 +138,7 @@ class RobotTest(object):
             if not self.autonomous_initialized:
                 # TODO: read target from wireless
                 self.target = (47.6529566, -122.3063133)
-                # TODO: get obstacles from wireless or sensor
-                obstacles = []
                 self.autonomous.set_target(self.target)
-                self.autonomous.clear_all_obstacles()
-                # for coord in obstacles:
-                #     self.autonomous.add_obstacle(scale_coords(coord, self.target))
                 self.autonomous_initialized = True
             if self.autonomous.is_done(location):
                 # Reached the target
