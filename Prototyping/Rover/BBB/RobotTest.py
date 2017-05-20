@@ -128,14 +128,14 @@ class RobotTest(object):
         # auto = self.r_comms.receivedDrive[0]
         if True:
             time.sleep(.1)
-            location = self.nav.getGPS()
+            location = (self.r_comms.lat, self.r_comms.longitude)
             if not self.autonomous_initialized:
                 # TODO: read target from wireless
                 self.target = (47.6529566, -122.3063133)
                 # TODO: get obstacles from wireless or sensor
                 obstacles = []
                 if self.sonar.readDisM() < self.sonar.getMaxDisM():
-                    obstacles = [Utils.point_at_end(self.nav.getGPS(), Utils.normalize_angle(90 - self.Sweeper.getAngle()), self.sonar.readDisM())]
+                    obstacles = [Utils.point_at_end(location, Utils.normalize_angle(90 - self.Sweeper.currentAngle), self.sonar.readDisM())]
                 self.autonomous.set_target(self.target)
                 self.autonomous.clear_all_obstacles()
                 # for coord in obstacles:

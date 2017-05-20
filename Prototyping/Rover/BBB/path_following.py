@@ -3,6 +3,12 @@ from PID import PID
 from Utils import normalize_angle
 import Utils
 
+# Set this to True to ignore the heading parameter in the go() method.
+# If it is set to True, will try to guess headings based on GPS changes.
+# For use in case the magnetometer is broken.
+IGNORE_HEADING = False
+
+
 class PathFollower:
     """
     Uses a PID loop to steer the robot to follow a path.
@@ -11,6 +17,9 @@ class PathFollower:
         path (list of tuple of (float, float)): The list of current destinations to go to.
         pid (PID): The PID controller for the angle
         position_epsilon(float): How close in METERS the robot has to be for a destination to be considered reached
+    Attributes used if IGNORE_HEADING is True:
+        prev_location (tuple of (float, float)): Last recorded GPS location
+        prev_heading (float): Last known/guessed heading
     """
     def __init__(self):
         self.path = []
@@ -22,11 +31,14 @@ class PathFollower:
         # logging info:
         open('path_log.txt', 'w').close()
 
+        # Used if IGNORE_HEADING is True
+        self.prev_location = None
+        self.prev_heading = 0.0
 
     def go(self, location, heading):
         """
         Args:
-            location (tuple of (float, float)): The current x, y coordinates of the robot.
+            location (tuple of (float, float)): The current GPS coordinates of the robot.
             heading (float): The current heading of the robot.
                 (0.0 for north, 90.0 for east, 180.0 for south, 270.0 for west)
         Returns (float): The turn value of the robot. 100 is full right. -100 is full left. 0 is straight.
@@ -47,6 +59,9 @@ class PathFollower:
         turn = min(max(self.pid.getOutput(), -100.0), 100.0)
         print 'PathFollower: go() returning ' + str(turn)
         '''
+        if IGNORE_HEADING:
+            self._update_heading(location)
+            heading = self.prev_heading
         # updates made by Brian 5/18/17
         # uses new distance code in Utils
         # get the heading between cur location and first in path
@@ -66,6 +81,8 @@ class PathFollower:
         """
         Returns (bool): whether the robot has reached the final destination yet
         """
+        if IGNORE_HEADING:
+            self._update_heading(location)
         self._remove_reached_destinations(location)
         return self.path == []
 
@@ -95,3 +112,16 @@ class PathFollower:
             with open("path_log.txt", "a") as myfile:
                 myfile.write("Distance:" + str(Utils.dist(self.path[0], location)) + '\n')
             print 'Distance to destination: ' + str(Utils.dist(self.path[0], location))
+
+    def _update_heading(self, location):
+        """
+        Internal use only.
+        Used to update prev_location and prev_heading if IGNORE_HEADING is True
+        Args:
+            location (tuple of (float, float)): current coordinates
+        """
+        if self.prev_location is None:
+            self.prev_location = location
+        elif self.prev_location != location:
+            self.prev_heading = Utils.bearing(self.prev_location, location)
+            self.prev_location = location
