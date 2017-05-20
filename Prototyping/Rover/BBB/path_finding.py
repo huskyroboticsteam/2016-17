@@ -16,9 +16,7 @@ def find_path(start, target, obstacles, buffer_width=0.1):
         but includes the ending point.
     """
     polygon_list = [Point(a).buffer(buffer_width, resolution=3) for a in obstacles]
-    union_all = cascaded_union(polygon_list)
-    if isinstance(union_all, Polygon):
-        union_all = to_multi_polygon([union_all])
+    union_all = to_multi_polygon(cascaded_union(polygon_list))
     start_outside = list(_nearest_outside(Point(start), union_all).coords)[0]
     target_outside = list(_nearest_outside(Point(target), union_all).coords)[0]
     boundary_list = [[vg.Point(b[0], b[1]) for b in a.exterior.coords] for a in union_all]
