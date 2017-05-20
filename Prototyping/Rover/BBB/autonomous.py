@@ -1,5 +1,6 @@
 from path_finding import find_path
 from path_following import PathFollower
+from Utils import distance
 
 
 class Autonomous:
@@ -7,8 +8,11 @@ class Autonomous:
     Plans and follows paths to avoid obstacles.
     All coordinates are in meters
     Attributes:
-        target (tuple of (float, float) or None): (x, y) coordinate of target.
-        obstacles (list of tuple of (float, float)): (x, y) locations of currently known obstacles.
+        target (tuple of (float, float) or None): coordinate of target.
+        obstacles (list of tuple of (float, float)): coordinates of currently known obstacles.
+        ignore_obstacle_distance (float): If a newly detected obstacle is this near to an obstacle used for planning
+            the current path, then it will be ignored until the path is re-planned. (In meters)
+        obstacles_for_curr_path (list of tuple of (float, float)): the obstacles used for planning the current path
         path (list of tuple of (float, float)): The currently planned path. "None" if not calculated yet.
         path_follower (PathFollower): Object for managing path-following state.
     """
@@ -19,6 +23,8 @@ class Autonomous:
         """
         self.target = None
         self.obstacles = []
+        self.ignore_obstacle_distance = 0.1
+        self.obstacles_for_curr_path = []
         self.path = None
         self.path_follower = PathFollower()
 
@@ -35,15 +41,20 @@ class Autonomous:
         Args:
             coord (tuple of (float, float)): The x, y coordinates of the obstacle.
         """
-        # TODO: Maybe ignore obstacles that are near known obstacles?
         self.obstacles.append(coord)
-        self.path = None
+        # Re-plan path if the new obstacle is sufficiently far from the obstacles already used for planning the path
+        if self.path is not None:
+            for obs in self.obstacles_for_curr_path:
+                if distance(coord, obs) > self.ignore_obstacle_distance:
+                    self.path = None
+                    return
 
     def clear_all_obstacles(self):
         """
         Resets the state. Forgets about all known obstacles.
         """
         self.obstacles = []
+        self.obstacles_for_curr_path = []
         self.path = None
 
     def go(self, location, heading):
@@ -84,3 +95,4 @@ class Autonomous:
         if self.path is None:
             self.path = find_path(location, self.target, self.obstacles)
             self.path_follower.set_path(self.path)
+            self.obstacles_for_curr_path = self.obstacles
