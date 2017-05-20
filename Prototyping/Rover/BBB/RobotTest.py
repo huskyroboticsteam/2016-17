@@ -135,7 +135,7 @@ class RobotTest(object):
                 # TODO: get obstacles from wireless or sensor
                 obstacles = []
                 if self.sonar.readDisM() < self.sonar.getMaxDisM():
-                    obstacles = [Utils.point_at_end(self.nav.getGPS(), Utils.normalize_angle(90 - self.Sweeper.currentAngle), self.sonar.readDisM())]
+                    obstacles = [Utils.point_at_end(self.nav.getGPS(), Utils.normalize_angle(90 - self.Sweeper.getAngle()), self.sonar.readDisM())]
                 self.autonomous.set_target(self.target)
                 self.autonomous.clear_all_obstacles()
                 # for coord in obstacles:
@@ -308,7 +308,7 @@ def main():
         robot = RobotTest(sys.argv[1])
         try:
             while True:
-                robot.moveServo() 
+                robot.moveServo()
                 robot.get_robot_comms().receiveData(robot.get_nav())
                 robot.get_robot_comms().sendData(robot.get_nav())
                 driveParms = robot.getDriveParms()
