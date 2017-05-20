@@ -10,24 +10,28 @@ import Navigation
 
 class Scan_Tester:
     def __init__(self):
-        self.rotater = Servo_Sweep.Servo_Sweep(0.3, 1, 179, "P8_13")
+        self.rotatorh = Servo_Sweep.Servo_Sweep(0.3, 1, 179, "P8_13")
+        self.rotatorv = Servo_Sweep.Servo_Sweep(0.3, 70, 90, "P8_19")
         self.scanner = Sonar.Sonar()
         self.nav = Navigation.Navigation(0.765555, 0.552777, 0.348333, 0.001, "AIN2")
 
     def run (self):
-        self.rotater.move()
-        angle = self.rotater.getSonarHeading()
+        self.rotatorh.move()
+        self.rotatorv.move()
+        angle = self.rotatorh.getSonarHeading()
         distance = self.scanner.readDisInch()
 
         print "angle: " + str(angle)
         print"distance: " + str(distance)
 
     def move(self):
-        self.rotater.move()
+        self.rotatorh.move()
+        self.rotatorv.move()
 
     def getVals(self):
-        angle = self.rotater.getSonarHeading()
+        angle = self.rotatorh.getSonarHeading()
         distance = self.scanner.readDisInch()
+        distanceReal = self.scanner.readTrueDisInch()
         roverAngle = 90 - angle
         realAngle = roverAngle + self.nav.getMag()
         if(realAngle < 0 ):
@@ -38,7 +42,8 @@ class Scan_Tester:
 
         print "Rover angle: " + str(roverAngle)
         print "Real angle: " + str(realAngle)
-        print "Distance to obstacle: " + str(distance) + " inches"
+        print "Raw Distance to obstacle: " + str(distance) + " inches"
+        print "Adjusted Distance to obstacle: " + str(distanceReal) + " inches"
 
     def getDis(self):
         return self.scanner.readDisInch()

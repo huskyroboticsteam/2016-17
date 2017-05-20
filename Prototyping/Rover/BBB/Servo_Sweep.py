@@ -30,7 +30,7 @@ class Servo_Sweep(object):
         duty = 100 - ((self.currentAngle / 180) * self.duty_span + self.duty_min)
         PWM.set_duty_cycle(self.servo_pin, duty)
 
-    def getSonarHeading(self):
+    def getAngle(self):
         return self.currentAngle
 
     def stop(self):

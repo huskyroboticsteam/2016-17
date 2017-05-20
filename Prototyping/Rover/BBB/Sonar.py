@@ -1,3 +1,4 @@
+import math
 import serial
 import Adafruit_BBIO.UART as UART
 import Adafruit_BBIO.ADC as ADC
@@ -37,3 +38,6 @@ class Sonar:
 
     def getMaxDisKm(self): # Returns max distance readble in Km
         return self.readDisKm(self.maxAnaVal)
+
+    def readTrueDisInch(self, angle):
+        return math.cos(angle) * self.readDisInch()
