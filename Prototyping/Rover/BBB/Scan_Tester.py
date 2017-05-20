@@ -11,13 +11,13 @@ import Navigation
 class Scan_Tester:
     def __init__(self):
         self.rotatorh = Servo_Sweep.Servo_Sweep(0.3, 1, 179, "P8_13")
-        self.rotatorv = Servo_Sweep.Servo_Sweep(0.3, 70, 90, "P8_19")
+#        self.rotatorv = Servo_Sweep.Servo_Sweep(0.3, 70, 90, "P8_19")
         self.scanner = Sonar.Sonar()
         self.nav = Navigation.Navigation(0.765555, 0.552777, 0.348333, 0.001, "AIN2")
 
     def run (self):
         self.rotatorh.move()
-        self.rotatorv.move()
+#        self.rotatorv.move()
         angle = self.rotatorh.getSonarHeading()
         distance = self.scanner.readDisInch()
 
@@ -26,12 +26,12 @@ class Scan_Tester:
 
     def move(self):
         self.rotatorh.move()
-        self.rotatorv.move()
+#        self.rotatorv.move()
 
     def getVals(self):
         angle = self.rotatorh.getAngle()
         distance = self.scanner.readDisInch()
-        distanceReal = self.scanner.readTrueDisInch()
+#        distanceReal = self.scanner.readTrueDisInch(self.rotatorv.getAngle()-90) # Might need to change this depending on servo position
         roverAngle = 90 - angle
         realAngle = roverAngle + self.nav.getMag()
         if(realAngle < 0 ):
