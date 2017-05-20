@@ -32,12 +32,12 @@ class Sonar:
         readVal = ((readVal * self.slope) - self.intersecpt) * 2.54  # Calculated through linear best fit
         return readVal
 
-    def readDisM(self):  # Calculates distance in kilometers
+    def readDisM(self):  # Calculates distance in meters
         readVal = self.readDisCm()/ 100  # Calculated through linear best fit
         return readVal
 
-    def getMaxDisM(self): # Returns max distance readble in Km
-        return self.readDisM(self.maxAnaVal)
+    def getMaxDisM(self): # Returns max distance readble in meters
+        return self.maxAnaVal * self.slope + self.intersecpt
 
     def readTrueDisInch(self, angle):
         return math.cos(angle) * self.readDisInch()

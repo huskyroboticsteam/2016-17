@@ -29,7 +29,7 @@ class Scan_Tester:
         self.rotatorv.move()
 
     def getVals(self):
-        angle = self.rotatorh.getSonarHeading()
+        angle = self.rotatorh.getAngle()
         distance = self.scanner.readDisInch()
         distanceReal = self.scanner.readTrueDisInch()
         roverAngle = 90 - angle
