@@ -19,6 +19,10 @@ class PathFollower:
         self.pid.setTarget(0.0)
         self.position_epsilon = 3
 
+        # logging info:
+        open('path_log.txt', 'w').close()
+
+
     def go(self, location, heading):
         """
         Args:
@@ -35,7 +39,7 @@ class PathFollower:
         dx = dest[0] - location[0]
         dy = dest[1] - location[1]
         desired_heading = normalize_angle(90.0 - degrees(atan2(dy, dx)))
-        diff_angle = normalize_angle(heading - desired_heading)
+        diff_angle = no rmalize_angle(heading - desired_heading)
         if diff_angle > 180.0:
             diff_angle -= 360.0
         self.pid.run(diff_angle)
@@ -88,4 +92,6 @@ class PathFollower:
         if self.path == []:
             print 'At destination'
         else:
+            with open("path_log.txt", "a") as myfile:
+                myfile.write("Distance:" + str(Utils.dist(self.path[0], location)) + '\n')
             print 'Distance to destination: ' + str(Utils.dist(self.path[0], location))

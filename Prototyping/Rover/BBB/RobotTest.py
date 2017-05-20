@@ -127,7 +127,7 @@ class RobotTest(object):
         # auto = self.r_comms.receivedDrive[0]
         if True:
             time.sleep(.1)
-            location = (self.r_comms.lat, self.r_comms.longitude)
+            location = self.nav.getGPS()
             if not self.autonomous_initialized:
                 # TODO: read target from wireless
                 self.target = (47.6529566, -122.3063133)
