@@ -11,6 +11,8 @@ class Sonar:
     def __init__(self):
         ADC.setup()
         self.maxAnaVal = 0.8
+        # Reads the data from SonarCalibrationData.txt
+        # The data is in the form "<slope> <intercept>"
         reader = open("SonarCalibrationData.txt", "r")
         values = reader.readline().split()
         reader.close()
@@ -39,5 +41,12 @@ class Sonar:
     def getMaxDisM(self): # Returns max distance readble in meters
         return (self.maxAnaVal * self.slope + self.intersecpt) * 254
 
+    # Returns the horizontal distance in inches to object given angle
+    # The angle is a value from 0 - 90 with 0 straight forward and 90 straight down
     def readTrueDisInch(self, angle):
         return math.cos(angle) * self.readDisInch()
+
+    # Returns the horizontal distance in meters to object given angle
+    # The angle is a value from 0 - 90 with 0 straight forward and 90 straight down
+    def readTrueDisM(self, angle):
+        return math.cos(angle) * self.readDisM()

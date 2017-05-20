@@ -14,6 +14,7 @@ class Servo_Sweep(object):
         self.center = (max + min) / 2
         self.clockwise = False
         self.currentAngle = 90.0
+        self.pin = pin
 
     def move(self):
         # first checks to see if the servo has reached the ends and reverses
@@ -34,7 +35,7 @@ class Servo_Sweep(object):
         return self.currentAngle
 
     def stop(self):
-        PWM.stop("P8_13")
+        PWM.stop(self.pin)
         PWM.cleanup()
 
 

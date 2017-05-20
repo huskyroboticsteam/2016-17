@@ -85,6 +85,9 @@ class RobotTest(object):
         self.sonar = Sonar.Sonar()
         self.target = None
 
+        # Used to keep track of number of obstacles seem in a row
+        self.obsCount = 0
+
     def moveServo(self):
         self.Sweeper.move()
 
@@ -134,8 +137,6 @@ class RobotTest(object):
                 self.target = (47.6529566, -122.3063133)
                 # TODO: get obstacles from wireless or sensor
                 obstacles = []
-                if self.sonar.readDisM() < self.sonar.getMaxDisM():
-                    obstacles = [Utils.point_at_end(location, Utils.normalize_angle(90 - self.Sweeper.currentAngle), self.sonar.readDisM())]
                 self.autonomous.set_target(self.target)
                 self.autonomous.clear_all_obstacles()
                 # for coord in obstacles:
@@ -155,6 +156,13 @@ class RobotTest(object):
                 if location == (0.0, 0.0) or location == (0, 0):
                     print "gps not received, staying still"
                     return 0, 0
+                if self.sonar.readDisM() < self.sonar.getMaxDisM(): # Make sure obstacle is greater than infinity value
+                    if self.obsCount < 5: # Filters out random garbage values if there even is any
+                        self.obsCount+= 1
+                    else: # Add obstacle to autonomous
+                        self.autonomous.add_obstacle(Utils.point_at_end(location, Utils.normalize_angle(90 - self.Sweeper.currentAngle), self.sonar.readDisM()))
+                else: # Sets the obs count to zero saying there hasn't been a obstacle
+                    self.obsCount = 0
                 turn = self.autonomous.go(location, heading)
                 print "turn: ", turn
                 return 50, turn
