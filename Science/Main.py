@@ -25,7 +25,7 @@ from SystemTelemetry import SystemTelemetry
 
 # Communication Setup
 #MAIN_IP = '192.168.0.1'  # Typical
-MAIN_IP = '192.168.0.104'  # Testing on Jaden's machine
+MAIN_IP = '192.168.0.2'  # Testing on Jaden's machine
 PRIMARY_TCP_SEND_PORT = 22
 INTERNAL_IP = '192.168.0.90'
 INTERNAL_TCP_RECEIVE_PORT = 5000
