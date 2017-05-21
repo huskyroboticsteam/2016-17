@@ -27,7 +27,7 @@ class MoveDrill(Command):
         self.motor.set(self._pid.getOutput())
 
     def setpoint(self, setpoint=None):
-        self._setpoint = Parse.aux_ctrl[AuxCtrlID.MoveDrill + 1]
+        self._setpoint = Parse.aux_ctrl[AuxCtrlID.MoveDrill + 1]  # Setpoint distance in mm
         return self._setpoint
 
     def stopSafe(self):

@@ -6,10 +6,9 @@ from Packet import AuxCtrlID
 from Command import Command
 from Motor import Servo
 
-DEFAULT_PIN = "P8_45"
+DEFAULT_PIN = "P9_21"
 
-
-class CamFocus(Command):
+class MoveSampleCup(Command):
 
     def __init__(self, servo_pin=DEFAULT_PIN):
         self._motor = Servo(servo_pin)
@@ -23,7 +22,7 @@ class CamFocus(Command):
         self._motor.moveTo(self.setpoint())
 
     def setpoint(self, setpoint=None):
-        self._setpoint = Parse.aux_ctrl[AuxCtrlID.CamFocusPos + 1]
+        self._setpoint = Parse.aux_ctrl[AuxCtrlID.MoveSampleCup + 1]
         return self._setpoint
 
     def stopSafe(self):
@@ -31,3 +30,4 @@ class CamFocus(Command):
 
     def isFinished(self):
         return False
+

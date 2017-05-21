@@ -32,6 +32,7 @@ class DrillCtrl(Command):
         self.lastTime = now
         currentP = self.drillEncoder.getValue()[0]
         self.currentRate = (currentP - self.currentPos) / deltaT
+        self.currentRate = 21600.0 / self.currentRate  # Convert from */s to RPM
         self.currentPos = currentP
 
         # Run PID Controller
@@ -40,7 +41,7 @@ class DrillCtrl(Command):
         self.drillMotor.set(self._pid.getOutput())
 
     def setpoint(self, setpoint=None):
-        self._setpoint = Parse.aux_ctrl[AuxCtrlID.DrillRPM + 1]
+        self._setpoint = Parse.aux_ctrl[AuxCtrlID.DrillRPM + 1]  # Setpoint in RPM
         return self._setpoint
 
     def stopSafe(self):

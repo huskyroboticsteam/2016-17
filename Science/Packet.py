@@ -104,6 +104,7 @@ class AuxCtrlID:
     DrillRPM = 0x01
     CamFocusPos = 0x02
     RotateArmature = 0x03
+    MoveSampleCup = 0x04
 
 class CameraID:
     Microscope = 0x01

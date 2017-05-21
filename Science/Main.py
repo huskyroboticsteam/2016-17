@@ -1,5 +1,4 @@
 import sys
-
 import Error
 import Util
 import Parse
@@ -17,6 +16,7 @@ from Commands.CamFocus import CamFocus
 from Commands.MoveDrill import MoveDrill
 from Commands.SystemControl import SystemControl
 from Commands.RotateArmature import RotateArmature
+from Commands.MoveSampleCup import MoveSampleCup
 from Commands.Command import Command
 from CommHandler import CommHandler
 from Packet import Packet, PacketType
@@ -71,11 +71,12 @@ SensorHandler.setupAll()
 SensorHandler.startAll()
 
 # Create Command Interface
-drillController = DrillCtrl("P8_13", encoder1)
+drillController = DrillCtrl("P8_13", encoder1, 0, 0, 0)
 rotateArmature = RotateArmature("P9_16", encoder2)
-armatureController = MoveDrill("P8_19", DistanceSensor)
+armatureController = MoveDrill("P8_19", DistanceSensor, 0, 0, 0)
 camFocusCommand = CamFocus("P9_14")
 systemControl = SystemControl("P9_15")
+moveSampleCup = MoveSampleCup("P9_21")
 
 # Initialize All Commands (Set machine to relaxed state)
 Command.initializeAll()
