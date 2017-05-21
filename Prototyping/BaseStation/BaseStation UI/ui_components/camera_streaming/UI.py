@@ -60,10 +60,8 @@ class Player(QtGui.QWidget):
     def createVLCWidgets(self, urls):
         # Empty list to hold vlc widgets
         widgets = []
-
-        instance = vlc.Instance('--quiet', '--no-video-on-top')
         for i in range(0, len(urls)):
-            vlc_widget = CustomWidgets.VLCWidget(urls[i], ":network-caching=0", instance)
+            vlc_widget = CustomWidgets.VLCWidget(urls[i], ":network-caching=0", vlc.Instance('--quiet', '--no-video-on-top'))
             vlc_widget.id = i
             widgets.append(vlc_widget)
 

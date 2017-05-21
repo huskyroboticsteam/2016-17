@@ -44,7 +44,7 @@ setting_widget = settings.Settings(main)
 stop_widget = stop.Stop()
 
 vlc_widget = UI.Player(setting_widget.get_camera_urls(), 300, 200)
-iplist = IPCheckerLayout.IPList({"192.168.0.22": "Camera One", "192.168.0.42": "Camera Two"}, 500)
+iplist = IPCheckerLayout.IPList({"192.168.0.50": "Rover", "192.168.0.42": "Camera Two"}, 500)
 arm = arm_widget.arm_widget()
 list_wid = list_widget.ListWidget()
 map = Map.Map(setting_widget.get_map_name())

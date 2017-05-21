@@ -6,7 +6,7 @@ import joystickv1
 
 class ConnectionManager:
     def __init__(self):
-        self.ROVER_HOST = "192.168.0.40"
+        self.ROVER_HOST = "192.168.0.50"
         self.ARM_HOST = "192.168.0.80"  # "192.168.7.2" # 7.2 for over USB
         self.SCIENCE_HOST = "192.168.0.90"
         self.LOCAL_HOST = "127.0.0.1"

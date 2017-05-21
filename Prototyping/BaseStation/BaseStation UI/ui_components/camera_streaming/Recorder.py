@@ -14,6 +14,7 @@ class VLCRecorder:
 
         # print os.listdir("ui_components/camera_streaming/video_output")
 
+        print "Recording"
         onlyfiles = [f for f in os.listdir("ui_components/camera_streaming/video_output/") if os.path.isfile(os.path.join("ui_components/camera_streaming/video_output/", f))]
         self.count = len(onlyfiles)
         # print(self.count)
@@ -27,7 +28,7 @@ class VLCRecorder:
 
         # sout makes the file type to output to
         sout = "#transcode{vcodec=h264,vb=800,width=640,height=480,acodec=mp3,ab=128,channels=2,samplerate=44100}" \
-               ":file{mux=mp4,dst=" "video_output/cam" + str(cameraId + 1) + "_" + str(self.count) + ".mp4}"
+               ":file{mux=mp4,dst=" "ui_components/camera_streaming/video_output/cam" + str(cameraId + 1) + "_" + str(self.count) + ".mp4}"
         # makes a "broadcast" to record, with name (filename)
         self.instance.vlm_add_broadcast(str(cameraId), url, sout, 0, None, True, False)
 
