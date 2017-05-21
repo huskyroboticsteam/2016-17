@@ -116,8 +116,8 @@ class Encoder(Sensor):
 
     # Returns true if the direction the encoder is moving clockwise
     def _isClockwise(self, lastA, lastB, curA, curB):
-        return (curA != lastA and curA != curB) \
-                or (curB != lastB and curA == curB)
+        return not ((curA != lastA and curA != curB) \
+                or (curB != lastB and curA == curB))
 
     # Returns distance moved as though it were a disk with radius "_distK"
     # Set "_distK" in self.setDistanceK(...)
