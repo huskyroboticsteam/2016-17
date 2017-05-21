@@ -43,7 +43,7 @@ class Encoder(Sensor):
         self._pinB = pinB      # integer value for B channel
         GPIO.setup(self._pinA, GPIO.IN)  # sets input GPIO pins
         GPIO.setup(self._pinB, GPIO.IN)  # sets input GPIO pins
-        self._ppr = ppr        # pulses per revolution of the encoder
+        self._ppr = float(ppr) # pulses per revolution of the encoder
         self._steps = 0        # signed number of steps/pulses encoder has recorded
         self._distK = 1        # K Constant for distance multiplication
         self._lastA = False    # last pin position for channel A
@@ -51,6 +51,7 @@ class Encoder(Sensor):
         self._isSetup = False  # whether the Encoder has been set up yet
         self._threadA = None
         self._threadB = None
+        self._setup()
 
     # Initializes Encoder
     # Meant for internal use only
@@ -74,9 +75,9 @@ class Encoder(Sensor):
     def _waitForEdge(self, pin):
         current = GPIO.input(pin)
         if current:
-            GPIO.waitForEdge(pin, GPIO.FALLING)
+            GPIO.wait_for_edge(pin, GPIO.FALLING)
         else:
-            GPIO.waitForEdge(pin, GPIO.RISING)
+            GPIO.wait_for_edge(pin, GPIO.RISING)
         self._update()
 
     # Updates encoder values

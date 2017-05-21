@@ -33,7 +33,7 @@ picT.start()
 
 SOCKET = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 if LISTEN:
-    SOCKET.bind(('192.168.0.104', 22))
+    SOCKET.bind(('192.168.0.2', 22))
     while True:
         SOCKET.listen(1)
         client, clientAddr = SOCKET.accept()

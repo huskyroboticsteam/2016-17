@@ -1,14 +1,15 @@
 import sys
-
 import Util
 import Error
 import Adafruit_BBIO.ADC as ADC
-from Sensors.Thermocouple import Thermocouple
-from Sensors.DistanceSensor import DistanceSensor
-from Sensors.UV_Sensor import UV
-from Sensors.Humidity import Humidity
-from Sensors.Limit import Limit
+from Sensors.Encoder import Encoder
 
+test = Encoder("P8_14", "P8_16", 220)
+
+for n in range(0, 10000):
+    Util.write(test.getValue())
+
+"""
 ADC.setup()
 dist = DistanceSensor()
 therm = Thermocouple("P9_22", "P9_17", "P9_18")
@@ -80,3 +81,5 @@ def decodeTherm():
 
 #testUV()
 #decodeUV()
+
+"""

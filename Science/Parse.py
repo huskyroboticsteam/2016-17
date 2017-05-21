@@ -90,6 +90,7 @@ def parse_sysctrl(msg):
 Parse Img Request
 """
 def parse_imgreq(msg):
+    Util.write("CAM PACKET RECEIVED")
     global cam_ctrl
     # Set Timestamp
     cam_ctrl[0] = Util.bytesToInt(msg.data, 0, 4)

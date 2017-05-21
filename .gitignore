@@ -15,3 +15,4 @@
 *.sqlite
 .vs/VSWorkspaceState.json
 Science/Science.pyproj.user
+.vs/ProjectSettings.json
