@@ -100,7 +100,7 @@ class PathFollower:
         """
         Internal use only
         """
-        while self.path != [] and Utils.unscaledDist(self.path[0], location) <= .005:#self.position_epsilon:
+        while self.path != [] and Utils.unscaledDist(self.path[0], location) <= self.position_epsilon:
             del self.path[0]
             self.pid.reset()
             self.pid.setTarget(0.0)
