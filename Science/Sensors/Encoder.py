@@ -113,7 +113,13 @@ class Encoder(Sensor):
     # Returns current angle of encoder in radians
     # (-inf, inf) (I.E. not mod 2pi)
     def getAngle(self):
-        return self._steps * (2 * pi/self._ppr) 
+        return self._steps * ((2 * pi) / self._ppr) 
+
+    def getAngle(self, bound, units='radians'):
+        angle = self.getAngle()
+        if units=='degrees':
+            angle *= (180.0 / pi)
+        return angle % float(bound)
 
     # Returns true if the direction the encoder is moving clockwise
     def _isClockwise(self, lastA, lastB, curA, curB):
@@ -130,12 +136,12 @@ class Encoder(Sensor):
         self._steps = 0
 
     def getValue(self):
-        return self.getAngle(), self.getDistance()
+        return self.getAngle(360.0, 'degrees'), self.getDistance()
 
     def getDataForPacket(self):
-        return Util.long_to_byte_length(int(round(self.getAngle() % (2*pi))), 2)
-
-
+        angle = int(round(self.getAngle()), 2) * 100
+        return Util.long_to_byte_length(angle, 2)
+    
     def stop(self):
         global STOP_JOIN_T_CONST
         self._threadA.join(STOP_JOIN_T_CONST)
