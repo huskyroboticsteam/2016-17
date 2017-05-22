@@ -33,15 +33,21 @@ class UV(Sensor):
 
     # Sets up device with time constant
     def setup(self, tConst=_uvTConst):  # tConst = 0, 1, 2, 3
-        if not self.critical_status:
+        try:
             self._uvTConst = tConst & 3  # Removes any unwanted digits
             self._uvl.writeRaw8((self._uvTConst << 2) | 2)  # Writes to correct register
-
+            self.critical_status = False
+        except:
+            if not self.critical_status:
+                # Throw "Communication Failure"
+                Error.throw(0x0203, "Could not initialize UV Sensor communications")
+                self.critical_status = True
+    
     # Reads raw binary value from the register
     def getRaw(self):
         uvData = 0
         if self.critical_status:
-            return 0
+            return uvData
         try:
             uvData = self._uvl.readRaw8()
             uvData |= self._uvm.readRaw8() << 8
