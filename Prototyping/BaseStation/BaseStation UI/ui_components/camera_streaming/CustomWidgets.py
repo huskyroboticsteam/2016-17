@@ -4,15 +4,16 @@ from PyQt4 import QtGui, QtCore
 
 
 class VLCWidget(QtGui.QFrame):
-    def __init__(self, url, options, instance):
+    def __init__(self, url, options, id):
         QtGui.QFrame.__init__(self)
 
-        self.instance = instance
+        self.instance = vlc.Instance('--quiet', '--no-video-on-top')
 
         # Creates the VLC Player Object
         self.player = self.instance.media_player_new()
         self.id = ""
         self.url = url
+        self.cameraId = id
 
         self.pal = self.palette()
         self.pal.setColor(QtGui.QPalette.Window, QtGui.QColor(0, 0, 0))
@@ -54,10 +55,10 @@ class Button(QtGui.QPushButton):
     def record(self):
         if not self.recording:
             self.setText("Recording")
-            self.recorder.start_recording(self.id)
+            self.recorder.start_recording()
             self.recording = True
         else:
             self.setText("Record Feed " + str(self.id + 1))
-            self.recorder.stop_recording(self.id)
+            self.recorder.stop_recording()
             self.recording = False
 

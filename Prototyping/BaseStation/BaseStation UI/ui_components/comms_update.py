@@ -132,7 +132,7 @@ class DriveConnection(UdpConnection):
             if abs(steering) < 20:
                 steering = 0
 
-            print throttle, steering
+            # print throttle, steering
 
         # Put the first 2 boolean values in the buffer
         buff = struct.pack("<?hh", self.auto, int(throttle), int(steering))
