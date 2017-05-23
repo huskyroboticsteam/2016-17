@@ -11,7 +11,7 @@ from ui_components.ip_scanner import IPCheckerLayout
 from ui_components.camera_streaming import UI
 from ui_components.emergency_stop import stop
 from ui_components.settings import settings
-from ui_components import comms_update
+from ui_components import comms_update, joystick, Camera_Controller
 from ui_components.arm_viz import arm_widget
 from ui_components.sensors import SensorChecker
 from ui_components.list_widget import list_widget
@@ -36,6 +36,12 @@ win = QtGui.QMainWindow()
 main = uic.loadUi("ui.ui", win)
 
 win.resize(1200, 675)
+
+'''Init the Joysticks and Camera Movement Code'''
+joys = joystick.getJoysticks()
+joys.start()
+cams = Camera_Controller.CameraMove(joys, ["192.168.0.30", "192.168.0.22"], "admin", "1234")
+cams.start()
 
 '''Create all the custom widgets for the UI'''
 sensors = SensorChecker.SensorData()

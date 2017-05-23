@@ -1,7 +1,7 @@
 from PyQt4 import QtCore
 import socket
 import struct
-import joystickv1
+import joystick
 
 
 class ConnectionManager:
@@ -92,7 +92,7 @@ class DriveConnection(UdpConnection):
         # Reset the UI if emergency stopped
         self.stop = False
 
-        self.joys = joystickv1.getJoysticks()
+        self.joys = joystick.getJoysticks()
         self.joys.start()
 
         self.timer = None
@@ -120,8 +120,8 @@ class DriveConnection(UdpConnection):
         try:
             # Emit drive of zero if emergency stop isn't enabled
             if self.stop is False:
-                throttle = self.joys.joystick_axis[0][1]
-                steering = self.joys.joystick_axis[0][0]
+                throttle = self.joys.joystick_axis[self.joys.rover_joystick_num][1]
+                steering = self.joys.joystick_axis[self.joys.rover_joystick_num][0]
         except:
             pass
         else:
@@ -176,7 +176,7 @@ class ArmConnection(UdpConnection):
     def __init__(self, host, port):
         super(self.__class__, self).__init__(host, port)
         # Make this joystick # 2
-        self.joys = joystickv1.getJoysticks()
+        self.joys = joystick.getJoysticks()
         self.joys.start()
 
         self.JOYSTICK_NUM = 0
