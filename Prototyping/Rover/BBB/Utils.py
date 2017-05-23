@@ -48,6 +48,10 @@ def dist(start, end):
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
     return R * c
 
+def unscaledDist(start, end):
+    distLat = (end[0] - start[0])
+    distLong = (end[1] - start[1])
+    return (((distLat ** 2) + (distLong ** 2))**.5)*100000
 
 # returns the initial bearing of the great circle between two GPS coords
 # start and end are tuples of floats representing a GPS coord

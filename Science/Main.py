@@ -25,7 +25,7 @@ from SystemTelemetry import SystemTelemetry
 
 # Communication Setup
 #MAIN_IP = '192.168.0.1'  # Typical
-MAIN_IP = '192.168.0.104'  # Testing on Jaden's machine
+MAIN_IP = '192.168.0.2'  # Testing on Jaden's machine
 PRIMARY_TCP_SEND_PORT = 22
 INTERNAL_IP = '192.168.0.90'
 INTERNAL_TCP_RECEIVE_PORT = 5000
@@ -49,9 +49,9 @@ Thermocouple = Thermocouple("P9_22", "P9_17", "P9_18")
 DistanceSensor = DistanceSensor()
 HumiditySensor = Humidity("AIN1")
 HumiditySensor.setup(1, 0)  # Setup Humidity Calibration
-encoder1 = Encoder("P8_22", "P8_24", 220)
-encoder2 = Encoder("P8_28", "P8_30", 220)
-encoder3 = Encoder("P8_34", "P8_36", 220)
+encoder1 = Encoder("P8_22", "P8_24", 40)
+encoder2 = Encoder("P8_28", "P8_30", 40)
+encoder3 = Encoder("P8_34", "P8_36", 40)
 limit1 = Limit("P8_12")
 limit2 = Limit("P8_10")
 limit3 = Limit("P8_8")

@@ -172,7 +172,7 @@ class RobotTest(object):
                     self.obsCount = 0
                 turn = self.autonomous.go(location, heading)
                 print "turn: ", turn
-                if abs(turn) < 10:
+                if abs(turn) < 10 and abs(self.nav.readPot()) > .01 :
                     # This makes it so that the robot aligns itself
                     return 1000, 1000
                 return 50, turn

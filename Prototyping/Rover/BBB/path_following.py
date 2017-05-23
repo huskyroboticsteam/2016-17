@@ -100,7 +100,7 @@ class PathFollower:
         """
         Internal use only
         """
-        while self.path != [] and Utils.dist(self.path[0], location) <= self.position_epsilon:
+        while self.path != [] and Utils.unscaledDist(self.path[0], location) <= self.position_epsilon:
             del self.path[0]
             self.pid.reset()
             self.pid.setTarget(0.0)
@@ -111,7 +111,7 @@ class PathFollower:
         else:
             with open("path_log.txt", "a") as myfile:
                 myfile.write("Distance:" + str(Utils.dist(self.path[0], location)) + '\n')
-            print 'Distance to destination: ' + str(Utils.dist(self.path[0], location))
+            print 'Distance to destination: ' + str(Utils.unscaledDist(self.path[0], location))
 
     def _update_heading(self, location):
         """

@@ -18,7 +18,7 @@ class Packet:
 
 Packet.setDefaultTarget("192.168.102", 22)
 
-CommHandler.CommHandler.setup("192.168.0.104", 22)
+CommHandler.CommHandler.setup("192.168.0.2", 22)
 CommHandler.CommHandler.startCommsThread()
 
 CommHandler = CommHandler.CommHandler
