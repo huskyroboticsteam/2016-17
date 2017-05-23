@@ -67,9 +67,13 @@ class PathFollower:
         # get the heading between cur location and first in path
         desired_heading = Utils.bearing(location, self.path[0])
         # use PID to get the turn value from desired heading
-        self.pid.run(heading - desired_heading)
+        diff_angle = normalize_angle(heading - desired_heading)
+        if diff_angle > 180.0:
+            diff_angle -= 360.0
+        self.pid.run(diff_angle)
         print "desired heading: " + str(desired_heading)
         print "cur heading: " + str(heading)
+        print "diff angle: " + str(diff_angle)
         print "desired location: " + str(self.path[0])
         print "cur location: " + str(location)
 
