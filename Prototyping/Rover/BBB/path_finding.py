@@ -45,6 +45,8 @@ def _nearest_outside(p, area, epsilon=0.00001):
         area (MultiPolygon or Polygon): the area
     Returns (Point): the desired point
     """
+    if area.is_empty:
+        return p
     area = area.buffer(epsilon)
     if not area.contains(p):
         return p
@@ -58,9 +60,12 @@ def to_multi_polygon(a):
     """
     Converts a Polygon or a MultiPolygon to a MultiPolygon
     """
-    if isinstance(a, MultiPolygon):
+    if a.is_empty:
+        return MultiPolygon([])
+    elif isinstance(a, MultiPolygon):
         return a
     elif isinstance(a, Polygon):
         return MultiPolygon([a])
     else:
+        print 'error, to_multi_polygon got: ' + str(a)
         assert False
