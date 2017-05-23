@@ -3,6 +3,7 @@ import gps as GPS
 import Adafruit_BBIO.ADC as ADC
 from time import sleep, time
 from threading import Thread
+import Utils
 
 # The number of seconds before a GPS reading is considered to be invalid
 STALE_GPS_TIME = 2.0
