@@ -70,7 +70,7 @@ class RobotTest(object):
                 MiniMotor.MiniMotor(4, 7, 6, 5, pwm),
             ]
         else:
-            self.pot_pid = PID.PID(-0.3, 0, 0)
+            self.pot_pid = PID.PID(-1, 0, 0)
             self.nav = Navigation.Navigation(0.560000002384, 0.325555562973, 0.115000002086, 0.001, "AIN2")
             self.r_comms = Robot_comms.Robot_comms("192.168.0.50", 8840, 8841, "<?hh", "<?ff", "<ffffffff", "<?ff?", self.nav)
             self.motors = [
@@ -163,19 +163,24 @@ class RobotTest(object):
                 if location == (0.0, 0.0) or location == (0, 0):
                     print "gps not received, staying still"
                     return 0, 0
-                if self.sonar.readDisM() < self.sonar.getMaxDisM(): # Make sure obstacle is greater than infinity value
-                    if self.obsCount < 5: # Filters out random garbage values if there even is any
-                        self.obsCount+= 1
-                    else: # Add obstacle to autonomous
-                        self.autonomous.add_obstacle(Utils.point_at_end(location, Utils.normalize_angle(90 - self.Sweeper.currentAngle), self.sonar.readDisM()))
-                else: # Sets the obs count to zero saying there hasn't been a obstacle
-                    self.obsCount = 0
+                # if self.sonar.readDisM() < self.sonar.getMaxDisM(): # Make sure obstacle is greater than infinity value
+                #     if self.obsCount < 5: # Filters out random garbage values if there even is any
+                #         self.obsCount+= 1
+                #     else: # Add obstacle to autonomous
+                #         self.autonomous.add_obstacle(Utils.point_at_end(location, Utils.normalize_angle(90 - self.Sweeper.currentAngle), self.sonar.readDisM()))
+                # else: # Sets the obs count to zero saying there hasn't been a obstacle
+                #     self.obsCount = 0
                 turn = self.autonomous.go(location, heading)
                 print "turn: ", turn
-                if abs(turn) < 10 and abs(self.nav.readPot()) > .01 :
-                    # This makes it so that the robot aligns itself
-                    return 1000, 1000
-                return 50, turn
+                if abs(turn) < 20:
+                    return 100, turn
+                else if turn > 0:
+                    return 100, 100
+                else:
+                    return 100, -100
+                # if abs(turn) < 10 and abs(self.nav.readPot()) > .01 :
+                #     # This makes it so that the robot aligns itself
+                #     return 1000, 1000
         else:
             return self.r_comms.receivedDrive[1], self.r_comms.receivedDrive[2]
 
