@@ -174,7 +174,7 @@ class RobotTest(object):
                 print "turn: ", turn
                 if abs(turn) < 20:
                     return 100, turn
-                else if turn > 0:
+                elif turn > 0:
                     return 100, 100
                 else:
                     return 100, -100
