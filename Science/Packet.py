@@ -105,6 +105,7 @@ class AuxCtrlID:
     CamFocusPos = 0x02
     RotateArmature = 0x03
     MoveSampleCup = 0x04
+    ReleaseSample = 0x05
 
 class CameraID:
     Microscope = 0x01
