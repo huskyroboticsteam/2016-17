@@ -7,7 +7,7 @@ from Command import Command
 
 class MoveDrill(Command):
 
-    def __init__(self, armatureMotorPin, distanceSensor, kp=0, ki=0, kd=0):
+    def __init__(self, armatureMotorPin, distanceSensor, limitSwitch, kp=0, ki=0, kd=0):
         # We cannot have undershoot, move slow
         # and calibrate well
         self._pid = PID(kp, ki, kd)

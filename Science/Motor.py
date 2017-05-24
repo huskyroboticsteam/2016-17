@@ -25,6 +25,9 @@ class Motor:
     def enable(self):
         pass
 
+    """
+    Input float % 0 to 1 inclusive
+    """
     def set(self, value):
         self.pwm_handler.set_duty_cycle(self._pin, ((value % 100) * 100.0))
 

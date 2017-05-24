@@ -71,7 +71,7 @@ SensorHandler.setupAll()
 SensorHandler.startAll()
 
 # Create Command Interface
-drillController = DrillCtrl("P8_13", encoder1, 0, 0, 0)
+drillController = DrillCtrl("P8_13", encoder1, limit1, 0, 0, 0)
 rotateArmature = RotateArmature("P9_16", encoder2)
 armatureController = MoveDrill("P8_19", DistanceSensor, 0, 0, 0)
 camFocusCommand = CamFocus("P9_14")
