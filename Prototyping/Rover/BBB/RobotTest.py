@@ -117,15 +117,6 @@ class RobotTest(object):
             return
         self.motors[motor_id - 1].set_motor_exactly(0)
 
-    def align(self):
-        print "pot = ", str(self.nav.readPot())
-        if self.nav.readPot() <= -0.01:
-            return (self.scale_motor_val(-20),self.scale_motor_val(20),self.scale_motor_val(5),self.scale_motor_val(45))
-        if self.nav.readPot() >= 0.01:
-            return (self.scale_motor_val(20),self.scale_motor_val(-20),self.scale_motor_val(45),self.scale_motor_val(5))
-        else:
-            return (0,0,0,0)
-
     def getDriveParms(self):
         """
         Gets the driving parameters of the rover.
@@ -178,9 +169,7 @@ class RobotTest(object):
                     return 100, 100
                 else:
                     return 100, -100
-                # if abs(turn) < 10 and abs(self.nav.readPot()) > .01 :
-                #     # This makes it so that the robot aligns itself
-                #     return 1000, 1000
+
         else:
             return self.r_comms.receivedDrive[1], self.r_comms.receivedDrive[2]
 
@@ -335,12 +324,7 @@ def main():
                 robot.get_robot_comms().receiveData(robot.get_nav())
                 robot.get_robot_comms().sendData(robot.get_nav())
                 driveParms = robot.getDriveParms()
-                MotorParms = (0,0,0,0)
-                # This is the alignment hack. I'm sorry.
-                if driveParms == (1000,1000):
-                    MotorParms = robot.align()
-                else:
-                    MotorParms = robot.convertParmsToMotorVals(driveParms)
+                MotorParms = robot.convertParmsToMotorVals(driveParms)
                 print "motor parms: ", MotorParms
                 for i in range(1, 5):
                     robot.driveMotor(i, MotorParms[i - 1])
