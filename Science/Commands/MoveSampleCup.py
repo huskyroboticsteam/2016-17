@@ -4,22 +4,41 @@ import Error
 import Util
 from Packet import AuxCtrlID
 from Command import Command
-from Motor import Servo
+from Motor import TalonMC
+from PID import PID
 
-DEFAULT_PIN = "P9_21"
 
 class MoveSampleCup(Command):
 
-    def __init__(self, servo_pin=DEFAULT_PIN):
-        self._motor = Servo(servo_pin)
-        Command.__init__(self)
+    LIMITS_ON = True
+    INITIALIZATION_MOTOR_SPEED_MAX = 0.25
+
+    def __init__(self, motor_pin, limitSwitch, encoder, kp=0, ki=0, kd=0):
+        self._motor = TalonMC(motor_pin)
+        self._limit = limitSwitch
+        self._encoder = encoder
+        self.ready = False
+        Command.__init__(self, PID(kp, ki, kd))
 
     def initialize(self):
+        # Check if the motor is ready for operation
         if not self._motor.isStarted():
             self._motor.__init__(self._motor._pin)
+        # Rotate clockwise until limit is hit (as long as limit plugged in)
+        # Reset encoder count
+        limitFound = False
+        while not limitFound and not self._limit.critical_status and MoveSampleCup.LIMITS_ON:
+            if self._limit.getValue():
+                limitFound = True
+            self._motor.set(-MoveSampleCup.INITIALIZATION_MOTOR_SPEED_MAX)
+        if limitFound:
+            self._encoder.reset()
+        self.ready = True
 
     def run(self, setpoint):
-        self._motor.moveTo(self.setpoint())
+        self._pid.setTarget(setpoint)
+        self._pid.run(self._encoder.getAngle())
+        self._motor.set(self._pid.getOutput())
 
     def setpoint(self, setpoint=None):
         self._setpoint = Parse.aux_ctrl[AuxCtrlID.MoveSampleCup + 1]

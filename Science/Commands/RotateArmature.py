@@ -6,6 +6,8 @@ from math import pi
 
 class RotateArmature(Command):
 
+    LIMITS_ON = True
+
     INITIALIZATION_MOTOR_SPEED_MAX = 0.25  # % MAX VALUE
     ALLOWABLE_INITIALIZATION_TOLERANCE = pi/16  # RADIANS
     MAX_TIME_ALLOTTED_INITIALIZATION = 30  # SECONDS
@@ -34,7 +36,7 @@ class RotateArmature(Command):
         """
         WILL NOT FIND ANGLE INITIALIZATION WITHOUT LIMIT SWITCH COMMUNICATION CAPABILITY
         """
-        while not limitFound and not self._limit.critical_status:
+        while not limitFound and not self._limit.critical_status and RotateArmature.LIMITS_ON:
             if self._limit.getValue():
                 limitFound = True
             if self._pid.getError <= RotateArmature.ALLOWABLE_INITIALIZATION_TOLERANCE:
