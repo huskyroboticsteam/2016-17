@@ -70,6 +70,7 @@ class Navigation:
     # Periodically updates the GPS data
     def updateGPS(self):
         while True:
+            print prevGPS
             gps = self.gps.getCoords()
             if gps is not None:
                 gpsFailure = False
@@ -83,7 +84,7 @@ class Navigation:
                 else:
                     for i in range(0,4):
                         self.prevGPS[i] = self.prevGPS[i + 1]
-                    gps[4] = lastGPS
+                    self.prevGPS[4] = gps
                 self.lastGPS = gps
             sleep(0.2)
 
