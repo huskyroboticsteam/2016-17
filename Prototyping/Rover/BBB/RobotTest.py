@@ -164,7 +164,7 @@ class RobotTest(object):
                 turn = self.autonomous.go(location, heading)
                 print "turn: ", turn
                 if abs(turn) < 20:
-                    return 100, turn
+                    return 100, turn * 5
                 elif turn > 0:
                     return 100, 100
                 else:
