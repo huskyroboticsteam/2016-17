@@ -42,6 +42,7 @@ class Navigation:
         self.POT_TOL = float(pot_tol)
         self.lastGPS = None
         self.lastGPSTime = time() - STALE_GPS_TIME * 2
+        self.prevGPS = [(0,0), (1,1), (2,2), (3,3), (4,4)]
         thread = Thread(target = self.updateGPS)
         thread.daemon = True
         thread.start()
@@ -63,21 +64,27 @@ class Navigation:
         # minus 170 for the angle the mag is mounted
         return (rawMag - 170) % 360
 
-    # returns gps data
-    # returns None if no gps reading performed within SLATE_GPS_TIME
     def getGPS(self):
-        if time() - self.lastGPSTime <= STALE_GPS_TIME:
-            return self.lastGPS
-        else:
-            return None
+        return self.lastGPS
 
     # Periodically updates the GPS data
     def updateGPS(self):
         while True:
             gps = self.gps.getCoords()
             if gps is not None:
+                gpsFailure = False
+                for i in range(1,5):
+                    if self.prevGPS[0] == self.prevGPS[i]:
+                        gpsFailure = True
+                if gpsFailure:
+                    print "---------- GPS ERROR --- RESTARTING GPS-----------"
+                    self.gps = GPS.GPS()
+                    self.prevGPS = [(0,0), (1,1), (2,2), (3,3), (4,4)]
+                else:
+                    for i in range(0,4):
+                        self.prevGPS[i] = self.prevGPS[i + 1]
+                    gps[4] = lastGPS
                 self.lastGPS = gps
-                self.lastGPSTime = time()
             sleep(0.2)
 
     def get_pot_left(self):
