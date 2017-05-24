@@ -17,7 +17,7 @@ class DrillCtrl(Command):
         self.drillMotor.set(0)
 
     def run(self, setpoint):
-        self.drillMotor.set(self.setpoint() / 100.0)
+        self.drillMotor.set(setpoint / 100.0)
 
     def setpoint(self, setpoint=None):
         self._setpoint = Parse.aux_ctrl[AuxCtrlID.DrillRPM + 1]  # Setpoint in RPM
