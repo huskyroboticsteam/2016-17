@@ -20,7 +20,8 @@ class RotateArmature(Command):
         self._limit = limitSwitch
         self.ready = False
 
-    def initialize(self):        
+    def initialize(self):
+        self.encoder.setAngleK(0.25)  # From Gear reduction on encoder mount
         # Move 30* Left or until limit switch found; then,
         # Move 60* Right or until limit switch found
         limitFound = False
