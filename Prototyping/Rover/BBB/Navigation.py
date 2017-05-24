@@ -1,5 +1,6 @@
 import mag as MAG
 import gps as GPS
+import Utils
 import Adafruit_BBIO.ADC as ADC
 from time import sleep, time
 from threading import Thread
@@ -59,10 +60,10 @@ class Navigation:
     def getMag(self):
         rawMag = self.mag.read()
         pot = self.readPot()
-        # angle = Utils.translateValue(pot, self.POT_LEFT - self.POT_MIDDLE, self.POT_RIGHT - self.POT_MIDDLE, -40, 40)
+        angle = Utils.translateValue(pot, self.POT_LEFT - self.POT_MIDDLE, self.POT_RIGHT - self.POT_MIDDLE, -40, 40)
         # returns the raw reading minus the angle from pot
         # minus 170 for the angle the mag is mounted
-        return (rawMag - 170) % 360
+        return (rawMag + angle - 200) % 360
 
     def getGPS(self):
         return self.lastGPS
