@@ -17,6 +17,7 @@ from Commands.MoveDrill import MoveDrill
 from Commands.SystemControl import SystemControl
 from Commands.RotateArmature import RotateArmature
 from Commands.MoveSampleCup import MoveSampleCup
+from Commands.ReleaseSample import ReleaseSample
 from Commands.Command import Command
 from CommHandler import CommHandler
 from Packet import Packet, PacketType
@@ -76,7 +77,8 @@ armatureController = MoveDrill("P8_19", DistanceSensor, 0, 0, 0)
 drillController = DrillCtrl("P8_13", encoder1, limit1, 0, 0, 0)
 rotateArmature = RotateArmature("P9_16", limit2, encoder2, 0, 0, 0)
 moveSampleCup = MoveSampleCup("P9_21", limit3, encoder3, 0, 0, 0)
-camFocusCommand = CamFocus("P9_14")
+releaseSample = ReleaseSample("P9_14")
+camFocusCommand = CamFocus("P8_16")
 systemControl = SystemControl("P9_15")
 
 # Initialize All Commands (Set machine to relaxed state)
