@@ -8,6 +8,7 @@ from Command import Command
 
 class DrillCtrl(Command):
 
+
     def __init__(self,  drillMotorPin):
         Command.__init__(self)
         self.drillMotor = TalonMC(drillMotorPin)

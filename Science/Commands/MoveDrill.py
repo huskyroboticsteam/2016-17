@@ -25,7 +25,7 @@ class MoveDrill(Command):
         """
         WILL NOT INITIALIZE WITHOUT LIMIT SWITCH COMMUNICATION CAPABILITY
         """
-        while not self.limit.getValue() and self.limit.critical_status:
+        while not self.limit.getValue() and not self.limit.critical_status:
             self.motor.set(-MoveDrill.INITIALIZATION_MOTOR_SPEED_MAX)
         self.currentPos = self.distanceSensor.getValue()
         self.ready = True

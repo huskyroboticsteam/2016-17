@@ -8,6 +8,9 @@ class Command:
     def __init__(self, pid=None):
         self._thread = Thread(target=self._threadRun)
         self._pid = pid
+        self.kp = self._pid._p
+        self.ki = self._pid._i
+        self.kd = self._pid._d
         self._pidCtrl = True
         self._setpoint = 0
         self.commands += [self]
