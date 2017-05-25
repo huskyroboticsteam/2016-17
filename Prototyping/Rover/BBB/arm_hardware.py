@@ -1,15 +1,20 @@
 import Adafruit_BBIO.UART as uart
 import serial
 import time
+import atexit
+from sabertooth import *
 
 uart.setup("UART1")
 uart.setup("UART2")
-ser1 = serial.Serial(port="/dev/ttyO1", baudrate=9600) # Pin 24
-ser2 = serial.Serial(port="/dev/ttyO2", baudrate=38400) # Pin 21
+ser2 = serial.Serial(port="/dev/ttyO1", baudrate=38400) # Pin 24
+ser1 = serial.Serial(port="/dev/ttyO2", baudrate=9600) # Pin 21
 ser1.close()
 ser2.close()
 ser1.open()
 ser2.open()
+
+# Helps automatic boud rate decection
+# ser1.write(bytearray([170]))
 
 def exit_handler():
     ser1.close()
@@ -31,12 +36,14 @@ Base rotation talon connected to 18, 20 and 22- PWM
 
 jointNames = ["base_rotation", "shoulder", "elbow", "wrist_lift", "wrist_rotation", "hand_grip"]
 
+# Out means towards full extension
+
 motors = {}
-motors[0] = Sabertooth(ser2, 128, 0)
-motors[1] = Sabertooth(ser1, 130, 0)
-motors[2] = Sabertooth(ser2, 128, 4)
-motors[3] = Sabertooth(ser2, 129, 4)
-motors[4] = Sabertooth(ser1, 130, 4)
-motors[5] = Sabertooth(ser2, 129, 0)
+motors[0] = Sabertooth(ser2, 128, 0) # Should be a PWM
+motors[1] = Sabertooth(ser1, 130, 0) # Positive is out
+motors[2] = Sabertooth(ser2, 128, 0) # Negitive is out
+motors[3] = Sabertooth(ser2, 128, 4) # Positive is out
+motors[4] = Sabertooth(ser1, 130, 4) # Positive is clockwise
+motors[5] = Sabertooth(ser2, 129, 4) # Positive is out
 
 feedback = {}
