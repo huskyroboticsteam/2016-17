@@ -131,7 +131,6 @@ class RobotTest(object):
         # auto = self.r_comms.receivedDrive[0]
         if True:
             time.sleep(.1)
-
             location = self.nav.getGPS()
             if location is None:
                 location = (0, 0)
