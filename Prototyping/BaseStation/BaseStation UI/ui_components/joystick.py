@@ -61,7 +61,6 @@ class MapJoysticks(QtGui.QDialog):
         self.instruction_layout.addLayout(self.button_box)
 
     def update(self, joystick_id):
-
         if joystick_id != -1:  # Joystick removed
             for i in range(len(self.sdl_instance.joystick_control)):
                 if joystick_id == self.sdl_instance.joystick_control[i]:
@@ -69,6 +68,7 @@ class MapJoysticks(QtGui.QDialog):
             self.update_window()
         else:
             self.update_window()
+            print "Showing window"
             self.show()
 
     def clearLayout(self, layout):
@@ -95,6 +95,7 @@ class SDLInstance:
     # Takes the joystick input and stores in variables
     def update_sdl2(self):
         for event in sdl2.ext.get_events():
+            print "SDL Events"
             if event.type == sdl2.SDL_JOYAXISMOTION:
                 self.joystick_axis[event.jaxis.which][event.jaxis.axis] = event.jaxis.value
                 # print self.joystick_axis
@@ -170,19 +171,16 @@ getJoysticks._joysticks = None
 
 class Joystick(QtGui.QWidget):
     def __init__(self):
+        self.ready = False
+        
         if sdl2.SDL_Init(sdl2.SDL_INIT_JOYSTICK) < 0:
             print "Couldn't initiate joystick(s)."
         else:
             self.sdl_instance = SDLInstance()  # Initializes PySDL2 to read and stores joystick input
-            self.joystick_control = self.sdl_instance.joystick_control
-            self.joystick_axis = self.sdl_instance.joystick_axis
-            self.joystick_ball = self.sdl_instance.joystick_ball
-            self.joystick_hat = self.sdl_instance.joystick_hat
-            self.joystick_button = self.sdl_instance.joystick_button
+            update()
 
             self.rd = ReceiveData(self.sdl_instance)
 
-        self.ready = False
 
     def start(self):
         # Ties window refresh to joystick refresh

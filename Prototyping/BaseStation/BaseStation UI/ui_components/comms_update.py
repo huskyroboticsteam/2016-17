@@ -7,7 +7,8 @@ import joystick
 class ConnectionManager:
     def __init__(self):
         self.ROVER_HOST = "192.168.0.50"
-        self.ARM_HOST = "192.168.0.80"  # "192.168.7.2" # 7.2 for over USB
+        # self.ARM_HOST = "192.168.0.80"  # For over ethernet
+        self.ARM_HOST = "192.168.7.2" # 7.2 for over USB
         self.LOCAL_HOST = "127.0.0.1"
         self.ROVER_TCP_PORT = 8841
         self.ROVER_PORT = 8840
@@ -187,20 +188,21 @@ class ArmConnection(UdpConnection):
             return
         # Don't run if joystick not plugged in
         if self.joys.joystick_control[self.joystick_control_index] is None:
+            # print "Arm joystick not plugged in"
             return
 
         # These mappings are for my Logitech F710 controller. 
         # Change accordingly if your controller is different
-        base_rotation = self._joy_axis(2)  # Triggers
-        shoulder = - self._joy_axis(1)  # Left stick Y axis
-        elbow = self._joy_axis(3)  # Right stick Y axis
-        wrist_lift = self._button_axis(1, 3)  # B is down, Y is up (B is right, Y is up)
-        wrist_rotation = self._hat_axis(4, 5)  # Bumpers
-        hand_grip = self._button_axis(2, 0)  # X- open hand, A- Close hand. (x left, a bottom)
+        base_rotation = self._joy_axis(2) / 2  # Triggers
+        shoulder = - self._joy_axis(1) / 2  # Left stick Y axis
+        elbow = self._joy_axis(3) / 2 # Right stick Y axis
+        wrist_lift = self._button_axis(1, 3) / 2 # B is down, Y is up (B is right, Y is up)
+        wrist_rotation = self._hat_axis(4, 5) / 2 # Bumpers
+        hand_grip = self._button_axis(2, 0) / 2 # X- open hand, A- Close hand. (x left, a bottom)
 
         buff = struct.pack("<ffffff", base_rotation, shoulder, elbow, wrist_lift, wrist_rotation, hand_grip)
 
-        # print (base_rotation, shoulder, elbow, wrist_lift, wrist_rotation, hand_grip)
+        print (base_rotation, shoulder, elbow, wrist_lift, wrist_rotation, hand_grip)
 
         # Will send even if we can't reach the rover?
         self.sock.sendto(buff, (self.host, self.port))
