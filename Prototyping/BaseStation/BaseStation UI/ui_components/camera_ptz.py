@@ -39,7 +39,10 @@ class PTZCamera:
             data.append("=".join((key, value)))
         url = self._base_url + relative_url + "?" + "&".join(data)
         req = urllib2.Request(url, headers=self._headers)
-        response = urllib2.urlopen(req)
+        try:
+            response = urllib2.urlopen(req)
+        except: # Ignore errors camera disconnected
+            pass
 
     """
     Sends the x and y speeds to the camera. They must be values between

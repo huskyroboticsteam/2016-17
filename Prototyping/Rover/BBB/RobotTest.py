@@ -70,8 +70,8 @@ class RobotTest(object):
                 MiniMotor.MiniMotor(4, 7, 6, 5, pwm),
             ]
         else:
-            self.pot_pid = PID.PID(-0.3, 0, 0)
-            self.nav = Navigation.Navigation(0.560000002384, 0.325555562973, 0.115000002086, 0.001, "AIN2")
+            self.pot_pid = PID.PID(-.7, -0.8, 0)
+            self.nav = Navigation.Navigation(0.60, 0.3166666, 0.14, 0.001, "AIN2")
             self.r_comms = Robot_comms.Robot_comms("192.168.0.50", 8840, 8841, "<?hh", "<?ff", "<ffffffff", "<?ff?", self.nav)
             self.motors = [
                 BigMotor.BigMotor(1, "P9_21"),
@@ -117,15 +117,6 @@ class RobotTest(object):
             return
         self.motors[motor_id - 1].set_motor_exactly(0)
 
-    def align(self):
-        print "pot = ", str(self.nav.readPot())
-        if self.nav.readPot() <= -0.01:
-            return (self.scale_motor_val(-20),self.scale_motor_val(20),self.scale_motor_val(5),self.scale_motor_val(45))
-        if self.nav.readPot() >= 0.01:
-            return (self.scale_motor_val(20),self.scale_motor_val(-20),self.scale_motor_val(45),self.scale_motor_val(5))
-        else:
-            return (0,0,0,0)
-
     def getDriveParms(self):
         """
         Gets the driving parameters of the rover.
@@ -139,14 +130,13 @@ class RobotTest(object):
         #     return 0, 0
         # auto = self.r_comms.receivedDrive[0]
         if True:
-            time.sleep(.1)
-
+            time.sleep(.4)
             location = self.nav.getGPS()
             if location is None:
                 location = (0, 0)
             if not self.autonomous_initialized:
                 # TODO: read target from wireless
-                self.target = (47.6529566, -122.3063133)
+                self.target = (47.6530883, -122.30722)
                 self.autonomous.set_target(self.target)
                 self.autonomous_initialized = True
             if self.autonomous.is_done(location):
@@ -163,19 +153,23 @@ class RobotTest(object):
                 if location == (0.0, 0.0) or location == (0, 0):
                     print "gps not received, staying still"
                     return 0, 0
-                if self.sonar.readDisM() < self.sonar.getMaxDisM(): # Make sure obstacle is greater than infinity value
-                    if self.obsCount < 5: # Filters out random garbage values if there even is any
-                        self.obsCount+= 1
-                    else: # Add obstacle to autonomous
-                        self.autonomous.add_obstacle(Utils.point_at_end(location, Utils.normalize_angle(90 - self.Sweeper.currentAngle), self.sonar.readDisM()))
-                else: # Sets the obs count to zero saying there hasn't been a obstacle
-                    self.obsCount = 0
+                # if self.sonar.readDisM() < self.sonar.getMaxDisM(): # Make sure obstacle is greater than infinity value
+                #     if self.obsCount < 5: # Filters out random garbage values if there even is any
+                #         self.obsCount+= 1
+                #     else: # Add obstacle to autonomous
+                #         self.autonomous.add_obstacle(Utils.point_at_end(location, Utils.normalize_angle(90 - self.Sweeper.currentAngle), self.sonar.readDisM()))
+                # else: # Sets the obs count to zero saying there hasn't been a obstacle
+                #     self.obsCount = 0
                 turn = self.autonomous.go(location, heading)
                 print "turn: ", turn
-                if abs(turn) < 10 and abs(self.nav.readPot()) > .01 :
-                    # This makes it so that the robot aligns itself
-                    return 1000, 1000
-                return 50, turn
+                # Smoother turns at low turn, otherwise max turn
+                if abs(turn) < 20:
+                    return 100, turn * 3
+                elif turn > 0:
+                    return 100, 100
+                else:
+                    return 100, -100
+
         else:
             return self.r_comms.receivedDrive[1], self.r_comms.receivedDrive[2]
 
@@ -330,12 +324,7 @@ def main():
                 robot.get_robot_comms().receiveData(robot.get_nav())
                 robot.get_robot_comms().sendData(robot.get_nav())
                 driveParms = robot.getDriveParms()
-                MotorParms = (0,0,0,0)
-                # This is the alignment hack. I'm sorry.
-                if driveParms == (1000,1000):
-                    MotorParms = robot.align()
-                else:
-                    MotorParms = robot.convertParmsToMotorVals(driveParms)
+                MotorParms = robot.convertParmsToMotorVals(driveParms)
                 print "motor parms: ", MotorParms
                 for i in range(1, 5):
                     robot.driveMotor(i, MotorParms[i - 1])

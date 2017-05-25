@@ -66,7 +66,8 @@ class GPS:
                 print "================================================================"
                 # logs fo debugging
                 with open("gps.txt", "a") as myfile:
-                    myfile.write(str((lat,lon)) + '\n')
+                    myfile.write(str((lat,lon)) + '\n'
+                                                  '')
                 return lat, lon
         except:
             return self.getCoords()

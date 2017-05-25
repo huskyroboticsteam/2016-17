@@ -8,40 +8,35 @@ class MapJoysticks(QtGui.QDialog):
     def __init__(self, sdl_instance, parent=None):
         QtGui.QDialog.__init__(self, parent)  # Initialize PyQt widget
         self.x, self.y = 100, 200
-        self.window_width, self.window_length = 500, 100
+        self.window_width, self.window_length = 500, 300
         self.setGeometry(self.x, self.y, self.window_width, self.window_length)  # Set window dimensions (x, y, w, h)
         self.setWindowTitle("Map Joystick")
         self.sdl_instance = sdl_instance
         self.main = QtGui.QVBoxLayout(self)
         self.instruction_layout = QtGui.QVBoxLayout()
         self.main.addLayout(self.instruction_layout)
-        self.instruction_layout.addWidget(
-            QtGui.QLabel("Click a button and then press any button on a joystick to map it"))
+        self.instruction_layout.addWidget(QtGui.QLabel("Click a button and then press any button on a joystick to map it"))
         self.button_box = None
-        self.maxjoys = 3
-        self.joyNames = ["Camera Joystick", "Drive Joystick", "Arm Joystick"]
 
-        # Assign initial joys values
-        for i in range(self.maxjoys):
-            self.sdl_instance.joystick_control.append(None)
-
-    def create_h_box(self):
+    def create_h_box(self, joy_num):
         h_layout = QtGui.QHBoxLayout()
-        for i in range(self.maxjoys):
-            if self.sdl_instance.joystick_control[i] is None:
-                button = QtGui.QPushButton(self.joyNames[i] + " is not mapped")
-            else:
-                button = QtGui.QPushButton(self.joyNames[i] + " is mapped")
-            button.released.connect(self.update_button(button, i))
-            h_layout.addWidget(button)
+        for i in range(joy_num):
+            layout = self.create_v_box(str(i + 1))
+            h_layout.addLayout(layout)
         return h_layout
+
+    def create_v_box(self, name):
+        layout = QtGui.QVBoxLayout()
+        button = QtGui.QPushButton("Joystick Number " + name + " is mapped to index: " + str())
+        layout.addWidget(button)
+        button.released.connect(self.update_button(button, name))
+        return layout
 
     def update_button(self, button, name):
         def update_button():
             joy_num = self.set_joystick_index()
-            self.sdl_instance.joystick_control[name] = joy_num
-            button.setText(self.joyNames[name] + " is mapped")
-
+            self.sdl_instance.joystick_control[int(name) - 1] = joy_num
+            button.setText("Joystick Number " + name + " is mapped to index: " + str(joy_num))
         return update_button
 
     def set_joystick_index(self):
@@ -50,26 +45,21 @@ class MapJoysticks(QtGui.QDialog):
                 if event.jbutton.state == 1:
                     return event.jdevice.which
 
-    def update_window(self):
+    def update(self):
+        joy_num = sdl2.SDL_NumJoysticks()
+        self.sdl_instance.joystick_control = []
+        for i in range(joy_num):
+            self.sdl_instance.joystick_control.append(0)
+
         b = self.instruction_layout.itemAt(1)
 
         if b is not None:
             self.clearLayout(b)
             self.instruction_layout.removeItem(b)
 
-        self.button_box = self.create_h_box()
-        self.instruction_layout.addLayout(self.button_box)
-
-    def update(self, joystick_id):
-
-        if joystick_id != -1:  # Joystick removed
-            for i in range(len(self.sdl_instance.joystick_control)):
-                if joystick_id == self.sdl_instance.joystick_control[i]:
-                    self.sdl_instance.joystick_control[i] = None
-            self.update_window()
-        else:
-            self.update_window()
-            self.show()
+        if joy_num > 0:
+            self.button_box = self.create_h_box(joy_num)
+            self.instruction_layout.addLayout(self.button_box)
 
     def clearLayout(self, layout):
         while layout.count():
@@ -79,8 +69,8 @@ class MapJoysticks(QtGui.QDialog):
             else:
                 self.clearLayout(child)
 
-
 class SDLInstance:
+
     # Initialises PySDL2 and the variables to store the joystick data
     def __init__(self):
         self.joystick_control = []
@@ -129,7 +119,7 @@ class SDLInstance:
                 ball_num = sdl2.SDL_JoystickNumBalls(self.joysticks[added_joystick])
                 self.joystick_ball.append([])
                 for j in range(ball_num):
-                    self.joystick_ball[added_joystick].append([0, 0])  # [[x, y]]
+                    self.joystick_ball[added_joystick].append([0, 0])   # [[x, y]]
 
                 hat_num = sdl2.SDL_JoystickNumHats(self.joysticks[added_joystick])
                 for j in range(hat_num):
@@ -141,11 +131,12 @@ class SDLInstance:
                     self.joystick_button[added_joystick].append(0)  # [button1, button2, button3, ...]
 
                 # Maps each joystick to a role
-                self.mj.update(-1)
+                self.mj.update()
+                self.mj.show()
 
             elif event.type == sdl2.SDL_JOYDEVICEREMOVED:
                 sdl2.SDL_JoystickClose(self.joysticks[event.jdevice.which])
-                self.mj.update(event.jdevice.which)
+                self.mj.update()
 
 
 class ReceiveData(QtGui.QWidget):
@@ -158,22 +149,18 @@ class ReceiveData(QtGui.QWidget):
     def update_input(self):
         self.sdl_instance.update_sdl2()
 
-
 def getJoysticks():
     if getJoysticks._joysticks is None:
         getJoysticks._joysticks = Joystick()
     return getJoysticks._joysticks
-
-
 getJoysticks._joysticks = None
-
 
 class Joystick(QtGui.QWidget):
     def __init__(self):
         if sdl2.SDL_Init(sdl2.SDL_INIT_JOYSTICK) < 0:
             print "Couldn't initiate joystick(s)."
         else:
-            self.sdl_instance = SDLInstance()  # Initializes PySDL2 to read and stores joystick input
+            self.sdl_instance = SDLInstance()    # Initializes PySDL2 to read and stores joystick input
             self.joystick_control = self.sdl_instance.joystick_control
             self.joystick_axis = self.sdl_instance.joystick_axis
             self.joystick_ball = self.sdl_instance.joystick_ball
@@ -211,4 +198,4 @@ if __name__ == '__main__':
 
     window = QtGui.QDialog()
     window.show()
-    sys.exit(app.exec_())  # Waits for the 'X' to be clicked to close
+    sys.exit(app.exec_())   # Waits for the 'X' to be clicked to close

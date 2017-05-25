@@ -31,7 +31,12 @@ options = {
 }
 
 executables = [
-    Executable('ui_runner_qt.py', base=base)
+    Executable(
+        'ui_runner_qt.py',
+        base=base,
+        icon="exe-icon.ico",
+        compress=True
+    )
 ]
 
 setup(name='HuskyGUI',

@@ -46,6 +46,7 @@ class Encoder(Sensor):
         self._ppr = float(ppr) # pulses per revolution of the encoder
         self._steps = 0        # signed number of steps/pulses encoder has recorded
         self._distK = 1        # K Constant for distance multiplication
+        self._angleK = 1       # K Constant for angle multiplication
         self._lastA = False    # last pin position for channel A
         self._lastB = False    # last pin position for channel B
         self._isSetup = False  # whether the Encoder has been set up yet
@@ -110,16 +111,13 @@ class Encoder(Sensor):
     def setDistanceK(self, distK):
         self._distK = distK
 
+    def setAngleK(self, angleK):
+        self._angleK = angleK
+
     # Returns current angle of encoder in radians
     # (-inf, inf) (I.E. not mod 2pi)
     def getAngle(self):
-        return self._steps * ((2 * pi) / self._ppr) 
-
-    def getAngle(self, bound, units='radians'):
-        angle = self.getAngle()
-        if units=='degrees':
-            angle *= (180.0 / pi)
-        return angle % float(bound)
+        return self._steps * (2 * pi/self._ppr)  * self._angleK
 
     # Returns true if the direction the encoder is moving clockwise
     def _isClockwise(self, lastA, lastB, curA, curB):

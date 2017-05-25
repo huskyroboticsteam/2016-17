@@ -7,7 +7,10 @@ from Command import Command
 
 class MoveDrill(Command):
 
-    def __init__(self, armatureMotorPin, distanceSensor, kp=0, ki=0, kd=0):
+    INITIALIZATION_MOTOR_SPEED_MAX = 0.25
+    LIMITS_ON = True
+
+    def __init__(self, armatureMotorPin, distanceSensor, limitSwitch, kp=0, ki=0, kd=0):
         # We cannot have undershoot, move slow
         # and calibrate well
         self._pid = PID(kp, ki, kd)
@@ -15,12 +18,22 @@ class MoveDrill(Command):
         self.motor = TalonMC(armatureMotorPin)
         self.distanceSensor = distanceSensor
         self.currentPos = self.distanceSensor.getValue()
+        self.limit = limitSwitch
+        self.ready = False
 
     def initialize(self):
         self.motor.enable()
+        """
+        WILL NOT INITIALIZE WITHOUT LIMIT SWITCH COMMUNICATION CAPABILITY
+        """
+        while not self.limit.getValue() and not self.limit.critical_status and MoveDrill.LIMITS_ON:
+            self.motor.set(-MoveDrill.INITIALIZATION_MOTOR_SPEED_MAX)
         self.currentPos = self.distanceSensor.getValue()
+        self.ready = True
 
     def run(self, setpoint):
+        if setpoint == -1 or not self.ready:
+            self.initialize()
         self._pid.setTarget(setpoint)
         self.currentPos = self.distanceSensor.getValue()
         self._pid.run(self.currentPos)

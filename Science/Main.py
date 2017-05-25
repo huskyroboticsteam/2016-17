@@ -17,6 +17,7 @@ from Commands.MoveDrill import MoveDrill
 from Commands.SystemControl import SystemControl
 from Commands.RotateArmature import RotateArmature
 from Commands.MoveSampleCup import MoveSampleCup
+from Commands.ReleaseSample import ReleaseSample
 from Commands.Command import Command
 from CommHandler import CommHandler
 from Packet import Packet, PacketType
@@ -26,7 +27,7 @@ from SystemTelemetry import SystemTelemetry
 # Communication Setup
 #MAIN_IP = '192.168.0.1'  # Typical
 MAIN_IP = '192.168.0.2'  # Testing on Jaden's machine
-PRIMARY_TCP_SEND_PORT = 22
+PRIMARY_TCP_SEND_PORT = 5000
 INTERNAL_IP = '192.168.0.90'
 INTERNAL_TCP_RECEIVE_PORT = 5000
 
@@ -71,12 +72,14 @@ SensorHandler.setupAll()
 SensorHandler.startAll()
 
 # Create Command Interface
-drillController = DrillCtrl("P8_13", encoder1, 0, 0, 0)
-rotateArmature = RotateArmature("P9_16", encoder2)
+# Command creation will cause initialization to have this order:
 armatureController = MoveDrill("P8_19", DistanceSensor, 0, 0, 0)
-camFocusCommand = CamFocus("P9_14")
+drillController = DrillCtrl("P8_13", encoder1, limit1, 0, 0, 0)
+rotateArmature = RotateArmature("P9_16", limit2, encoder2, 0, 0, 0)
+moveSampleCup = MoveSampleCup("P9_21", limit3, encoder3, 0, 0, 0)
+releaseSample = ReleaseSample("P9_14")
+camFocusCommand = CamFocus("P8_16")
 systemControl = SystemControl("P9_15")
-moveSampleCup = MoveSampleCup("P9_21")
 
 # Initialize All Commands (Set machine to relaxed state)
 Command.initializeAll()

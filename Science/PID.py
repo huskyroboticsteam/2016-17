@@ -97,3 +97,10 @@ class PID:
     # Restrains output to (+/-)1
     def restrainOutput(self, output):
         return output % 1
+
+    def getError():
+        return self._lastError
+
+    # Returns output between (+/-)restraint (-inf,inf)
+    def restrainedOutput(self, restraint):
+        return restraint * self.getOutput()
