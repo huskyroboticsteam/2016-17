@@ -178,7 +178,6 @@ class Joystick(QtGui.QWidget):
         else:
             self.sdl_instance = SDLInstance()  # Initializes PySDL2 to read and stores joystick input
             update()
-
             self.rd = ReceiveData(self.sdl_instance)
 
 

@@ -7,8 +7,8 @@ import joystick
 class ConnectionManager:
     def __init__(self):
         self.ROVER_HOST = "192.168.0.50"
-        # self.ARM_HOST = "192.168.0.80"  # For over ethernet
-        self.ARM_HOST = "192.168.7.2" # 7.2 for over USB
+        self.ARM_HOST = "192.168.0.90"  # For over ethernet
+        # self.ARM_HOST = "192.168.7.2" # 7.2 for over USB
         self.LOCAL_HOST = "127.0.0.1"
         self.ROVER_TCP_PORT = 8841
         self.ROVER_PORT = 8840
@@ -197,7 +197,8 @@ class ArmConnection(UdpConnection):
         shoulder = - self._joy_axis(1) / 2  # Left stick Y axis
         elbow = self._joy_axis(3) / 2 # Right stick Y axis
         wrist_lift = self._button_axis(1, 3) / 2 # B is down, Y is up (B is right, Y is up)
-        wrist_rotation = self._hat_axis(4, 5) / 2 # Bumpers
+        #wrist_rotation = self._hat_axis(4, 5) / 2 # Bumpers
+        wrist_rotation = 0
         hand_grip = self._button_axis(2, 0) / 2 # X- open hand, A- Close hand. (x left, a bottom)
 
         buff = struct.pack("<ffffff", base_rotation, shoulder, elbow, wrist_lift, wrist_rotation, hand_grip)
@@ -215,15 +216,15 @@ class ArmConnection(UdpConnection):
         print self.joys.joystick_control
         print self.joystick_control_index
         val = self.joys.joystick_axis[self.joys.joystick_control[self.joystick_control_index]][axisNum]
-        val /= 32768.0
+        val /= 32768.0 # Scale to -1 .. 1
 
         # Deadzone
         return 0 if (abs(val) < .10) else val
 
     def _button_axis(self, forwardBtn, reverseBtn):
-        if self.joys.joystick_button[self.joys.joystick_control[self.joystick_control_index][forwardBtn]]:
+        if self.joys.joystick_button[self.joys.joystick_control[self.joystick_control_index]][forwardBtn]:
             return 1
-        elif self.joys.joystick_button[self.joys.joystick_control[self.joystick_control_index][reverseBtn]]:
+        elif self.joys.joystick_button[self.joys.joystick_control[self.joystick_control_index]][reverseBtn]:
             return -1
         else:
             return 0
