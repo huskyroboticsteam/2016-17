@@ -71,7 +71,7 @@ class Navigation:
     # Periodically updates the GPS data
     def updateGPS(self):
         while True:
-            print prevGPS
+            print self.prevGPS
             gps = self.gps.getCoords()
             if gps is not None:
                 gpsFailure = False

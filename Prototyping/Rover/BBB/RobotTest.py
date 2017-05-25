@@ -71,7 +71,7 @@ class RobotTest(object):
             ]
         else:
             self.pot_pid = PID.PID(-1, 0, 0)
-            self.nav = Navigation.Navigation(0.560000002384, 0.325555562973, 0.115000002086, 0.001, "AIN2")
+            self.nav = Navigation.Navigation(0.60, 0.3166666, 0.14, 0.001, "AIN2")
             self.r_comms = Robot_comms.Robot_comms("192.168.0.50", 8840, 8841, "<?hh", "<?ff", "<ffffffff", "<?ff?", self.nav)
             self.motors = [
                 BigMotor.BigMotor(1, "P9_21"),
