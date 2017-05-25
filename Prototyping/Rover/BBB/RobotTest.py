@@ -70,7 +70,7 @@ class RobotTest(object):
                 MiniMotor.MiniMotor(4, 7, 6, 5, pwm),
             ]
         else:
-            self.pot_pid = PID.PID(-1, 0, 0)
+            self.pot_pid = PID.PID(-.7, -0.8, 0)
             self.nav = Navigation.Navigation(0.60, 0.3166666, 0.14, 0.001, "AIN2")
             self.r_comms = Robot_comms.Robot_comms("192.168.0.50", 8840, 8841, "<?hh", "<?ff", "<ffffffff", "<?ff?", self.nav)
             self.motors = [
@@ -130,13 +130,13 @@ class RobotTest(object):
         #     return 0, 0
         # auto = self.r_comms.receivedDrive[0]
         if True:
-            time.sleep(.1)
+            time.sleep(.4)
             location = self.nav.getGPS()
             if location is None:
                 location = (0, 0)
             if not self.autonomous_initialized:
                 # TODO: read target from wireless
-                self.target = (47.6529566, -122.3063133)
+                self.target = (47.6530883, -122.30722)
                 self.autonomous.set_target(self.target)
                 self.autonomous_initialized = True
             if self.autonomous.is_done(location):
@@ -164,7 +164,7 @@ class RobotTest(object):
                 print "turn: ", turn
                 # Smoother turns at low turn, otherwise max turn
                 if abs(turn) < 20:
-                    return 100, turn * 5
+                    return 100, turn * 3
                 elif turn > 0:
                     return 100, 100
                 else:
