@@ -162,6 +162,7 @@ class RobotTest(object):
                 #     self.obsCount = 0
                 turn = self.autonomous.go(location, heading)
                 print "turn: ", turn
+                # Smoother turns at low turn, otherwise max turn
                 if abs(turn) < 20:
                     return 100, turn * 5
                 elif turn > 0:
