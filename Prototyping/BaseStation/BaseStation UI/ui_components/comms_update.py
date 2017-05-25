@@ -219,9 +219,9 @@ class ArmConnection(UdpConnection):
         return 0 if (abs(val) < .10) else val
 
     def _button_axis(self, forwardBtn, reverseBtn):
-        if self.joys.joystick_button[self.joys.joystick_control[self.joystick_control_index][forwardDir]]:
+        if self.joys.joystick_button[self.joys.joystick_control[self.joystick_control_index][forwardBtn]]:
             return 1
-        elif self.joys.joystick_button[self.joys.joystick_control[self.joystick_control_index][reverseDir]]:
+        elif self.joys.joystick_button[self.joys.joystick_control[self.joystick_control_index][reverseBtn]]:
             return -1
         else:
             return 0
