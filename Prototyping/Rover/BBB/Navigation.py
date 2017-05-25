@@ -63,7 +63,7 @@ class Navigation:
         angle = Utils.translateValue(pot, self.POT_LEFT - self.POT_MIDDLE, self.POT_RIGHT - self.POT_MIDDLE, -40, 40)
         # returns the raw reading minus the angle from pot
         # minus 170 for the angle the mag is mounted
-        return (rawMag + angle - 200) % 360
+        return (rawMag - angle - 90) % 360
 
     def getGPS(self):
         return self.lastGPS
