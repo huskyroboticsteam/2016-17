@@ -3,45 +3,37 @@ import os
 
 
 class VLCRecorder:
-    def __init__(self, urls):
+    def __init__(self, url, cameraId):
 
-        self.instance = vlc.Instance()
-
-        self.urls = urls
-
-        # Creates the VLC Player Object
-        self.player = self.instance.media_player_new()
-
-        # print os.listdir("ui_components/camera_streaming/video_output")
-
-        print "Recording"
-        onlyfiles = [f for f in os.listdir("ui_components/camera_streaming/video_output/") if os.path.isfile(os.path.join("ui_components/camera_streaming/video_output/", f))]
-        self.count = len(onlyfiles)
-        # print(self.count)
-
-        for i in range(0, len(urls)):
-            self.instantiate_media(urls[i], i)
+        self.url = url
+        self.cameraId = cameraId
+        urlA = url.split("Profile")
+        urlA[1] = str(int(urlA[1]) - 1)
+        self.url = urlA[0] + "Profile" + urlA[1]
+        self.player = None
+        self.instantiate_media()
 
     # makes the broadcasts that we will use to record
-    def instantiate_media(self, url, cameraId):
-        self.count += 1
-
-        # sout makes the file type to output to
-        sout = "#transcode{vcodec=h264,vb=800,width=640,height=480,acodec=mp3,ab=128,channels=2,samplerate=44100}" \
-               ":file{mux=mp4,dst=" "ui_components/camera_streaming/video_output/cam" + str(cameraId + 1) + "_" + str(self.count) + ".mp4}"
-        # makes a "broadcast" to record, with name (filename)
-        self.instance.vlm_add_broadcast(str(cameraId), url, sout, 0, None, True, False)
+    def instantiate_media(self):
+        onlyfiles = [f for f in os.listdir("ui_components/camera_streaming/video_output/") if
+                     os.path.isfile(os.path.join("ui_components/camera_streaming/video_output/", f))]
+        count = len(onlyfiles)
+        # Creates the VLC Player Object
+        cmd3 = "--sout=#transcode{vencoder=libavformat,vcodec=h264}:std{access=file,mux=mp4,dst=ui_components/camera_streaming/video_output/cam" + str(
+            self.cameraId + 1) + "_" + str(count) + ".mp4}"
+        instance = vlc.Instance(cmd3)
+        self.player = instance.media_player_new()
+        self.player.set_media(instance.media_new(self.url))
 
     # destroys than remakes the broadcasts
-    def reset_media(self, cameraId):
-        self.instance.vlm_del_media(str(cameraId))
-        self.instantiate_media(self.urls[cameraId], cameraId)
+    def reset_media(self):
+        self.instantiate_media()
 
     # starts the recording
-    def start_recording(self, cameraId):
-        self.instance.vlm_play_media(str(cameraId))
+    def start_recording(self):
+        self.player.play()
 
     # stops the recording
-    def stop_recording(self, cameraId):
-        self.instance.vlm_stop_media(str(cameraId))
-        self.reset_media(cameraId)
+    def stop_recording(self):
+        self.player.stop()
+        self.reset_media()

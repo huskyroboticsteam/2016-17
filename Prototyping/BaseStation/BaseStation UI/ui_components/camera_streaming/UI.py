@@ -24,8 +24,7 @@ class Player(QtGui.QWidget):
 
         # Create the VLC video widgets
         self.videos = self.createVLCWidgets(urls)
-
-        self.recorder = Recorder.VLCRecorder(urls)
+        self.recorders = self.createRecorders(urls)
 
         for i in range(0, len(urls)):
             # Vertical box will hold the video and its corresponding record button
@@ -43,7 +42,7 @@ class Player(QtGui.QWidget):
             vbox.addWidget(self.videos[i])
 
             # Create record button then add to layout container
-            recordButton = CustomWidgets.Button("Record Feed " + str(self.videos[i].id + 1), self.videos[i].id, self.recorder)
+            recordButton = CustomWidgets.Button("Record Feed " + str(self.videos[i].id + 1), self.videos[i].id, self.recorders[i])
             vbox.addWidget(recordButton)
 
             # Add all vertical layout containers to a horizontal container
@@ -61,8 +60,17 @@ class Player(QtGui.QWidget):
         # Empty list to hold vlc widgets
         widgets = []
         for i in range(0, len(urls)):
-            vlc_widget = CustomWidgets.VLCWidget(urls[i], ":network-caching=0", vlc.Instance('--quiet', '--no-video-on-top'))
+            vlc_widget = CustomWidgets.VLCWidget(urls[i], ":network-caching=0", i)
             vlc_widget.id = i
             widgets.append(vlc_widget)
 
         return widgets
+
+    def createRecorders(self, urls):
+        # Empty list to hold vlc widgets
+        rec = []
+        for i in range(0, len(urls)):
+            record = Recorder.VLCRecorder(urls[i], i)
+            rec.append(record)
+
+        return rec

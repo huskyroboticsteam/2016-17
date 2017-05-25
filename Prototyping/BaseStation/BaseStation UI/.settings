@@ -1,5 +1,5 @@
 default_map=UW
-cams=Mid Res Cam,rtsp://admin:1234@192.168.0.42:554/media/media.amp?streamprofile=Profile6,Low Res Cam,rtsp://admin:1234@192.168.0.22:554/media/media.amp?streamprofile=Profile8,Amazon Special,rtsp://192.168.1.15:554/user=admin&password=&channel=1&stream=0.sdp
+cams=Mid Res Cam,rtsp://admin:1234@192.168.0.30:554/media/media.amp?streamprofile=Profile6,Low Res Cam,rtsp://admin:1234@192.168.0.22:554/media/media.amp?streamprofile=Profile8
 default_cam_1=0
 default_cam_2=1
-default_cam_3=2
+default_cam_3=1

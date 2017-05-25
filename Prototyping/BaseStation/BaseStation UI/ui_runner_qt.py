@@ -11,11 +11,12 @@ from ui_components.ip_scanner import IPCheckerLayout
 from ui_components.camera_streaming import UI
 from ui_components.emergency_stop import stop
 from ui_components.settings import settings
-from ui_components import comms_update
+from ui_components import comms_update, joystick, Camera_Controller
 from ui_components.arm_viz import arm_widget
 from ui_components.sensors import SensorChecker
 from ui_components.list_widget import list_widget
 from ui_components.auto_indicator import auto
+
 
 def quitting():
     # Close all connection threads
@@ -25,8 +26,12 @@ def quitting():
     # Save the changes to the settings by the user
     setting_widget.save()
 
+    cam1.quit()
+    cam2.quit()
+
 # Specifying the new PyQt4 applicataion and main window
 app = QtGui.QApplication(sys.argv)
+app.setWindowIcon(QtGui.QIcon('rocket-icon.png'))
 
 # Call this function when we are about to quit
 app.aboutToQuit.connect(quitting)
@@ -34,8 +39,17 @@ win = QtGui.QMainWindow()
 
 # Load the UI into the main window
 main = uic.loadUi("ui.ui", win)
+win.setWindowTitle("Husky Robotics Control GUI")
 
 win.resize(1200, 675)
+
+'''Init the Joysticks and Camera Movement Code'''
+joys = joystick.getJoysticks()
+joys.start()
+cam1 = Camera_Controller.CameraMove(joys, "192.168.0.30", "admin", "1234")
+cam1.start()
+cam2 = Camera_Controller.CameraMove(joys, "192.168.0.22", "admin", "1234")
+cam2.start()
 
 '''Create all the custom widgets for the UI'''
 sensors = SensorChecker.SensorData()
@@ -76,7 +90,8 @@ sock.auto.requestMarkers.connect(list_wid.get_markers)
 list_wid.giveMarkers.connect(sock.auto.set_markers)
 
 # Tell the science station to take a picture
-sensors.picture_signal.connect(sock.science.send_message)
+sensors.picture_signal.connect(sock.science.send_picture)
+sensors.slider_signal.connect(sock.science.send_sliders)
 
 sock.drive.sensorUpdate.connect(sensors.update_ui)
 sock.science.sensorUpdate.connect(sensors.update_ui)

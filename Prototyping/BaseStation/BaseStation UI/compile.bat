@@ -59,6 +59,7 @@
  copy ui.ui build\exe.win32-2.7
  copy .settings build\exe.win32-2.7
  copy UW.dat build\exe.win32-2.7
+ copy rocket-icon.png build\exe.win32-2.7
  mkdir build\exe.win32-2.7\ui_components
  mkdir build\exe.win32-2.7\ui_components\camera_streaming
  mkdir build\exe.win32-2.7\ui_components\camera_streaming\video_output

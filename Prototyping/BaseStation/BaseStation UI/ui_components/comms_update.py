@@ -1,14 +1,13 @@
 from PyQt4 import QtCore
 import socket
 import struct
-import joystickv1
+import joystick
 
 
 class ConnectionManager:
     def __init__(self):
         self.ROVER_HOST = "192.168.0.50"
         self.ARM_HOST = "192.168.0.80"  # "192.168.7.2" # 7.2 for over USB
-        self.SCIENCE_HOST = "192.168.0.90"
         self.LOCAL_HOST = "127.0.0.1"
         self.ROVER_TCP_PORT = 8841
         self.ROVER_PORT = 8840
@@ -19,13 +18,13 @@ class ConnectionManager:
         # Kill the thread when the work is done
         self.auto.finished.connect(self.auto.quit)
 
-        self.drive = DriveConnection(self.ROVER_HOST, self.ROVER_PORT)
+        self.drive = DriveConnection(self.ROVER_HOST, self.ROVER_PORT, 1) # Last param specifies joystick number
         self.drive.start()
 
-        self.arm = ArmConnection(self.ARM_HOST, self.ARM_PORT)
+        self.arm = ArmConnection(self.ARM_HOST, self.ARM_PORT, 2)
         self.arm.start()
 
-        self.science = ScienceConnection(self.SCIENCE_HOST, self.SCIENCE_PORT)
+        self.science = ScienceConnection("192.168.0.1", self.SCIENCE_PORT)
         self.science.start()
 
     def enable_tcp(self, enable):
@@ -41,8 +40,6 @@ class ConnectionManager:
         self.auto.quit()
 
         if self.science.science_sock is not None:
-            if self.science.connected:
-                self.science.science_sock.shutdown(socket.SHUT_RDWR)
             self.science.science_sock.close()
         self.science.quit()
 
@@ -82,7 +79,7 @@ class DriveConnection(UdpConnection):
     sensorUpdate = QtCore.pyqtSignal([dict])
     gpsUpdate = QtCore.pyqtSignal([tuple])
 
-    def __init__(self, host, port):
+    def __init__(self, host, port, joystick_control_index):
         UdpConnection.__init__(self, host, port)
 
         # Indicates whether the rovers is in autonomous mode
@@ -91,8 +88,9 @@ class DriveConnection(UdpConnection):
         # Indicates whether emergency stop has been pressed (CANNOT BE UNDONE)
         # Reset the UI if emergency stopped
         self.stop = False
+        self.joystick_control_index = joystick_control_index
 
-        self.joys = joystickv1.getJoysticks()
+        self.joys = joystick.getJoysticks()
         self.joys.start()
 
         self.timer = None
@@ -117,11 +115,14 @@ class DriveConnection(UdpConnection):
         throttle = 0
         steering = 0
 
+        #print self.joys.joystick_control
+        #print self.joys.joystick_axis
+
         try:
             # Emit drive of zero if emergency stop isn't enabled
-            if self.stop is False:
-                throttle = self.joys.joystick_axis[0][1]
-                steering = self.joys.joystick_axis[0][0]
+            if self.stop is False and self.joys.joystick_control[self.joystick_control_index] is not None:
+                throttle = self.joys.joystick_axis[self.joys.joystick_control[self.joystick_control_index]][1]
+                steering = self.joys.joystick_axis[self.joys.joystick_control[self.joystick_control_index]][0]
         except:
             pass
         else:
@@ -132,7 +133,7 @@ class DriveConnection(UdpConnection):
             if abs(steering) < 20:
                 steering = 0
 
-            print throttle, steering
+            # print throttle, steering
 
         # Put the first 2 boolean values in the buffer
         buff = struct.pack("<?hh", self.auto, int(throttle), int(steering))
@@ -173,19 +174,19 @@ class DriveConnection(UdpConnection):
 
 
 class ArmConnection(UdpConnection):
-    def __init__(self, host, port):
+    def __init__(self, host, port, joystick_control_index):
         super(self.__class__, self).__init__(host, port)
         # Make this joystick # 2
-        self.joys = joystickv1.getJoysticks()
+        self.joys = joystick.getJoysticks()
         self.joys.start()
 
-        self.JOYSTICK_NUM = 0
+        self.joystick_control_index = joystick_control_index
 
     def send_message(self):
         if not self.joys.ready:
             return
         # Don't run if joystick not plugged in
-        if len(self.joys.joystick_axis) < self.JOYSTICK_NUM + 1:
+        if self.joys.joystick_control[self.joystick_control_index] is None:
             return
 
         # These mappings are for my Logitech F710 controller. 
@@ -209,16 +210,18 @@ class ArmConnection(UdpConnection):
         Returns the value at the specificed joystick axis. The value will be on
         the scale of 0-1.
         """
-        val = self.joys.joystick_axis[self.JOYSTICK_NUM][axisNum];
+        print self.joys.joystick_control
+        print self.joystick_control_index
+        val = self.joys.joystick_axis[self.joys.joystick_control[self.joystick_control_index]][axisNum]
         val /= 32768.0
 
         # Deadzone
         return 0 if (abs(val) < .10) else val
 
     def _button_axis(self, forwardBtn, reverseBtn):
-        if self.joys.joystick_button[self.JOYSTICK_NUM][forwardDir]:
+        if self.joys.joystick_button[self.joys.joystick_control[self.joystick_control_index][forwardDir]]:
             return 1
-        elif self.joys.joystick_button[self.JOYSTICK_NUM][reverseDir]:
+        elif self.joys.joystick_button[self.joys.joystick_control[self.joystick_control_index][reverseDir]]:
             return -1
         else:
             return 0
@@ -232,44 +235,49 @@ class ScienceConnection(QtCore.QThread):
 
         self.host = host
         self.port = port
-
-        self.connected = False
-        self.failed = 0
-
         self.science_sock = None
+        self.client = None
 
     def run(self):
-        # Initial connection attempt
-        self.connect(5)
+        self.bind()
 
         while True:
-            if self.failed < 10 and self.connected:
-                self.receive_message()
-                self.msleep(10)
-            else:
-                # Disconnect the socket and try to reconnect
-                self.connected = False
-                self.failed = 0
-                if self.science_sock is not None:
-                    self.science_sock.shutdown(socket.SHUT_RDWR)
-                    self.science_sock.close()
-                self.connect(10)
+            self.science_sock.listen(1)
+            client, addr = self.science_sock.accept()
+            self.client = client
+            self.receive_message()
+            self.msleep(1)
 
-    def connect(self, retry):
-        try:
+    def bind(self):
             self.science_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            self.science_sock.connect((self.host, self.port))
-        except socket.error:
-            print "Failed to Connect to Science Station retrying in 10 seconds"
-            self.sleep(10)
-            self.connect(retry - 1)
-        else:
-            self.connected = True
+            self.science_sock.bind((self.host, self.port))
 
-    def send_message(self):
-        if self.connected:
-            buff = struct.pack(">ic18sc", 0x00000000, 0x80, "I can haz picture?", 0x00)
-            self.science_sock.send(buff)
+    def send_picture(self, check_state):
+        if check_state:
+            buff = struct.pack(">ic18sc", 0, '\x80', "I can haz picture?", '\x02')
+        else:
+            buff = struct.pack(">ic18sc", 0, '\x80', "I can haz picture?", '\x01')
+
+        if self.client is not None:
+            self.client.send(buff)
+
+    def send_sliders(self, value, name):
+        value = int(value)
+        if name == "arm":
+            buff = struct.pack('>Icci', 0, '\x81', '\x03', value)
+        elif name == "speed":
+            buff = struct.pack('>Icci', 0, '\x81', '\x01', value)
+        elif name == "cam":
+            buff = struct.pack('>Icci', 0, '\x81', '\x02', value)
+        elif name == "cup":
+            buff = struct.pack('>Icci', 0, '\x81', '\x04', value)
+        elif name == "pos":
+            buff = struct.pack('>Icci', 0, '\x81', '\x00', value)
+        elif name == "release":
+            buff = struct.pack('>Icci', 0, '\x81', '\x00', value)
+
+        if self.client is not None:
+            self.client.send(buff)
 
     def receive_message(self):
         """
@@ -279,16 +287,19 @@ class ScienceConnection(QtCore.QThread):
         """
 
         try:
-            science_data = self.science_sock.recv(1024)
+            if self.client is not None:
+                science_data = self.client.recv(1024)
         except socket.error:
-            self.failed = self.failed + 1
+            pass
         else:
             # Unpack the first six floats of the packet
-            tup = struct.unpack_from(">ic", science_data, 0)
+            tup = struct.unpack_from(">IB", science_data, 0)
             ide = tup[1]
 
-            if ide == 0x00:
-                tup = struct.unpack_from(">hihhh", science_data, 2)
+            print tup
+
+            if ide == '\x00':
+                tup = struct.unpack_from(">HIhhH", science_data, 5)
                 distance = tup[0]
                 uv = tup[1]
                 thermo_ext = tup[2]
@@ -298,8 +309,76 @@ class ScienceConnection(QtCore.QThread):
                               "Thermo Internal": str(thermo_ext), "Thermo External": str(thermo_int),
                               "Humidity": str(humidity)}
                 self.sensorUpdate.emit(dictionary)
-            elif ide == 0x02:
-                tup = struct.unpack_from(">hhh?", science_data, 2)
+            elif ide == '\x01':
+                tup = struct.unpack_from(">H")
+                str = "Science "
+                if tup == '\x00\x00':
+                    print str + "Okay"
+                elif tup == '\x00\x01':
+                    print str + "Can't init ADC"
+                elif tup == '\x00\x02':
+                    print str + "Can't setup DIO"
+                elif tup == '\x00\x03':
+                    print str + "Can't read DIO"
+                elif tup == '\x00\x04':
+                    print str + "Not Init Servo"
+                elif tup == '\x00\xFE':
+                    print str + "Ping Errors"
+                elif tup == '\x00\xFF':
+                    print str + "Unknown Error"
+                elif tup == '\x01\x01':
+                    print str + "Thermo No Reading"
+                elif tup == '\x01\x02':
+                    print str + "Thermo No Internal Reading"
+                elif tup == '\x01\x03':
+                    print str + "Thermo Reading Invalid"
+                elif tup == '\x01\x04':
+                    print str + "Thermo Open Circuit"
+                elif tup == '\x01\x05':
+                    print str + "Thermo GND Short"
+                elif tup == '\x01\x06':
+                    print str + "Thermo VCC Short"
+                elif tup == '\x01\x07':
+                    print str + "Thermo General Failure"
+                elif tup == '\x01\x08':
+                    print str + "Comm Failure"
+                elif tup == '\x02\x01':
+                    print str + "UV No Reading"
+                elif tup == '\x02\x02':
+                    print str + "UV Reading Invalid"
+                elif tup == '\x02\x03':
+                    print str + "UV Comm Failure"
+                elif tup == '\x03\x01':
+                    print str + "Distance No Reading"
+                elif tup == '\x03\x02':
+                    print str + "Distance Reading Invalid"
+                elif tup == '\x03\x03':
+                    print str + "Distance Comm Failure"
+                elif tup == '\x03\x04':
+                    print str + "Distance Failed Begin Ranging"
+                elif tup == '\x03\x05':
+                    print str + "Distance Failed Stop Ranging"
+                elif tup == '\x04\x01':
+                    print str + "Hum No Reading"
+                elif tup == '\x04\x02':
+                    print str + "Hum Reading Invalid"
+                elif tup == '\x04\x03':
+                    print str + "Hum Overzealous Insertion"
+                elif tup == '\x04\x04':
+                    print str + "Hum Comm Failure"
+                elif tup == '\x05\x01':
+                    print str + "Comms Can't Init"
+                elif tup == '\x05\x02':
+                    print str + "Comms Failed To Start Receive"
+                elif tup == '\x05\x03':
+                    print str + "Comms Failed to Send Packet"
+                elif tup == '\x05\x04':
+                    print str + "Comms Failed to Parse Packet"
+                elif tup == '\x05\x05':
+                    print str + "Comms Invalid Request"
+
+            elif ide == '\x02':
+                tup = struct.unpack_from(">hhh?", science_data, 5)
                 enc1 = tup[0]
                 enc2 = tup[1]
                 enc3 = tup[2]
