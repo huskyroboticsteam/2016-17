@@ -93,6 +93,7 @@ class RobotTest(object):
             PWM.set_duty_cycle(servo_pin_2, 1.5 * 100/17.6)
             PWM.set_duty_cycle(servo_pin_3, 1.5 * 100/17.6)
             PWM.set_duty_cycle(servo_pin_4, 1.5 * 100/17.6)
+            sleep(10)
 
         self.autonomous_initialized = False
         self.autonomous = Autonomous()
