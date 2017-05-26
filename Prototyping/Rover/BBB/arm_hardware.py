@@ -2,7 +2,7 @@ import Adafruit_BBIO.UART as uart
 import serial
 import time
 import atexit
-from sabertooth import *
+from output_driver import *
 
 uart.setup("UART1")
 uart.setup("UART2")
@@ -13,12 +13,15 @@ ser2.close()
 ser1.open()
 ser2.open()
 
-# Helps automatic boud rate decection
+# Helps automatic baud rate decection
 # ser1.write(bytearray([170]))
 
 def exit_handler():
     ser1.close()
     ser2.close()
+    
+    for motor in motors:
+        motor.close()
     
 atexit.register(exit_handler)
 
@@ -39,7 +42,7 @@ jointNames = ["base_rotation", "shoulder", "elbow", "wrist_lift", "wrist_rotatio
 # Out means towards full extension
 
 motors = {}
-motors[0] = Sabertooth(ser2, 128, 0) # Should be a PWM
+motors[0] = PWM("P9_99", "P9_99", "P9_99")
 motors[1] = Sabertooth(ser1, 130, 0) # Positive is out
 motors[2] = Sabertooth(ser2, 128, 0) # Negitive is out
 motors[3] = Sabertooth(ser2, 128, 4) # Positive is out
@@ -47,3 +50,4 @@ motors[4] = Sabertooth(ser1, 130, 4) # Positive is clockwise
 motors[5] = Sabertooth(ser2, 129, 4) # Positive is out
 
 feedback = {}
+feedback[0] = Encoder()

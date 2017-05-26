@@ -1,7 +1,5 @@
 #!/usr/bin/env python
 from math import *
-from sabertooth import *
-import atexit
 import arm_hardware as hw
 
 if __name__ == "__main__":
