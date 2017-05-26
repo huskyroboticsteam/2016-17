@@ -15,6 +15,8 @@ import time
 from autonomous import Autonomous
 from random import random
 from Utils import scale_coords
+import Adafruit_BBIO.PWM as PWM
+import basicAutonomous
 
 class RobotTest(object):
     """
@@ -79,6 +81,19 @@ class RobotTest(object):
                 BigMotor.BigMotor(3, "P9_14"),
                 BigMotor.BigMotor(4, "P9_22")
                 ]
+            servo_pin_1 = "P9_14"
+            servo_pin_2 = "P9_22"
+            servo_pin_3 = "P9_16"
+            servo_pin_4 = "P9_21"
+            PWM.start(servo_pin_1, 1.5/17.6, 60)
+            PWM.start(servo_pin_2, 1.5/17.6, 60)
+            PWM.start(servo_pin_3, 1.5/17.6, 60)
+            PWM.start(servo_pin_4, 1.5/17.6, 60)
+            PWM.set_duty_cycle(servo_pin_1, 1.5 * 100/17.6)
+            PWM.set_duty_cycle(servo_pin_2, 1.5 * 100/17.6)
+            PWM.set_duty_cycle(servo_pin_3, 1.5 * 100/17.6)
+            PWM.set_duty_cycle(servo_pin_4, 1.5 * 100/17.6)
+
         self.autonomous_initialized = False
         self.autonomous = Autonomous()
         self.Sweeper = Servo_Sweep.Servo_Sweep(0.005, 1, 179, "P8_13")
@@ -335,6 +350,7 @@ def main():
                     robot.stopMotor(i)
                 except:
                     print("motor: " + str(i) + " disconnected")
+            PWM.cleanup()
             robot.r_comms.closeConn()
             print "exiting"
 
