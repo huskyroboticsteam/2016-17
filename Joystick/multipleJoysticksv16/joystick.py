@@ -25,6 +25,7 @@ class MapJoysticks(QtGui.QDialog):
         for i in range(self.maxjoys):
             self.sdl_instance.joystick_control.append(None)
 
+    # Returns a horizontal layout that contains vertical layouts of the buttons to map joysticks
     def create_h_box(self):
         h_layout = QtGui.QHBoxLayout()
         for i in range(self.maxjoys):
@@ -36,20 +37,22 @@ class MapJoysticks(QtGui.QDialog):
             h_layout.addWidget(button)
         return h_layout
 
+    # Returns a function that maps a joystick to an index
     def update_button(self, button, name):
         def update_button():
             joy_num = self.set_joystick_index()
             self.sdl_instance.joystick_control[name] = joy_num
             button.setText(self.joyNames[name] + " is mapped")
-
         return update_button
 
+    # Returns the index of the joystick that a button was pressed
     def set_joystick_index(self):
         while True:
             for event in sdl2.ext.get_events():
                 if event.jbutton.state == 1:
                     return event.jdevice.which
 
+    # Updates the window to show the amount of buttons as there is joysticks connected
     def update_window(self):
         b = self.instruction_layout.itemAt(1)
 
@@ -60,8 +63,8 @@ class MapJoysticks(QtGui.QDialog):
         self.button_box = self.create_h_box()
         self.instruction_layout.addLayout(self.button_box)
 
+    # Updates the mapped joysticks
     def update(self, joystick_id):
-
         if joystick_id != -1:  # Joystick removed
             for i in range(len(self.sdl_instance.joystick_control)):
                 if joystick_id == self.sdl_instance.joystick_control[i]:
@@ -71,6 +74,7 @@ class MapJoysticks(QtGui.QDialog):
             self.update_window()
             self.show()
 
+    # Clears the passed layout
     def clearLayout(self, layout):
         while layout.count():
             child = layout.takeAt(0)
@@ -184,14 +188,15 @@ class Joystick(QtGui.QWidget):
 
         self.ready = False
 
+    # Ties window refresh to joystick refresh
     def start(self):
-        # Ties window refresh to joystick refresh
         QtGui.QWidget.__init__(self)
         timer = QtCore.QTimer(self)
         timer.timeout.connect(self.rd.update_input)
         timer.timeout.connect(self.update)
         timer.start(1000 / 120)  # Updates 120 times per second
 
+    # Updates the variables in Joystick
     def update(self):
         self.joystick_control = self.sdl_instance.joystick_control
         self.joystick_axis = self.sdl_instance.joystick_axis
