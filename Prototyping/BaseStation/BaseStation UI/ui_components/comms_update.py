@@ -213,8 +213,8 @@ class ArmConnection(UdpConnection):
         Returns the value at the specificed joystick axis. The value will be on
         the scale of 0-1.
         """
-        print self.joys.joystick_control
-        print self.joystick_control_index
+        # print self.joys.joystick_control
+        # print self.joystick_control_index
         val = self.joys.joystick_axis[self.joys.joystick_control[self.joystick_control_index]][axisNum]
         val /= 32768.0 # Scale to -1 .. 1
 
