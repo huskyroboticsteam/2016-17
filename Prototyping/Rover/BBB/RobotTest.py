@@ -97,7 +97,7 @@ class RobotTest(object):
             # raw_input("Press Enter to complete calibration")
 
         self.autonomous_initialized = False
-        self.autonomous = Autonomous()
+        self.autonomous = basicAutonomous()
         self.Sweeper = Servo_Sweep.Servo_Sweep(0.005, 1, 179, "P8_13")
         self.sonar = Sonar.Sonar()
         self.target = None
