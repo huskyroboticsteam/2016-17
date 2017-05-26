@@ -73,28 +73,28 @@ class RobotTest(object):
             ]
         else:
             self.pot_pid = PID.PID(-.7, -0.8, 0)
+            self.nav = Navigation.Navigation(0.60, 0.3166666, 0.14, 0.001, "AIN2")
+            self.r_comms = Robot_comms.Robot_comms("192.168.0.50", 8840, 8841, "<?hh", "<?ff", "<ffffffff", "<?ff?", self.nav)
             self.motors = [
                 BigMotor.BigMotor(1, "P9_21"),
                 BigMotor.BigMotor(2, "P9_16"),
                 BigMotor.BigMotor(3, "P9_14"),
                 BigMotor.BigMotor(4, "P9_22")
                 ]
-            servo_pin_1 = "P9_14"
-            servo_pin_2 = "P9_22"
-            servo_pin_3 = "P9_16"
-            servo_pin_4 = "P9_21"
-            PWM.start(servo_pin_1, 1.5/17.6, 60)
-            PWM.start(servo_pin_2, 1.5/17.6, 60)
-            PWM.start(servo_pin_3, 1.5/17.6, 60)
-            PWM.start(servo_pin_4, 1.5/17.6, 60)
-            raw_input("Press Enter to start calibration")
-            PWM.set_duty_cycle(servo_pin_1, 1.5 * 100/17.6)
-            PWM.set_duty_cycle(servo_pin_2, 1.5 * 100/17.6)
-            PWM.set_duty_cycle(servo_pin_3, 1.5 * 100/17.6)
-            PWM.set_duty_cycle(servo_pin_4, 1.5 * 100/17.6)
-            raw_input("Press Enter to complete calibration")
-            self.nav = Navigation.Navigation(0.60, 0.3166666, 0.14, 0.001, "AIN2")
-            self.r_comms = Robot_comms.Robot_comms("192.168.0.50", 8840, 8841, "<?hh", "<?ff", "<ffffffff", "<?ff?", self.nav)
+            # servo_pin_1 = "P9_14"
+            # servo_pin_2 = "P9_22"
+            # servo_pin_3 = "P9_16"
+            # servo_pin_4 = "P9_21"
+            # PWM.start(servo_pin_1, 1.5/17.6, 60)
+            # PWM.start(servo_pin_2, 1.5/17.6, 60)
+            # PWM.start(servo_pin_3, 1.5/17.6, 60)
+            # PWM.start(servo_pin_4, 1.5/17.6, 60)
+            # raw_input("Press Enter to start calibration")
+            # PWM.set_duty_cycle(servo_pin_1, 1.5 * 100/17.6)
+            # PWM.set_duty_cycle(servo_pin_2, 1.5 * 100/17.6)
+            # PWM.set_duty_cycle(servo_pin_3, 1.5 * 100/17.6)
+            # PWM.set_duty_cycle(servo_pin_4, 1.5 * 100/17.6)
+            # raw_input("Press Enter to complete calibration")
 
         self.autonomous_initialized = False
         self.autonomous = Autonomous()
