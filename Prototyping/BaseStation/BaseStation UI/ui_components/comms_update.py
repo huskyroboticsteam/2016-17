@@ -197,8 +197,7 @@ class ArmConnection(UdpConnection):
         shoulder = - self._joy_axis(1) / 2  # Left stick Y axis
         elbow = self._joy_axis(4) / 2 # Right stick Y axis
         wrist_lift = self._button_axis(1, 3) / 2 # B is down, Y is up (B is right, Y is up)
-        #wrist_rotation = self._hat_axis(4, 5) / 2 # Bumpers
-        wrist_rotation = 0
+        wrist_rotation = self._button_axis(4, 5) / 2 # Bumpers
         hand_grip = self._button_axis(2, 0) / 2 # X- open hand, A- Close hand. (x left, a bottom)
 
         buff = struct.pack("<ffffff", base_rotation, shoulder, elbow, wrist_lift, wrist_rotation, hand_grip)
@@ -213,9 +212,6 @@ class ArmConnection(UdpConnection):
         Returns the value at the specificed joystick axis. The value will be on
         the scale of 0-1.
         """
-        # print self.joys.joystick_control
-        # print self.joystick_control_index
-        print self.joys.joystick_axis[self.joys.joystick_control[self.joystick_control_index]]
         val = self.joys.joystick_axis[self.joys.joystick_control[self.joystick_control_index]][axisNum]
         val /= 32768.0 # Scale to -1 .. 1
 
@@ -245,6 +241,7 @@ class ArmConnection(UdpConnection):
             return 0
 
     def _button_axis(self, forwardBtn, reverseBtn):
+        print self.joys.joystick_button[self.joys.joystick_control[self.joystick_control_index]]
         if self.joys.joystick_button[self.joys.joystick_control[self.joystick_control_index]][forwardBtn]:
             return 1.0
         elif self.joys.joystick_button[self.joys.joystick_control[self.joystick_control_index]][reverseBtn]:
