@@ -7,9 +7,10 @@ class VLCRecorder:
 
         self.url = url
         self.cameraId = cameraId
-        urlA = url.split("Profile")
-        urlA[1] = str(int(urlA[1]) - 1)
-        self.url = urlA[0] + "Profile" + urlA[1]
+        if "admin:1234" in url:
+            urlA = url.split("Profile")
+            urlA[1] = str(int(urlA[1]) - 1)
+            self.url = urlA[0] + "Profile" + urlA[1]
         self.player = None
         self.instantiate_media()
 

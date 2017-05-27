@@ -119,7 +119,7 @@ class PingThread(QtCore.QThread):
         self.paths = paths
         self.update_time = update_time
 
-    def start_work(self):
+    def run(self):
         """
         Pings through all ips in the list, making the ip to boolean map and emitting it
         :return: Emits a dictionary
@@ -148,6 +148,8 @@ class PingThread(QtCore.QThread):
         :param hostname: IP address to ping as a string
         :return: Boolean - true if pinging was successful
         """
+
+        print "Pinging"
 
         ret_code = subprocess.call("ping -w 200 " + hostname,
                                    stdout=open(os.devnull, 'w'),
