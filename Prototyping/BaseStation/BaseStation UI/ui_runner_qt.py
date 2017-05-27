@@ -60,7 +60,8 @@ stop_widget = stop.Stop()
 vlc_widget = UI.Player(setting_widget.get_camera_urls(), 300, 200)
 # IP Pinging List, update specified in milliseconds
 iplist = IPCheckerLayout.IPList({"192.168.0.50": "Rover Main", "192.168.0.90": "Arm Main", "192.168.0.91":
-                                "Science Main", "192.168.0.22": "Eye of Sauron", "192.168.0.15": "Arm Cam"}, 500)
+                                "Science Main", "192.168.0.22": "Eye of Sauron", "192.168.0.42": "Ground Cam",
+                                 "192.168.0.15": "Arm Cam"}, 500)
 arm = arm_widget.arm_widget()
 list_wid = list_widget.ListWidget()
 map = Map.Map(setting_widget.get_map_name())

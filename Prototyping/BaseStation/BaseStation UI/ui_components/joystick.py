@@ -68,7 +68,6 @@ class MapJoysticks(QtGui.QDialog):
             self.update_window()
         else:
             self.update_window()
-            print "Showing window"
             self.show()
 
     def clearLayout(self, layout):
@@ -95,7 +94,6 @@ class SDLInstance:
     # Takes the joystick input and stores in variables
     def update_sdl2(self):
         for event in sdl2.ext.get_events():
-            print "SDL Events"
             if event.type == sdl2.SDL_JOYAXISMOTION:
                 self.joystick_axis[event.jaxis.which][event.jaxis.axis] = event.jaxis.value
                 # print self.joystick_axis
