@@ -193,9 +193,9 @@ class ArmConnection(UdpConnection):
 
         # These mappings are for my Logitech F710 controller. 
         # Change accordingly if your controller is different
-        base_rotation = self._joy_axis(2) / 2  # Triggers
+        base_rotation = self._base_axis(2, 5) / 2 # Triggers
         shoulder = - self._joy_axis(1) / 2  # Left stick Y axis
-        elbow = self._joy_axis(3) / 2 # Right stick Y axis
+        elbow = self._joy_axis(4) / 2 # Right stick Y axis
         wrist_lift = self._button_axis(1, 3) / 2 # B is down, Y is up (B is right, Y is up)
         #wrist_rotation = self._hat_axis(4, 5) / 2 # Bumpers
         wrist_rotation = 0
@@ -215,17 +215,40 @@ class ArmConnection(UdpConnection):
         """
         # print self.joys.joystick_control
         # print self.joystick_control_index
+        print self.joys.joystick_axis[self.joys.joystick_control[self.joystick_control_index]]
         val = self.joys.joystick_axis[self.joys.joystick_control[self.joystick_control_index]][axisNum]
         val /= 32768.0 # Scale to -1 .. 1
 
         # Deadzone
         return 0 if (abs(val) < .10) else val
 
+    def _base_axis(self, axisNum, axis2Num):
+        """
+        Returns the value at the specificed joystick axis. The value will be on
+        the scale of 0-1.
+        """
+        # print self.joys.joystick_control
+        # print self.joystick_control_index
+        val = self.joys.joystick_axis[self.joys.joystick_control[self.joystick_control_index]][axisNum]
+        val2 = self.joys.joystick_axis[self.joys.joystick_control[self.joystick_control_index]][axis2Num]
+        val /= 32768.0 # Scale to -1 .. 1
+        val2 /= 32768.0
+
+        # Deadzone
+        if val < 0.10 and val2 < 0.10:
+            return 0
+        if val < 0.10:
+            return val2
+        if val2 < 0.10:
+            return -val
+        else:
+            return 0
+
     def _button_axis(self, forwardBtn, reverseBtn):
         if self.joys.joystick_button[self.joys.joystick_control[self.joystick_control_index]][forwardBtn]:
-            return 1
+            return 1.0
         elif self.joys.joystick_button[self.joys.joystick_control[self.joystick_control_index]][reverseBtn]:
-            return -1
+            return -1.0
         else:
             return 0
 
