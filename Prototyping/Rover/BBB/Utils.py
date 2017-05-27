@@ -66,6 +66,7 @@ def bearing(start, end):
     return (math.degrees(math.atan2(y, x)) + 360) % 360
 
 
+# TODO: This function isn't correct. Remove?
 # returns the GPS coord of the point dist away from start along bearing
 # start is tuple of floats representing a GPS coord
 # bearing is a float representing a compass direction in degrees
@@ -79,6 +80,38 @@ def point_at_end(start, brng, dist):
     lambda_2 = start[1] + math.atan2(math.sin(brng) * math.sin(dist / R) * math.cos(start_rad[0]),
                                      math.cos(dist / R) - math.sin(start_rad[0]) * math.sin(phi_2))
     return math.degrees(phi_2), (lambda_2 + 540) % 360 - 180
+
+
+def getNewGPS(self, start, bearing, distance):
+    """
+    Source: https://stackoverflow.com/questions/7222382/get-lat-long-given-current-point-distance-and-bearing
+    Returns a tuple representing the a new GPS coordinate translated
+
+    Translation is based on a bearing and distance
+
+    Args:
+        start: A GPS tuple representing the starting coordinate
+        bearing: The angle in degrees representing the direction of location
+        location: The distance in meters from the translated coordinate is from the current
+
+    """
+    R = 6378.1  # Radius of the Earth
+    brng = math.radians(bearing)  # Bearing degrees converted to radians.
+    d = distance / 1000  # Distance in km
+
+    lat1 = math.radians(math.radians(start[0]))  # Current lat point converted to radians
+    lon1 = math.radians(math.radians(start[1]))  # Current long point converted to radians
+
+    lat2 = math.asin(math.sin(lat1) * math.cos(d / R) +
+                     math.cos(lat1) * math.sin(d / R) * math.cos(brng))
+
+    lon2 = lon1 + math.atan2(math.sin(brng) * math.sin(d / R) * math.cos(lat1),
+                             math.cos(d / R) - math.sin(lat1) * math.sin(lat2))
+
+    lat2 = math.degrees(lat2)
+    lon2 = math.degrees(lon2)
+
+    return (lat2, lon2)
 
 
 # find distance between two points using the haversine formula
