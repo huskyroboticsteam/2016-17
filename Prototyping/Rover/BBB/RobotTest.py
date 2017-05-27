@@ -81,21 +81,23 @@ class RobotTest(object):
                 BigMotor.BigMotor(3, "P9_14"),
                 BigMotor.BigMotor(4, "P9_22")
                 ]
-            servo_pin_1 = "P9_14"
-            servo_pin_2 = "P9_22"
-            servo_pin_3 = "P9_16"
-            servo_pin_4 = "P9_21"
-            PWM.start(servo_pin_1, 1.5/17.6, 60)
-            PWM.start(servo_pin_2, 1.5/17.6, 60)
-            PWM.start(servo_pin_3, 1.5/17.6, 60)
-            PWM.start(servo_pin_4, 1.5/17.6, 60)
-            PWM.set_duty_cycle(servo_pin_1, 1.5 * 100/17.6)
-            PWM.set_duty_cycle(servo_pin_2, 1.5 * 100/17.6)
-            PWM.set_duty_cycle(servo_pin_3, 1.5 * 100/17.6)
-            PWM.set_duty_cycle(servo_pin_4, 1.5 * 100/17.6)
+            # servo_pin_1 = "P9_14"
+            # servo_pin_2 = "P9_22"
+            # servo_pin_3 = "P9_16"
+            # servo_pin_4 = "P9_21"
+            # PWM.start(servo_pin_1, 1.5/17.6, 60)
+            # PWM.start(servo_pin_2, 1.5/17.6, 60)
+            # PWM.start(servo_pin_3, 1.5/17.6, 60)
+            # PWM.start(servo_pin_4, 1.5/17.6, 60)
+            # raw_input("Press Enter to start calibration")
+            # PWM.set_duty_cycle(servo_pin_1, 1.5 * 100/17.6)
+            # PWM.set_duty_cycle(servo_pin_2, 1.5 * 100/17.6)
+            # PWM.set_duty_cycle(servo_pin_3, 1.5 * 100/17.6)
+            # PWM.set_duty_cycle(servo_pin_4, 1.5 * 100/17.6)
+            # raw_input("Press Enter to complete calibration")
 
         self.autonomous_initialized = False
-        self.autonomous = Autonomous()
+        self.autonomous = basicAutonomous()
         self.Sweeper = Servo_Sweep.Servo_Sweep(0.005, 1, 179, "P8_13")
         self.sonar = Sonar.Sonar()
         self.target = None

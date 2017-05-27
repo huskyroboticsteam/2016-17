@@ -10,6 +10,18 @@ import signal
 import traceback
 
 Debug = False
+ExpectedRange = (120, 240);
+
+def GetFilename(BoolAddToFile, BoolAddFolder):
+    Lines = [];
+    try:
+        with open("NODELETE_Current.txt") as File:
+            for CurrLine in File:
+                Lines += [CurrLine];
+    except:
+        sys.stdout.write("Record file is missing!\n");
+        return "ERROR_FILE_MISSING.jpg";
+    return "imgs" + str(Lines[0] + 1) + "/" + "img" + str(Lines[1] + 1) + ".jpg";
 
 # Cuts out the specified part of the image to prepare for sharpness calculations.
 def PrepareImageData(ImgData, StartX, StartY, EndX, EndY):
@@ -96,8 +108,8 @@ def UserExit(signal, frame):
     sys.exit(0);
 
 # Simply takes a picture.
-def TakePicture():
-    call(["fswebcam", "-r", "1600x1200", "test060.jpg"]);
+def TakePicture(File):
+    call(["fswebcam", "-r", "1600x1200", File]);
 
 # Sends a "move servo" packet to the BeagleBone. Used for AF.
 def SendServo(NewValue):
@@ -116,20 +128,30 @@ def SendServo(NewValue):
 
 # Executes the AF routine.
 def DoAutofocus():
-    TakePicture();
-    sys.stdout.write("Picture taken, calculating sharpness...\n");
-    Sharpness = TestImage("test060.jpg");
-    sys.stdout.write("Sharpness: " + str(Sharpness) + "\n");
-    SendServo(Sharpness % 360);
-    sys.stdout.write("Packet sent.\n");
-
+    File = GetFilename(True, False);
+    TakePicture(File);
+    if Debug:
+        sys.stdout.write("Picture taken, calculating sharpness...\n");
+    Sharpness = TestImage(File);
+    if Debug:
+        sys.stdout.write("Sharpness: " + str(Sharpness) + "\n");
+    while LimitMoveAndContinue(Cycle(Sharpness)):
+        File = GetFilename(True, False);
+        TakePicture(File);
+        if Debug:
+            sys.stdout.write("Picture taken, calculating sharpness...\n");
+        Sharpness = TestImage(File);
+        if Debug:
+            sys.stdout.write("Sharpness: " + str(Sharpness) + "\n");
+    GetFilename(True, True); # Moves to next folder.
 signal.signal(signal.SIGINT, UserExit)
 
 GPIO.setmode(GPIO.BOARD);
 InputPin = 16;
-GPIO.setup(InputPin, GPIO.IN);
+GPIO.setup(InputPin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN);
 TakePic = False;
 DoAF = False;
+ServoPos = 20;
 
 def CamTrigger(channel):
     global DoAF;
@@ -143,10 +165,60 @@ def CamTrigger(channel):
         TakePic = True;
 
 PicFoci = [];
+FocusIsNear = False;
+MovementQty = 20.000;
+
+# If we're about to exit focus bounds, turn around. Check if movement needs to happen, and do it. Returns False if we're done taking this picture.
+def LimitMoveAndContinue(Movement):
+    global PicFoci;
+    global FocusIsNear;
+    global MovementQty;
+    global ServoPos;
+    global ExpectedRange;
+    if abs(Movement) > 0.25:
+        if (ServoPos + Movement) < ExpectedRange[0] or (ServoPos + Movement) > ExpectedRange[1]:
+            Movement *= -1;
+            MovementQty *= -1; # Keep it going in the new direction.
+        ServoPos += Movement;
+        SendServo(ServoPos % 360);
+        if Debug:
+            sys.stdout.write("Packet sent for servo pos " + str(ServoPos % 360) + ".\n");
+        time.sleep(1);
+        return True;
+    else:
+        PicFoci = [];
+        FocusIsNear = False;
+        MovementQty = 20.000;
+        ServoPos = 0;
+        time.sleep(2);
+        return False;
 
 def Cycle(CurrFocus):
+    global PicFoci;
+    global FocusIsNear;
+    global MovementQty;
     PicFoci += [CurrFocus];
     Avg = AvgList(PicFoci);
+    if len(PicFoci) >= 20:
+        # We've taken 20 pictures, so we're probably OK to stop.
+        # Either we are close enough, or we ran into issues and won't find a good focus point.
+        return 0.000;
+    if PicFoci > (Avg * 1.2):
+        # We are close, slow down, and check direction.
+        if PicFoci[len(PicFoci) - 2] > CurrFocus:
+            # We were better, go back slowly.
+            MovementQty *= -0.75;
+        else:
+            # We are still improving. Slow down to minimize overshoot.
+            MovementQty *= 0.75;
+        FocusIsNear = True;
+    elif FocusIsNear:
+        # Focus was near, no longer. We need to go back.
+        MovementQty *= -0.75;
+        return MovementQty;
+    else:
+        # Focus was not near, and still is not. Keep going.
+        return MovementQty;
 
 def AvgList(List):
     Sum = 0;
@@ -162,7 +234,7 @@ while True:
             DoAutofocus();
             TakePic = False;
         else:
-            TakePicture();
+            TakePicture(GetFilename(True, True));
             TakePic = False;
     time.sleep(0.050);
 GPIO.cleanup();
