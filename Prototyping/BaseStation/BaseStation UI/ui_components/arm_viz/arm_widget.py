@@ -18,10 +18,10 @@ class arm_widget(QtGui.QWidget):
         self.draw_origin = np.array([0, 0, 0])
 
         # Make a new 3d armature with lengths proportional to real arm
-        self.test_armature = Arm(50, Parameter(0, pi), FixedParameter(0),
-                        Arm(50, Parameter(0, pi), FixedParameter(0),
-                        Arm(30, Parameter(0, pi / 4), FixedParameter(0),
-                        Arm(10, Parameter(0, pi / 4), FixedParameter(0)))))
+        self.test_armature = Arm(50, Parameter(0, pi),
+                        Arm(50, Parameter(0, pi),
+                        Arm(30, Parameter(0, pi / 4),
+                        Arm(10, StaticParameter(0)))))
 
         # Make the starting params for the arm
         self.params = self.test_armature.min_parameters()
