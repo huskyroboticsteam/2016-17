@@ -13,7 +13,7 @@ class Scan_Tester:
     def __init__(self):
         self.rotatorh = Servo_Sweep.Servo_Sweep(0.3, 1, 179, "P8_13")
 #        self.rotatorv = Servo_Sweep.Servo_Sweep(0.3, 70, 90, "P8_19")
-        self.scanner = Sonar.Sonar("AIN6")
+        self.scanner = Sonar.Sonar()
 #        self.nav = Navigation.Navigation(0.765555, 0.552777, 0.348333, 0.001, "AIN2")
 
     def run (self):
@@ -44,7 +44,7 @@ class Scan_Tester:
         print "Rover angle: " + str(roverAngle)
 #        print "Real angle: " + str(realAngle)
         print "Raw Distance to obstacle: " + str(distance) + " inches (" + str(distance * 0.0254) + " meters) "
-        print "Psuedo gps: " + str(Utils.point_at_end((0,0), Utils.normalize_angle(roverAngle), disance * 0.0254))
+        print "Psuedo gps: " + str(Utils.getNewGPS((0,0), Utils.normalize_angle(roverAngle), disance * 0.0254))
 #        print "Adjusted Distance to obstacle: " + str(distanceReal) + " inches"
 
     def getDis(self):

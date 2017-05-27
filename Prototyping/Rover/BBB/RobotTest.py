@@ -16,7 +16,7 @@ from autonomous import Autonomous
 from random import random
 from Utils import scale_coords
 import Adafruit_BBIO.PWM as PWM
-import basicAutonomous
+from basicAutonomous import basicAutonomous
 
 class RobotTest(object):
     """
@@ -180,12 +180,7 @@ class RobotTest(object):
                 turn = self.autonomous.go(location, heading)
                 print "turn: ", turn
                 # Smoother turns at low turn, otherwise max turn
-                if abs(turn) < 20:
-                    return 100, turn * 3
-                elif turn > 0:
-                    return 100, 100
-                else:
-                    return 100, -100
+                return 70, max(min(100, turn * 2), -100)
 
         else:
             return self.r_comms.receivedDrive[1], self.r_comms.receivedDrive[2]
