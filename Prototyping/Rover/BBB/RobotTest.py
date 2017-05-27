@@ -16,7 +16,7 @@ from autonomous import Autonomous
 from random import random
 from Utils import scale_coords
 import Adafruit_BBIO.PWM as PWM
-import basicAutonomous
+from basicAutonomous import basicAutonomous
 
 class RobotTest(object):
     """
