@@ -67,7 +67,7 @@ class IPList(QtGui.QWidget):
 
         # Vertically holds the list of friendly names for the ips and indicators
         vbox = QtGui.QVBoxLayout()
-        for key, value in self.map.iteritems():
+        for key, value in sorted(self.map.items(), key=lambda x:x[1]):
             # Holds a single name and indicator pair
             hbox = QtGui.QHBoxLayout()
 
@@ -148,8 +148,6 @@ class PingThread(QtCore.QThread):
         :param hostname: IP address to ping as a string
         :return: Boolean - true if pinging was successful
         """
-
-        print "Pinging"
 
         ret_code = subprocess.call("ping -w 200 " + hostname,
                                    stdout=open(os.devnull, 'w'),
