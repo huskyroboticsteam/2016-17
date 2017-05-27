@@ -16,15 +16,6 @@ ser2.open()
 # Helps automatic baud rate decection
 # ser1.write(bytearray([170]))
 
-def exit_handler():
-    ser1.close()
-    ser2.close()
-    
-    for motor in motors:
-        motor.close()
-    
-atexit.register(exit_handler)
-
 """
 Pin 1- Ground
 Pin 6- System 5V Powers the beagle bone- needs to be set
@@ -32,9 +23,7 @@ Pin 8- Output 5V to power encoders- needs to be set
 Motor controller pins don't change
 Pin 37/39 feedback for linear actators. Connected to pots. Analog
 Pin 3, 5, 7, 9, 11, 13, 15, 17. Paired A then B for encoder feedback. First set is BA
-Base rotation talon connected to 18, 20 and 22- PWM
-- 20 is signal
-- Power is the others
+Base rotation talon connected to 14 - PWM
 """
 
 jointNames = ["base_rotation", "shoulder", "elbow", "wrist_lift", "wrist_rotation", "hand_grip"]
@@ -42,7 +31,7 @@ jointNames = ["base_rotation", "shoulder", "elbow", "wrist_lift", "wrist_rotatio
 # Out means towards full extension
 
 motors = {}
-motors[0] = PWM("P9_99", "P9_99", "P9_99")
+motors[0] = TalonOutput("P9_14")
 motors[1] = Sabertooth(ser1, 130, 0) # Positive is out
 motors[2] = Sabertooth(ser2, 128, 0) # Negitive is out
 motors[3] = Sabertooth(ser2, 128, 4) # Positive is out
@@ -50,4 +39,17 @@ motors[4] = Sabertooth(ser1, 130, 4) # Positive is clockwise
 motors[5] = Sabertooth(ser2, 129, 4) # Positive is out
 
 feedback = {}
-feedback[0] = Encoder()
+#feedback[0] = Encoder()
+
+
+def exit_handler():
+    ser1.close()
+    ser2.close()
+    
+    for i in xrange(len(motors)):
+        try:
+            motors[i].close()
+        except:
+            pass
+    
+atexit.register(exit_handler)

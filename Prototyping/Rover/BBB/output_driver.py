@@ -1,5 +1,6 @@
 import serial
 import Adafruit_BBIO.PWM as PWM
+import Adafruit_BBIO.GPIO as GPIO
 import atexit
 
 class Output:
@@ -44,7 +45,7 @@ class Sabertooth(Output):
 		# Should be 0 or 4
 		self.channel_start = channel 
 
-	def cleanup(self):
+	def close(self):
 		self.write(0)
 		self.ser.close()
 
@@ -63,7 +64,7 @@ class Sabertooth(Output):
 		data = bytearray([self.address, channel, power, checksum])
 		self.ser.write(data)
 
-class PwmOutput(Output):
+class TalonOutput(Output):
     def __init__(self, outputPin, powerPin=None, groundPin=None):
         """
         Pins are strings like 'P9_24'. If power or ground is None, no
@@ -73,7 +74,8 @@ class PwmOutput(Output):
         self.powerPin = powerPin
         self.groundPin = groundPin  
         
-        PWM.start(outputPin, 50)
+        PWM.start(outputPin, 37.5)
+        PWM.set_frequency(outputPin, 1 / .004)
         
         # This may not be nececary, but I've included it anyways
         if powerPin is not None:
@@ -83,13 +85,16 @@ class PwmOutput(Output):
         if groundPin is not None:
             GPIO.setup(groundPin, GPIO.IN)
             GPIO.output(groundPin, GPIO.LOW)
+            
+        self.write(0)
         
     def write(self, value):
-        PWM.set_duty_cycle(outputPin, (value * 50) + 50)
+        output = (value + 1) / 2.0
+        PWM.set_duty_cycle(self.outputPin, 25 + output * 25)
         
     def close(self):
         self.write(0)
-        PWM.stop(outputPin)
+        PWM.stop(self.outputPin)
         
         
 def exit_handler():
