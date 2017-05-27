@@ -180,7 +180,7 @@ class RobotTest(object):
                 turn = self.autonomous.go(location, heading)
                 print "turn: ", turn
                 # Smoother turns at low turn, otherwise max turn
-                return max(min(100, turn * 2), -100)
+                return 70, max(min(100, turn * 2), -100)
 
         else:
             return self.r_comms.receivedDrive[1], self.r_comms.receivedDrive[2]
