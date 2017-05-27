@@ -4,6 +4,7 @@ import Adafruit_BBIO.ADC as ADC
 import Servo_Sweep
 import Sonar
 import Navigation
+import Utils
 
 # This class is used for testing purposes only
 # It tests the servos and sonar for the scanner
@@ -12,13 +13,13 @@ class Scan_Tester:
     def __init__(self):
         self.rotatorh = Servo_Sweep.Servo_Sweep(0.3, 1, 179, "P8_13")
 #        self.rotatorv = Servo_Sweep.Servo_Sweep(0.3, 70, 90, "P8_19")
-        self.scanner = Sonar.Sonar()
-        self.nav = Navigation.Navigation(0.765555, 0.552777, 0.348333, 0.001, "AIN2")
+        self.scanner = Sonar.Sonar("AIN6")
+#        self.nav = Navigation.Navigation(0.765555, 0.552777, 0.348333, 0.001, "AIN2")
 
     def run (self):
         self.rotatorh.move()
 #        self.rotatorv.move()
-        angle = self.rotatorh.getSonarHeading()
+        angle = self.rotatorh.getAngle()
         distance = self.scanner.readDisInch()
 
         print "angle: " + str(angle)
@@ -33,17 +34,18 @@ class Scan_Tester:
         distance = self.scanner.readDisInch()
 #        distanceReal = self.scanner.readTrueDisInch(self.rotatorv.getAngle()-90) # Might need to change this depending on servo position
         roverAngle = 90 - angle
-        realAngle = roverAngle + self.nav.getMag()
-        if(realAngle < 0 ):
-            realAngle = realAngle + 360
-        if(realAngle > 360):
-            realAngle = realAngle - 360
+#        realAngle = roverAngle + self.nav.getMag()
+#        if(realAngle < 0 ):
+#            realAngle = realAngle + 360
+#        if(realAngle > 360):
+#            realAngle = realAngle - 360
 
 
         print "Rover angle: " + str(roverAngle)
-        print "Real angle: " + str(realAngle)
-        print "Raw Distance to obstacle: " + str(distance) + " inches"
-        print "Adjusted Distance to obstacle: " + str(distanceReal) + " inches"
+#        print "Real angle: " + str(realAngle)
+        print "Raw Distance to obstacle: " + str(distance) + " inches (" + str(distance * 0.0254) + " meters) "
+        print "Psuedo gps: " + str(Utils.point_at_end((0,0), Utils.normalize_angle(roverAngle), disance * 0.0254))
+#        print "Adjusted Distance to obstacle: " + str(distanceReal) + " inches"
 
     def getDis(self):
         return self.scanner.readDisInch()

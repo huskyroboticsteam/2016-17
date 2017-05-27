@@ -99,7 +99,7 @@ class RobotTest(object):
         self.autonomous_initialized = False
         self.autonomous = basicAutonomous()
         self.Sweeper = Servo_Sweep.Servo_Sweep(0.005, 1, 179, "P8_13")
-        self.sonar = Sonar.Sonar()
+        self.sonar = Sonar.Sonar("AIN6")
         self.target = None
 
         # Used to keep track of number of obstacles seem in a row
@@ -174,7 +174,7 @@ class RobotTest(object):
                 #     if self.obsCount < 5: # Filters out random garbage values if there even is any
                 #         self.obsCount+= 1
                 #     else: # Add obstacle to autonomous
-                #         self.autonomous.add_obstacle(Utils.point_at_end(location, Utils.normalize_angle(90 - self.Sweeper.currentAngle), self.sonar.readDisM()))
+                #         self.autonomous.add_obstacle(Utils.getNewGPS(location, Utils.normalize_angle(heading + 90 - self.Sweeper.currentAngle), self.sonar.readDisM()))
                 # else: # Sets the obs count to zero saying there hasn't been a obstacle
                 #     self.obsCount = 0
                 turn = self.autonomous.go(location, heading)
