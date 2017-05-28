@@ -17,15 +17,16 @@ from Sensor import Sensor
 from threading import Thread
 
 LIMITS = []
+event_found = False
 
 class Limit(Sensor):
 
     # Sets pin of limit switch
     def __init__(self, pin):
         global LIMITS
-        self._pin = str(pin)
+        self._limitPin = str(pin)
         try:
-            GPIO.setup(self._pin, GPIO.IN)
+            GPIO.setup(self._limitPin, GPIO.IN)
         except:
             # Throw "Could not setup DIO Pin"
             self.critical_status = True
@@ -40,7 +41,7 @@ class Limit(Sensor):
         if self.critical_status:
             return val
         try:
-            val = GPIO.input(self._pin)
+            val = int(GPIO.input(self._limitPin)) == 1  # Ensures boolean
         except:
             # Throw "Could not read DIO Pin"
             Error.throw(0x0003)
@@ -51,15 +52,13 @@ class Limit(Sensor):
         return Util.long_to_byte_length(int(self.getValue()), 1)
 
     def waitForSwitchChange(self, timeout=300):
-        waitingFor = not self.getValue()
-        def wait():
-            if self.getValue():
-                GPIO.wait_for_edge(self._pin, GPIO.RISING)
-            else:
-                GPIO.wait_for_edge(self._pin, GPIO.FALLING)
-        thread = Thread(target=wait)
-        thread.start()
-        thread.join(timeout)
+        global event_found
+        GPIO.add_event_detect(self._limitPin, GPIO.BOTH, callback=eventFound)
+        start_time = time.time()
+        while not event_found and (time.time() - start_time) < timeout:
+            pass
+        event_found = False
+        
 
     @classmethod
     def getAllData(cls):
@@ -69,3 +68,6 @@ class Limit(Sensor):
             data |= int(LIMITS[i].getValue()) << i
         return Util.long_to_byte_length(data, 1)
 
+def eventFound(args):
+    global event_found
+    event_found = True
