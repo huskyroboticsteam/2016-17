@@ -3,6 +3,8 @@ import socket
 import sys
 import math
 import time
+import os
+import struct
 import RPi.GPIO as GPIO
 from subprocess import call
 from binascii import unhexlify
@@ -10,18 +12,32 @@ import signal
 import traceback
 
 Debug = False
-ExpectedRange = (120, 240);
+ExpectedRange = (15, 345);
 
 def GetFilename(BoolAddToFile, BoolAddFolder):
-    Lines = [];
+    FolderNm = "imgs";
+    FileNm = "img";
     try:
-        with open("NODELETE_Current.txt") as File:
-            for CurrLine in File:
-                Lines += [CurrLine];
+        Lines = open("NODELETE_Current.txt").read().splitlines();
+        if Debug:
+            sys.stdout.write("Folder/File: " + str(Lines[0]) + "\n");
+        if BoolAddFolder:
+            Lines[0] = str(int(Lines[0]) + 1);
+            Lines[1] = "0";
+        else:
+            Lines[0] = str(int(Lines[0]));
+            Lines[1] = str(int(Lines[1]) + 1);
+        FolderNm += Lines[0];
+        FileNm += Lines[1] + ".jpg";
+        if BoolAddToFile:
+            open("NODELETE_Current.txt",'w').write('\n'.join(Lines));
     except:
         sys.stdout.write("Record file is missing!\n");
-        return "ERROR_FILE_MISSING.jpg";
-    return "imgs" + str(Lines[0] + 1) + "/" + "img" + str(Lines[1] + 1) + ".jpg";
+        sys.stdout.write(traceback.format_exc());
+        return "ERROR_OVERZEALOUS_DELETION.jpg";
+    if not os.path.exists(FolderNm):
+        os.makedirs(FolderNm);
+    return FolderNm + "/" + FileNm;
 
 # Cuts out the specified part of the image to prepare for sharpness calculations.
 def PrepareImageData(ImgData, StartX, StartY, EndX, EndY):
@@ -110,15 +126,18 @@ def UserExit(signal, frame):
 # Simply takes a picture.
 def TakePicture(File):
     call(["fswebcam", "-r", "1600x1200", File]);
+    pass;
 
 # Sends a "move servo" packet to the BeagleBone. Used for AF.
 def SendServo(NewValue):
     Timestamp = long_to_byte_length(int(time.time()), 4);
     ID = long_to_byte_length(0x81, 1);
     Command = long_to_byte_length(0x02, 1);
-    Value = long_to_byte_length(NewValue, 4);
+    Value = long_to_byte_length(int(NewValue), 4);
     try:
         Sock = socket.socket();
+        #TimeoutVal = struct.pack('ll', 8, 8000000);
+        #Sock.setsockopt(socket.SOL_SOCKET, socket.SO_SNDTIMEO, TimeoutVal)
         Sock.connect(("192.168.0.90", 5000));
         Sock.send(Timestamp + ID + Command + Value);
         Sock.close()
@@ -151,7 +170,7 @@ InputPin = 16;
 GPIO.setup(InputPin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN);
 TakePic = False;
 DoAF = False;
-ServoPos = 20;
+ServoPos = ExpectedRange[0] * (1);
 
 def CamTrigger(channel):
     global DoAF;
@@ -166,7 +185,7 @@ def CamTrigger(channel):
 
 PicFoci = [];
 FocusIsNear = False;
-MovementQty = 20.000;
+MovementQty = 50.000;
 
 # If we're about to exit focus bounds, turn around. Check if movement needs to happen, and do it. Returns False if we're done taking this picture.
 def LimitMoveAndContinue(Movement):
@@ -188,7 +207,7 @@ def LimitMoveAndContinue(Movement):
     else:
         PicFoci = [];
         FocusIsNear = False;
-        MovementQty = 20.000;
+        MovementQty = 50.000;
         ServoPos = 0;
         time.sleep(2);
         return False;
@@ -219,6 +238,7 @@ def Cycle(CurrFocus):
     else:
         # Focus was not near, and still is not. Keep going.
         return MovementQty;
+    return 50.000;
 
 def AvgList(List):
     Sum = 0;
@@ -226,8 +246,25 @@ def AvgList(List):
         Sum += I;
     return (Sum) / len(List);
 
-
+call(["fuser", "/dev/video0", "-k"]);
+GetFilename(True, True);
 GPIO.add_event_detect(InputPin, GPIO.RISING, callback=CamTrigger);
+
+if len(sys.argv) > 0:
+    sys.stdout.write("Arguments given: " + str(sys.argv) + "\n");
+    for Argument in sys.argv:
+        if(Argument == "d"):
+            Debug = True;
+            sys.stdout.write("Debug mode enabled.\n");
+        if(Argument == "a"):
+            TakePic = True;
+            DoAF = True;
+            break;
+        if(Argument == "p"):
+            TakePic = True;
+            DoAF = False;
+            break;  
+
 while True:
     if TakePic:
         if DoAF:
