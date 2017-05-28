@@ -9,8 +9,8 @@ import Util
 
 class Motor:
 
-    Motor.pwm_working = ["P9_14", "P9_16", "P9_42", "P9_21", "P8_13", "P8_19"]
-    Motor.motors = []
+    pwm_working = ["P9_14", "P9_16", "P9_42", "P9_21", "P8_13", "P8_19"]
+    motors = []
 
     def __init__(self, pin, freq=50):
         self._pin = pin
