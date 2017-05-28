@@ -28,6 +28,7 @@ class MoveDrill(Command):
         self._encoder.setDistanceK(0.011)  # From radius of encoder wheel in meters
         if MoveDrill.LIMITS_ON and not self._limit.getValue():
             self._motor.set(-MoveDrill.INITIALIZATION_MOTOR_SPEED_MAX)
+            
             self._limit.waitForSwitchChange(MoveDrill.MAX_TIME_ALLOTTED_INITIALIZATION)
         self._motor.set(0)
         self.ready = True

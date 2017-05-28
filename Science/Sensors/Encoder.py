@@ -121,10 +121,10 @@ class Encoder(Sensor):
         return self._steps * (2 * pi/self._ppr)  * self._angleK
 
     def getAngleBounded(self, maxAngle, units='radians'):
-        angle = self.getAngle() % maxAngle
+        angle = self.getAngle()
         if units=='degrees':
             angle *= 180.0 / pi
-        return angle
+        return angle % maxAngle
 
     # Returns true if the direction the encoder is moving clockwise
     def _isClockwise(self, lastA, lastB, curA, curB):
