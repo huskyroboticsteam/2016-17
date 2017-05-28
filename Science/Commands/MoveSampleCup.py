@@ -21,10 +21,6 @@ class MoveSampleCup(Command):
         Command.__init__(self, PID(kp, ki, kd))
 
     def initialize(self):
-        # Check if the motor is ready for operation
-        if not self._motor.isStarted():
-            self._motor.__init__(self._motor._pin)
-
         # Rotate clockwise until limit is hit (as long as limit plugged in)
         # Reset encoder count
         limitFound = False

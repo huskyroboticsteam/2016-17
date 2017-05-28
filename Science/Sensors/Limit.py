@@ -14,7 +14,7 @@ import Error
 import time
 import Adafruit_BBIO.GPIO as GPIO  # Ignore compiler errors
 from Sensor import Sensor
-
+from threading import Thread
 
 LIMITS = []
 
@@ -52,11 +52,14 @@ class Limit(Sensor):
 
     def waitForSwitchChange(self, timeout=300):
         waitingFor = not self.getValue()
-        if self.getValue():
-            GPIO.wait_for_edge(self._pin, GPIO.RISING)
-        else:
-            GPIO.wait_for_edge(self._pin, GPIO.FALLING)
-        return True
+        def wait():
+            if self.getValue():
+                GPIO.wait_for_edge(self._pin, GPIO.RISING)
+            else:
+                GPIO.wait_for_edge(self._pin, GPIO.FALLING)
+        thread = Thread(target=wait)
+        thread.start()
+        thread.join(timeout)
 
     @classmethod
     def getAllData(cls):

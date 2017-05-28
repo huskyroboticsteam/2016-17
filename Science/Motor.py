@@ -1,5 +1,4 @@
-import Adafruit_GPIO.PWM as PWM
-import Adafruit_BBIO.PWM as PWM_MAIN
+import Adafruit_BBIO.PWM as PWM
 import time
 import Util
 
@@ -10,16 +9,13 @@ import Util
 
 class Motor:
 
-    pwm_handler = PWM.get_platform_pwm()
-    pwm_working = ["P9_14", "P9_16", "P9_42", "P9_21", "P8_13", "P8_19"]
-    motors = []
-    _started = False
+    Motor.pwm_working = ["P9_14", "P9_16", "P9_42", "P9_21", "P8_13", "P8_19"]
+    Motor.motors = []
 
     def __init__(self, pin, freq=50):
         self._pin = pin
-        Motor.pwm_handler.start(self._pin, 0.0, freq)
-        self._started = True
-        self.motors += [self]
+        PWM.start(self._pin, 0.0, freq)
+        Motor.motors += [self]
 
     def enable(self):
         pass
@@ -28,42 +24,40 @@ class Motor:
     Input float % 0 to 1 inclusive
     """
     def set(self, value):
-        Motor.pwm_handler.set_duty_cycle(self._pin, ((value % 100) * 100.0))
+        PWM.set_duty_cycle(self._pin, ((value % 100) * 100.0))
 
     def stop(self):
-        Motor.pwm_handler.stop(self._pin)
+        PWM.stop(self._pin)
 
     def calibrate(self):
         pass
 
     @classmethod
     def getMotors(cls):
-        return cls.motors
+        return Motor.motors
 
     @classmethod
     def enableAll(cls):
-        for motor in cls.motors:
+        for motor in Motor.motors:
             motor.enable()
 
     @classmethod
     def stopAll(cls):
-        for motor in cls.motors:
+        for motor in Motor.motors:
             motor.stop()
-            Motor.pwm_handler.stop(motor._pin)
-        PWM_MAIN.cleanup()
+            PWM.stop(motor._pin)
+        PWM.cleanup()
 
     @classmethod
     def initializeAllPWMPins(cls):
-        PWM_MAIN.cleanup()
+        PWM.cleanup()
         
 
     @classmethod
     def calibrateAll(cls):
-        for motor in cls.motors:
+        for motor in Motor.motors:
             motor.calibrate()
 
-    def isStarted(self):
-        return self._started
 
 """
 Interfaces Beaglebone Black PWM outputs with
@@ -99,9 +93,7 @@ class TalonMC(Motor):
     # -1 to 1 % power
     def set(self, percent_power):
         output = Util.map(percent_power, -1.0, 1.0, 1.0, 99.0)
-        Util.write(output)
-        Util.write(self._pin)
-        PWM_MAIN.set_duty_cycle(self._pin, output)
+        PWM.set_duty_cycle(self._pin, output)
 
 
 

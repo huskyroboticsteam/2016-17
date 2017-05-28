@@ -3,15 +3,15 @@ import Util
 from math import fabs
 from Command import Command
 from PID import PID
-from Motor import TalonMC, Motor
+from Motor import TalonMC
 from math import pi
 
 class RotateArmature(Command):
 
-    LIMITS_ON = True
+    RotateArmature.LIMITS_ON = True
 
-    INITIALIZATION_MOTOR_SPEED_MAX = 0.5  # %/100 MAX VALUE
-    MAX_TIME_ALLOTTED_INITIALIZATION = 10   # SECONDS
+    RotateArmature.INITIALIZATION_MOTOR_SPEED_MAX = 0.15  # %/100 MAX VALUE
+    RotateArmature.MAX_TIME_ALLOTTED_INITIALIZATION = 10   # SECONDS
 
     def __init__(self, armatureMotorPin, encoder, limitSwitch, kp=0, ki=0, kd=0):
         Command.__init__(self, PID(kp, ki, kd))
@@ -22,10 +22,11 @@ class RotateArmature(Command):
 
     def initialize(self):
         self._encoder.setAngleK(0.25)  # From Gear reduction on encoder mount
-        self._motor.set(RotateArmature.INITIALIZATION_MOTOR_SPEED_MAX)
-        Util.write(self._motor._pin)
-        limitFound = self._limit.waitForSwitchChange(RotateArmature.MAX_TIME_ALLOTTED_INITIALIZATION)
+        if RotateArmature.LIMITS_ON:
+            self._motor.set(RotateArmature.INITIALIZATION_MOTOR_SPEED_MAX)
+            self._limit.waitForSwitchChange(RotateArmature.MAX_TIME_ALLOTTED_INITIALIZATION)
         self._motor.set(0.0)
+        self._encoder.reset()  # Resets to 0 degrees
         self.ready = True
 
     def run(self, setpoint):
