@@ -173,17 +173,14 @@ class Robot(object):
                 if location == (0.0, 0.0) or location == (0, 0):
                     print "gps not received, staying still"
                     return 0, 0
-		
                 if self.sonar.readDisM() < self.sonar.getMaxDisM(): # Make sure obstacle is greater than infinity value
                     if self.obsCount < 5: # Filters out random garbage values if there even is any
                         self.obsCount+= 1
                     else: # Add obstacle to autonomous
                         obsHeading = Utils.normalize_angle(heading + 90 - self.Sweeper.currentAngle)
-                       # self.autonomous.add_obstacle(Utils.getNewGPS(location, obsHeading, self.sonar.readDisM()))
-              		self.autonomus.set_target(Utils.getNewGPS(location, obsHeading, self.sonar.readDisM()))
-		else: # Sets the obs count to zero saying there hasn't been a obstacle
+                        self.autonomous.add_obstacle(Utils.getNewGPS(location, obsHeading, self.sonar.readDisM()))
+                else: # Sets the obs count to zero saying there hasn't been a obstacle
                     self.obsCount = 0
-		
                 turn = self.autonomous.go(location, heading)
                 print "turn: ", turn
                 return 70, turn
