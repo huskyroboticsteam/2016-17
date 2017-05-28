@@ -3,6 +3,7 @@ import Adafruit_PCA9685
 import PID
 import math
 import Servo_Sweep
+import Sonar
 import threading
 import MiniMotor
 import BigMotor
@@ -10,11 +11,13 @@ import Robot_comms
 import Navigation
 import Utils
 import sys
+import time
 from autonomous import Autonomous
 from random import random
 from Utils import scale_coords
+import Adafruit_BBIO.PWM as PWM
 
-class Robot(object):
+class RobotTest(object):
     """
     Class for controlling the whole robot.
 
@@ -68,8 +71,8 @@ class Robot(object):
                 MiniMotor.MiniMotor(4, 7, 6, 5, pwm),
             ]
         else:
-            self.pot_pid = PID.PID(-0.3, 0, 0)
-            self.nav = Navigation.Navigation(0.560000002384, 0.325555562973, 0.115000002086, 0.001, "AIN2")
+            self.pot_pid = PID.PID(-.7, -0.4, 0)
+            self.nav = Navigation.Navigation(0.518, 0.322, 0.147, 0.001, "AIN2")
             self.r_comms = Robot_comms.Robot_comms("192.168.0.50", 8840, 8841, "<?hh", "<?ff", "<ffffffff", "<?ff?", self.nav)
             self.motors = [
                 BigMotor.BigMotor(1, "P9_21"),
@@ -77,13 +80,36 @@ class Robot(object):
                 BigMotor.BigMotor(3, "P9_14"),
                 BigMotor.BigMotor(4, "P9_22")
                 ]
+            # servo_pin_1 = "P9_14"
+            # servo_pin_2 = "P9_22"
+            # servo_pin_3 = "P9_16"
+            # servo_pin_4 = "P9_21"
+            # PWM.start(servo_pin_1, 1.5/17.6, 60)
+            # PWM.start(servo_pin_2, 1.5/17.6, 60)
+            # PWM.start(servo_pin_3, 1.5/17.6, 60)
+            # PWM.start(servo_pin_4, 1.5/17.6, 60)
+            # raw_input("Press Enter to start calibration")
+            # PWM.set_duty_cycle(servo_pin_1, 1.5 * 100/17.6)
+            # PWM.set_duty_cycle(servo_pin_2, 1.5 * 100/17.6)
+            # PWM.set_duty_cycle(servo_pin_3, 1.5 * 100/17.6)
+            # PWM.set_duty_cycle(servo_pin_4, 1.5 * 100/17.6)
+            # raw_input("Press Enter to complete calibration")
+
         self.autonomous_initialized = False
         self.autonomous = Autonomous()
-        self.Sweeper = Servo_Sweep.Servo_Sweep(0.005, 1, 179, "P8_13")
+        self.Sweeper = Servo_Sweep.Servo_Sweep(10.0, 1, 179, "P8_13", -10)
+        # TODO Get PWM working for vertical servo
+        self.sonar = Sonar.Sonar("AIN6")
         self.target = None
+
+        # Used to keep track of number of obstacles seem in a row
+        self.obsCount = 0
 
     def moveServo(self):
         self.Sweeper.move()
+
+    def stopServo(self):
+        self.Sweeper.stop()
 
     def driveMotor(self, motor_id, motor_val):
         """
@@ -109,7 +135,7 @@ class Robot(object):
         if motor_id < 1 or motor_id > 4:
             print "bad motor num: " + motor_id
             return
-        self.motors[motor_id].set_motor_exactly(0)
+        self.motors[motor_id - 1].set_motor_exactly(0)
 
     def getDriveParms(self):
         """
@@ -120,31 +146,48 @@ class Robot(object):
                 For the turn value, 100 is full right, -100 is full left, and 0
                 is straight.
         """
-        if self.r_comms.receivedDrive is None:
-            return 0, 0
-        auto = self.r_comms.receivedDrive[0]
-        if auto:
-            location = (self.r_comms.lat, self.r_comms.longitude)
+        # if self.r_comms.receivedDrive is None:
+        #     return 0, 0
+        # auto = self.r_comms.receivedDrive[0]
+        if True:
+            time.sleep(.4)
+            location = self.nav.getGPS()
+            if location is None:
+                location = (0, 0)
             if not self.autonomous_initialized:
                 # TODO: read target from wireless
-                target = (random(), random())
-                # TODO: get obstacles from wireless or sensor
-                obstacles = []
-                self.autonomous.set_target(scale_coords(self.target, self.target))
-                self.autonomous.clear_all_obstacles()
-                for coord in obstacles:
-                    self.autonomous.add_obstacle(scale_coords(coord, self.target))
+                self.target = (47.65324833333333, -122.307635)
+                self.autonomous.set_target(self.target)
                 self.autonomous_initialized = True
-            if self.autonomous.is_done(scale_coords(location, self.target)):
+            if self.autonomous.is_done(location):
                 # Reached the target
-                self.autonomous_initialized = False
                 # sends back "we're here" signal
-                self.r_comms.sendAtLocationPacket(self.get_nav())
+                print "arrived at desired location"
+                self.r_comms.sendAtLocationPacket(self.nav)
                 return 0, 0
             else:
                 heading = self.nav.getMag()
-                turn = self.autonomous.go(scale_coords(location, self.target), heading) * -1
-                return 100, turn
+                #print "heading: ", heading
+                #print "location: ", location
+                #print "desired location: ", self.target
+                if location == (0.0, 0.0) or location == (0, 0):
+                    print "gps not received, staying still"
+                    return 0, 0
+		
+                if self.sonar.readDisM() < self.sonar.getMaxDisM(): # Make sure obstacle is greater than infinity value
+                    if self.obsCount < 5: # Filters out random garbage values if there even is any
+                        self.obsCount+= 1
+                    else: # Add obstacle to autonomous
+                        obsHeading = Utils.normalize_angle(heading + 90 - self.Sweeper.currentAngle)
+                       # self.autonomous.add_obstacle(Utils.getNewGPS(location, obsHeading, self.sonar.readDisM()))
+              		self.autonomus.set_target(Utils.getNewGPS(location, obsHeading, self.sonar.readDisM()))
+		else: # Sets the obs count to zero saying there hasn't been a obstacle
+                    self.obsCount = 0
+		
+                turn = self.autonomous.go(location, heading)
+                print "turn: ", turn
+                return 70, turn
+
         else:
             return self.r_comms.receivedDrive[1], self.r_comms.receivedDrive[2]
 
@@ -158,7 +201,7 @@ class Robot(object):
                                                     self.nav.get_pot_right() - self.nav.get_pot_middle(), 100, -100)
             self.pot_pid.run(scaledPotReading)
             finalTurn = self.pot_pid.getOutput()
-            print str(driveParms)
+            #print str(driveParms)
             result = (self.scale_motor_val(driveParms[0] + finalTurn),
                       self.scale_motor_val(driveParms[0] - finalTurn),
                       self.scale_motor_val(driveParms[0] - finalTurn),
@@ -169,12 +212,12 @@ class Robot(object):
             # Potentiometer error
             # reset PID:
             self.pot_pid.setTarget(0)
-            print str(driveParms)
+            #print str(driveParms)
             result = (self.scale_motor_val(driveParms[0] + driveParms[1]),
                       self.scale_motor_val(driveParms[0] - driveParms[1]),
                       self.scale_motor_val(driveParms[0] - driveParms[1]),
                       self.scale_motor_val(driveParms[0] + driveParms[1]))
-            print str(result)
+            #print str(result)
             return result
 
     @staticmethod
@@ -254,7 +297,7 @@ class DriveThread(threading.Thread):
     """
     def __init__(self, drive_params, is_using_big_motor):
         super(DriveThread, self).__init__()
-        self.robot = Robot(is_using_big_motor)
+        self.robot = RobotTest(is_using_big_motor)
         self.drive_params = drive_params
 
     def run(self):
@@ -292,14 +335,15 @@ def main():
             drive_params.stop()
             drive_thread.join()
     else:
-        robot = Robot(sys.argv[1])
+        robot = RobotTest(sys.argv[1])
         try:
             while True:
-                robot.moveServo() # Might not move very fast with print statements
+                robot.moveServo()
                 robot.get_robot_comms().receiveData(robot.get_nav())
                 robot.get_robot_comms().sendData(robot.get_nav())
                 driveParms = robot.getDriveParms()
                 MotorParms = robot.convertParmsToMotorVals(driveParms)
+                print "motor parms: ", MotorParms
                 for i in range(1, 5):
                     robot.driveMotor(i, MotorParms[i - 1])
 
@@ -309,6 +353,8 @@ def main():
                     robot.stopMotor(i)
                 except:
                     print("motor: " + str(i) + " disconnected")
+            robot.stopServo()
+            PWM.cleanup()
             robot.r_comms.closeConn()
             print "exiting"
 
