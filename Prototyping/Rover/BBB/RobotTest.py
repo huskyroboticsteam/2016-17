@@ -71,7 +71,7 @@ class RobotTest(object):
                 MiniMotor.MiniMotor(4, 7, 6, 5, pwm),
             ]
         else:
-            self.pot_pid = PID.PID(-.7, -0.8, 0)
+            self.pot_pid = PID.PID(-.7, -0.4, 0)
             self.nav = Navigation.Navigation(0.518, 0.322, 0.147, 0.001, "AIN2")
             self.r_comms = Robot_comms.Robot_comms("192.168.0.50", 8840, 8841, "<?hh", "<?ff", "<ffffffff", "<?ff?", self.nav)
             self.motors = [
