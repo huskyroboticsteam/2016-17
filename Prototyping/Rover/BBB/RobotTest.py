@@ -97,7 +97,7 @@ class RobotTest(object):
 
         self.autonomous_initialized = False
         self.autonomous = Autonomous()
-        self.Sweeper = Servo_Sweep.Servo_Sweep(2.0, 1, 179, "P8_13", 0)
+        self.Sweeper = Servo_Sweep.Servo_Sweep(2.0, 1, 179, "P8_13", -10)
         # TODO Get PWM working for vertical servo
         self.sonar = Sonar.Sonar("AIN6")
         self.target = None

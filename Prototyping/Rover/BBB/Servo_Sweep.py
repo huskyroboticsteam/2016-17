@@ -63,6 +63,7 @@ class Servo_Sweep(object):
 
 
 def main():
+    local_pin = raw_input('Enter pin servo is located in: ')
     runner = Servo_Sweep(0.2, 1, 179, "P8_13", 0)
     choice = raw_input('Chose test mode \n 0 for auto servo move \n 1 for manual servo move')
     if choice == "0":
@@ -71,6 +72,8 @@ def main():
     else:
         while True:
             angle = raw_input("Angle (0 to 180 x to exit):")
+            duty_span = 11.5
+            duty_min = 3
             if angle == 'x':
                 PWM.stop(servo_pin)
                 PWM.cleanup()
