@@ -50,7 +50,7 @@ class SonarTest:
 
 def main():
     choice = raw_input('Choose Read Value: \n 0: Analog \n 1: Inches \n 2: Centimeters \n')
-    caller = Sonar.Sonar()
+    caller = Sonar.Sonar('AIN6')
     if choice[0] == '0':
         while True:
             print str(caller.readAna())
