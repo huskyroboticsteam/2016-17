@@ -146,10 +146,10 @@ class RobotTest(object):
                 For the turn value, 100 is full right, -100 is full left, and 0
                 is straight.
         """
-        # if self.r_comms.receivedDrive is None:
-        #     return 0, 0
-        # auto = self.r_comms.receivedDrive[0]
-        if True:
+        if self.r_comms.receivedDrive is None:
+             return 0, 0
+        auto = self.r_comms.receivedDrive[0]
+        if auto:
             time.sleep(.4)
             location = self.nav.getGPS()
             if location is None:
