@@ -1,4 +1,5 @@
 import sys
+import time
 import Error
 import Util
 import Parse
@@ -11,13 +12,13 @@ from Sensors.UV_Sensor import UV
 from Sensors.Encoder import Encoder
 from Sensors.Limit import Limit
 from Sensors.Sensor import SensorHandler
+from Commands.ReleaseSample import ReleaseSample
 from Commands.DrillCtrl import DrillCtrl
 from Commands.CamFocus import CamFocus
 from Commands.MoveDrill import MoveDrill
 from Commands.SystemControl import SystemControl
 from Commands.RotateArmature import RotateArmature
 from Commands.MoveSampleCup import MoveSampleCup
-from Commands.ReleaseSample import ReleaseSample
 from Commands.Command import Command
 from CommHandler import CommHandler
 from Packet import Packet, PacketType
@@ -73,19 +74,19 @@ SensorHandler.startAll()
 
 # Create Command Interface
 # Command creation will cause initialization to have this order:
-armatureController = MoveDrill("P8_19", DistanceSensor, 0, 0, 0)
-drillController = DrillCtrl("P8_13", encoder1, limit1, 0, 0, 0)
-rotateArmature = RotateArmature("P9_16", limit2, encoder2, 0, 0, 0)
-moveSampleCup = MoveSampleCup("P9_21", limit3, encoder3, 0, 0, 0)
-releaseSample = ReleaseSample("P9_14")
-camFocusCommand = CamFocus("P8_16")
-systemControl = SystemControl("P9_15")
+armatureController = MoveDrill("P8_19", DistanceSensor, limit3, 0, 0, 0)  # Motor 2
+rotateArmature = RotateArmature("P9_16", encoder2, limit2, 0, 0, 0)  # Motor 3
+moveSampleCup = MoveSampleCup("P9_14", limit1, encoder3, 0, 0, 0)  # Motor 4
+drillController = DrillCtrl("P8_13")  # Motor 1
+releaseSample = ReleaseSample("P9_21")  # Motor 6
+camFocusCommand = CamFocus("P9_42")  # Motor 5
+systemControl = SystemControl("P9_15")  # GPIO
+
 
 # Initialize All Commands (Set machine to relaxed state)
 Command.initializeAll()
 # Start All Commands
 Command.startAll()
-
 # Enable all Motors
 Motor.enableAll()
 
@@ -110,5 +111,7 @@ while True:
     systemPacket = Packet(PacketType.SystemTelemetry)
     systemPacket.appendData(SystemTelemetry.getTelemetryData())
     CommHandler.addCyclePacket(systemPacket)
+
+    time.sleep(0.02)
 
     sys.stdout.flush()

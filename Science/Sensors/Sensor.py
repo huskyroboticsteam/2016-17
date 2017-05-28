@@ -1,5 +1,4 @@
 import Util
-from Limit import Limit
 
 class Sensor:
 
@@ -81,9 +80,7 @@ class SensorHandler:
     def getAuxSensorData(cls):
         data = bytearray()
         for sensor in cls._auxSensors:
-            if not isinstance(sensor, Limit):
-                buffer = sensor.getDataForPacket()
-                Util.appendBytearray(data, buffer)
-        Util.appendBytearray(data, Limit.getAllData())
+            buffer = sensor.getDataForPacket()
+            Util.appendBytearray(data, buffer)
         return data
 

@@ -13,12 +13,11 @@ class Motor:
     pwm_handler = PWM.get_platform_pwm()
     pwm_working = ["P9_14", "P9_16", "P9_42", "P9_21", "P8_13", "P8_19"]
     motors = []
-    _freq = 2000
     _started = False
 
-    def __init__(self, pin):
+    def __init__(self, pin, freq=50):
         self._pin = pin
-        self.pwm_handler.start(self._pin, 0.0)
+        Motor.pwm_handler.start(self._pin, 0.0, freq)
         self._started = True
         self.motors += [self]
 
@@ -29,17 +28,13 @@ class Motor:
     Input float % 0 to 1 inclusive
     """
     def set(self, value):
-        self.pwm_handler.set_duty_cycle(self._pin, ((value % 100) * 100.0))
+        Motor.pwm_handler.set_duty_cycle(self._pin, ((value % 100) * 100.0))
 
     def stop(self):
-        self.pwm_handler.stop(self._pin)
+        Motor.pwm_handler.stop(self._pin)
 
     def calibrate(self):
         pass
-
-    def setFreq(self, freq):
-        self.pwm_handler.set_frequency(self._pin, freq)
-        self._freq = freq
 
     @classmethod
     def getMotors(cls):
@@ -54,13 +49,11 @@ class Motor:
     def stopAll(cls):
         for motor in cls.motors:
             motor.stop()
-            cls.pwm_handler.stop(motor._pin)
-        cls.pwm_handler.cleanup()
+            Motor.pwm_handler.stop(motor._pin)
+        PWM_MAIN.cleanup()
 
     @classmethod
     def initializeAllPWMPins(cls):
-        for pin in cls.pwm_working:
-            cls.pwm_handler.stop(pin)
         PWM_MAIN.cleanup()
         
 
@@ -95,14 +88,21 @@ Page 29 has PWM Calibration information
 
 class TalonMC(Motor):
 
-    _freq = 4000  # from the Talon spec
 
     def __init__(self, pin):
-        Motor.__init__(self, pin)
-        self._calibration = TalonCalibration(self._pin)
+        Motor.__init__(self, pin, 333)
+        self._calibration = TalonCalibration(self)
 
     def calibrate(self):
         self._calibration.calibrate()
+
+    # -1 to 1 % power
+    def set(self, percent_power):
+        output = Util.map(percent_power, -1.0, 1.0, 1.0, 99.0)
+        Util.write(output)
+        Util.write(self._pin)
+        PWM_MAIN.set_duty_cycle(self._pin, output)
+
 
 
 """
@@ -112,8 +112,8 @@ class TalonMC(Motor):
 
 class Servo(Motor):
 
-    _minDutyCycle = 3.0
-    _maxDutyCycle = 14.5
+    _minDutyCycle = 1.0
+    _maxDutyCycle = 4.0
 
     def __init__(self, pin):
         Motor.__init__(self, pin)
@@ -126,7 +126,7 @@ class Servo(Motor):
 
     def moveTo(self, angle):
         dutyCycle = 100 - ((angle / 180.0) * (self._maxDutyCycle - self._minDutyCycle) + self._minDutyCycle)
-        self.pwm_handler.set_duty_cycle(self._pin, dutyCycle)
+        self.set(dutyCycle / 100.0)
 
 
 """
@@ -152,8 +152,9 @@ class TalonCalibration:
 
     def calibrate(self):
         start_time = time.time()
-        while time.time() - start_time < 0.5:
+        while time.time() - start_time < 5:
             self._motor.set(1.0)
         start_time = time.time()
-        while time.time() - start_time < 0.5:
-            self._motor.set(0.0)
+        while time.time() - start_time < 5:
+            self._motor.set(-1.0)
+        self._motor.set(0.0)

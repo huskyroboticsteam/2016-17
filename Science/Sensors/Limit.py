@@ -11,6 +11,7 @@ Questions/Comments? Email: jadenjb@uw.edu
 """
 import Util
 import Error
+import time
 import Adafruit_BBIO.GPIO as GPIO  # Ignore compiler errors
 from Sensor import Sensor
 
@@ -48,6 +49,14 @@ class Limit(Sensor):
     # Returns data for packet
     def getDataForPacket(self):
         return Util.long_to_byte_length(int(self.getValue()), 1)
+
+    def waitForSwitchChange(self, timeout=300):
+        waitingFor = not self.getValue()
+        if self.getValue():
+            GPIO.wait_for_edge(self._pin, GPIO.RISING)
+        else:
+            GPIO.wait_for_edge(self._pin, GPIO.FALLING)
+        return True
 
     @classmethod
     def getAllData(cls):

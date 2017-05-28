@@ -45,6 +45,9 @@ class PID:
 
     # Initializes coefficients and sets target to 0
     def __init__(self, kP, kI, kD):
+        self._p = 0
+        self._i = 0
+        self._d = 0
         self.setCoefficients(kP, kI, kD)
         self._target = 0.0
         self._lastError = 0.0
@@ -98,7 +101,7 @@ class PID:
     def restrainOutput(self, output):
         return output % 1
 
-    def getError():
+    def getError(self):
         return self._lastError
 
     # Returns output between (+/-)restraint (-inf,inf)

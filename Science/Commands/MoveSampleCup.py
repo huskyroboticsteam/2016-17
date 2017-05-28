@@ -3,7 +3,7 @@ import Parse
 import Error
 import Util
 from Packet import AuxCtrlID
-from Command import Command
+from Commands.Command import Command
 from Motor import TalonMC
 from PID import PID
 
@@ -11,7 +11,7 @@ from PID import PID
 class MoveSampleCup(Command):
 
     LIMITS_ON = True
-    INITIALIZATION_MOTOR_SPEED_MAX = 0.25
+    INITIALIZATION_MOTOR_SPEED_MAX = 0.05
 
     def __init__(self, motor_pin, limitSwitch, encoder, kp=0, ki=0, kd=0):
         self._motor = TalonMC(motor_pin)
@@ -24,9 +24,11 @@ class MoveSampleCup(Command):
         # Check if the motor is ready for operation
         if not self._motor.isStarted():
             self._motor.__init__(self._motor._pin)
+
         # Rotate clockwise until limit is hit (as long as limit plugged in)
         # Reset encoder count
         limitFound = False
+        """
         while not limitFound and not self._limit.critical_status and MoveSampleCup.LIMITS_ON:
             if self._limit.getValue():
                 limitFound = True
@@ -34,11 +36,15 @@ class MoveSampleCup(Command):
         if limitFound:
             self._encoder.reset()
         self.ready = True
+        """
 
     def run(self, setpoint):
+        """
         self._pid.setTarget(setpoint)
         self._pid.run(self._encoder.getAngle())
         self._motor.set(self._pid.getOutput())
+        """
+        pass
 
     def setpoint(self, setpoint=None):
         self._setpoint = Parse.aux_ctrl[AuxCtrlID.MoveSampleCup + 1]

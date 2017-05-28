@@ -29,7 +29,7 @@ toHigh = upper bound of new range
 TESTED? [YES]
 """
 def map(input, fromLow, fromHigh, toLow, toHigh):
-    return toLow + ((float(input - fromLow)/(fromHigh - fromLow)) * (toHigh - toLow))
+    return toLow + ((float(toHigh - toLow)/(fromHigh - fromLow)) * (input - fromLow))
 
 
 """
