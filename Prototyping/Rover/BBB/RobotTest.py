@@ -177,7 +177,7 @@ class RobotTest(object):
                 #     if self.obsCount < 5: # Filters out random garbage values if there even is any
                 #         self.obsCount+= 1
                 #     else: # Add obstacle to autonomous
-                #         obsHeading = Utils.normalize_angle(heading + 90 - self.Sweeper.currentAngle)
+                #         obsHeading = Utils.normalize_angle(heading + 90 - self.Sweeper.getAngle)
                 #         self.autonomous.add_obstacle(Utils.getNewGPS(location, obsHeading, self.sonar.readDisM()))
                 # else: # Sets the obs count to zero saying there hasn't been a obstacle
                 #     self.obsCount = 0
