@@ -14,8 +14,7 @@ class CamFocus(Command):
         Command.__init__(self)
 
     def initialize(self):
-        if not self._motor.isStarted():
-            self._motor.__init__(self._motor._pin)
+        pass
 
     def run(self, setpoint):
         self._motor.moveTo(setpoint)

@@ -23,6 +23,7 @@ class Marker:
         self.zoom_level = zoom_level
         self.coordX = lat
         self.coordY = long
+        self.color = color
         self.pen = QtGui.QPen(color)
 
     def draw(self, painter):
@@ -45,3 +46,4 @@ class Marker:
 
     def set_color(self, color):
         self.pen = QtGui.QPen(color)
+        self.color = color

@@ -47,6 +47,8 @@ class ConnectionManager:
         # Kill the thread
         self.drive.quit()
 
+        self.arm.killing = True
+        self.arm.kill()
         self.arm.quit()
 
 
@@ -181,24 +183,31 @@ class ArmConnection(UdpConnection):
         self.joys = joystick.getJoysticks()
         self.joys.start()
 
+        self.killing = False
+
         self.joystick_control_index = joystick_control_index
+
+    def kill(self):
+        for i in xrange(6):
+            buff = struct.pack("<ffffff", 0, 0, 0, 0, 0, 0)
+            self.sock.sendto(buff, (self.host, self.port))
 
     def send_message(self):
         if not self.joys.ready:
             return
         # Don't run if joystick not plugged in
-        if self.joys.joystick_control[self.joystick_control_index] is None:
+        if self.joys.joystick_control[self.joystick_control_index] is None or self.killing:
             # print "Arm joystick not plugged in"
             return
 
         # These mappings are for my Logitech F710 controller. 
         # Change accordingly if your controller is different
-        base_rotation = self._base_axis(2, 5) / 2 # Triggers
+        base_rotation = self._base_axis(2, 5) / -2 # Triggers
         shoulder = - self._joy_axis(1) / 2  # Left stick Y axis
-        elbow = self._joy_axis(4) / 2 # Right stick Y axis
-        wrist_lift = self._button_axis(1, 3) / 2 # B is down, Y is up (B is right, Y is up)
-        wrist_rotation = self._button_axis(4, 5) / 2 # Bumpers
-        hand_grip = self._button_axis(2, 0) / 2 # X- open hand, A- Close hand. (x left, a bottom)
+        elbow = self._joy_axis(4) / -2 # Right stick Y axis
+        wrist_lift = self._button_axis(2, 0) / 2 # X- open hand, A- Close hand. (x left, a bottom)
+        wrist_rotation = self._button_axis(4, 5) / -4 # Bumpers
+        hand_grip = self._button_axis(1, 3) # B is down, Y is up (B is right, Y is up)
 
         buff = struct.pack("<ffffff", base_rotation, shoulder, elbow, wrist_lift, wrist_rotation, hand_grip)
 

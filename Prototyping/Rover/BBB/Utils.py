@@ -82,7 +82,7 @@ def point_at_end(start, brng, dist):
     return math.degrees(phi_2), (lambda_2 + 540) % 360 - 180
 
 
-def getNewGPS(self, start, bearing, distance):
+def getNewGPS(start, bearing, distance):
     """
     Source: https://stackoverflow.com/questions/7222382/get-lat-long-given-current-point-distance-and-bearing
     Returns a tuple representing the a new GPS coordinate translated
@@ -92,15 +92,15 @@ def getNewGPS(self, start, bearing, distance):
     Args:
         start: A GPS tuple representing the starting coordinate
         bearing: The angle in degrees representing the direction of location
-        location: The distance in meters from the translated coordinate is from the current
+        distance: The distance in meters from the translated coordinate is from the current
 
     """
     R = 6378.1  # Radius of the Earth
     brng = math.radians(bearing)  # Bearing degrees converted to radians.
     d = distance / 1000  # Distance in km
 
-    lat1 = math.radians(math.radians(start[0]))  # Current lat point converted to radians
-    lon1 = math.radians(math.radians(start[1]))  # Current long point converted to radians
+    lat1 = math.radians(start[0])  # Current lat point converted to radians
+    lon1 = math.radians(start[1])  # Current long point converted to radians
 
     lat2 = math.asin(math.sin(lat1) * math.cos(d / R) +
                      math.cos(lat1) * math.sin(d / R) * math.cos(brng))

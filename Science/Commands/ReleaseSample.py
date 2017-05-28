@@ -10,8 +10,7 @@ class ReleaseSample(Command):
         Command.__init__(self)
 
     def initialize(self):
-        if not self._motor.isStarted():
-            self._motor.__init__(self._motor._pin)
+        pass
         #self._motor.moveTo(0.0)
 
     def run(self, setpoint):

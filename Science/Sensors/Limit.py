@@ -14,18 +14,20 @@ import Error
 import time
 import Adafruit_BBIO.GPIO as GPIO  # Ignore compiler errors
 from Sensor import Sensor
-
+from threading import Thread
 
 LIMITS = []
 
 class Limit(Sensor):
 
+    event_found = False
+
     # Sets pin of limit switch
     def __init__(self, pin):
         global LIMITS
-        self._pin = str(pin)
+        self._limitPin = str(pin)
         try:
-            GPIO.setup(self._pin, GPIO.IN)
+            GPIO.setup(self._limitPin, GPIO.IN)
         except:
             # Throw "Could not setup DIO Pin"
             self.critical_status = True
@@ -40,7 +42,7 @@ class Limit(Sensor):
         if self.critical_status:
             return val
         try:
-            val = GPIO.input(self._pin)
+            val = int(GPIO.input(self._limitPin)) == 1  # Ensures boolean
         except:
             # Throw "Could not read DIO Pin"
             Error.throw(0x0003)
@@ -51,12 +53,11 @@ class Limit(Sensor):
         return Util.long_to_byte_length(int(self.getValue()), 1)
 
     def waitForSwitchChange(self, timeout=300):
-        waitingFor = not self.getValue()
-        if self.getValue():
-            GPIO.wait_for_edge(self._pin, GPIO.RISING)
-        else:
-            GPIO.wait_for_edge(self._pin, GPIO.FALLING)
-        return True
+        GPIO.remove_event_detect(self._limitPin)
+        GPIO.add_event_detect(self._limitPin, GPIO.BOTH)
+        start_time = time.time()
+        while not GPIO.event_detected(self._limitPin) and (time.time() - start_time) < timeout:
+            pass
 
     @classmethod
     def getAllData(cls):
@@ -65,4 +66,3 @@ class Limit(Sensor):
         for i in range(0, len(LIMITS)):
             data |= int(LIMITS[i].getValue()) << i
         return Util.long_to_byte_length(data, 1)
-

@@ -3,9 +3,20 @@ import serial
 import Adafruit_BBIO.UART as UART
 import Adafruit_BBIO.ADC as ADC
 from time import sleep
-UART.setup("UART1")
-ser = serial.Serial('/dev/ttyO1', 9600)
+#UART.setup("UART1")
+#ser = serial.Serial('/dev/ttyO1', 9600)
 
+'''
+Used to read sonar values from analog
+Values can be in many different scales
+
+Used by:
+    SonarTest.py
+    Robot.py
+    RobotTest.py
+    Scan_Tester.py
+
+'''
 
 class Sonar:
     def __init__(self, pin):
