@@ -51,9 +51,9 @@ Thermocouple = Thermocouple("P9_22", "P9_17", "P9_18")
 DistanceSensor = DistanceSensor()
 HumiditySensor = Humidity("AIN1")
 HumiditySensor.setup(1, 0)  # Setup Humidity Calibration
-encoder1 = Encoder("P8_22", "P8_24", 40)
-encoder2 = Encoder("P8_28", "P8_30", 40)
-encoder3 = Encoder("P8_34", "P8_36", 40)
+encoder1 = Encoder("P8_14", "P8_16", 40)
+encoder2 = Encoder("P8_17", "P8_18", 40)
+encoder3 = Encoder("P8_7", "P8_9", 40)
 limit1 = Limit("P8_12")
 limit2 = Limit("P8_10")
 limit3 = Limit("P8_8")
@@ -73,11 +73,11 @@ SensorHandler.setupAll()
 SensorHandler.startAll()
 
 # Create Command Interface
-# Command creation will cause initialization to have this order:
-armatureController = MoveDrill("P8_19", DistanceSensor, limit3, 0, 0, 0)  # Motor 2
+# IMPORTANT!!!: Order of command creation will cause initialization to have this order:
 rotateArmature = RotateArmature("P9_16", encoder2, limit2, 0, 0, 0)  # Motor 3
+armatureController = MoveDrill("P8_13", DistanceSensor, encoder1, limit3, 0, 0, 0)  # Motor 2
 moveSampleCup = MoveSampleCup("P9_14", limit1, encoder3, 0, 0, 0)  # Motor 4
-drillController = DrillCtrl("P8_13")  # Motor 1
+drillController = DrillCtrl("P8_19")  # Motor 1
 releaseSample = ReleaseSample("P9_21")  # Motor 6
 camFocusCommand = CamFocus("P9_42")  # Motor 5
 systemControl = SystemControl("P9_15")  # GPIO

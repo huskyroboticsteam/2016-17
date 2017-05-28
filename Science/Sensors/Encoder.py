@@ -41,8 +41,8 @@ class Encoder(Sensor):
     def __init__(self, pinA, pinB, ppr):
         self._pinA = pinA      # integer value for A channel
         self._pinB = pinB      # integer value for B channel
-        GPIO.setup(self._pinA, GPIO.IN)  # sets input GPIO pins
-        GPIO.setup(self._pinB, GPIO.IN)  # sets input GPIO pins
+        GPIO.setup(self._pinA, GPIO.IN, pull_up_down=GPIO.PUD_OFF)  # sets input GPIO pins
+        GPIO.setup(self._pinB, GPIO.IN, pull_up_down=GPIO.PUD_OFF)  # sets input GPIO pins
         self._ppr = float(ppr) # pulses per revolution of the encoder
         self._steps = 0        # signed number of steps/pulses encoder has recorded
         self._distK = 1        # K Constant for distance multiplication
@@ -106,10 +106,11 @@ class Encoder(Sensor):
         self._lastA = curA
         self._lastB = curB
 
-    # This method sets a constant whose product with the accumulated angle is
-    # the distance traveled
-    def setDistanceK(self, distK):
-        self._distK = distK
+    # Takes in RADIUS of encoder shaft (or gear) to calculate the distance travelled
+    # by the encoder wheel. Useful for measuring distance relative to the starting position
+    # / the last time reset() was called
+    def setDistanceK(self, radius):
+        self._distK = 2*pi*radius / self._ppr
 
     def setAngleK(self, angleK):
         self._angleK = angleK
@@ -130,8 +131,8 @@ class Encoder(Sensor):
         return not ((curA != lastA and curA != curB) \
                 or (curB != lastB and curA == curB))
 
-    # Returns distance moved as though it were a disk with radius "_distK"
-    # Set "_distK" in self.setDistanceK(...)
+    # Returns distance moved as though it were a disk with radius r
+    # set in self.setDistanceK(...)
     def getDistance(self):
         return self._steps * self._distK
 

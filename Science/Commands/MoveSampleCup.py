@@ -11,7 +11,8 @@ from PID import PID
 class MoveSampleCup(Command):
 
     LIMITS_ON = True
-    INITIALIZATION_MOTOR_SPEED_MAX = 0.05
+    INITIALIZATION_MOTOR_SPEED_MAX = 0.15
+    MAX_TIME_ALLOTTED_INITIALIZATION = 15
 
     def __init__(self, motor_pin, limitSwitch, encoder, kp=0, ki=0, kd=0):
         self._motor = TalonMC(motor_pin)
@@ -23,16 +24,13 @@ class MoveSampleCup(Command):
     def initialize(self):
         # Rotate clockwise until limit is hit (as long as limit plugged in)
         # Reset encoder count
-        limitFound = False
-        """
-        while not limitFound and not self._limit.critical_status and MoveSampleCup.LIMITS_ON:
-            if self._limit.getValue():
-                limitFound = True
-            self._motor.set(-MoveSampleCup.INITIALIZATION_MOTOR_SPEED_MAX)
-        if limitFound:
-            self._encoder.reset()
+        self._encoder.setAngleK(0.25)  # From Gear reduction on encoder mount
+        if MoveSampleCup.LIMITS_ON and not self._limit.getValue():
+            self._motor.set(MoveSampleCup.INITIALIZATION_MOTOR_SPEED_MAX)
+            self._limit.waitForSwitchChange(MoveSampleCup.MAX_TIME_ALLOTTED_INITIALIZATION)
+        self._motor.set(0.0)
+        self._encoder.reset()  # Resets to 0 degrees
         self.ready = True
-        """
 
     def run(self, setpoint):
         """
