@@ -259,11 +259,9 @@ if len(sys.argv) > 0:
         if(Argument == "a"):
             TakePic = True;
             DoAF = True;
-            break;
         if(Argument == "p"):
             TakePic = True;
             DoAF = False;
-            break;  
 
 while True:
     if TakePic:
