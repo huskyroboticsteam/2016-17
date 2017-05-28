@@ -95,7 +95,7 @@ class _MagnetometerUpdaterThread(threading.Thread):
         self.daemon = True
         self.magnetometer = magnetometer
         self.heading_history = []
-        self.heading_history_max_length = 10
+        self.heading_history_max_length = 3
         self.update_interval = 0.1
 
     def run(self):
