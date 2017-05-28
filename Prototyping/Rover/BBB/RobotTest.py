@@ -72,7 +72,7 @@ class RobotTest(object):
             ]
         else:
             self.pot_pid = PID.PID(-.7, -0.8, 0)
-            self.nav = Navigation.Navigation(0.60, 0.3166666, 0.14, 0.001, "AIN2")
+            self.nav = Navigation.Navigation(0.518, 0.322, 0.147, 0.001, "AIN2")
             self.r_comms = Robot_comms.Robot_comms("192.168.0.50", 8840, 8841, "<?hh", "<?ff", "<ffffffff", "<?ff?", self.nav)
             self.motors = [
                 BigMotor.BigMotor(1, "P9_21"),
@@ -152,7 +152,7 @@ class RobotTest(object):
                 location = (0, 0)
             if not self.autonomous_initialized:
                 # TODO: read target from wireless
-                self.target = (47.6530883, -122.30722)
+                self.target = (47.653133, -122.307038)
                 self.autonomous.set_target(self.target)
                 self.autonomous_initialized = True
             if self.autonomous.is_done(location):
