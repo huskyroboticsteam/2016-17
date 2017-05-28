@@ -53,9 +53,12 @@ class Navigation:
     # returns -1 if error
     def readPot(self):
         result = self.POT_MIDDLE - ADC.read(self.POT_PIN)
-        if result > self.POT_MIDDLE - self.POT_RIGHT or result < self.POT_MIDDLE - self.POT_LEFT:
-            return -1
-        return result
+        if result > self.POT_MIDDLE - self.POT_RIGHT:
+            return self.POT_MIDDLE - self.POT_RIGHT
+        elif result < self.POT_MIDDLE - self.POT_LEFT:
+            return self.POT_MIDDLE - self.POT_LEFT
+        else:
+            return result
 
     # returns heading of front body or -1 if error
     def getMag(self):
