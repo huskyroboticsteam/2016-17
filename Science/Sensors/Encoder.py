@@ -126,6 +126,15 @@ class Encoder(Sensor):
             angle *= 180.0 / pi
         return angle % maxAngle
 
+    def getAngleDegrees(self):
+        return self.getAngle() * (180.0 / pi)
+   
+    def getAngleInNegativeRange(self):
+        angle = 180.0 - self.getAngleBounded(360.0, 'degrees')
+        if angle == -180:
+            angle *= -1
+        return angle
+    
     # Returns true if the direction the encoder is moving clockwise
     def _isClockwise(self, lastA, lastB, curA, curB):
         return not ((curA != lastA and curA != curB) \
