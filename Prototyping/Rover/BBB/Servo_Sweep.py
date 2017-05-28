@@ -34,9 +34,10 @@ class Servo_Sweep(object):
         self.right = min
         self.center = (max + min) / 2
         self.clockwise = False
-        self.currentAngle = 90.0
+        self.currentAngle = 1.0
         self.pin = pin
         self.offset = offset
+
 
     # Moves the servo back and forth
     def move(self):
@@ -55,7 +56,7 @@ class Servo_Sweep(object):
         PWM.set_duty_cycle(self.servo_pin, duty)
 
     def getAngle(self):
-        return self.currentAngle + self.offset
+        return self.currentAngle * self.offset
 
     def stop(self):
         PWM.stop(self.pin)
@@ -64,14 +65,15 @@ class Servo_Sweep(object):
 
 def main():
     local_pin = raw_input('Enter pin servo is located in: ')
-    runner = Servo_Sweep(0.2, 1, 179, "P8_13", 0)
+    runner = Servo_Sweep(0.2, 1, 179, local_pin, 0)
+    servo_pin = local_pin
     choice = raw_input('Chose test mode \n 0 for auto servo move \n 1 for manual servo move')
     if choice == "0":
         while True:
             runner.move()
     else:
         while True:
-            angle = raw_input("Angle (0 to 180 x to exit):")
+            angle = raw_input("Angle (0 to 180 x to exit): ")
             duty_span = 11.5
             duty_min = 3
             if angle == 'x':

@@ -11,7 +11,7 @@ import Utils
 
 class Scan_Tester:
     def __init__(self):
-        self.rotatorh = Servo_Sweep.Servo_Sweep(0.3, 1, 179, "P8_13", -10)
+        self.rotatorh = Servo_Sweep.Servo_Sweep(0.3, 1, 179, "P8_13", 1.125)
 #        self.rotatorv = Servo_Sweep.Servo_Sweep(0.3, 70, 90, "P8_19", 0)
         self.scanner = Sonar.Sonar("AIN6")
 #        self.nav = Navigation.Navigation(0.765555, 0.552777, 0.348333, 0.001, "AIN2")
