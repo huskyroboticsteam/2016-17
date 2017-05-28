@@ -63,7 +63,7 @@ class Servo_Sweep(object):
 
 
 def main():
-    runner = Servo_Sweep(0.2, 1, 179, "P8_13")
+    runner = Servo_Sweep(0.2, 1, 179, "P8_13", 0)
     choice = raw_input('Chose test mode \n 0 for auto servo move \n 1 for manual servo move')
     if choice == "0":
         while True:
