@@ -97,7 +97,8 @@ class RobotTest(object):
 
         self.autonomous_initialized = False
         self.autonomous = Autonomous()
-        self.Sweeper = Servo_Sweep.Servo_Sweep(0.005, 1, 179, "P8_13")
+        self.Sweeper = Servo_Sweep.Servo_Sweep(2.0, 1, 179, "P8_13", 0)
+        # TODO Get PWM working for vertical servo
         self.sonar = Sonar.Sonar("AIN6")
         self.target = None
 
@@ -106,6 +107,9 @@ class RobotTest(object):
 
     def moveServo(self):
         self.Sweeper.move()
+
+    def stopServo(self):
+        self.Sweeper.stop()
 
     def driveMotor(self, motor_id, motor_val):
         """
@@ -173,7 +177,8 @@ class RobotTest(object):
                 #     if self.obsCount < 5: # Filters out random garbage values if there even is any
                 #         self.obsCount+= 1
                 #     else: # Add obstacle to autonomous
-                #         self.autonomous.add_obstacle(Utils.getNewGPS(location, Utils.normalize_angle(heading + 90 - self.Sweeper.currentAngle), self.sonar.readDisM()))
+                #         obsHeading = Utils.normalize_angle(heading + 90 - self.Sweeper.currentAngle)
+                #         self.autonomous.add_obstacle(Utils.getNewGPS(location, obsHeading, self.sonar.readDisM()))
                 # else: # Sets the obs count to zero saying there hasn't been a obstacle
                 #     self.obsCount = 0
                 turn = self.autonomous.go(location, heading)
@@ -345,6 +350,7 @@ def main():
                     robot.stopMotor(i)
                 except:
                     print("motor: " + str(i) + " disconnected")
+            robot.stopServo()
             PWM.cleanup()
             robot.r_comms.closeConn()
             print "exiting"
