@@ -17,7 +17,7 @@ from random import random
 from Utils import scale_coords
 import Adafruit_BBIO.PWM as PWM
 
-class RobotTest(object):
+class Robot(object):
     """
     Class for controlling the whole robot.
 
@@ -297,7 +297,7 @@ class DriveThread(threading.Thread):
     """
     def __init__(self, drive_params, is_using_big_motor):
         super(DriveThread, self).__init__()
-        self.robot = RobotTest(is_using_big_motor)
+        self.robot = Robot(is_using_big_motor)
         self.drive_params = drive_params
 
     def run(self):
@@ -335,7 +335,7 @@ def main():
             drive_params.stop()
             drive_thread.join()
     else:
-        robot = RobotTest(sys.argv[1])
+        robot = Robot(sys.argv[1])
         try:
             while True:
                 robot.moveServo()
