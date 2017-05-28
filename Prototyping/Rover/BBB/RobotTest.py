@@ -16,7 +16,6 @@ from autonomous import Autonomous
 from random import random
 from Utils import scale_coords
 import Adafruit_BBIO.PWM as PWM
-from basicAutonomous import basicAutonomous
 
 class RobotTest(object):
     """
@@ -97,7 +96,7 @@ class RobotTest(object):
             # raw_input("Press Enter to complete calibration")
 
         self.autonomous_initialized = False
-        self.autonomous = basicAutonomous()
+        self.autonomous = Autonomous()
         self.Sweeper = Servo_Sweep.Servo_Sweep(0.005, 1, 179, "P8_13")
         self.sonar = Sonar.Sonar("AIN6")
         self.target = None
@@ -179,8 +178,7 @@ class RobotTest(object):
                 #     self.obsCount = 0
                 turn = self.autonomous.go(location, heading)
                 print "turn: ", turn
-                # Smoother turns at low turn, otherwise max turn
-                return 70, max(min(100, turn * 2), -100)
+                return 70, turn
 
         else:
             return self.r_comms.receivedDrive[1], self.r_comms.receivedDrive[2]
