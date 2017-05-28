@@ -17,9 +17,10 @@ from Sensor import Sensor
 from threading import Thread
 
 LIMITS = []
-event_found = False
 
 class Limit(Sensor):
+
+    event_found = False
 
     # Sets pin of limit switch
     def __init__(self, pin):
@@ -52,13 +53,11 @@ class Limit(Sensor):
         return Util.long_to_byte_length(int(self.getValue()), 1)
 
     def waitForSwitchChange(self, timeout=300):
-        global event_found
-        GPIO.add_event_detect(self._limitPin, GPIO.BOTH, callback=eventFound)
+        GPIO.remove_event_detect(self._limitPin)
+        GPIO.add_event_detect(self._limitPin, GPIO.BOTH)
         start_time = time.time()
-        while not event_found and (time.time() - start_time) < timeout:
+        while not GPIO.event_detected(self._limitPin) and (time.time() - start_time) < timeout:
             pass
-        event_found = False
-        
 
     @classmethod
     def getAllData(cls):
@@ -67,7 +66,3 @@ class Limit(Sensor):
         for i in range(0, len(LIMITS)):
             data |= int(LIMITS[i].getValue()) << i
         return Util.long_to_byte_length(data, 1)
-
-def eventFound(args):
-    global event_found
-    event_found = True
