@@ -5,14 +5,14 @@ import math
 import time
 import os
 import struct
-import RPi.GPIO as GPIO
+# import RPi.GPIO as GPIO #<platform>
 from subprocess import call
 from binascii import unhexlify
 import signal
 import traceback
 
 Debug = False
-ExpectedRange = (15, 345);
+ExpectedRange = (90, 225);
 
 def GetFilename(BoolAddToFile, BoolAddFolder):
     FolderNm = "imgs";
@@ -86,6 +86,12 @@ def TestImage(File):
         sys.stdout.write("Calculated sharpness: " + str(SharpnessBas) + "\n");
     return SharpnessBas;
 
+def FakeImage():
+    FakeValues = [51116, 47931, 48354, 48792, 50671, 47892, 40102, 40863, 43109, 46631, 39613, 42914, 39940, 43754, 44793, 44170, 46007, 51511, 43228, 39744, 40873, 45067, 47988, 42363, 42916, 43172, 47291, 45896, 46850, 45183, 45729, 41245, 50210, 52495, 47536, 45695, 48008, 43642, 44849, 41600, 44970, 44671, 41289, 39644, 45333, 42699, 46530, 49093, 48331, 44409, 48998, 48565, 39850, 47529, 46387, 49292, 40966, 40997, 50828, 40451, 50618, 50496, 39269, 46406, 41950, 41289, 45614, 51213, 52066, 52924, 47108, 52148, 47210, 46298, 53342, 51481, 40690, 51413, 41615, 44942, 47313, 49308, 42190, 46430, 49575, 50559, 40843, 51275, 43865, 44705, 53003, 42781, 50581, 42241, 50723, 45741, 53149, 43518, 52466, 51123, 52266, 50872, 45569, 52801, 50861, 40116, 46406, 53177, 40452, 53222, 47152, 52292, 46346, 47341, 44145, 48080, 44444, 42155, 42890, 55138, 55135, 41764, 48764, 47284, 47679, 45514, 43888, 42137, 48348, 50406, 54700, 51694, 45192, 42369, 41455, 52459, 50785, 49567, 49214, 49280, 50292, 54029, 49299, 50839, 51361, 48398, 48862, 49348, 44907, 56284, 55173, 43894, 53196, 43287, 50944, 48137, 53419, 50207, 47996, 53508, 46178, 49269, 54191, 47464, 43327, 42730, 48598, 50851, 54734, 53175, 41846, 54224, 49965, 53448, 43054, 48924, 46580, 42703, 53252, 47288, 47008, 49109, 53949, 56153, 56164, 52665, 56629, 51547, 45214, 48041, 47283, 44178, 45030, 48929, 50515, 54572, 58549, 49198, 47593, 58325, 52783, 44438, 51960, 51227, 55239, 49901, 48800, 59262, 58962, 59157, 52768, 53617, 52958, 51804, 79112, 72806, 106617, 121564, 211783, 510948, 878183, 1936569, 1097830, 485215, 92455, 71501, 62339, 72318, 67332, 54635, 53578, 46378, 53904, 50400, 44736, 57467, 46124, 44454, 48401, 52328, 50535, 47863, 50880, 54408, 46953, 51617, 43791, 52957, 54115, 47796, 46324, 44832, 56296, 42503, 42163, 51149, 54866, 50148, 46947, 45386, 49164, 47030, 45707, 43302, 47682, 54375, 48084, 46334, 52906, 46886, 54390, 46496, 48711, 53289, 52855, 44622, 43045, 47239, 52563, 42826, 42981, 51978, 40903, 51820, 39538, 42653, 51288, 49755, 41813, 49812, 49453, 46341, 49457, 51687, 47153, 42381, 43632, 45133, 48278, 52429, 44464, 49650, 51289, 47762, 47152, 46297, 41378, 40439, 49653, 39638, 41240, 40631, 44372, 47440, 41448, 47914, 45467, 46654, 51111, 44831, 47156, 42576, 38752, 40816, 47715, 44883, 41097, 45126, 50917, 46968, 44512, 47370, 50415, 43412, 45777, 47388, 48698, 51617, 39196, 40173, 48008, 42791, 45687, 39866, 49690, 44428, 49794, 49345, 49416, 45290, 49968, 47767, 44017, 49639, 43142, 44279, 47092, 49534, 46814, 49078, 42608];
+    if Debug:
+        sys.stdout.write("Faking image sharpness, servo at " + str(ServoPos) + ", so returning " + str(FakeValues[int(ServoPos % 360)]) + ".\n");
+    return FakeValues[int(ServoPos % 360)];
+
 # Calculates sharpness for a list of images.
 def TestImageSet(Min, Max):
     Images = [];
@@ -120,12 +126,12 @@ def long_to_byte_length(val, byte_length, endianness='big'):
 
 def UserExit(signal, frame):
     sys.stdout.write("Ctrl+C detected, exiting...\n");
-    GPIO.cleanup();
+    #GPIO.cleanup(); #<platform>
     sys.exit(0);
 
 # Simply takes a picture.
 def TakePicture(File):
-    call(["fswebcam", "-r", "1600x1200", File]);
+    call(["fswebcam", "-r", "1600x1200", File]); #<platform>
     pass;
 
 # Sends a "move servo" packet to the BeagleBone. Used for AF.
@@ -138,39 +144,42 @@ def SendServo(NewValue):
         Sock = socket.socket();
         #TimeoutVal = struct.pack('ll', 8, 8000000);
         #Sock.setsockopt(socket.SOL_SOCKET, socket.SO_SNDTIMEO, TimeoutVal)
-        Sock.connect(("192.168.0.90", 5000));
-        Sock.send(Timestamp + ID + Command + Value);
-        Sock.close()
+        #Sock.connect(("192.168.0.90", 5000)); #<platform>
+        #Sock.send(Timestamp + ID + Command + Value); #<platform>
+        #Sock.close() #<platform>
     except:
         sys.stdout.write("Something went wrong when sending packet.\n");
         sys.stdout.write(traceback.format_exc());
 
 # Executes the AF routine.
 def DoAutofocus():
-    File = GetFilename(True, False);
+    """File = GetFilename(True, False);
     TakePicture(File);
     if Debug:
         sys.stdout.write("Picture taken, calculating sharpness...\n");
     Sharpness = TestImage(File);
     if Debug:
-        sys.stdout.write("Sharpness: " + str(Sharpness) + "\n");
+        sys.stdout.write("Sharpness: " + str(Sharpness) + "\n");"""
+    Sharpness = FakeImage();
+    LimitMoveAndContinue(Cycle(Sharpness));
     while LimitMoveAndContinue(Cycle(Sharpness)):
-        File = GetFilename(True, False);
+        Sharpness = FakeImage();
+        """File = GetFilename(True, False);
         TakePicture(File);
         if Debug:
             sys.stdout.write("Picture taken, calculating sharpness...\n");
         Sharpness = TestImage(File);
         if Debug:
-            sys.stdout.write("Sharpness: " + str(Sharpness) + "\n");
-    GetFilename(True, True); # Moves to next folder.
+            sys.stdout.write("Sharpness: " + str(Sharpness) + "\n");"""
+    #GetFilename(True, True); # Moves to next folder.
 signal.signal(signal.SIGINT, UserExit)
 
-GPIO.setmode(GPIO.BOARD);
+#GPIO.setmode(GPIO.BOARD); #<platform>
 InputPin = 16;
-GPIO.setup(InputPin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN);
+#GPIO.setup(InputPin, GPIO.IN, pull_up_down=GPIO.PUD_DOWN); #<platform>
 TakePic = False;
 DoAF = False;
-ServoPos = ExpectedRange[0] * (1);
+ServoPos = ExpectedRange[0];
 
 def CamTrigger(channel):
     global DoAF;
@@ -184,19 +193,23 @@ def CamTrigger(channel):
         TakePic = True;
 
 PicFoci = [];
+ServoPositions = [];
 FocusIsNear = False;
-MovementQty = 50.000;
+FocusWasVeryGood = False;
+MovementQty = 25.000;
 
 # If we're about to exit focus bounds, turn around. Check if movement needs to happen, and do it. Returns False if we're done taking this picture.
 def LimitMoveAndContinue(Movement):
     global PicFoci;
+    global ServoPositions;
     global FocusIsNear;
     global MovementQty;
     global ServoPos;
     global ExpectedRange;
-    if abs(Movement) > 0.25:
+    global FocusWasVeryGood;
+    if abs(Movement) > 0.75:
         if (ServoPos + Movement) < ExpectedRange[0] or (ServoPos + Movement) > ExpectedRange[1]:
-            Movement *= -1;
+            Movement *= -0.5;
             MovementQty *= -1; # Keep it going in the new direction.
         ServoPos += Movement;
         SendServo(ServoPos % 360);
@@ -205,40 +218,73 @@ def LimitMoveAndContinue(Movement):
         time.sleep(1);
         return True;
     else:
+        if Debug:
+            sys.stdout.write("Tested servo positions: " + str(ServoPositions) + "\n");
         PicFoci = [];
+        ServoPositions = [];
         FocusIsNear = False;
-        MovementQty = 50.000;
+        FocusWasVeryGood = False;
+        MovementQty = 25.000;
         ServoPos = 0;
         time.sleep(2);
         return False;
 
 def Cycle(CurrFocus):
     global PicFoci;
+    global ServoPositions;
     global FocusIsNear;
+    global FocusWasVeryGood;
     global MovementQty;
+    global ServoPos;
     PicFoci += [CurrFocus];
+    ServoPos = int(ServoPos);
+    ServoPositions += [ServoPos];
     Avg = AvgList(PicFoci);
-    if len(PicFoci) >= 20:
-        # We've taken 20 pictures, so we're probably OK to stop.
+    if len(PicFoci) >= 40:
+        # We've taken 40 pictures, so we're probably OK to stop.
         # Either we are close enough, or we ran into issues and won't find a good focus point.
+        if Debug:
+            sys.stdout.write("[C] We've taken 40 pictures, giving up.\n");
         return 0.000;
-    if PicFoci > (Avg * 1.2):
+    if CurrFocus > (Avg * 1.2):
         # We are close, slow down, and check direction.
-        if PicFoci[len(PicFoci) - 2] > CurrFocus:
-            # We were better, go back slowly.
-            MovementQty *= -0.75;
+        if PicFoci[len(PicFoci) - 2] > CurrFocus * 1.05:
+            if Debug:
+                sys.stdout.write("[C] Close, but we were better. Moving back slowly.\n");
+            MovementQty *= -0.6;
         else:
-            # We are still improving. Slow down to minimize overshoot.
-            MovementQty *= 0.75;
+            if Debug:
+                sys.stdout.write("[C] Close, we are still improving. Slowing down to minimize overshoot.\n");
+            if FocusIsNear: # We were already close, slow down significantly.
+                if CurrFocus > (Avg * 5):
+                    if Debug:
+                        sys.stdout.write("[C] Focus is very good. Slowing down quite a bit.\n");
+                    FocusWasVeryGood = True;
+                    MovementQty *= 0.5;
+                if abs(MovementQty) < 3:
+                    if Debug:
+                        sys.stdout.write("[C] We're already moving slow. Not stopping yet.\n");
+                    # We're already quite slow, don't slow as much.
+                    MovementQty *= (1 / MovementQty);
+                else:
+                    if FocusWasVeryGood:
+                        MovementQty *= -0.5;
+                    else:
+                        MovementQty *= 0.5;
+            else: # We just got near. Slow down a bit less.
+                MovementQty *= 0.6;
         FocusIsNear = True;
     elif FocusIsNear:
-        # Focus was near, no longer. We need to go back.
-        MovementQty *= -0.75;
+        if Debug:
+            sys.stdout.write("[C] Focus was near, no longer. We need to go back.\n");
+        MovementQty *= -0.95;
+        FocusIsNear = False;
         return MovementQty;
     else:
-        # Focus was not near, and still is not. Keep going.
+        if Debug:
+            sys.stdout.write("[C] Focus was not near, and still is not. Keep going.\n");
         return MovementQty;
-    return 50.000;
+    return MovementQty;
 
 def AvgList(List):
     Sum = 0;
@@ -246,9 +292,9 @@ def AvgList(List):
         Sum += I;
     return (Sum) / len(List);
 
-call(["fuser", "/dev/video0", "-k"]);
+#call(["fuser", "/dev/video0", "-k"]); #<platform>
 GetFilename(True, True);
-GPIO.add_event_detect(InputPin, GPIO.RISING, callback=CamTrigger);
+#GPIO.add_event_detect(InputPin, GPIO.RISING, callback=CamTrigger); #<platform>
 
 if len(sys.argv) > 0:
     sys.stdout.write("Arguments given: " + str(sys.argv) + "\n");
@@ -272,4 +318,4 @@ while True:
             TakePicture(GetFilename(True, True));
             TakePic = False;
     time.sleep(0.050);
-GPIO.cleanup();
+#GPIO.cleanup(); #<platform>
