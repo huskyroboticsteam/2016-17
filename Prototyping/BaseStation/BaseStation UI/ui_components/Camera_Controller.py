@@ -8,10 +8,11 @@ max_speed = 100
 
 
 class CameraMove(QtCore.QThread):
-    def __init__(self, js, camera_ip, username, password):
+    def __init__(self, js, joystick_num, camera_ip, username, password):
         super(self.__class__, self).__init__()
         self.cam = PTZCamera(camera_ip, username, password)
         self.js = js
+        self.js_num = joystick_num
         self.x_speed = 0
         self.y_speed = 0
 
@@ -21,8 +22,8 @@ class CameraMove(QtCore.QThread):
             self.msleep(10)
 
     def move(self):
-        if self.js.ready and self.js.joystick_control[0] is not None:
-            hat_val = self.js.joystick_hat[self.js.joystick_control[0]]
+        if self.js.ready and self.js.joystick_control[self.js_num] is not None:
+            hat_val = self.js.joystick_hat[self.js.joystick_control[self.js_num]]
 
             changed = False
 

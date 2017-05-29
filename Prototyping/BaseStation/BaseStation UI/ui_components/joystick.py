@@ -16,10 +16,10 @@ class MapJoysticks(QtGui.QDialog):
         self.instruction_layout = QtGui.QVBoxLayout()
         self.main.addLayout(self.instruction_layout)
         self.instruction_layout.addWidget(
-            QtGui.QLabel("Click a button and then press any button on a joystick to map it"))
+            QtGui.QLabel("Click a button and then press any button on a joystick to map it."))
         self.button_box = None
-        self.maxjoys = 3
-        self.joyNames = ["Camera Joystick", "Drive Joystick", "Arm Joystick"]
+        self.maxjoys = 4
+        self.joyNames = ["Sauron Joystick", "Ground Cam Joystick", "Drive Joystick", "Arm Joystick"]
 
         # Assign initial joys values
         for i in range(self.maxjoys):

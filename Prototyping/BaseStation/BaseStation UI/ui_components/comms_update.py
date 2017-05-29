@@ -19,10 +19,10 @@ class ConnectionManager:
         # Kill the thread when the work is done
         self.auto.finished.connect(self.auto.quit)
 
-        self.drive = DriveConnection(self.ROVER_HOST, self.ROVER_PORT, 1) # Last param specifies joystick number
+        self.drive = DriveConnection(self.ROVER_HOST, self.ROVER_PORT, 2) # Last param specifies joystick number
         self.drive.start()
 
-        self.arm = ArmConnection(self.ARM_HOST, self.ARM_PORT, 2)
+        self.arm = ArmConnection(self.ARM_HOST, self.ARM_PORT, 3)
         self.arm.start()
 
         self.science = ScienceConnection("192.168.0.1", self.SCIENCE_PORT)
