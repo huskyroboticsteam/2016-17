@@ -62,6 +62,7 @@ Parse Auxilliary Ctrl Packet
 """
 def parse_aux(msg):
     global aux_ctrl    
+    cmd_id = 0
     # Set Timestamp
     aux_ctrl[0] = Util.bytesToInt(msg.data, 0, 4)
     # Get Command ID at byte pos 5
@@ -69,7 +70,6 @@ def parse_aux(msg):
     # Get Command Value
     cmd_value = Util.bytesToInt(msg.data, 6, 10)
     aux_ctrl[cmd_id + 1] = cmd_value
-    Util.write(aux_ctrl)
 
 
 """

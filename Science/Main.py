@@ -74,9 +74,9 @@ SensorHandler.startAll()
 
 # Create Command Interface
 # IMPORTANT!!!: Order of command creation will cause initialization to have this order:
-rotateArmature = RotateArmature("P9_16", encoder2, limit2, 0, 0, 0)  # Motor 3
-armatureController = MoveDrill("P8_13", DistanceSensor, encoder1, limit3, 0.1, 0.1, 0.1)  # Motor 2
-moveSampleCup = MoveSampleCup("P9_14", limit1, encoder3, 0, 0, 0)  # Motor 4
+rotateArmature = RotateArmature("P9_16", encoder2, limit2, 0.2, 0.01, 0.01)  # Motor 3
+armatureController = MoveDrill("P8_13", DistanceSensor, encoder1, limit3, 0.05, 0.01, 0.01)  # Motor 2
+moveSampleCup = MoveSampleCup("P9_14", limit1, encoder3, 0.001, 0.0055, 0)  # Motor 4
 drillController = DrillCtrl("P8_19")  # Motor 1
 releaseSample = ReleaseSample("P9_21")  # Motor 6
 camFocusCommand = CamFocus("P9_42")  # Motor 5

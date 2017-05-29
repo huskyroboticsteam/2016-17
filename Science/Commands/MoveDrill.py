@@ -34,19 +34,21 @@ class MoveDrill(Command):
         self.ready = True
         self._encoder.reset()
         self._motor.set(0.15)
-        time.sleep(1)
+        time.sleep(4)
         self._motor.set(0)
 
     def run(self, setpoint):
-        if self.last_setpoint != setpoint:
-            Util.write(setpoint)
         self.last_setpoint = setpoint
         if setpoint == -1 or not self.ready:
             self.initialize()
         self._pid.setTarget(setpoint)
         self.currentPos = self._encoder.getDistance()
         self._pid.run(self.currentPos)
-        #self.motor.set(self._pid.getOutput())
+        output = self._pid.getOutput()
+        if self._limit.getValue() and output < 0:
+            self._motor.set(0.0)  # For safety
+        else:
+            self._motor.set(output)
 
     def setpoint(self, setpoint=None):
         self._setpoint = Parse.aux_ctrl[AuxCtrlID.MoveDrill + 1]  # Setpoint distance in mm

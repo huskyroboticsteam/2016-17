@@ -24,7 +24,7 @@ class Motor:
     Input float % 0 to 1 inclusive
     """
     def set(self, value):
-        PWM.set_duty_cycle(self._pin, ((value % 100) * 100.0))
+        PWM.set_duty_cycle(self._pin, ((value % 1) * 100.0))
 
     def stop(self):
         PWM.stop(self._pin)
@@ -93,7 +93,7 @@ class TalonMC(Motor):
     # -1 to 1 % power
     def set(self, percent_power):
         output = Util.map(percent_power, -1.0, 1.0, 1.0, 99.0)
-        PWM.set_duty_cycle(self._pin, output)
+        PWM.set_duty_cycle(self._pin, output % 100.0)
 
 
 

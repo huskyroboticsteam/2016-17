@@ -14,13 +14,10 @@ class ReleaseSample(Command):
         #self._motor.moveTo(0.0)
 
     def run(self, setpoint):
-        """
         if setpoint == 1:
             self._motor.moveTo(90.0)
         else:
             self._motor.moveTo(0.0)
-        """
-        pass
 
     def setpoint(self, setpoint=None):
         self._setpoint = Parse.aux_ctrl[AuxCtrlID.ReleaseSample + 1]

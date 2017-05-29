@@ -1,10 +1,12 @@
 import time
 import Util
+import Parse
 from math import fabs
 from Command import Command
 from PID import PID
 from Motor import TalonMC
 from math import pi
+from Packet import AuxCtrlID
 
 class RotateArmature(Command):
 
@@ -12,6 +14,7 @@ class RotateArmature(Command):
 
     INITIALIZATION_MOTOR_SPEED_MAX = 0.5  # %/100 MAX VALUE
     MAX_TIME_ALLOTTED_INITIALIZATION = 15   # SECONDS
+    ANGLE_EPSILON = 1
 
     # LOOKING AT BACK = LOOKING AT CIRCUIT BOARD
     # POSITIVE SPEED ON THIS MOTOR, COUNTER-CLOCKWISE LOOKING AT BACK
@@ -24,7 +27,6 @@ class RotateArmature(Command):
         self._limit = limitSwitch
         self.ready = False
         self.last_setpoint = 0.0
-
     def initialize(self):
         self._encoder.setAngleK(0.25)  # From Gear reduction on encoder mount
         if RotateArmature.LIMITS_ON and not self._limit.getValue():
@@ -41,9 +43,20 @@ class RotateArmature(Command):
         self.ready = True
 
     def run(self, setpoint):
-        if self.last_setpoint != setpoint:
+        if setpoint != self.last_setpoint:
+            difference = self._encoder.getAngleDegrees() - setpoint
+            sign = -difference / fabs(difference)
+            self._motor.set(RotateArmature.INITIALIZATION_MOTOR_SPEED_MAX * self.kp * sign)
+            Util.write(fabs(difference))
             Util.write(setpoint)
+            while abs(difference) > RotateArmature.ANGLE_EPSILON:
+                difference = self._encoder.getAngleDegrees() - setpoint
+                Util.write(difference)
+            self._motor.set(0)
         self.last_setpoint = setpoint
+        
+    def setpoint(self):
+        return -Parse.aux_ctrl[AuxCtrlID.RotateArmature + 1]
 
     def stopSafe(self):
         self._motor.stop()

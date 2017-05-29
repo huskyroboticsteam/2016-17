@@ -22,6 +22,7 @@ class MoveSampleCup(Command):
         self._encoder = encoder
         self.ready = False
         self.last_setpoint = 0.0
+        self.last_pid_output = 0.0
         Command.__init__(self, PID(kp, ki, kd))
 
     def initialize(self):
@@ -40,18 +41,18 @@ class MoveSampleCup(Command):
     def run(self, setpoint):
         if self._encoder.getAngleDegrees() > 360.0:
             self.initialize()
-        if self._limit.getValue():
-            self._encoder.reset()
         self._pid.setTarget(setpoint)
         self._pid.run(self._encoder.getAngleDegrees())
-        Util.write(self._pid.getOutput())
-        self._motor.set(self._pid.getOutput())
+        output = self._pid.getOutput()
+        if output != self.last_pid_output:
+            pass
+            #Util.write(output)
+        self._motor.set(output)
+        self.last_pid_output = output
 
     def setpoint(self, setpoint=None):
         # Retrieves setpoint from packet
         self._setpoint = Parse.aux_ctrl[AuxCtrlID.MoveSampleCup + 1]
-        if self._setpoint != self.last_setpoint:
-            Util.write(self._setpoint)
         self.last_setpoint = self._setpoint
         return self._setpoint
 
