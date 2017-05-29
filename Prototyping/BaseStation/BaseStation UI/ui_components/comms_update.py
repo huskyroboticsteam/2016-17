@@ -250,7 +250,6 @@ class ArmConnection(UdpConnection):
             return 0
 
     def _button_axis(self, forwardBtn, reverseBtn):
-        print self.joys.joystick_button[self.joys.joystick_control[self.joystick_control_index]]
         if self.joys.joystick_button[self.joys.joystick_control[self.joystick_control_index]][forwardBtn]:
             return 1.0
         elif self.joys.joystick_button[self.joys.joystick_control[self.joystick_control_index]][reverseBtn]:
@@ -304,11 +303,13 @@ class ScienceConnection(QtCore.QThread):
         elif name == "cup":
             buff = struct.pack('>Icci', 0, '\x81', '\x04', value)
         elif name == "pos":
+            print "here"
             buff = struct.pack('>Icci', 0, '\x81', '\x00', value)
         elif name == "release":
             buff = struct.pack('>Icci', 0, '\x81', '\x00', value)
 
         if self.client is not None:
+            print "Lel"
             self.client.send(buff)
 
     def receive_message(self):
@@ -319,18 +320,19 @@ class ScienceConnection(QtCore.QThread):
         """
 
         try:
-            if self.client is not None:
-                science_data = self.client.recv(1024)
+
+            science_data = self.client.recv(1024)
         except socket.error:
             pass
         else:
             # Unpack the first six floats of the packet
-            tup = struct.unpack_from(">IB", science_data, 0)
+            tup = struct.unpack_from(">Ic", science_data, 0)
             ide = tup[1]
 
             print tup
 
             if ide == '\x00':
+
                 tup = struct.unpack_from(">HIhhH", science_data, 5)
                 distance = tup[0]
                 uv = tup[1]
@@ -342,72 +344,72 @@ class ScienceConnection(QtCore.QThread):
                               "Humidity": str(humidity)}
                 self.sensorUpdate.emit(dictionary)
             elif ide == '\x01':
-                tup = struct.unpack_from(">H")
-                str = "Science "
+                tup = struct.unpack_from(">H", science_data, 5)
+                stri = "Science "
                 if tup == '\x00\x00':
-                    print str + "Okay"
+                    print stri + "Okay"
                 elif tup == '\x00\x01':
-                    print str + "Can't init ADC"
+                    print stri + "Can't init ADC"
                 elif tup == '\x00\x02':
-                    print str + "Can't setup DIO"
+                    print stri + "Can't setup DIO"
                 elif tup == '\x00\x03':
-                    print str + "Can't read DIO"
+                    print stri + "Can't read DIO"
                 elif tup == '\x00\x04':
-                    print str + "Not Init Servo"
+                    print stri + "Not Init Servo"
                 elif tup == '\x00\xFE':
-                    print str + "Ping Errors"
+                    print stri + "Ping Errors"
                 elif tup == '\x00\xFF':
-                    print str + "Unknown Error"
+                    print stri + "Unknown Error"
                 elif tup == '\x01\x01':
-                    print str + "Thermo No Reading"
+                    print stri + "Thermo No Reading"
                 elif tup == '\x01\x02':
-                    print str + "Thermo No Internal Reading"
+                    print stri + "Thermo No Internal Reading"
                 elif tup == '\x01\x03':
-                    print str + "Thermo Reading Invalid"
+                    print stri + "Thermo Reading Invalid"
                 elif tup == '\x01\x04':
-                    print str + "Thermo Open Circuit"
+                    print stri + "Thermo Open Circuit"
                 elif tup == '\x01\x05':
-                    print str + "Thermo GND Short"
+                    print stri + "Thermo GND Short"
                 elif tup == '\x01\x06':
-                    print str + "Thermo VCC Short"
+                    print stri + "Thermo VCC Short"
                 elif tup == '\x01\x07':
-                    print str + "Thermo General Failure"
+                    print stri + "Thermo General Failure"
                 elif tup == '\x01\x08':
-                    print str + "Comm Failure"
+                    print stri + "Comm Failure"
                 elif tup == '\x02\x01':
-                    print str + "UV No Reading"
+                    print stri + "UV No Reading"
                 elif tup == '\x02\x02':
-                    print str + "UV Reading Invalid"
+                    print stri + "UV Reading Invalid"
                 elif tup == '\x02\x03':
-                    print str + "UV Comm Failure"
+                    print stri + "UV Comm Failure"
                 elif tup == '\x03\x01':
-                    print str + "Distance No Reading"
+                    print stri + "Distance No Reading"
                 elif tup == '\x03\x02':
-                    print str + "Distance Reading Invalid"
+                    print stri + "Distance Reading Invalid"
                 elif tup == '\x03\x03':
-                    print str + "Distance Comm Failure"
+                    print stri + "Distance Comm Failure"
                 elif tup == '\x03\x04':
-                    print str + "Distance Failed Begin Ranging"
+                    print stri + "Distance Failed Begin Ranging"
                 elif tup == '\x03\x05':
-                    print str + "Distance Failed Stop Ranging"
+                    print stri + "Distance Failed Stop Ranging"
                 elif tup == '\x04\x01':
-                    print str + "Hum No Reading"
+                    print stri + "Hum No Reading"
                 elif tup == '\x04\x02':
-                    print str + "Hum Reading Invalid"
+                    print stri + "Hum Reading Invalid"
                 elif tup == '\x04\x03':
-                    print str + "Hum Overzealous Insertion"
+                    print stri + "Hum Overzealous Insertion"
                 elif tup == '\x04\x04':
-                    print str + "Hum Comm Failure"
+                    print stri + "Hum Comm Failure"
                 elif tup == '\x05\x01':
-                    print str + "Comms Can't Init"
+                    print stri + "Comms Can't Init"
                 elif tup == '\x05\x02':
-                    print str + "Comms Failed To Start Receive"
+                    print stri + "Comms Failed To Start Receive"
                 elif tup == '\x05\x03':
-                    print str + "Comms Failed to Send Packet"
+                    print stri + "Comms Failed to Send Packet"
                 elif tup == '\x05\x04':
-                    print str + "Comms Failed to Parse Packet"
+                    print stri + "Comms Failed to Parse Packet"
                 elif tup == '\x05\x05':
-                    print str + "Comms Invalid Request"
+                    print stri + "Comms Invalid Request"
 
             elif ide == '\x02':
                 tup = struct.unpack_from(">hhh?", science_data, 5)
