@@ -23,6 +23,7 @@ class RotateArmature(Command):
         self._encoder = encoder
         self._limit = limitSwitch
         self.ready = False
+        self.last_setpoint = 0.0
 
     def initialize(self):
         self._encoder.setAngleK(0.25)  # From Gear reduction on encoder mount
@@ -34,16 +35,15 @@ class RotateArmature(Command):
         # Rotate back by 90* relative to current location
         if RotateArmature.LIMITS_ON:
             self._motor.set(-RotateArmature.INITIALIZATION_MOTOR_SPEED_MAX)
-            Util.write(self._encoder.getAngleDegrees())
             while self._encoder.getAngleDegrees() > -87.0:
                 pass
-                #if self._limit.getValue() and self._encoder.getAngleBounded(360.0, 'degrees') > 5.0:
-                #    break
             self._motor.set(0)
         self.ready = True
 
     def run(self, setpoint):
-        pass
+        if self.last_setpoint != setpoint:
+            Util.write(setpoint)
+        self.last_setpoint = setpoint
 
     def stopSafe(self):
         self._motor.stop()

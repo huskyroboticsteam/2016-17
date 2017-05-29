@@ -27,7 +27,7 @@ from SystemTelemetry import SystemTelemetry
 
 # Communication Setup
 #MAIN_IP = '192.168.0.1'  # Typical
-MAIN_IP = '192.168.0.2'  # Testing on Jaden's machine
+MAIN_IP = '192.168.0.101'  # Testing on Jaden's machine
 PRIMARY_TCP_SEND_PORT = 5000
 INTERNAL_IP = '192.168.0.90'
 INTERNAL_TCP_RECEIVE_PORT = 5000
@@ -53,7 +53,7 @@ HumiditySensor = Humidity("AIN1")
 HumiditySensor.setup(1, 0)  # Setup Humidity Calibration
 encoder1 = Encoder("P8_14", "P8_16", 80)
 encoder2 = Encoder("P8_17", "P8_18", 80)
-encoder3 = Encoder("P8_7", "P8_9", 80)
+encoder3 = Encoder("P8_7", "P8_9", 420)
 limit1 = Limit("P8_12")
 limit2 = Limit("P8_10")
 limit3 = Limit("P8_8")
@@ -75,7 +75,7 @@ SensorHandler.startAll()
 # Create Command Interface
 # IMPORTANT!!!: Order of command creation will cause initialization to have this order:
 rotateArmature = RotateArmature("P9_16", encoder2, limit2, 0, 0, 0)  # Motor 3
-armatureController = MoveDrill("P8_13", DistanceSensor, encoder1, limit3, 0, 0, 0)  # Motor 2
+armatureController = MoveDrill("P8_13", DistanceSensor, encoder1, limit3, 0.1, 0.1, 0.1)  # Motor 2
 moveSampleCup = MoveSampleCup("P9_14", limit1, encoder3, 0, 0, 0)  # Motor 4
 drillController = DrillCtrl("P8_19")  # Motor 1
 releaseSample = ReleaseSample("P9_21")  # Motor 6

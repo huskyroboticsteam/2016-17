@@ -45,7 +45,7 @@ class Packet:
     # buffer for the packet.
     def appendData(self, data):
         if isinstance(data, int):
-            self._data += Util.long_to_byte_length(data, 1)
+            self._data += Util.long_to_byte_length(data, 2)
         else:
             self._data = data
 

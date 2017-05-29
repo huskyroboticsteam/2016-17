@@ -15,6 +15,7 @@ method comments below.
 import sys
 import math
 import struct
+import binascii
 from binascii import unhexlify
 
 ADC_STATUS = False
@@ -217,3 +218,6 @@ Adds a new line at the end
 """
 def write(val):
     sys.stdout.write(str(val) + "\n")
+
+def hexint(b):
+    return int(binascii.hexlify(b), 16)

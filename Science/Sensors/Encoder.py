@@ -149,6 +149,10 @@ class Encoder(Sensor):
     def reset(self):
         self._steps = 0
 
+    def setReverse(self):
+        self._distK *= -1
+        self._angleK *= -1
+
     def getValue(self):
         return self.getAngleBounded(360.0, 'degrees'), self.getDistance()
 

@@ -69,6 +69,7 @@ def parse_aux(msg):
     # Get Command Value
     cmd_value = Util.bytesToInt(msg.data, 6, 10)
     aux_ctrl[cmd_id + 1] = cmd_value
+    Util.write(aux_ctrl)
 
 
 """
