@@ -17,6 +17,7 @@ from random import random
 from Utils import scale_coords
 import Adafruit_BBIO.PWM as PWM
 
+COORD_LIST = [(38.299051667, -111.40419333)]
 class Robot(object):
     """
     Class for controlling the whole robot.
@@ -156,7 +157,7 @@ class Robot(object):
                 location = (0, 0)
             if not self.autonomous_initialized:
                 # TODO: read target from wireless
-                self.target = (47.65324833333333, -122.307635)
+                self.target = COORD_LIST
                 self.autonomous.set_target(self.target)
                 self.autonomous_initialized = True
             if self.autonomous.is_done(location):
