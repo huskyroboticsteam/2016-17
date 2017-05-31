@@ -44,7 +44,7 @@ class Robot(object):
     Back
     """
 
-    def __init__(self, is_using_big_motor):
+    def __init__(self, is_using_big_motor, auto):
         """
         Args:
             is_using_big_motor (bool): True if using BigMotor for controller motors.
@@ -102,7 +102,7 @@ class Robot(object):
         # TODO Get PWM working for vertical servo
         self.sonar = Sonar.Sonar("AIN6")
         self.target = None
-
+        self.auto = auto
         # Used to keep track of number of obstacles seem in a row
         self.obsCount = 0
 
@@ -149,7 +149,7 @@ class Robot(object):
         """
         if self.r_comms.receivedDrive is None:
              return 0, 0
-        auto = self.r_comms.receivedDrive[0]
+        auto = self.auto
         if auto:
             time.sleep(.4)
             location = self.nav.getGPS()
@@ -333,7 +333,8 @@ def main():
             drive_params.stop()
             drive_thread.join()
     else:
-        robot = Robot(sys.argv[1])
+
+        robot = Robot(sys.argv[1], int(sys.argv[2]))
         try:
             while True:
                 robot.moveServo()
