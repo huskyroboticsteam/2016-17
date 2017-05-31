@@ -16,7 +16,7 @@ class Autonomous:
         path (list of tuple of (float, float)): The currently planned path. "None" if not calculated yet.
         path_follower (PathFollower): Object for managing path-following state.
     """
-    def __init__(self):
+    def __init__(self, path=None):
         """
         Args:
             target (tuple of (float, float)): The target x, y coordinates
@@ -25,8 +25,8 @@ class Autonomous:
         self.obstacles = []
         self.ignore_obstacle_distance = 0.1
         self.obstacles_for_curr_path = []
-        self.path = None
-        self.path_follower = PathFollower()
+        self.path = path
+        self.path_follower = PathFollower(self.path)
 
     def set_target(self, target):
         """
