@@ -101,7 +101,10 @@ class Robot(object):
         # TODO Get PWM working for vertical servo
         self.sonar = Sonar.Sonar("AIN6")
         self.coord_list = coord_list
-        self.target = self.coord_list[0]
+        if (len(self.coord_list) > 0):
+            self.target = self.coord_list[0]
+        else:
+            self.target = None
 
         # Used to keep track of number of obstacles seem in a row
         self.obsCount = 0
