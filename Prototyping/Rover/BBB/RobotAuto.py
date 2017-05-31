@@ -336,8 +336,9 @@ def main():
             drive_thread.join()
     else:
         coords_list = []
-        for i in range(2, len(sys.argv)):
-            coords_list.append(sys.argv[i])
+        for i in range(2, len(sys.argv), 2):
+            coord = (sys.argv[i], sys.argv[i + 1])
+            coords_list.append(coord)
         robot = Robot(sys.argv[1], coords_list)
 
         try:
