@@ -208,10 +208,11 @@ class ArmConnection(UdpConnection):
         wrist_lift = self._button_axis(2, 0) / 2 # X- open hand, A- Close hand. (x left, a bottom)
         wrist_rotation = self._button_axis(4, 5) / -4 # Bumpers
         hand_grip = self._button_axis(1, 3) # B is down, Y is up (B is right, Y is up)
+        winch = self._joy_axis(0)
 
-        buff = struct.pack("<ffffff", base_rotation, shoulder, elbow, wrist_lift, wrist_rotation, hand_grip)
+        buff = struct.pack("<fffffff", base_rotation, shoulder, elbow, wrist_lift, wrist_rotation, hand_grip, winch)
 
-        print (base_rotation, shoulder, elbow, wrist_lift, wrist_rotation, hand_grip)
+        print (base_rotation, shoulder, elbow, wrist_lift, wrist_rotation, hand_grip, winch)
 
         # Will send even if we can't reach the rover?
         self.sock.sendto(buff, (self.host, self.port))

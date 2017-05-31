@@ -4,8 +4,8 @@ import time
 
 # Controls the arm with manual (joystick) controls
 
-# comms = Arm_comms("192.168.7.2", 53204, "<ffffff") # For over USB
-comms = Arm_comms("192.168.0.90", 53204, "<ffffff") # For over ethernet
+# comms = Arm_comms("192.168.7.2", 53204, "<fffffff") # For over USB
+comms = Arm_comms("192.168.0.90", 53204, "<fffffff") # For over ethernet
 
 while True:
     comms.receiveData()
