@@ -13,10 +13,10 @@ while True:
     # Use this to move the arm
     if comms.receivedDrive == None:
         print "Nothing recieved"
-        for i in xrange(6):
+        for i in xrange(7):
             hw.motors[i].write(0)
     else:
-        for i in xrange(6):
+        for i in xrange(7):
             hw.motors[i].write(comms.receivedDrive[i])
     
-    time.sleep(1 / 60)
+/ 60)    time.sleep(1

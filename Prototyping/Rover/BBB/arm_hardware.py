@@ -26,7 +26,7 @@ Pin 3, 5, 7, 9, 11, 13, 15, 17. Paired A then B for encoder feedback. First set 
 Base rotation talon connected to 14 - PWM
 """
 
-jointNames = ["base_rotation", "shoulder", "elbow", "wrist_lift", "wrist_rotation", "hand_grip"]
+jointNames = ["base_rotation", "shoulder", "elbow", "wrist_lift", "wrist_rotation", "hand_grip", "winch"]
 
 # Out means towards full extension
 
@@ -37,6 +37,7 @@ motors[2] = Sabertooth(ser2, 128, 0) # Negitive is out
 motors[3] = Sabertooth(ser2, 128, 4) # Positive is out
 motors[4] = Sabertooth(ser1, 130, 4) # Positive is clockwise
 motors[5] = Sabertooth(ser2, 129, 4) # Positive is out
+motors[6] = Sabertooth(ser2, 129, 0)
 
 feedback = {}
 #feedback[0] = Encoder()
