@@ -21,8 +21,8 @@ class PathFollower:
         prev_location (tuple of (float, float)): Last recorded GPS location
         prev_heading (float): Last known/guessed heading
     """
-    def __init__(self, path=[]):
-        self.path = path
+    def __init__(self,):
+        self.path = []
         # TODO fine tune this
         self.pid = PID(0.5, 0.0, 0.0)
         self.pid.setTarget(0.0)
