@@ -320,51 +320,33 @@ class DriveThread(threading.Thread):
 
 
 def main():
-    choice = raw_input('Control robot with keyboard? (y/n) ')
-    if choice[0] == 'y':
-        drive_params = DriveParams()
-        drive_thread = DriveThread(drive_params, sys.argv[1])
-        drive_thread.start()
-        print 'Enter throttle followed by turn, separated by spaces.'
-        print 'For turn, 100 is full right, -100 is full left.'
-        try:
-            while True:
-                in_str = raw_input('input: ')
-                in_list = in_str.split()
-                throttle = float(in_list[0])
-                turn = float(in_list[1])
-                drive_params.set(throttle, turn)
-        except KeyboardInterrupt:
-            drive_params.stop()
-            drive_thread.join()
-    else:
-        coords_list = []
-        for i in range(2, len(sys.argv), 2):
-            coord = (sys.argv[i], sys.argv[i + 1])
-            coords_list.append(coord)
-        robot = Robot(sys.argv[1], coords_list)
+    coords_list = []
+    for i in range(2, len(sys.argv), 2):
+        coord = (sys.argv[i], sys.argv[i + 1])
+        coords_list.append(coord)
+    robot = Robot(sys.argv[1], coords_list)
 
-        try:
-            while True:
-                robot.moveServo()
-                robot.get_robot_comms().receiveData(robot.get_nav())
-                robot.get_robot_comms().sendData(robot.get_nav())
-                driveParms = robot.getDriveParms()
-                MotorParms = robot.convertParmsToMotorVals(driveParms)
-                print "motor parms: ", MotorParms
-                for i in range(1, 5):
-                    robot.driveMotor(i, MotorParms[i - 1])
-
-        except KeyboardInterrupt:
+    try:
+        while True:
+            robot.moveServo()
+            robot.get_robot_comms().receiveData(robot.get_nav())
+            robot.get_robot_comms().sendData(robot.get_nav())
+            driveParms = robot.getDriveParms()
+            MotorParms = robot.convertParmsToMotorVals(driveParms)
+            print "motor parms: ", MotorParms
             for i in range(1, 5):
-                try:
-                    robot.stopMotor(i)
-                except:
-                    print("motor: " + str(i) + " disconnected")
-            robot.stopServo()
-            PWM.cleanup()
-            robot.r_comms.closeConn()
-            print "exiting"
+                robot.driveMotor(i, MotorParms[i - 1])
+
+    except KeyboardInterrupt:
+        for i in range(1, 5):
+            try:
+                robot.stopMotor(i)
+            except:
+                print("motor: " + str(i) + " disconnected")
+        robot.stopServo()
+        PWM.cleanup()
+        robot.r_comms.closeConn()
+        print "exiting"
 
 if __name__ == "__main__":
     main()
