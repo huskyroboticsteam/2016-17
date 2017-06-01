@@ -24,7 +24,8 @@ def quitting():
     # Shutdown the networking thread
     iplist.worker.quit()
     # Save the changes to the settings by the user
-    setting_widget.save()
+    # TODO: revert changes I made
+    #setting_widget.save()
 
     cam1.quit()
     cam2.quit()
@@ -45,6 +46,7 @@ win.resize(1200, 675)
 
 '''Init the Joysticks and Camera Movement Code'''
 joys = joystick.getJoysticks()
++9
 joys.start()
 cam1 = Camera_Controller.CameraMove(joys, 1, "192.168.0.42", "admin", "1234")
 cam1.start()
@@ -57,7 +59,8 @@ sock = comms_update.ConnectionManager()
 setting_widget = settings.Settings(main)
 stop_widget = stop.Stop()
 
-vlc_widget = UI.Player(setting_widget.get_camera_urls(), 300, 200)
+vlc_widget = UI.Player(setting_widget.get_camera_urls(), setting_widget.get_camera_cache(), 300, 200)
+# made change here!!!
 # IP Pinging List, update specified in milliseconds
 iplist = IPCheckerLayout.IPList({"192.168.0.50": "Rover Main", "192.168.0.90": "Arm Main", "192.168.0.91":
                                 "Science Main", "192.168.0.22": "Eye of Sauron", "192.168.0.42": "Ground Cam",

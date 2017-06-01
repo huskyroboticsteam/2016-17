@@ -6,13 +6,13 @@ import vlc
 
 class Player(QtGui.QWidget):
 
-    def __init__(self, urls, x, y, master=None):
+    def __init__(self, urls, cache, x, y, master=None):
         super(Player, self).__init__(master)
         self.sizeX = x
         self.sizeY = y
-        self.createUI(urls)
+        self.createUI(urls, cache)
 
-    def createUI(self, urls):
+    def createUI(self, urls, cache):
         self.widget = QtGui.QWidget(self)
         # self.setContentsMargins(0, 0, 10, 5)
 
@@ -23,7 +23,7 @@ class Player(QtGui.QWidget):
         self.hbox.setContentsMargins(0, 0, 0, 0)
 
         # Create the VLC video widgets
-        self.videos = self.createVLCWidgets(urls)
+        self.videos = self.createVLCWidgets(urls, cache)
         self.recorders = self.createRecorders(urls)
 
         for i in range(0, len(urls)):
@@ -56,11 +56,11 @@ class Player(QtGui.QWidget):
             self.videos[i].assignWindowId()
             self.videos[i].play()
 
-    def createVLCWidgets(self, urls):
+    def createVLCWidgets(self, urls, cache):
         # Empty list to hold vlc widgets
         widgets = []
         for i in range(0, len(urls)):
-            vlc_widget = CustomWidgets.VLCWidget(urls[i], ":network-caching=0", i)
+            vlc_widget = CustomWidgets.VLCWidget(urls[i], ":network-caching=" + cache[i], i)
             vlc_widget.id = i
             widgets.append(vlc_widget)
 

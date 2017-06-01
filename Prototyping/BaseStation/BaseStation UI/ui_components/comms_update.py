@@ -204,11 +204,11 @@ class ArmConnection(UdpConnection):
         # Change accordingly if your controller is different
         base_rotation = self._base_axis(2, 5) / -2 # Triggers
         shoulder = - self._joy_axis(1) / 2  # Left stick Y axis
-        elbow = self._joy_axis(4) / -2 # Right stick Y axis
-        wrist_lift = self._button_axis(2, 0) / 2 # X- open hand, A- Close hand. (x left, a bottom)
+        wrist_lift = self._joy_axis(4) / -2 # Right stick Y axis
+        elbow = self._button_axis(2, 0) / 2 # X- open hand, A- Close hand. (x left, a bottom)
         wrist_rotation = self._button_axis(4, 5) / -4 # Bumpers
         hand_grip = self._button_axis(1, 3) # B is down, Y is up (B is right, Y is up)
-        winch = self._joy_axis(0)
+        winch = self._joy_axis(0) / 5
 
         buff = struct.pack("<fffffff", base_rotation, shoulder, elbow, wrist_lift, wrist_rotation, hand_grip, winch)
 

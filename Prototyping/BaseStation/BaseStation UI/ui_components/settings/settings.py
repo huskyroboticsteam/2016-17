@@ -13,6 +13,7 @@ class Settings:
         self.main = ui
 
         self.cam_list = []
+        self.cache_list = []
 
         self.main.generate.clicked.connect(self.generate_new_map)
 
@@ -128,6 +129,15 @@ class Settings:
 
         return temp
 
+    def get_camera_cache(self):
+        temp = []
+
+        temp.append(self.cache_list[self.main.cam1.currentIndex()])
+        temp.append(self.cache_list[self.main.cam2.currentIndex()])
+        temp.append(self.cache_list[self.main.cam3.currentIndex()])
+
+        return temp
+
     # Saves the current state of the settings page except for generation of new map form
     def save(self):
         """
@@ -177,12 +187,14 @@ class Settings:
         list = QtCore.QStringList()
 
         for i in range(0, len(camList)):
-            if i % 2 == 0:
+            if i % 3 == 0:
                 # Add the names of the cameras
                 list.append(camList[i])
-            else:
+            elif i % 3 == 1:
                 # Add the URLS to the list
                 self.cam_list.append(camList[i])
+            else :
+                self.cache_list.append(camList[i])
 
         # Add the options to the selection boxes
         self.main.cam1.addItems(list)
